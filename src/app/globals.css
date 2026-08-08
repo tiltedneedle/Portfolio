@@ -1,0 +1,313 @@
+@import "tailwindcss";
+
+@theme {
+  --default-font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+    "SF Pro Text", system-ui, sans-serif;
+}
+
+/* ============================================================== design tokens
+   Surfaces step in perceptible increments — earlier revisions carried pairs
+   like #1c1c1e / #1d1d1f that differ by 1/255 and read as one colour.
+   Accents are Apple's system palette; nothing outside this set should appear.
+   ========================================================================== */
+
+:root {
+  /* surfaces, darkest to lightest */
+  --surface-0: #000000;
+  --surface-1: #0a0a0a;
+  --surface-2: #161616;
+  --surface-3: #1c1c1e;
+  --surface-4: #2c2c2e;
+  --surface-5: #3c3c3e;
+
+  /* text, brightest to dimmest — every value clears WCAG AA on surface-0..4 */
+  --text: #f5f5f7;
+  --text-secondary: #d1d1d6;
+  --text-body: #a1a1a6;
+  --text-muted: #86868b;
+
+  /* hairlines */
+  --line: #ffffff14;
+  --line-strong: #ffffff29;
+
+  /* accents */
+  --accent-blue: #2997ff;
+  --accent-indigo: #5e5ce6;
+  --accent-green: #30d158;
+  --accent-orange: #ff9f0a;
+  --accent-pink: #ff375f;
+  --accent-purple: #af52de;
+  --accent-cyan: #64d2ff;
+  --accent-red: #ff453a;
+
+  /* legacy aliases still referenced by base styles */
+  --bg: var(--surface-0);
+  --background: var(--surface-0);
+  --foreground: var(--text);
+  --muted: var(--text-muted);
+  --muted-dark: #6e6e73; /* scrollbar thumb only — non-text, 3:1 applies */
+
+  /* motion: one curve for UI, one for playful overshoot */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-ios: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-ios-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  --dur-fast: 200ms;
+  --dur-base: 300ms;
+  --dur-slow: 500ms;
+  --dur-slower: 800ms;
+
+  /* elevation: stacked shadows — a tight contact shadow plus a wide ambient
+     one, with a hairline ring so cards stay defined on near-black. */
+  --elev-1: 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  --elev-2: 0 4px 12px -2px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --elev-3: 0 12px 32px -8px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --elev-4: 0 24px 64px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  --glow-soft: 0 0 40px rgba(255, 255, 255, 0.06);
+  --glow-medium: 0 0 40px rgba(255, 255, 255, 0.1);
+  --glow-strong: 0 0 60px rgba(255, 255, 255, 0.12);
+
+  /* The /portfolio board is a light surface and needs its own scale —
+     white-on-near-white can't borrow the dark elevations. */
+  --elev-light-1: 0 2px 12px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
+  --elev-light-3: 0 12px 40px -8px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  /* Catches the notional light source on a card's top edge. */
+  --edge-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  --edge-highlight-hover: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* ==================================================================== base */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--surface-0);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "kern" 1, "liga" 1;
+  letter-spacing: -0.01em;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+    system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+::selection {
+  color: var(--text);
+  background: #fff3;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface-0);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--muted-dark);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+:focus-visible {
+  outline: 2px solid #ffffff80;
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* ============================================================== keyframes
+   Only what is referenced. Fourteen orphaned keyframes and thirty-three unused
+   utility classes were removed from this file.
+   ====================================================================== */
+
+@keyframes pulse-orb {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.25;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes ambient-glow {
+  0%,
+  100% {
+    opacity: 0.015;
+  }
+  50% {
+    opacity: 0.03;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes text-glow-pulse {
+  0%,
+  100% {
+    text-shadow: 0 0 30px #ffffff1a;
+  }
+  50% {
+    text-shadow: 0 0 60px #fff3, 0 0 100px #ffffff1a;
+  }
+}
+
+/* Slow breathing bloom for resting elevated surfaces. */
+@keyframes elevation-breathe {
+  0%,
+  100% {
+    box-shadow: var(--elev-2);
+  }
+  50% {
+    box-shadow: var(--elev-3);
+  }
+}
+
+/* A specular highlight that sweeps across a surface on hover. */
+@keyframes sheen-sweep {
+  0% {
+    transform: translateX(-120%) skewX(-20deg);
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(220%) skewX(-20deg);
+    opacity: 0;
+  }
+}
+
+.animate-shimmer {
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s infinite;
+}
+
+.animate-text-glow {
+  animation: text-glow-pulse 4s ease-in-out infinite;
+}
+
+/* ============================================================== elevation
+   Shadow, lift and ring animate together on one curve so surfaces feel like
+   physical objects rather than boxes that happen to move.
+   ====================================================================== */
+
+/* Every card in this codebase gets its lift from Framer Motion, so these
+   classes deliberately animate shadow only — a CSS `transform` here would
+   fight `whileHover` for the same property. */
+.elevate-static {
+  box-shadow: var(--elev-1), var(--edge-highlight);
+  transition: box-shadow var(--dur-slow) var(--ease-out-expo);
+}
+
+.elevate-static:hover {
+  box-shadow: var(--elev-3), var(--edge-highlight-hover);
+}
+
+/* Same, one step deeper — for the large feature cards. */
+.elevate-static-lg {
+  box-shadow: var(--elev-2), var(--edge-highlight);
+  transition: box-shadow var(--dur-slow) var(--ease-out-expo);
+}
+
+.elevate-static-lg:hover {
+  box-shadow: var(--elev-4), var(--edge-highlight-hover);
+}
+
+/* For surfaces whose shadow value is driven by React state rather than :hover —
+   without this the shadow snaps between values instead of easing. */
+.shadow-tween {
+  transition: box-shadow var(--dur-slow) var(--ease-out-expo);
+}
+
+/* Sweeping highlight. Put on a relatively-positioned, overflow-hidden parent. */
+.sheen {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+  transform: translateX(-120%) skewX(-20deg);
+  opacity: 0;
+}
+
+.sheen:hover::after {
+  animation: sheen-sweep 900ms var(--ease-out-expo);
+}
+
+/* ============================================================ reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  /* No sweep, no breathing — the resting elevation stays. */
+  .sheen:hover::after {
+    animation: none;
+    opacity: 0;
+  }
+}

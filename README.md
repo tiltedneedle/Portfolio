@@ -134,6 +134,25 @@ and `div`→`main` changes are visually inert.
 
 Everything else is a faithful reproduction.
 
+## Motion and the reduced-motion preference
+
+The `@media (prefers-reduced-motion: reduce)` block in `globals.css` only stops
+**CSS** animations. Framer Motion animates through inline styles and ignores it
+completely, so every animating component must call `useReducedMotion()` itself.
+Four didn't, which meant a user with the preference set still got the infinite
+logo marquee, two perpetual arrow bounces, the hero scroll indicator, and the
+portfolio board's four-second fly-in. All are now gated.
+
+If you add a `motion.*` element, guard it:
+
+```tsx
+const reduced = useReducedMotion();
+<motion.div animate={reduced ? {} : { y: [0, 10, 0] }} … />
+```
+
+Loading spinners are the deliberate exception — they convey state, so they keep
+spinning.
+
 ## Performance notes
 
 Two payload problems were inherited from the original and fixed:

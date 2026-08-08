@@ -2,6 +2,7 @@
 
 import { useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import {
   ArrowRight,
@@ -64,16 +65,18 @@ export function ServiceDetailPage({ service }: { service: Service }) {
 
   return (
     <>
-      {/* eslint-disable @next/next/no-img-element */}
       <section
         ref={heroRef}
         className="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden bg-black min-h-[80vh] flex items-center"
       >
         <motion.div style={{ y: reduced ? 0 : heroY }} className="absolute inset-0">
-          <img
+          <Image
             src={service.imageUrl}
             alt=""
-            className="absolute inset-0 w-full h-full object-cover"
+            fill
+            sizes="100vw"
+            priority
+            className="object-cover"
           />
           <div className="absolute inset-0 bg-black/75" />
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent" />
@@ -201,10 +204,12 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                   className={`absolute -inset-[2px] rounded-3xl bg-gradient-to-br ${service.gradient} opacity-60`}
                 />
                 <div className="absolute inset-[2px] rounded-[22px] overflow-hidden bg-[#1c1c1e]">
-                  <img
+                  <Image
                     src={service.imageUrl}
                     alt={service.title}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
                 </div>
@@ -243,10 +248,12 @@ export function ServiceDetailPage({ service }: { service: Service }) {
 
       <section className="relative py-28 md:py-40 bg-black overflow-hidden">
         <div className="absolute top-1/2 right-[-10%] -translate-y-1/2 w-[500px] h-[400px] rounded-3xl overflow-hidden opacity-[0.04] rotate-[3deg] pointer-events-none hidden lg:block">
-          <img
+          <Image
             src={service.imageUrl}
             alt=""
-            className="w-full h-full object-cover blur-[2px]"
+            fill
+            sizes="500px"
+            className="object-cover blur-[2px]"
           />
         </div>
 
@@ -562,10 +569,12 @@ export function ServiceDetailPage({ service }: { service: Service }) {
       <section className="relative py-28 md:py-40 bg-[#0a0a0a] overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-black via-[#0a0a0a] to-[#0d0d0d]" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[300px] rounded-tl-3xl overflow-hidden opacity-[0.025] pointer-events-none hidden lg:block">
-          <img
+          <Image
             src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&h=400&fit=crop"
             alt=""
-            className="w-full h-full object-cover"
+            fill
+            sizes="400px"
+            className="object-cover"
           />
         </div>
 
@@ -672,7 +681,6 @@ export function ServiceDetailPage({ service }: { service: Service }) {
           </motion.div>
         </div>
       </section>
-      {/* eslint-enable @next/next/no-img-element */}
     </>
   );
 }

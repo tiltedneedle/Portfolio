@@ -105,7 +105,7 @@ export function ContactForm() {
               >
                 Book a Demo
                 <motion.span
-                  animate={{ x: [0, 3, 0] }}
+                  animate={reduced ? {} : { x: [0, 3, 0] }}
                   transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
                 >
                   <ArrowUpRight className="w-4 h-4" />

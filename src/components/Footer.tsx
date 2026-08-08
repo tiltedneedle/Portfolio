@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
 const socials = [
@@ -36,6 +36,7 @@ const socialPaths: Record<string, string> = {
 
 export function Footer() {
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+  const reduced = useReducedMotion();
 
   return (
     <footer className="relative py-20 md:py-24 bg-[#0a0a0a]">
@@ -199,7 +200,7 @@ export function Footer() {
             className="inline-flex items-center gap-2 text-[13px] text-[#86868b] hover:text-[#f5f5f7] transition-colors duration-300"
           >
             <motion.span
-              animate={{ y: [0, -3, 0] }}
+              animate={reduced ? {} : { y: [0, -3, 0] }}
               transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
             >
               ↑

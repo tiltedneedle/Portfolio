@@ -224,14 +224,14 @@ export function Hero() {
         className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
       >
         <motion.div
-          animate={{ y: [0, 10, 0] }}
+          animate={reduced ? {} : { y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           className="flex flex-col items-center gap-2"
         >
           <span className="text-[11px] text-[#86868b] uppercase tracking-[0.15em]">Scroll</span>
           <div className="w-6 h-10 border-2 border-[#86868b]/50 rounded-full flex items-start justify-center p-2 backdrop-blur-sm">
             <motion.div
-              animate={{ opacity: [1, 0.3, 1], y: [0, 8, 0], scale: [1, 0.8, 1] }}
+              animate={reduced ? {} : { opacity: [1, 0.3, 1], y: [0, 8, 0], scale: [1, 0.8, 1] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               className="w-1.5 h-2.5 bg-[#f5f5f7] rounded-full"
             />

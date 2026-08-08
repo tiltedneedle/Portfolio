@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { CheckCircle2, Clock, Play, Quote, X } from "lucide-react";
 import { useFocusTrap } from "@/lib/use-focus-trap";
 import type { ModalItem } from "@/lib/site-data";
@@ -24,6 +24,11 @@ export function VideoModal({
   relatedItems = [],
   onSelectRelated,
 }: Props) {
+  const reduced = useReducedMotion();
+  // Entrance offsets are motion; the opacity fade is not.
+  const rise = reduced ? {} : { y: 20 };
+  const riseTo = reduced ? {} : { y: 0 };
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -79,9 +84,9 @@ export function VideoModal({
 
           <motion.div
             ref={scrollRef}
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, ...(reduced ? {} : { scale: 0.95 }), ...rise }}
+            animate={{ opacity: 1, scale: 1, ...riseTo }}
+            exit={{ opacity: 0, ...(reduced ? {} : { scale: 0.95 }), ...rise }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="absolute inset-0 z-[101] overflow-y-auto"
             role="dialog"
@@ -95,7 +100,7 @@ export function VideoModal({
                 onClick={(e) => e.stopPropagation()}
               >
                 <motion.button
-                  initial={{ opacity: 0, scale: 0.8 }}
+                  initial={{ opacity: 0, ...(reduced ? {} : { scale: 0.8 }) }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.2 }}
                   onClick={close}
@@ -175,8 +180,8 @@ export function VideoModal({
                       return (
                         <motion.div
                           key={metric.label}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
+                          initial={{ opacity: 0, ...rise }}
+                          animate={{ opacity: 1, ...riseTo }}
                           transition={{
                             delay: 0.1 + 0.05 * i,
                             duration: 0.5,
@@ -245,8 +250,8 @@ export function VideoModal({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
                       {item.challenge && (
                         <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
+                          initial={{ opacity: 0, ...rise }}
+                          animate={{ opacity: 1, ...riseTo }}
                           transition={{ delay: 0.2, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                           className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-[#ff453a]/10 to-transparent border border-[#ff453a]/20"
                         >
@@ -261,8 +266,8 @@ export function VideoModal({
 
                       {item.solution && (
                         <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
+                          initial={{ opacity: 0, ...rise }}
+                          animate={{ opacity: 1, ...riseTo }}
                           transition={{ delay: 0.3, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                           className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-[#30d158]/10 to-transparent border border-[#30d158]/20"
                         >
@@ -279,8 +284,8 @@ export function VideoModal({
 
                   {item.results && (
                     <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
+                      initial={{ opacity: 0, ...rise }}
+                      animate={{ opacity: 1, ...riseTo }}
                       transition={{ delay: 0.4, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                       className="mb-10 p-6 md:p-8 rounded-2xl bg-gradient-to-br from-[#2997ff]/10 to-transparent border border-[#2997ff]/20"
                     >
@@ -293,8 +298,8 @@ export function VideoModal({
 
                   {item.testimonial && (
                     <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
+                      initial={{ opacity: 0, ...rise }}
+                      animate={{ opacity: 1, ...riseTo }}
                       transition={{ delay: 0.5, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                       className="mb-10 p-8 md:p-10 rounded-2xl bg-[#2c2c2e] border border-white/[0.06] relative overflow-hidden"
                     >

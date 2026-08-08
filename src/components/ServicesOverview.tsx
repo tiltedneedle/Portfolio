@@ -2,6 +2,7 @@
 
 import { useRef, type ReactNode } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import {
   ArrowRight,
@@ -181,29 +182,33 @@ export function ServicesOverview() {
       <section className="relative py-28 md:py-40 bg-black overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-black to-[#0d0d0d]" />
 
-        {/* eslint-disable @next/next/no-img-element */}
         <div className="absolute top-[5%] left-[-5%] w-[350px] h-[250px] rounded-3xl overflow-hidden opacity-[0.04] rotate-[-8deg] pointer-events-none">
-          <img
+          <Image
             src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=600&h=400&fit=crop"
             alt=""
-            className="w-full h-full object-cover"
+            fill
+            sizes="350px"
+            className="object-cover"
           />
         </div>
         <div className="absolute top-[35%] right-[-8%] w-[300px] h-[200px] rounded-3xl overflow-hidden opacity-[0.035] rotate-[6deg] pointer-events-none">
-          <img
+          <Image
             src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop"
             alt=""
-            className="w-full h-full object-cover"
+            fill
+            sizes="300px"
+            className="object-cover"
           />
         </div>
         <div className="absolute bottom-[10%] left-[3%] w-[280px] h-[200px] rounded-3xl overflow-hidden opacity-[0.03] rotate-[4deg] pointer-events-none">
-          <img
+          <Image
             src="https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&h=400&fit=crop"
             alt=""
-            className="w-full h-full object-cover"
+            fill
+            sizes="280px"
+            className="object-cover"
           />
         </div>
-        {/* eslint-enable @next/next/no-img-element */}
 
         <motion.div
           animate={reduced ? {} : { opacity: [0, 0.15, 0], y: ["-100%", "200%"] }}
@@ -290,7 +295,7 @@ export function ServicesOverview() {
                       Learn more
                       <motion.span
                         className="inline-block"
-                        animate={{ x: [0, 4, 0] }}
+                        animate={reduced ? {} : { x: [0, 4, 0] }}
                         transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
                       >
                         <ArrowRight className="w-4 h-4" />

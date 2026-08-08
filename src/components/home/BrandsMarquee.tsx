@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 // Intrinsic dimensions are declared so the row reserves correct space before
 // the images decode — without them the marquee reflows as each logo lands.
@@ -39,6 +39,12 @@ function BrandLogo({ brand, priority }: { brand: Brand; priority: boolean }) {
 }
 
 export function BrandsMarquee() {
+  const reduced = useReducedMotion();
+  // An endless horizontal crawl is exactly what this preference is for.
+  const scroll = reduced
+    ? {}
+    : { animate: { x: ["0%", "-100%"] }, transition: { duration: 30, ease: "linear" as const, repeat: Infinity } };
+
   return (
     <section className="relative bg-black py-12 md:py-16 overflow-hidden border-t border-white/[0.04]">
       <motion.div
@@ -60,8 +66,7 @@ export function BrandsMarquee() {
         <div className="flex overflow-hidden">
           <motion.div
             className="flex shrink-0"
-            animate={{ x: ["0%", "-100%"] }}
-            transition={{ duration: 30, ease: "linear", repeat: Infinity }}
+            {...scroll}
           >
             {brands.map((brand, i) => (
               // The first few are visible immediately; the rest can wait.
@@ -70,8 +75,7 @@ export function BrandsMarquee() {
           </motion.div>
           <motion.div
             className="flex shrink-0"
-            animate={{ x: ["0%", "-100%"] }}
-            transition={{ duration: 30, ease: "linear", repeat: Infinity }}
+            {...scroll}
             aria-hidden="true"
           >
             {brands.map((brand, i) => (

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +33,7 @@ export function NavBar() {
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathname = usePathname();
+  const reduced = useReducedMotion();
 
   useEffect(() => {
     let ticking = false;
@@ -261,7 +262,7 @@ export function NavBar() {
                 Book a Demo
                 <motion.span
                   className="inline-block"
-                  animate={{ x: [0, 3, 0] }}
+                  animate={reduced ? {} : { x: [0, 3, 0] }}
                   transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
                 >
                   →

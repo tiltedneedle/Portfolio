@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ArrowRight, Maximize2, Move, X, ZoomIn, ZoomOut } from "lucide-react";
 import { NavBar } from "@/components/NavBar";
 import { useFocusTrap } from "@/lib/use-focus-trap";
@@ -232,6 +232,7 @@ export function PortfolioBoard() {
   const pinchDist = useRef(0);
   const pinchMid = useRef({ x: 0, y: 0 });
   const dialogRef = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
 
   useFocusTrap(!!selected, dialogRef);
 
@@ -279,6 +280,14 @@ export function PortfolioBoard() {
     const targetX = w / 2 - focusX * target;
     const targetY = h / 2 - focusY * target;
 
+    // Skip the four-second fly-in entirely and land on the resting view.
+    if (reduced) {
+      setPhase("done");
+      setScale(target);
+      setPos({ x: targetX, y: targetY });
+      return;
+    }
+
     setScale(fitScale);
     setPos(fitPos);
 
@@ -309,7 +318,7 @@ export function PortfolioBoard() {
       clearTimeout(t3);
       clearTimeout(t4);
     };
-  }, [getSize, isMobile]);
+  }, [getSize, isMobile, reduced]);
 
   const onWheel = useCallback(
     (e: React.WheelEvent) => {

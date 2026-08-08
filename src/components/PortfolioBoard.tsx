@@ -627,7 +627,7 @@ export function PortfolioBoard() {
               </p>
 
               <div
-                className="flex items-center gap-3 mt-2 text-[10px] uppercase tracking-[0.15em]"
+                className="flex items-center gap-3 mt-2 text-[11px] uppercase tracking-[0.15em]"
                 style={{ color: "#c4c4c8" }}
               >
                 <span>London</span>
@@ -766,19 +766,19 @@ export function PortfolioBoard() {
                 >
                   {selected.title}
                 </h2>
-                <p className="text-[14px] md:text-[15px] text-[#6e6e73] leading-relaxed mt-2">
+                <p className="text-[15px] md:text-[15px] text-[#6e6e73] leading-relaxed mt-2">
                   A case study in bold storytelling and measurable growth.
                 </p>
                 <div className="mt-4 md:mt-5 flex flex-wrap gap-3">
                   <Link
                     href="/book-demo"
-                    className="inline-flex items-center px-5 md:px-6 py-2.5 md:py-3 bg-[#1c1c1e] text-white rounded-full text-[13px] md:text-[14px] font-semibold hover:bg-black active:scale-[0.97] transition-all"
+                    className="inline-flex items-center px-5 md:px-6 py-2.5 md:py-3 bg-[#1c1c1e] text-white rounded-full text-[13px] md:text-[15px] font-semibold hover:bg-black active:scale-[0.97] transition-all"
                   >
                     Book a Demo
                   </Link>
                   <button
                     onClick={() => setSelected(null)}
-                    className="inline-flex items-center px-5 md:px-6 py-2.5 md:py-3 bg-[#f5f5f7] text-[#1c1c1e] rounded-full text-[13px] md:text-[14px] font-medium hover:bg-[#e8e8ed] active:scale-[0.97] transition-all"
+                    className="inline-flex items-center px-5 md:px-6 py-2.5 md:py-3 bg-[#f5f5f7] text-[#1c1c1e] rounded-full text-[13px] md:text-[15px] font-medium hover:bg-[#e8e8ed] active:scale-[0.97] transition-all"
                   >
                     Back to Gallery
                   </button>

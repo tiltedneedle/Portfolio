@@ -127,7 +127,7 @@ export function LegalPage({ title, lastUpdated, sections }: Props) {
                 {section.paragraphs?.map((paragraph, p) => (
                   <p
                     key={p}
-                    className="text-[16px] md:text-[17px] leading-[1.7] text-[#a1a1a6] mb-4 last:mb-0"
+                    className="text-[17px] md:text-[17px] leading-[1.7] text-[#a1a1a6] mb-4 last:mb-0"
                   >
                     {renderInline(paragraph)}
                   </p>
@@ -138,7 +138,7 @@ export function LegalPage({ title, lastUpdated, sections }: Props) {
                     {section.bullets.map((bullet, b) => (
                       <li
                         key={b}
-                        className="relative pl-6 text-[16px] md:text-[17px] leading-[1.7] text-[#a1a1a6]"
+                        className="relative pl-6 text-[17px] md:text-[17px] leading-[1.7] text-[#a1a1a6]"
                       >
                         <span
                           aria-hidden="true"

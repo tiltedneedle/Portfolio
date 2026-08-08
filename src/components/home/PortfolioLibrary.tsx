@@ -148,7 +148,7 @@ function PortfolioCard({ item, onClick }: { item: PortfolioItem; onClick: () => 
           transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           className="absolute top-3 left-3"
         >
-          <span className="px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-white/90 bg-white/15 backdrop-blur-md rounded-full border border-white/10">
+          <span className="px-2.5 py-1 text-[11px] font-medium uppercase tracking-wider text-white/90 bg-white/15 backdrop-blur-md rounded-full border border-white/10">
             {item.categories[0]}
           </span>
         </motion.div>
@@ -174,7 +174,7 @@ function PortfolioCard({ item, onClick }: { item: PortfolioItem; onClick: () => 
             animate={{ y: hovered && !reduced ? -4 : 0 }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
-            <h3 className="text-[15px] md:text-[16px] font-semibold text-white leading-tight line-clamp-2">
+            <h3 className="text-[15px] md:text-[17px] font-semibold text-white leading-tight line-clamp-2">
               {item.title}
             </h3>
             <p className="mt-1 text-[13px] text-white/60 line-clamp-1">{item.client}</p>
@@ -187,10 +187,10 @@ function PortfolioCard({ item, onClick }: { item: PortfolioItem; onClick: () => 
               <div className="flex gap-4 mt-3 pt-3 border-t border-white/10">
                 {item.metrics.slice(0, 2).map((metric) => (
                   <div key={metric.label} className="flex flex-col">
-                    <span className="text-[14px] font-semibold text-white tabular-nums">
+                    <span className="text-[15px] font-semibold text-white tabular-nums">
                       {metric.value}
                     </span>
-                    <span className="text-[10px] text-white/50 uppercase tracking-wider">
+                    <span className="text-[11px] text-white/50 uppercase tracking-wider">
                       {metric.label}
                     </span>
                   </div>
@@ -253,7 +253,7 @@ export function PortfolioLibrary() {
           <h2 className="text-[32px] md:text-[48px] lg:text-[56px] font-semibold text-[#f5f5f7] tracking-[-0.02em] leading-[1.1]">
             Portfolio Library
           </h2>
-          <p className="mt-6 text-[17px] md:text-[21px] text-[#86868b] leading-[1.4]">
+          <p className="mt-6 text-[17px] md:text-[22px] text-[#86868b] leading-[1.4]">
             1,000+ projects delivered across industries.
           </p>
         </motion.div>

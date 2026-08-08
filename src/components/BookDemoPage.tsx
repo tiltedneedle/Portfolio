@@ -65,7 +65,7 @@ export function BookDemoPage() {
               </span>
             </h1>
 
-            <p className="text-lg md:text-xl text-[#86868b] max-w-xl mx-auto leading-relaxed">
+            <p className="text-[19px] md:text-xl text-[#86868b] max-w-xl mx-auto leading-relaxed">
               Book a call with our team. We&apos;ll map out a custom plan to scale your brand. No
               strings attached.
             </p>
@@ -128,7 +128,7 @@ export function BookDemoPage() {
                   {expectations.map((item, i) => (
                     <div key={i} className="flex items-start gap-3">
                       <CheckCircle2 className="w-[18px] h-[18px] text-[#30d158] flex-shrink-0 mt-0.5" />
-                      <span className="text-[14px] text-[#a1a1a6] leading-relaxed">{item}</span>
+                      <span className="text-[15px] text-[#a1a1a6] leading-relaxed">{item}</span>
                     </div>
                   ))}
                 </div>
@@ -139,7 +139,7 @@ export function BookDemoPage() {
                   <Video className="w-4 h-4 text-[#2997ff]" />
                   Call details
                 </h2>
-                <div className="space-y-3 text-[14px] text-[#a1a1a6]">
+                <div className="space-y-3 text-[15px] text-[#a1a1a6]">
                   <div className="flex items-center justify-between py-2 border-b border-white/[0.04]">
                     <span>Duration</span>
                     <span className="text-[#f5f5f7] font-medium">30 minutes</span>
@@ -163,7 +163,7 @@ export function BookDemoPage() {
                 <div className="flex items-start gap-3">
                   <Shield className="w-5 h-5 text-[#2997ff] flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-[14px] text-[#f5f5f7] font-medium mb-1">
+                    <p className="text-[15px] text-[#f5f5f7] font-medium mb-1">
                       No commitment required
                     </p>
                     <p className="text-[13px] text-[#86868b] leading-relaxed">
@@ -200,7 +200,7 @@ export function BookDemoPage() {
             <h2 className="text-2xl md:text-3xl font-semibold text-[#f5f5f7] tracking-[-0.02em] mb-4">
               Not ready for a call yet?
             </h2>
-            <p className="text-[16px] text-[#86868b] leading-relaxed mb-8">
+            <p className="text-[17px] text-[#86868b] leading-relaxed mb-8">
               Explore our work and see how we&apos;ve helped brands generate billions of views.
             </p>
             <div className="flex flex-wrap justify-center gap-3">

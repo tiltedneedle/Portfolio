@@ -45,7 +45,7 @@ export default function NotFound() {
               </span>
             </h1>
 
-            <p className="text-lg md:text-xl text-[#86868b] leading-relaxed mb-10">
+            <p className="text-[19px] md:text-xl text-[#86868b] leading-relaxed mb-10">
               The link may be old or mistyped. Here&apos;s where to go instead.
             </p>
 

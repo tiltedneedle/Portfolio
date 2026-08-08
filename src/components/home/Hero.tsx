@@ -207,7 +207,7 @@ export function Hero() {
                   >
                     {stat.value}
                   </motion.div>
-                  <div className="mt-2 text-[10px] md:text-sm text-[#86868b] uppercase tracking-[0.08em] transition-colors duration-300 group-hover:text-[#a1a1a6]">
+                  <div className="mt-2 text-[11px] md:text-[15px] text-[#86868b] uppercase tracking-[0.08em] transition-colors duration-300 group-hover:text-[#a1a1a6]">
                     {stat.label}
                   </div>
                 </motion.div>

@@ -125,7 +125,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="flex items-center gap-2 text-[14px] text-[#86868b] mb-8"
+            className="flex items-center gap-2 text-[15px] text-[#86868b] mb-8"
           >
             <Link href="/" className="hover:text-[#f5f5f7] transition-colors">
               Home
@@ -232,7 +232,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                 >
                   {stat.value}
                 </div>
-                <div className="mt-2 text-[12px] md:text-sm text-[#86868b] uppercase tracking-[0.08em]">
+                <div className="mt-2 text-[12px] md:text-[15px] text-[#86868b] uppercase tracking-[0.08em]">
                   {stat.label}
                 </div>
               </motion.div>
@@ -323,7 +323,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                 >
                   <Check className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-[16px] text-[#d1d1d6] group-hover:text-white transition-colors">
+                <span className="text-[17px] text-[#d1d1d6] group-hover:text-white transition-colors">
                   {feature}
                 </span>
               </motion.div>
@@ -365,7 +365,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                   <div
                     className={`w-12 h-12 rounded-xl bg-gradient-to-br ${service.gradient} flex items-center justify-center flex-shrink-0 opacity-60 group-hover:opacity-100 transition-opacity duration-500`}
                   >
-                    <span className="text-white text-[18px] font-bold">
+                    <span className="text-white text-[19px] font-bold">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                   </div>
@@ -425,7 +425,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                 <div
                   className={`w-14 h-14 rounded-full bg-gradient-to-br ${service.gradient} flex items-center justify-center flex-shrink-0`}
                 >
-                  <span className="text-white text-[18px] font-bold">
+                  <span className="text-white text-[19px] font-bold">
                     {String(step.step).padStart(2, "0")}
                   </span>
                 </div>
@@ -488,7 +488,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                     <h3 className="text-[17px] font-semibold text-[#f5f5f7] mb-1.5 group-hover:text-white transition-colors">
                       {step.title}
                     </h3>
-                    <p className="text-[14px] text-[#86868b] leading-relaxed group-hover:text-[#a1a1a6] transition-colors">
+                    <p className="text-[15px] text-[#86868b] leading-relaxed group-hover:text-[#a1a1a6] transition-colors">
                       {step.description}
                     </p>
                   </div>
@@ -602,7 +602,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                       >
                         {ICONS_SM[other.iconName]}
                       </div>
-                      <h3 className="text-[16px] font-semibold text-[#f5f5f7] group-hover:text-white transition-colors">
+                      <h3 className="text-[17px] font-semibold text-[#f5f5f7] group-hover:text-white transition-colors">
                         {other.shortTitle}
                       </h3>
                     </div>

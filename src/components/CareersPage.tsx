@@ -169,7 +169,7 @@ function RoleCard({
           >
             <div className="px-8 md:px-10 pb-8 md:pb-10">
               <div className="h-px w-full bg-gradient-to-r from-transparent via-white/[0.08] to-transparent mb-7" />
-              <p className="text-[16px] md:text-[17px] text-[#a1a1a6] leading-relaxed max-w-2xl">
+              <p className="text-[17px] md:text-[17px] text-[#a1a1a6] leading-relaxed max-w-2xl">
                 {role.description}
               </p>
 
@@ -183,7 +183,7 @@ function RoleCard({
                       <span className="shrink-0 w-6 h-6 rounded-full bg-[#2997ff]/10 flex items-center justify-center">
                         <Check className="w-3.5 h-3.5 text-[#2997ff]" />
                       </span>
-                      <span className="text-[15px] md:text-[16px] text-[#f5f5f7]">
+                      <span className="text-[15px] md:text-[17px] text-[#f5f5f7]">
                         {requirement}
                       </span>
                     </li>
@@ -269,7 +269,7 @@ function ApplicationForm({
             <CheckCircle2 className="w-7 h-7 text-[#30d158]" />
           </motion.div>
           <h3 className="text-2xl font-semibold text-[#f5f5f7] mb-2">Application received</h3>
-          <p className="text-[16px] text-[#86868b] max-w-md mx-auto">
+          <p className="text-[17px] text-[#86868b] max-w-md mx-auto">
             Thanks for applying to Tilted Needle. We read every application and will be in touch if
             there&apos;s a fit.
           </p>
@@ -392,7 +392,7 @@ function ApplicationForm({
           </div>
 
           {error && (
-            <p className="text-[14px] text-[#ff453a]" role="alert">
+            <p className="text-[15px] text-[#ff453a]" role="alert">
               {error}
             </p>
           )}
@@ -617,7 +617,7 @@ export function CareersPage() {
                   <h3 className="text-[22px] md:text-[24px] font-semibold text-[#f5f5f7] mb-3 group-hover:text-white transition-colors duration-300">
                     {perk.title}
                   </h3>
-                  <p className="text-[15px] md:text-[16px] text-[#86868b] leading-relaxed group-hover:text-[#a1a1a6] transition-colors duration-300">
+                  <p className="text-[15px] md:text-[17px] text-[#86868b] leading-relaxed group-hover:text-[#a1a1a6] transition-colors duration-300">
                     {perk.description}
                   </p>
                 </motion.div>

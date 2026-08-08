@@ -183,6 +183,31 @@ Fonts are Inter and Cormorant Garamond via `next/font/google`, exposed as
 Distinct hex values went from 46 to 33; the remainder are the text ramp and the
 separate light scale the `/portfolio` board needs.
 
+### Type scale
+
+Sizes are authored as arbitrary px, because the design needs 15/17/19 and
+Tailwind's named steps don't provide them. Mixing the two conventions is what
+produced 22 sizes with 1px-apart neighbours (14/15, 16/17, 18/19, 21/22, and a
+one-off 44). Consolidated to 16:
+
+```
+11   micro labels, eyebrows        24 28 32   sub-headings
+12   small labels, legal           48 56 64 72 88   display
+13   captions, helper text
+15   body small, form controls
+17   body
+19   body large
+20 22  lead paragraphs
+```
+
+`text-2xl`…`text-7xl` still appear, but only inside responsive ramps like
+`text-4xl md:text-5xl lg:text-[64px]`. Don't reintroduce a bare `text-sm`,
+`text-base` or `text-lg` — each duplicated a step the codebase already
+expressed in px.
+
+The h1 sizes do differ by page (88 on marketing pages, 72 on book-demo, 64 on
+legal, 56 on service detail). That is a deliberate hierarchy, not drift.
+
 ### Elevation
 
 Shadows are stacked — a tight contact shadow plus a wide ambient one, plus a

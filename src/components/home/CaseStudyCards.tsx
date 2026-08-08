@@ -134,7 +134,7 @@ export function CaseStudyCards({ caseStudies }: { caseStudies: CaseStudy[] }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.15, duration: 0.6 }}
-            className="mt-6 text-[17px] md:text-[21px] text-[#86868b] leading-[1.4] max-w-2xl mx-auto"
+            className="mt-6 text-[17px] md:text-[22px] text-[#86868b] leading-[1.4] max-w-2xl mx-auto"
           >
             Deep dives into our most successful campaigns and the strategies behind them.
           </motion.p>
@@ -230,7 +230,7 @@ export function CaseStudyCards({ caseStudies }: { caseStudies: CaseStudy[] }) {
                     <h3 className="text-xl md:text-2xl font-semibold text-white mb-1">
                       {study.client}
                     </h3>
-                    <p className="text-[14px] text-[#86868b]">{study.title}</p>
+                    <p className="text-[15px] text-[#86868b]">{study.title}</p>
                   </div>
                   <motion.div
                     animate={{

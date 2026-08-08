@@ -193,7 +193,7 @@ export function ContactForm() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.5 }}
-                      className="text-[16px] text-[#86868b]"
+                      className="text-[17px] text-[#86868b]"
                     >
                       We&apos;ll be in touch within 24-48 hours.
                     </motion.p>
@@ -287,7 +287,7 @@ export function ContactForm() {
                   </motion.div>
 
                   {error && (
-                    <p className="text-[14px] text-[#ff453a]" role="alert">
+                    <p className="text-[15px] text-[#ff453a]" role="alert">
                       {error}
                     </p>
                   )}

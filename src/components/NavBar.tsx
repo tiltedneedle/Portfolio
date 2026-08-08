@@ -90,7 +90,7 @@ export function NavBar() {
               <motion.span
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center gap-2 text-[14px] font-medium text-[#f5f5f7] hover:text-white transition-colors duration-300"
+                className="inline-flex items-center gap-2 text-[15px] font-medium text-[#f5f5f7] hover:text-white transition-colors duration-300"
               >
                 <Image
                   src="/white-logo.png"
@@ -128,7 +128,7 @@ export function NavBar() {
                       <Link href={link.href}>
                         <motion.span
                           className={cn(
-                            "relative text-[12px] transition-all duration-300 py-1 inline-flex items-center gap-1 cursor-pointer",
+                            "relative flex text-[12px] transition-all duration-300 py-1 items-center gap-1 cursor-pointer",
                             isActive ? "text-[#f5f5f7]" : "text-[#86868b] hover:text-[#f5f5f7]"
                           )}
                         >
@@ -236,7 +236,10 @@ export function NavBar() {
                       onMouseEnter={() => setHovered(link.href)}
                       onMouseLeave={() => setHovered(null)}
                       className={cn(
-                        "relative text-[12px] transition-all duration-300 py-1",
+                        // inline-block: as a plain inline span the vertical padding
+                        // doesn't expand the box, which left route links (Careers)
+                        // 2px shorter and a pixel lower than the hash links.
+                        "relative block text-[12px] transition-all duration-300 py-1",
                         isActive ? "text-[#f5f5f7]" : "text-[#86868b] hover:text-[#f5f5f7]"
                       )}
                     >

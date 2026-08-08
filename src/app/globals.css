@@ -55,6 +55,25 @@
   --ease-ios: cubic-bezier(0.25, 0.1, 0.25, 1);
   --ease-ios-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
+  /* Type scale. Sizes are authored as arbitrary px because the design needs
+     15/17/19, which Tailwind's named steps don't provide — mixing the two
+     conventions is what produced 22 sizes with 1px-apart neighbours
+     (14/15, 16/17, 18/19, 21/22). Consolidated to:
+
+       11  micro labels, eyebrows
+       12  small labels, legal
+       13  captions, helper text
+       15  body small, form controls
+       17  body
+       19  body large
+       20  22  lead paragraphs
+       24  28  32  sub-headings
+       48  56  64  72  88  display
+
+     Named utilities (text-2xl…text-7xl) remain, but only inside responsive
+     ramps such as `text-4xl md:text-5xl lg:text-[64px]`. Don't reintroduce a
+     bare `text-sm` / `text-base` / `text-lg`. */
+
   --dur-fast: 200ms;
   --dur-base: 300ms;
   --dur-slow: 500ms;

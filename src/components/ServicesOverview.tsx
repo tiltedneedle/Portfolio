@@ -169,7 +169,7 @@ export function ServicesOverview() {
                 <div className="text-3xl md:text-5xl lg:text-[56px] font-semibold text-[#f5f5f7] tracking-[-0.02em]">
                   {stat.value}
                 </div>
-                <div className="mt-2 text-[12px] md:text-sm text-[#86868b] uppercase tracking-[0.08em]">
+                <div className="mt-2 text-[12px] md:text-[15px] text-[#86868b] uppercase tracking-[0.08em]">
                   {stat.label}
                 </div>
               </motion.div>

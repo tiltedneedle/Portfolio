@@ -117,7 +117,7 @@ export function ProcessTimeline() {
                   setActiveTrack(t.id);
                   setOpenStep(null);
                 }}
-                className={`relative px-4 md:px-6 py-2.5 rounded-full text-[12px] md:text-[14px] font-medium transition-colors duration-300 whitespace-nowrap ${
+                className={`relative px-4 md:px-6 py-2.5 rounded-full text-[12px] md:text-[15px] font-medium transition-colors duration-300 whitespace-nowrap ${
                   activeTrack === t.id ? "text-black" : "text-[#86868b] hover:text-white"
                 }`}
               >
@@ -247,7 +247,7 @@ export function ProcessTimeline() {
                         {openStepData.title}
                       </h4>
                     </div>
-                    <p className="text-[16px] text-[#a1a1a6] leading-relaxed">
+                    <p className="text-[17px] text-[#a1a1a6] leading-relaxed">
                       {openStepData.description}
                     </p>
                   </div>

@@ -107,7 +107,7 @@ export function Footer() {
                   <motion.span
                     onMouseEnter={() => setHoveredLink(link.label)}
                     onMouseLeave={() => setHoveredLink(null)}
-                    className="relative text-[14px] text-[#a1a1a6] hover:text-[#f5f5f7] transition-colors duration-300 w-fit block"
+                    className="relative text-[15px] text-[#a1a1a6] hover:text-[#f5f5f7] transition-colors duration-300 w-fit block"
                   >
                     {link.label}
                     <motion.span
@@ -139,11 +139,11 @@ export function Footer() {
             <div className="space-y-3">
               <a
                 href="mailto:info@tiltedneedle.com"
-                className="block text-[14px] text-[#a1a1a6] hover:text-[#f5f5f7] transition-colors duration-300"
+                className="block text-[15px] text-[#a1a1a6] hover:text-[#f5f5f7] transition-colors duration-300"
               >
                 info@tiltedneedle.com
               </a>
-              <p className="text-[14px] text-[#a1a1a6]">London · Dubai · Global</p>
+              <p className="text-[15px] text-[#a1a1a6]">London · Dubai · Global</p>
             </div>
           </div>
         </div>

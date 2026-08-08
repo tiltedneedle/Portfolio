@@ -153,7 +153,7 @@ export function VideoModal({
                       </p>
                       <h2
                         id="video-modal-title"
-                        className="text-3xl md:text-4xl lg:text-[44px] font-semibold text-[#f5f5f7] tracking-[-0.02em] leading-[1.1]"
+                        className="text-3xl md:text-4xl lg:text-[48px] font-semibold text-[#f5f5f7] tracking-[-0.02em] leading-[1.1]"
                       >
                         {item.title}
                       </h2>
@@ -165,7 +165,7 @@ export function VideoModal({
                     </div>
                   </div>
 
-                  <p className="text-[18px] md:text-[19px] text-[#a1a1a6] leading-relaxed mb-10 max-w-3xl">
+                  <p className="text-[19px] md:text-[19px] text-[#a1a1a6] leading-relaxed mb-10 max-w-3xl">
                     {item.summary}
                   </p>
 
@@ -306,7 +306,7 @@ export function VideoModal({
                         </p>
                         <footer className="flex items-center gap-4">
                           <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#2997ff] to-[#30d158] flex items-center justify-center">
-                            <span className="text-white font-semibold text-base">
+                            <span className="text-white font-semibold text-[17px]">
                               {item.testimonial.author.charAt(0)}
                             </span>
                           </div>

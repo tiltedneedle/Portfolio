@@ -181,6 +181,7 @@ export function CaseStudyCards({ caseStudies }: { caseStudies: CaseStudy[] }) {
               }}
             >
               <div className="relative aspect-[16/10] overflow-hidden">
+                <div className="absolute inset-0 skeleton" aria-hidden="true" />
                 {study.videoUrl && (
                   <motion.video
                     ref={(el) => {

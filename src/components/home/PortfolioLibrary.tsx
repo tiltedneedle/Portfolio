@@ -118,6 +118,7 @@ function PortfolioCard({ item, onClick }: { item: PortfolioItem; onClick: () => 
           boxShadow: hovered ? "var(--elev-3), var(--glow-soft)" : "var(--elev-1)",
         }}
       >
+        <div className="absolute inset-0 skeleton" aria-hidden="true" />
         {item.videoUrl ? (
           <motion.video
             ref={videoRef}

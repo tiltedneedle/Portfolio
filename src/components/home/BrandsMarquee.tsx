@@ -1,29 +1,37 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 
+// Intrinsic dimensions are declared so the row reserves correct space before
+// the images decode — without them the marquee reflows as each logo lands.
+// The source PNGs are far larger than their display size (aston-martin ships
+// at 3762x1488 for a ~110px slot), so these go through next/image rather than
+// a bare <img>.
 const brands = [
-  { name: "The Jet Business", src: "/logos/white/tjb.png" },
-  { name: "Aston Martin", src: "/logos/white/aston-martin.png" },
-  { name: "Toyota", src: "/logos/white/toyota.png" },
-  { name: "Koenigsegg", src: "/logos/white/koenigsegg.png" },
-  { name: "Jetex", src: "/logos/white/jetex.png" },
-  { name: "Youmi Beauty", src: "/logos/white/youmi-beauty.png" },
-  { name: "EuroEyes", src: "/logos/white/euroeyes.png" },
-  { name: "Ohana Developments", src: "/logos/white/ohana.png" },
-  { name: "Shafik Gabr Foundation", src: "/logos/white/shafik-gabr.png" },
+  { name: "The Jet Business", src: "/logos/white/tjb.png", width: 1188, height: 916 },
+  { name: "Aston Martin", src: "/logos/white/aston-martin.png", width: 3762, height: 1488 },
+  { name: "Toyota", src: "/logos/white/toyota.png", width: 1099, height: 804 },
+  { name: "Koenigsegg", src: "/logos/white/koenigsegg.png", width: 816, height: 874 },
+  { name: "Jetex", src: "/logos/white/jetex.png", width: 436, height: 148 },
+  { name: "Youmi Beauty", src: "/logos/white/youmi-beauty.png", width: 167, height: 56 },
+  { name: "EuroEyes", src: "/logos/white/euroeyes.png", width: 178, height: 37 },
+  { name: "Ohana Developments", src: "/logos/white/ohana.png", width: 116, height: 124 },
+  { name: "Shafik Gabr Foundation", src: "/logos/white/shafik-gabr.png", width: 176, height: 91 },
 ];
 
-function BrandLogo({ brand }: { brand: { name: string; src: string } }) {
+type Brand = (typeof brands)[number];
+
+function BrandLogo({ brand, priority }: { brand: Brand; priority: boolean }) {
   return (
     <div className="flex items-center justify-center h-14 md:h-16 px-8 md:px-12">
-      {/* Plain <img>: the marquee duplicates every logo and next/image's
-          optimizer adds no value for small transparent PNGs in motion. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <Image
         src={brand.src}
         alt={brand.name}
-        loading="lazy"
+        width={brand.width}
+        height={brand.height}
+        sizes="(max-width: 768px) 150px, 190px"
+        priority={priority}
         className="max-h-9 md:max-h-11 w-auto max-w-[150px] md:max-w-[190px] object-contain opacity-70 transition-opacity duration-300 hover:opacity-100"
       />
     </div>
@@ -56,7 +64,8 @@ export function BrandsMarquee() {
             transition={{ duration: 30, ease: "linear", repeat: Infinity }}
           >
             {brands.map((brand, i) => (
-              <BrandLogo key={`brand-1-${i}`} brand={brand} />
+              // The first few are visible immediately; the rest can wait.
+              <BrandLogo key={`brand-1-${i}`} brand={brand} priority={i < 4} />
             ))}
           </motion.div>
           <motion.div
@@ -66,7 +75,7 @@ export function BrandsMarquee() {
             aria-hidden="true"
           >
             {brands.map((brand, i) => (
-              <BrandLogo key={`brand-2-${i}`} brand={brand} />
+              <BrandLogo key={`brand-2-${i}`} brand={brand} priority={false} />
             ))}
           </motion.div>
         </div>

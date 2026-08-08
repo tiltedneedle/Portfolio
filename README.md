@@ -134,6 +134,28 @@ and `div`→`main` changes are visually inert.
 
 Everything else is a faithful reproduction.
 
+## Performance notes
+
+Two payload problems were inherited from the original and fixed:
+
+- **Cormorant Garamond was loaded and preloaded but never used.** Four weights,
+  20 `@font-face` blocks, a 37 KB preloaded woff2 — and not one character
+  rendered in it. Removed; only Inter ships now.
+- **The brand logos were wildly oversized.** `aston-martin.png` is 3762×1488
+  (111 KB) for a slot that is at most 190×44. All nine now go through
+  `next/image` with intrinsic dimensions and a `sizes` hint: **245 KB → 75 KB
+  of AVIF, 69% smaller**, and declaring the dimensions stops the marquee row
+  reflowing as each logo decodes.
+
+Together that is roughly **207 KB off every page load**.
+
+Videos are the remaining weight and are all remote (CloudFront, Pexels,
+Pixabay). They stay lazy: `preload="none"`, attached only when a card nears the
+viewport, and capped at four concurrent loads by `src/lib/video-slots.ts`. A
+`.skeleton` shimmer sits behind each one — an unloaded `<video>` paints
+nothing, so the skeleton shows through and is covered the instant the first
+frame arrives, with no readiness state to track.
+
 ## Assets
 
 `public/` holds the brand logos (`white-logo.png`, `black-logo.png`,

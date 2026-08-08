@@ -1,18 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Cormorant_Garamond } from "next/font/google";
+import { Inter } from "next/font/google";
 import { organizationSchema, websiteSchema } from "@/lib/structured-data";
 import "./globals.css";
 
+// The original also loaded Cormorant Garamond in four weights and preloaded it
+// (~37 KB, 20 @font-face blocks) without ever rendering a character in it.
+// Dropped. Re-add here if a serif is ever actually used.
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
-  display: "swap",
-});
-
-const cormorant = Cormorant_Garamond({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
-  variable: "--font-cormorant",
   display: "swap",
 });
 
@@ -65,7 +61,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${cormorant.variable}`}>
+    <html lang="en" className={inter.variable}>
       <body className="antialiased">
         {children}
         <script

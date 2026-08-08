@@ -256,6 +256,20 @@ body {
   box-shadow: var(--elev-4), var(--edge-highlight-hover);
 }
 
+/* Sits behind a lazily-loaded <video>. An unloaded video paints nothing, so the
+   skeleton shows through and is covered the moment the first frame arrives —
+   no readiness state to track. */
+.skeleton {
+  background-image: linear-gradient(
+    90deg,
+    var(--surface-3) 0%,
+    var(--surface-4) 50%,
+    var(--surface-3) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
 /* For surfaces whose shadow value is driven by React state rather than :hover —
    without this the shadow snaps between values instead of easing. */
 .shadow-tween {

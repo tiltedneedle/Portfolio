@@ -670,7 +670,8 @@ export function PortfolioBoard() {
                     setSelected(frame);
                   }}
                   aria-label={`Play ${frame.title}`}
-                  className="block w-full h-full text-left focus:outline-none"
+                  // Light board, so the global white focus ring would be invisible.
+                  className="block w-full h-full text-left rounded-[3px] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2997ff]"
                 >
                   <div
                     className="bg-white rounded-[3px] overflow-hidden p-[8px] transition-shadow duration-500 group-hover:shadow-[var(--elev-light-3)]"

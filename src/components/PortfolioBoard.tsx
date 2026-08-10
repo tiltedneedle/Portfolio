@@ -229,6 +229,7 @@ export function PortfolioBoard() {
   const [selected, setSelected] = useState<Frame | null>(null);
   const [phase, setPhase] = useState<Phase>("start");
   const [isMobile, setIsMobile] = useState(false);
+  const [size, setSize] = useState({ w: 1200, h: 800 });
   const pinchDist = useRef(0);
   const pinchMid = useRef({ x: 0, y: 0 });
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -246,13 +247,24 @@ export function PortfolioBoard() {
     return () => document.removeEventListener("keydown", onKey);
   }, [selected]);
 
+  // Viewport size lives in state rather than being read off the ref during
+  // render. The virtualisation memo below needs it, and reading a ref while
+  // rendering is neither guaranteed populated nor safe under concurrent React.
+  // Seeded to the same values on server and client so hydration matches; the
+  // real measurement lands in the effect immediately after mount.
   useEffect(() => {
-    setIsMobile(window.innerWidth < 768);
-    const onResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    const measure = () => {
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (rect) setSize({ w: rect.width, h: rect.height });
+      setIsMobile(window.innerWidth < 768);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
   }, []);
 
+  // Event handlers only — they run outside render, where reading the ref is
+  // fine and gives a fresher value than state.
   const getSize = useCallback(() => {
     if (!containerRef.current) return { w: 1200, h: 800 };
     const rect = containerRef.current.getBoundingClientRect();
@@ -451,7 +463,7 @@ export function PortfolioBoard() {
 
   const zoomTo = useCallback(
     (next: number) => {
-      const { w, h } = getSize();
+      const { w, h } = size;
       const cx = w / 2;
       const cy = h / 2;
       const dx = cx - pos.x;
@@ -459,7 +471,7 @@ export function PortfolioBoard() {
       setPos(clampPos(cx - (next / scale) * dx, cy - (next / scale) * dy, next, w, h));
       setScale(next);
     },
-    [scale, pos, getSize]
+    [scale, pos, size]
   );
 
   // Arrow keys pan, +/- zoom, 0 fits — the board was pointer-only before.
@@ -504,7 +516,7 @@ export function PortfolioBoard() {
 
   // Only mount frames near the viewport.
   const visible = useMemo(() => {
-    const { w, h } = getSize();
+    const { w, h } = size;
     const ids = new Set<number>();
     for (const frame of frames) {
       const x = frame.x * scale + pos.x;
@@ -514,7 +526,7 @@ export function PortfolioBoard() {
       if (x + fw > -250 && x < w + 250 && y + fh > -250 && y < h + 250) ids.add(frame.id);
     }
     return ids;
-  }, [scale, pos, getSize]);
+  }, [scale, pos, size]);
 
   const transition = intro
     ? phase === "start"
@@ -526,20 +538,19 @@ export function PortfolioBoard() {
       ? "none"
       : "transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)";
 
+  // Reads `size` rather than measuring the ref, so this array — which is built
+  // during render — carries no ref access with it.
   const controls = [
     { icon: <ZoomIn className="w-4 h-4" />, action: () => zoomTo(Math.min(1.8, scale * 1.35)), label: "Zoom in" },
     {
       icon: <ZoomOut className="w-4 h-4" />,
-      action: () => {
-        const { w, h } = getSize();
-        zoomTo(Math.max(minScaleFor(w, h), scale / 1.35));
-      },
+      action: () => zoomTo(Math.max(minScaleFor(size.w, size.h), scale / 1.35)),
       label: "Zoom out",
     },
     {
       icon: <Maximize2 className="w-4 h-4" />,
       action: () => {
-        const { w, h } = getSize();
+        const { w, h } = size;
         const next = Math.max(
           minScaleFor(w, h),
           Math.min(1.8, 0.95 * Math.min(w / canvasW, h / canvasH))

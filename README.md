@@ -155,18 +155,30 @@ spinning.
 
 ## Performance notes
 
-Two payload problems were inherited from the original and fixed:
+Payload problems inherited from the original, all fixed:
 
-- **Cormorant Garamond was loaded and preloaded but never used.** Four weights,
-  20 `@font-face` blocks, a 37 KB preloaded woff2 — and not one character
-  rendered in it. Removed; only Inter ships now.
+- **Neither webfont was ever used.** The original loaded Inter *and* Cormorant
+  Garamond, wired both up as CSS variables — and referenced neither. The actual
+  stack is `-apple-system, BlinkMacSystemFont, "SF Pro Display", …`. Measured on
+  the built page: of 527 text-bearing elements, **zero** resolved to Inter, and
+  a width probe confirmed the rendered text does not match forced-Inter. Both
+  are gone. The site now ships **no `@font-face`, no woff2, and no font
+  preload** — and renders identically, because it always was rendering in
+  system fonts. `h1` measures 752×174 @88px before and after.
 - **The brand logos were wildly oversized.** `aston-martin.png` is 3762×1488
   (111 KB) for a slot that is at most 190×44. All nine now go through
   `next/image` with intrinsic dimensions and a `sizes` hint: **245 KB → 75 KB
   of AVIF, 69% smaller**, and declaring the dimensions stops the marquee row
   reflowing as each logo decodes.
+- **The service hero shipped an unoptimised JPEG.** It is the LCP element on the
+  four service pages: **21 KB → 3 KB AVIF**.
 
-Together that is roughly **207 KB off every page load**.
+Together that is roughly **290 KB off every page load**, plus one fewer
+render-blocking preload.
+
+Because nothing is fetched from Google at build time, the build is also fully
+offline-capable — `next/font/google` failed once during development with
+"Error while requesting resource", which would break CI on a flaky network.
 
 Videos are the remaining weight and are all remote (CloudFront, Pexels,
 Pixabay). They stay lazy: `preload="none"`, attached only when a card nears the
@@ -183,8 +195,8 @@ video, plus section imagery — is referenced remotely from CloudFront, Pexels,
 Pixabay and Unsplash, matching the original. Remote image hosts are allowlisted
 in `next.config.ts`.
 
-Fonts are Inter and Cormorant Garamond via `next/font/google`, exposed as
-`--font-inter` and `--font-cormorant`.
+There are no font files. Type renders in the platform UI stack declared in
+`globals.css` — see the fonts note under Performance before adding one back.
 
 ## Design system
 

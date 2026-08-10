@@ -1,16 +1,19 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
 import { organizationSchema, websiteSchema } from "@/lib/structured-data";
 import "./globals.css";
 
-// The original also loaded Cormorant Garamond in four weights and preloaded it
-// (~37 KB, 20 @font-face blocks) without ever rendering a character in it.
-// Dropped. Re-add here if a serif is ever actually used.
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
+// This site ships no webfonts, deliberately.
+//
+// The original loaded Inter (7 subsets, 212 KB in the build, 47 KB preloaded)
+// and Cormorant Garamond (4 weights, ~37 KB preloaded) — and rendered neither.
+// Both were wired up as CSS variables that nothing ever referenced, while the
+// actual stack in globals.css is `-apple-system, BlinkMacSystemFont,
+// "SF Pro Display", …`. Measured on the built page: of 527 text-bearing
+// elements, zero resolved to Inter.
+//
+// So both are gone. The system stack is what the design was always rendering
+// in, it needs no network at build or runtime, and it has no swap flash.
+// If a real webfont is ever wanted, add it here AND put it in the stack.
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tiltedneedle.com"),
@@ -61,7 +64,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en">
       <body className="antialiased">
         {children}
         <script

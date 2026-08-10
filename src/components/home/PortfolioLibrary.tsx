@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
 import { VideoModal } from "@/components/VideoModal";
-import { loadedSrcs, releaseSlot, requestSlot } from "@/lib/video-slots";
+import { attachThrottledVideo } from "@/lib/video-slots";
 import { portfolioItems, type ModalItem, type PortfolioItem } from "@/lib/site-data";
 import { SECTION_Y } from "@/lib/design-tokens";
 
@@ -30,56 +30,9 @@ function PortfolioCard({ item, onClick }: { item: PortfolioItem; onClick: () => 
     if (!inView || !item.videoUrl) return;
     const video = videoRef.current;
     if (!video) return;
-
-    const cancelled = { current: false };
-
-    if (loadedSrcs.has(item.videoUrl)) {
-      if (!video.src) video.src = item.videoUrl;
-      video.play().catch(() => {});
-      return () => {
-        cancelled.current = true;
-        video.pause();
-      };
-    }
-
-    let holding = false;
-    const src = item.videoUrl;
-
-    (async () => {
-      await requestSlot();
-      if (cancelled.current) return releaseSlot();
-      holding = true;
-      video.src = src;
-      video.load();
-      video.addEventListener(
-        "canplay",
-        () => {
-          if (!cancelled.current) {
-            loadedSrcs.add(src);
-            video.play().catch(() => {});
-          }
-        },
-        { once: true }
-      );
-      video.addEventListener("progress", () => {
-        if (video.buffered.length > 0 && holding) {
-          holding = false;
-          releaseSlot();
-        }
-      });
-      setTimeout(() => {
-        if (holding) {
-          holding = false;
-          releaseSlot();
-        }
-      }, 3000);
-    })();
-
-    return () => {
-      cancelled.current = true;
-      video.pause();
-      if (holding) releaseSlot();
-    };
+    // `inView` flips false on every scroll-past, so this cleanup runs far more
+    // often than unmount — it has to balance the slot exactly.
+    return attachThrottledVideo(video, item.videoUrl, 3000);
   }, [inView, item.videoUrl]);
 
   return (

@@ -172,7 +172,21 @@ export function ProcessTimeline() {
                     onMouseEnter={() => setHoveredStep(step.step)}
                     onMouseLeave={() => setHoveredStep(null)}
                     onClick={() => setOpenStep(isOpen ? null : step.step)}
-                    className="relative cursor-pointer group flex flex-col items-center w-full max-w-[180px]"
+                    // This is a disclosure, and it used to be a click-only div:
+                    // reachable by mouse, invisible to the keyboard entirely.
+                    role="button"
+                    tabIndex={0}
+                    aria-expanded={isOpen}
+                    aria-controls={`step-panel-${track.id}-${step.step}`}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setOpenStep(isOpen ? null : step.step);
+                      }
+                    }}
+                    onFocus={() => setHoveredStep(step.step)}
+                    onBlur={() => setHoveredStep(null)}
+                    className="relative cursor-pointer group flex flex-col items-center w-full max-w-[180px] rounded-2xl focus-visible:outline-2 focus-visible:outline-white/50 focus-visible:outline-offset-4"
                   >
                     <div className="relative w-[64px] h-[64px] mb-5">
                       <motion.div
@@ -231,6 +245,9 @@ export function ProcessTimeline() {
               {openStepData && (
                 <motion.div
                   key={`${track.id}-${openStep}-panel`}
+                  id={`step-panel-${track.id}-${openStep}`}
+                  role="region"
+                  aria-label={`${openStepData.title} — step detail`}
                   initial={{ opacity: 0, y: SHIFT.md }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}

@@ -12,6 +12,8 @@ import { SECTION_Y, SHIFT } from "@/lib/design-tokens";
 export function ContactForm() {
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
+  // The mailto fallback is a hand-off, not a send — say so rather than claiming delivery.
+  const [handedOff, setHandedOff] = useState(false);
   const [focused, setFocused] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const reduced = useReducedMotion();
@@ -33,8 +35,10 @@ export function ContactForm() {
     });
 
     setSubmitting(false);
-    if (result.ok) setSent(true);
-    else setError(result.error);
+    if (result.ok) {
+      setHandedOff(result.handedOff);
+      setSent(true);
+    } else setError(result.error);
   };
 
   const labelClass = (field: string) =>
@@ -188,7 +192,7 @@ export function ContactForm() {
                       transition={{ delay: 0.4 }}
                       className="text-2xl font-semibold text-[#f5f5f7] mb-2"
                     >
-                      Message sent
+                      {handedOff ? "Almost there" : "Message sent"}
                     </motion.h3>
                     <motion.p
                       initial={{ opacity: 0, y: SHIFT.sm }}
@@ -196,7 +200,9 @@ export function ContactForm() {
                       transition={{ delay: 0.5 }}
                       className="text-[17px] text-[#86868b]"
                     >
-                      We&apos;ll be in touch within 24-48 hours.
+                      {handedOff
+                        ? "We've opened your email app with the message ready. Send it and we'll reply within 24-48 hours."
+                        : "We'll be in touch within 24-48 hours."}
                     </motion.p>
                   </div>
                 </motion.div>

@@ -1,10 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+
+// Frozen at build time; the Footer effect corrects it if the visitor's year differs.
+const BUILD_YEAR = new Date().getFullYear();
 
 const socials = [
   { label: "Instagram", href: "https://www.instagram.com/tiltedneedle/?hl=en" },
@@ -37,6 +40,16 @@ const socialPaths: Record<string, string> = {
 export function Footer() {
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
   const reduced = useReducedMotion();
+
+  // These pages are statically prerendered, so `new Date()` during render baked
+  // the build year into the HTML — stale from every 1 January until the next
+  // deploy, and a hydration mismatch the moment the client disagreed. The first
+  // client render deliberately matches the server, then the effect corrects it.
+  const [year, setYear] = useState(BUILD_YEAR);
+  useEffect(() => {
+    const current = new Date().getFullYear();
+    if (current !== BUILD_YEAR) setYear(current);
+  }, []);
 
   return (
     <footer className="relative py-20 md:py-24 bg-[#0a0a0a]">
@@ -166,7 +179,7 @@ export function Footer() {
           className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
         >
           <p className="text-[12px] text-[#86868b]">
-            © {new Date().getFullYear()} Tilted Needle. All rights reserved.
+            © {year} Tilted Needle. All rights reserved.
           </p>
           <div className="flex gap-6">
             <motion.a

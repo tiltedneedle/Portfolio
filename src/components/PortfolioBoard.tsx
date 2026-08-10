@@ -7,6 +7,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ArrowRight, Maximize2, Move, X, ZoomIn, ZoomOut } from "lucide-react";
 import { NavBar } from "@/components/NavBar";
 import { useFocusTrap } from "@/lib/use-focus-trap";
+import { attachThrottledVideo } from "@/lib/video-slots";
 import { boardVideos, type BoardVideo } from "@/lib/board-videos";
 
 /* ------------------------------------------------------------------ layout */
@@ -120,83 +121,17 @@ function clampPos(x: number, y: number, scale: number, w: number, h: number) {
 
 /* ------------------------------------------------- throttled video loading */
 
-const MAX_CONCURRENT = 4;
-let activeLoads = 0;
-const waiting: Array<() => void> = [];
-const loaded = new Set<string>();
-
-function acquire(): Promise<void> {
-  if (activeLoads < MAX_CONCURRENT) {
-    activeLoads++;
-    return Promise.resolve();
-  }
-  return new Promise((resolve) => {
-    waiting.push(() => {
-      activeLoads++;
-      resolve();
-    });
-  });
-}
-
-function release() {
-  activeLoads--;
-  if (waiting.length > 0) waiting.shift()!();
-}
+// The board used to carry a private copy of the slot semaphore, with the same
+// double-release defect the shared one had. It now uses the shared limiter so
+// there is a single accounting of in-flight video loads.
 
 function BoardVideoTile({ src, className }: { src: string; className?: string }) {
   const ref = useRef<HTMLVideoElement>(null);
-  const cancelled = useRef(false);
 
   useEffect(() => {
-    cancelled.current = false;
     const video = ref.current;
     if (!video) return;
-
-    if (loaded.has(src)) {
-      video.src = src;
-      video.play().catch(() => {});
-      return () => {
-        cancelled.current = true;
-        video.pause();
-      };
-    }
-
-    let holding = false;
-    (async () => {
-      await acquire();
-      if (cancelled.current) return release();
-      holding = true;
-      video.src = src;
-      video.load();
-      video.addEventListener(
-        "canplay",
-        () => {
-          if (!cancelled.current) {
-            loaded.add(src);
-            video.play().catch(() => {});
-          }
-        },
-        { once: true }
-      );
-      video.addEventListener("progress", () => {
-        if (video.buffered.length > 0 && holding) {
-          holding = false;
-          release();
-        }
-      });
-      setTimeout(() => {
-        if (holding) {
-          holding = false;
-          release();
-        }
-      }, 2500);
-    })();
-
-    return () => {
-      cancelled.current = true;
-      video.pause();
-      if (holding) release();
-    };
+    return attachThrottledVideo(video, src);
   }, [src]);
 
   return (
@@ -214,6 +149,7 @@ function BoardVideoTile({ src, className }: { src: string; className?: string })
     </div>
   );
 }
+
 
 /* ------------------------------------------------------------------- board */
 

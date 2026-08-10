@@ -38,9 +38,16 @@ export function BookDemoPage() {
     return () => window.removeEventListener("message", onMessage);
   }, []);
 
-  const reveal = reduced
-    ? {}
-    : { initial: { opacity: 0, y: REVEAL.sm }, animate: { opacity: 1, y: 0 } };
+  // `reduced` must only remove the movement, never the whole reveal.
+  // useReducedMotion() is null during SSR, so the server always rendered the
+  // `initial` state — opacity:0. Dropping `animate` on the client (where it
+  // resolves to true) left nothing to animate that back to 1, so a
+  // reduced-motion visitor could get a page of invisible content. Opacity is
+  // always animated; only the offset is conditional.
+  const reveal = {
+    initial: { opacity: 0, y: reduced ? 0 : REVEAL.sm },
+    animate: { opacity: 1, y: 0 },
+  };
 
   return (
     <div className="bg-black min-h-screen">
@@ -195,7 +202,7 @@ export function BookDemoPage() {
       <section className="relative py-20 md:py-28 border-t border-white/[0.04]">
         <div className="mx-auto max-w-[640px] px-6 text-center">
           <motion.div
-            initial={reduced ? {} : { opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: reduced ? 0 : REVEAL.md }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}

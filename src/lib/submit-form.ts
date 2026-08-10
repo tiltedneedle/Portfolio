@@ -9,7 +9,15 @@ export type FormPayload = {
   link?: string;
 };
 
-type Result = { ok: true } | { ok: false; error: string };
+/**
+ * `handedOff` distinguishes "the server accepted and mailed it" from "there is
+ * no mail transport, so we opened the visitor's email client". The second is
+ * not a send — the visitor still has to press send, and may not — so the UI
+ * must not claim the message was delivered.
+ */
+type Result =
+  | { ok: true; handedOff: boolean }
+  | { ok: false; error: string };
 
 function buildMailto(payload: FormPayload, to: string, subject: string) {
   const lines: string[] = [];
@@ -44,12 +52,12 @@ export async function submitForm(payload: FormPayload): Promise<Result> {
     });
     const data = await res.json();
 
-    if (data.ok) return { ok: true };
+    if (data.ok) return { ok: true, handedOff: false };
 
     // Server has no mail transport configured — hand off to the user's client.
     if (data.fallback && data.to) {
       window.location.href = buildMailto(payload, data.to, data.subject || "Tilted Needle");
-      return { ok: true };
+      return { ok: true, handedOff: true };
     }
 
     return {

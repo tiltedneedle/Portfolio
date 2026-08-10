@@ -220,6 +220,8 @@ function ApplicationForm({
   const reduced = useReducedMotion();
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
+  // See ContactForm: a mailto hand-off has not been delivered yet.
+  const [handedOff, setHandedOff] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fieldClass =
@@ -244,8 +246,10 @@ function ApplicationForm({
     });
 
     setSubmitting(false);
-    if (result.ok) setSent(true);
-    else setError(result.error);
+    if (result.ok) {
+      setHandedOff(result.handedOff);
+      setSent(true);
+    } else setError(result.error);
   };
 
   return (
@@ -268,10 +272,13 @@ function ApplicationForm({
           >
             <CheckCircle2 className="w-7 h-7 text-[#30d158]" />
           </motion.div>
-          <h3 className="text-2xl font-semibold text-[#f5f5f7] mb-2">Application received</h3>
+          <h3 className="text-2xl font-semibold text-[#f5f5f7] mb-2">
+            {handedOff ? "Almost there" : "Application received"}
+          </h3>
           <p className="text-[17px] text-[#86868b] max-w-md mx-auto">
-            Thanks for applying to Tilted Needle. We read every application and will be in touch if
-            there&apos;s a fit.
+            {handedOff
+              ? "We've opened your email app with your application ready. Send it and we'll read every word."
+              : "Thanks for applying to Tilted Needle. We read every application and will be in touch if there's a fit."}
           </p>
         </motion.div>
       ) : (

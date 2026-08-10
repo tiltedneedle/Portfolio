@@ -534,32 +534,47 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                 viewport={{ once: true }}
                 transition={{ delay: 0.08 * i, duration: 0.5 }}
               >
-                <button
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full text-left p-6 rounded-2xl bg-[#1c1c1e]/60 border border-white/[0.04] hover:bg-[#1c1c1e] transition-all duration-300"
-                >
-                  <div className="flex items-center justify-between gap-4">
-                    <h3 className="text-[17px] font-medium text-[#f5f5f7]">{item.question}</h3>
-                    <motion.div
-                      animate={{ rotate: openFaq === i ? 180 : 0 }}
-                      transition={{ duration: 0.3 }}
+                {/* The answer used to sit inside the button, so every collapsed
+                    question announced its entire answer as the button's name —
+                    and nested a heading inside interactive content. The panel is
+                    now a sibling, linked by aria-controls. */}
+                <div className="rounded-2xl bg-[#1c1c1e]/60 border border-white/[0.04] hover:bg-[#1c1c1e] transition-all duration-300">
+                  <h3>
+                    <button
+                      onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                      aria-expanded={openFaq === i}
+                      aria-controls={`faq-panel-${i}`}
+                      id={`faq-trigger-${i}`}
+                      className="w-full text-left p-6 flex items-center justify-between gap-4 text-[17px] font-medium text-[#f5f5f7] rounded-2xl"
                     >
-                      <ChevronDown className="w-5 h-5 text-[#86868b] flex-shrink-0" />
-                    </motion.div>
-                  </div>
+                      {item.question}
+                      <motion.span
+                        animate={{ rotate: openFaq === i ? 180 : 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="flex-shrink-0"
+                        aria-hidden="true"
+                      >
+                        <ChevronDown className="w-5 h-5 text-[#86868b]" />
+                      </motion.span>
+                    </button>
+                  </h3>
                   <motion.div
+                    id={`faq-panel-${i}`}
+                    role="region"
+                    aria-labelledby={`faq-trigger-${i}`}
                     initial={false}
                     animate={{
                       height: openFaq === i ? "auto" : 0,
                       opacity: openFaq === i ? 1 : 0,
-                      marginTop: openFaq === i ? 12 : 0,
                     }}
                     transition={{ duration: 0.3, ease: EASE }}
                     className="overflow-hidden"
                   >
-                    <p className="text-[15px] text-[#86868b] leading-relaxed">{item.answer}</p>
+                    <p className="text-[15px] text-[#86868b] leading-relaxed px-6 pb-6">
+                      {item.answer}
+                    </p>
                   </motion.div>
-                </button>
+                </div>
               </motion.div>
             ))}
           </div>

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, Play } from "lucide-react";
 import { VideoModal } from "@/components/VideoModal";
-import { loadedSrcs, releaseSlot, requestSlot } from "@/lib/video-slots";
+import { attachThrottledVideo } from "@/lib/video-slots";
 import type { CaseStudy } from "@/lib/case-studies-data";
 import type { ModalItem } from "@/lib/site-data";
 import { REVEAL, SECTION_Y } from "@/lib/design-tokens";
@@ -18,6 +18,9 @@ export function CaseStudyCards({ caseStudies }: { caseStudies: CaseStudy[] }) {
   const videoRefs = useRef<Record<string, HTMLVideoElement | null>>({});
   const cardRefs = useRef<Record<string, HTMLElement | null>>({});
   const started = useRef(new Set<string>());
+  // Every attach hands back a detacher; the effect cleanup must run them or a
+  // card observed just before unmount keeps its load slot.
+  const detachers = useRef<Array<() => void>>([]);
 
   const cardVariants = {
     hidden: { opacity: 0, y: reduced ? 0 : 50 },
@@ -42,40 +45,7 @@ export function CaseStudyCards({ caseStudies }: { caseStudies: CaseStudy[] }) {
           const study = caseStudies.find((s) => s.id === id);
           if (!video || !study?.videoUrl) return;
 
-          const src = study.videoUrl;
-          if (loadedSrcs.has(src)) {
-            video.src = src;
-            video.play().catch(() => {});
-            return;
-          }
-
-          let holding = false;
-          (async () => {
-            await requestSlot();
-            holding = true;
-            video.src = src;
-            video.load();
-            video.addEventListener(
-              "canplay",
-              () => {
-                loadedSrcs.add(src);
-                video.play().catch(() => {});
-              },
-              { once: true }
-            );
-            video.addEventListener("progress", () => {
-              if (video.buffered.length > 0 && holding) {
-                holding = false;
-                releaseSlot();
-              }
-            });
-            setTimeout(() => {
-              if (holding) {
-                holding = false;
-                releaseSlot();
-              }
-            }, 3000);
-          })();
+          detachers.current.push(attachThrottledVideo(video, study.videoUrl, 3000));
         });
       },
       { rootMargin: "200px" }
@@ -84,7 +54,12 @@ export function CaseStudyCards({ caseStudies }: { caseStudies: CaseStudy[] }) {
     Object.values(cardRefs.current).forEach((el) => {
       if (el) observer.observe(el);
     });
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      detachers.current.forEach((detach) => detach());
+      detachers.current = [];
+      started.current.clear();
+    };
   }, [caseStudies]);
 
   const onEnter = (id: string) => {

@@ -7,6 +7,7 @@ import { ArrowRight, Play } from "lucide-react";
 import { VideoModal } from "@/components/VideoModal";
 import { loadedSrcs, releaseSlot, requestSlot } from "@/lib/video-slots";
 import { portfolioItems, type ModalItem, type PortfolioItem } from "@/lib/site-data";
+import { SECTION_Y } from "@/lib/design-tokens";
 
 function PortfolioCard({ item, onClick }: { item: PortfolioItem; onClick: () => void }) {
   const [hovered, setHovered] = useState(false);
@@ -228,7 +229,7 @@ export function PortfolioLibrary() {
   return (
     <section
       id="portfolio"
-      className="relative py-16 md:py-20 lg:py-24 bg-[#0a0a0a] overflow-hidden"
+      className={`relative ${SECTION_Y} bg-[#0a0a0a] overflow-hidden`}
     >
       <div className="absolute inset-0 bg-gradient-to-b from-black via-[#0a0a0a] to-[#0a0a0a] pointer-events-none" />
       <div className="absolute top-[30%] left-[-5%] w-[400px] h-[400px] rounded-full bg-[#64d2ff]/10 blur-[160px] pointer-events-none opacity-[0.03]" />

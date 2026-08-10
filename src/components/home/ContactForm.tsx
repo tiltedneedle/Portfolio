@@ -7,6 +7,7 @@ import { ArrowUpRight, CheckCircle2, Send } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { submitForm } from "@/lib/submit-form";
+import { SECTION_Y, SHIFT } from "@/lib/design-tokens";
 
 export function ContactForm() {
   const [submitting, setSubmitting] = useState(false);
@@ -45,7 +46,7 @@ export function ContactForm() {
     "transition-all duration-300 focus:shadow-[0_0_0_4px_rgba(255,255,255,0.05)]";
 
   return (
-    <section id="contact" className="py-16 md:py-20 relative overflow-hidden bg-black">
+    <section id="contact" className={`${SECTION_Y} relative overflow-hidden bg-black`}>
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-to-t from-white/5 to-transparent blur-[150px] pointer-events-none animate-[ambient-glow_8s_ease-in-out_infinite]" />
       <div
         className="absolute inset-0 pointer-events-none"
@@ -182,7 +183,7 @@ export function ContactForm() {
                       <CheckCircle2 className="w-7 h-7 text-[#f5f5f7]" />
                     </motion.div>
                     <motion.h3
-                      initial={{ opacity: 0, y: 10 }}
+                      initial={{ opacity: 0, y: SHIFT.sm }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
                       className="text-2xl font-semibold text-[#f5f5f7] mb-2"
@@ -190,7 +191,7 @@ export function ContactForm() {
                       Message sent
                     </motion.h3>
                     <motion.p
-                      initial={{ opacity: 0, y: 10 }}
+                      initial={{ opacity: 0, y: SHIFT.sm }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.5 }}
                       className="text-[17px] text-[#86868b]"

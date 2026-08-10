@@ -7,6 +7,7 @@ import { VideoModal } from "@/components/VideoModal";
 import { loadedSrcs, releaseSlot, requestSlot } from "@/lib/video-slots";
 import type { CaseStudy } from "@/lib/case-studies-data";
 import type { ModalItem } from "@/lib/site-data";
+import { REVEAL, SECTION_Y } from "@/lib/design-tokens";
 
 export function CaseStudyCards({ caseStudies }: { caseStudies: CaseStudy[] }) {
   const [selected, setSelected] = useState<ModalItem | null>(null);
@@ -107,7 +108,7 @@ export function CaseStudyCards({ caseStudies }: { caseStudies: CaseStudy[] }) {
   };
 
   return (
-    <section id="results" className="py-16 md:py-20 lg:py-24 bg-black relative overflow-hidden">
+    <section id="results" className={`${SECTION_Y} bg-black relative overflow-hidden`}>
       <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-black to-black pointer-events-none" />
       <div
         className="absolute inset-0 pointer-events-none"
@@ -130,7 +131,7 @@ export function CaseStudyCards({ caseStudies }: { caseStudies: CaseStudy[] }) {
             Real results. Real brands.
           </h2>
           <motion.p
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: REVEAL.sm }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.15, duration: 0.6 }}

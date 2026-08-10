@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ChevronRight, Code2, Play, Target, Users, Video } from "lucide-react";
+import { SECTION_Y } from "@/lib/design-tokens";
 
 const serviceRoutes: Record<string, string> = {
   "content-creation": "content-creation",
@@ -130,7 +131,7 @@ export function ServicesShowcase() {
   }, [hovering, active]);
 
   return (
-    <section id="services" className="py-16 md:py-20 relative overflow-hidden bg-black">
+    <section id="services" className={`${SECTION_Y} relative overflow-hidden bg-black`}>
       <div className="absolute inset-0 bg-gradient-to-b from-[#0d0d0d] via-black to-[#0a0a0a]" />
 
       <motion.div

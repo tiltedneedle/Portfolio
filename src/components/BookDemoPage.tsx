@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, CheckCircle2, Clock, Shield, Star, Video } from "lucide-react";
+import { REVEAL } from "@/lib/design-tokens";
 
 const stats = [
   { value: "2B+", label: "Organic Views" },
@@ -37,7 +38,9 @@ export function BookDemoPage() {
     return () => window.removeEventListener("message", onMessage);
   }, []);
 
-  const reveal = reduced ? {} : { initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 } };
+  const reveal = reduced
+    ? {}
+    : { initial: { opacity: 0, y: REVEAL.sm }, animate: { opacity: 1, y: 0 } };
 
   return (
     <div className="bg-black min-h-screen">

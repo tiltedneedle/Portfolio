@@ -19,6 +19,7 @@ import {
   Users,
 } from "lucide-react";
 import { servicesList } from "@/lib/services-data";
+import { SECTION_Y, SHIFT } from "@/lib/design-tokens";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -75,7 +76,7 @@ export function ProcessTimeline() {
         : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 max-w-[920px]";
 
   return (
-    <section id="process" className="py-16 md:py-20 relative overflow-hidden bg-[#0a0a0a]">
+    <section id="process" className={`${SECTION_Y} relative overflow-hidden bg-[#0a0a0a]`}>
       <div className="absolute inset-0 bg-gradient-to-b from-black via-[#0a0a0a] to-[#0d0d0d]" />
       <div
         className="absolute inset-0 opacity-[0.02] pointer-events-none"
@@ -138,7 +139,7 @@ export function ProcessTimeline() {
           <AnimatePresence mode="wait">
             <motion.p
               key={track.id}
-              initial={{ opacity: 0, y: 6 }}
+              initial={{ opacity: 0, y: SHIFT.sm }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.3 }}
@@ -230,7 +231,7 @@ export function ProcessTimeline() {
               {openStepData && (
                 <motion.div
                   key={`${track.id}-${openStep}-panel`}
-                  initial={{ opacity: 0, y: 16 }}
+                  initial={{ opacity: 0, y: SHIFT.md }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
                   className="flex items-start gap-6 p-7 md:p-8 rounded-3xl bg-[#1c1c1e] border border-white/5 max-w-3xl mx-auto"

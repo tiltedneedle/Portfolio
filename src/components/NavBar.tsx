@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SHIFT } from "@/lib/design-tokens";
 
 const serviceLinks = [
   { href: "/services/content-creation", label: "Content Creation" },
@@ -152,9 +153,9 @@ export function NavBar() {
                       <AnimatePresence>
                         {dropdownOpen && (
                           <motion.div
-                            initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                            initial={{ opacity: 0, y: SHIFT.sm, scale: 0.96 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                            exit={{ opacity: 0, y: SHIFT.sm, scale: 0.96 }}
                             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
                             className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[280px] rounded-2xl bg-[rgba(28,28,30,0.95)] backdrop-blur-2xl border border-white/[0.08] shadow-[0_8px_40px_rgba(0,0,0,0.5)] overflow-hidden"
                           >

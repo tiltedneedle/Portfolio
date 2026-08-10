@@ -214,6 +214,41 @@ There are no font files. Type renders in the platform UI stack declared in
 Distinct hex values went from 46 to 33; the remainder are the text ramp and the
 separate light scale the `/portfolio` board needs.
 
+### Section rhythm
+
+`src/lib/design-tokens.ts` holds the vertical rhythm, because it had split in
+two. `CaseStudyCards` and `PortfolioLibrary` ran `py-16 md:py-20 lg:py-24`
+while `ServicesShowcase`, `ProcessTimeline` and `ContactForm` stopped at
+`md:py-20` — so above 1024px three sections breathed 80px and two breathed
+96px. All five now use `SECTION_Y`, and the home page reads:
+
+```
+hero        0      full-bleed, min-h-screen
+marquee     64px   SECTION_Y_TIGHT — reads as a break, not a section
+sections    96px   SECTION_Y — services, process, results, portfolio, contact
+footer      96px
+```
+
+Inner pages run a more generous `SECTION_Y_INNER` (`py-28 md:py-40`).
+`/book-demo` is deliberately outside both: its sections use asymmetric
+`pt`/`pb` because hero → stats → scheduler flow as one continuous column, and
+symmetric padding would double the gaps between them.
+
+### Reveal distances
+
+Also in `design-tokens.ts`, and split into two scales on purpose:
+
+```
+REVEAL   sm 20  md 30  lg 40    scroll reveals — whileInView
+SHIFT    sm 8   md 16           UI state changes — dropdowns, panels, status
+```
+
+These are genuinely different families. A dropdown that travels as far as a
+section reveal feels sluggish, so collapsing them into one scale would be
+wrong. Eight ad-hoc values (6, 8, 10, 15, 16, 20, 30, 40) became five, by
+sorting each usage into the family it belonged to rather than rounding to the
+nearest number.
+
 ### Type scale
 
 Sizes are authored as arbitrary px, because the design needs 15/17/19 and

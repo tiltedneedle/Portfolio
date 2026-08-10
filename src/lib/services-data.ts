@@ -25,7 +25,6 @@ export type Service = {
   iconName: string;
   gradient: string;
   imageUrl: string;
-  videoUrl: string;
 };
 
 export const servicesList: Service[] = [
@@ -193,7 +192,6 @@ export const servicesList: Service[] = [
     iconName: "Video",
     gradient: "from-[#ff9f0a] to-[#ff375f]",
     imageUrl: "https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&h=600&fit=crop",
-    videoUrl: "https://videos.pexels.com/video-files/5081889/5081889-uhd_2560_1440_25fps.mp4",
   },
   {
     id: "influencer-marketing",
@@ -285,7 +283,6 @@ export const servicesList: Service[] = [
     iconName: "Users",
     gradient: "from-[#ff375f] to-[#af52de]",
     imageUrl: "https://images.unsplash.com/photo-1616469829581-73993eb86b02?w=800&h=600&fit=crop",
-    videoUrl: "https://videos.pexels.com/video-files/5585918/5585918-hd_1920_1080_30fps.mp4",
   },
   {
     id: "paid-advertising-performance",
@@ -381,7 +378,6 @@ export const servicesList: Service[] = [
     iconName: "Target",
     gradient: "from-[#64d2ff] to-[#2997ff]",
     imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop",
-    videoUrl: "https://videos.pexels.com/video-files/7579968/7579968-hd_1920_1080_25fps.mp4",
   },
   {
     id: "app-web-development",
@@ -477,6 +473,5 @@ export const servicesList: Service[] = [
     iconName: "Code2",
     gradient: "from-[#5e5ce6] to-[#af52de]",
     imageUrl: "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&h=600&fit=crop",
-    videoUrl: "https://videos.pexels.com/video-files/3045163/3045163-uhd_2560_1440_24fps.mp4",
   },
 ];

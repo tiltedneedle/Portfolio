@@ -470,7 +470,7 @@ export function CareersPage() {
             className="absolute inset-0 w-full h-full object-cover opacity-80"
           >
             <source
-              src="https://videos.pexels.com/video-files/3045163/3045163-uhd_2560_1440_24fps.mp4"
+              src="https://videos.pexels.com/video-files/3045163/3045163-hd_1920_1080_25fps.mp4"
               type="video/mp4"
             />
           </video>

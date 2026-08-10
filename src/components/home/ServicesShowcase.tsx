@@ -42,8 +42,9 @@ const services: Service[] = [
     ],
     imageUrl:
       "https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800&h=600&fit=crop",
-    videoUrl:
-      "https://videos.pexels.com/video-files/5081889/5081889-uhd_2560_1440_25fps.mp4",
+    // Source clip was withdrawn from Pexels (403). Card falls back to its still
+    // image; the play affordance hides itself. Drop a working URL in to restore it.
+    videoUrl: "",
     icon: <Video className="w-5 h-5" />,
     gradient: "from-[#ff9f0a] to-[#ff375f]",
   },
@@ -62,8 +63,8 @@ const services: Service[] = [
     ],
     imageUrl:
       "https://images.unsplash.com/photo-1616469829581-73993eb86b02?w=800&h=600&fit=crop",
-    videoUrl:
-      "https://videos.pexels.com/video-files/5585918/5585918-hd_1920_1080_30fps.mp4",
+    // Source clip was withdrawn from Pexels (403). See note above.
+    videoUrl: "",
     icon: <Users className="w-5 h-5" />,
     gradient: "from-[#ff375f] to-[#af52de]",
   },
@@ -103,7 +104,7 @@ const services: Service[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&h=600&fit=crop",
     videoUrl:
-      "https://videos.pexels.com/video-files/3045163/3045163-uhd_2560_1440_24fps.mp4",
+      "https://videos.pexels.com/video-files/3045163/3045163-hd_1920_1080_25fps.mp4",
     icon: <Code2 className="w-5 h-5" />,
     gradient: "from-[#5e5ce6] to-[#af52de]",
   },
@@ -116,11 +117,17 @@ export function ServicesShowcase() {
   const reduced = useReducedMotion();
   const [active, setActive] = useState(services[0]);
   const [hovering, setHovering] = useState(false);
+  // Remote stock video rots — two of these clips were withdrawn mid-project.
+  // A failed source must not leave a play button promising something that
+  // never plays, so failures are tracked and the affordance is withdrawn too.
+  const [failed, setFailed] = useState<Record<string, boolean>>({});
   const videoRef = useRef<HTMLVideoElement>(null);
   const tabsRef = useRef<HTMLDivElement>(null);
 
+  const hasVideo = !!active.videoUrl && !failed[active.videoUrl];
+
   useEffect(() => {
-    if (videoRef.current && active.videoUrl) {
+    if (videoRef.current && hasVideo) {
       if (hovering) {
         videoRef.current.play().catch(() => {});
       } else {
@@ -128,7 +135,7 @@ export function ServicesShowcase() {
         videoRef.current.currentTime = 0;
       }
     }
-  }, [hovering, active]);
+  }, [hovering, active, hasVideo]);
 
   return (
     <section id="services" className={`${SECTION_Y} relative overflow-hidden bg-black`}>
@@ -212,7 +219,7 @@ export function ServicesShowcase() {
                   className={`absolute -inset-[2px] rounded-3xl bg-gradient-to-br ${active.gradient} opacity-60`}
                 />
                 <div className="absolute inset-[2px] rounded-[22px] overflow-hidden bg-[#1c1c1e]">
-                  {active.videoUrl && (
+                  {hasVideo && (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: hovering ? 1 : 0 }}
@@ -225,6 +232,9 @@ export function ServicesShowcase() {
                         muted
                         loop
                         playsInline
+                        onError={() =>
+                          setFailed((prev) => ({ ...prev, [active.videoUrl]: true }))
+                        }
                         className="w-full h-full object-cover"
                       />
                     </motion.div>
@@ -241,7 +251,7 @@ export function ServicesShowcase() {
 
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-                  {active.videoUrl && (
+                  {hasVideo && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: hovering ? 0 : 1, scale: hovering ? 0.8 : 1 }}

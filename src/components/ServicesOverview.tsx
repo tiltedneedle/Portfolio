@@ -1,32 +1,28 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
+import {
+  useRef,
+  type ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion,
+  useReducedMotion,
+  useScroll,
+  useTransform } from "framer-motion";
 import {
   ArrowRight,
-  BarChart3,
   Code2,
-  Database,
-  Mail,
-  ShoppingBag,
   Target,
   Users,
   Video,
-  Zap,
 } from "lucide-react";
-import { servicesList } from "@/lib/services-data";
+import { servicesList, type ServiceIconName } from "@/lib/services-data";
+import { EASE_OUT_EXPO, SECTION_Y_INNER } from "@/lib/design-tokens";
 
-const ICONS: Record<string, ReactNode> = {
-  Zap: <Zap className="w-6 h-6" />,
+const ICONS: Record<ServiceIconName, ReactNode> = {
   Video: <Video className="w-6 h-6" />,
   Target: <Target className="w-6 h-6" />,
-  BarChart3: <BarChart3 className="w-6 h-6" />,
   Users: <Users className="w-6 h-6" />,
-  Mail: <Mail className="w-6 h-6" />,
-  Database: <Database className="w-6 h-6" />,
-  ShoppingBag: <ShoppingBag className="w-6 h-6" />,
   Code2: <Code2 className="w-6 h-6" />,
 };
 
@@ -96,7 +92,7 @@ export function ServicesOverview() {
           <motion.div
             initial={{ opacity: 0, y: reduced ? 0 : 50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 1, ease: EASE_OUT_EXPO }}
             className="text-center"
           >
             <motion.p
@@ -111,7 +107,7 @@ export function ServicesOverview() {
             <motion.h1
               initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              transition={{ delay: 0.3, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ delay: 0.3, duration: 1, ease: EASE_OUT_EXPO }}
               className="text-5xl md:text-7xl lg:text-[88px] font-semibold tracking-[-0.03em] leading-[1.05] text-[#f5f5f7] mb-6"
             >
               Everything your brand
@@ -164,7 +160,7 @@ export function ServicesOverview() {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.1 * i, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ delay: 0.1 * i, duration: 0.6, ease: EASE_OUT_EXPO }}
                 className="text-center"
               >
                 <div className="text-3xl md:text-5xl lg:text-[56px] font-semibold text-[#f5f5f7] tracking-[-0.02em]">
@@ -179,7 +175,7 @@ export function ServicesOverview() {
         </div>
       </section>
 
-      <section className="relative py-28 md:py-40 bg-black overflow-hidden">
+      <section className={`relative ${SECTION_Y_INNER} bg-black overflow-hidden`}>
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-black to-[#0d0d0d]" />
 
         <div className="absolute top-[5%] left-[-5%] w-[350px] h-[250px] rounded-3xl overflow-hidden opacity-[0.04] rotate-[-8deg] pointer-events-none">
@@ -247,11 +243,11 @@ export function ServicesOverview() {
                 initial={{ opacity: 0, y: reduced ? 0 : 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.08 * i, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ delay: 0.08 * i, duration: 0.6, ease: EASE_OUT_EXPO }}
               >
                 <Link href={`/services/${service.slug}`}>
                   <motion.div
-                    whileHover={{ y: -6, transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] } }}
+                    whileHover={{ y: -6, transition: { duration: 0.3, ease: EASE_OUT_EXPO } }}
                     className="group relative p-8 md:p-10 rounded-[28px] bg-gradient-to-b from-[#1c1c1e] to-[#161616] h-full cursor-pointer elevate-static-lg sheen"
                   >
                     <div
@@ -309,7 +305,7 @@ export function ServicesOverview() {
         </div>
       </section>
 
-      <section className="relative py-28 md:py-40 bg-[#0a0a0a] overflow-hidden">
+      <section className={`relative ${SECTION_Y_INNER} bg-[#0a0a0a] overflow-hidden`}>
         <div className="absolute inset-0">
           <video
             autoPlay
@@ -356,7 +352,7 @@ export function ServicesOverview() {
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.8, ease: EASE_OUT_EXPO }}
           >
             <p className="text-[#ff375f] text-[17px] font-medium mb-4">Ready to grow?</p>
             <h2 className="text-4xl md:text-5xl lg:text-[64px] font-semibold text-[#f5f5f7] tracking-[-0.025em] mb-6 leading-tight">

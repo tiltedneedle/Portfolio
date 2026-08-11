@@ -7,7 +7,7 @@ import { VideoModal } from "@/components/VideoModal";
 import { attachThrottledVideo } from "@/lib/video-slots";
 import type { CaseStudy } from "@/lib/case-studies-data";
 import type { ModalItem } from "@/lib/site-data";
-import { REVEAL, SECTION_Y } from "@/lib/design-tokens";
+import { EASE_OUT_EXPO, REVEAL, SECTION_Y } from "@/lib/design-tokens";
 
 export function CaseStudyCards({ caseStudies }: { caseStudies: CaseStudy[] }) {
   const [selected, setSelected] = useState<ModalItem | null>(null);
@@ -27,7 +27,7 @@ export function CaseStudyCards({ caseStudies }: { caseStudies: CaseStudy[] }) {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const },
+      transition: { duration: 0.8, ease: EASE_OUT_EXPO },
     },
   };
 
@@ -54,11 +54,15 @@ export function CaseStudyCards({ caseStudies }: { caseStudies: CaseStudy[] }) {
     Object.values(cardRefs.current).forEach((el) => {
       if (el) observer.observe(el);
     });
+    // Captured inside the effect: the ref object can be swapped before
+    // cleanup runs, and React warns about reading .current there.
+    const startedSet = started.current;
+    const attached = detachers.current;
     return () => {
       observer.disconnect();
-      detachers.current.forEach((detach) => detach());
+      attached.forEach((detach) => detach());
       detachers.current = [];
-      started.current.clear();
+      startedSet.clear();
     };
   }, [caseStudies]);
 
@@ -98,7 +102,7 @@ export function CaseStudyCards({ caseStudies }: { caseStudies: CaseStudy[] }) {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.8, ease: EASE_OUT_EXPO }}
           className="mb-16 md:mb-20 text-center"
         >
           <p className="text-[#ff9f0a] text-[17px] font-medium mb-4">Case Studies</p>
@@ -168,7 +172,7 @@ export function CaseStudyCards({ caseStudies }: { caseStudies: CaseStudy[] }) {
                     playsInline
                     preload="none"
                     animate={{ scale: hovered === study.id ? 1.08 : 1 }}
-                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                 )}

@@ -7,7 +7,7 @@ import { ArrowRight, Play } from "lucide-react";
 import { VideoModal } from "@/components/VideoModal";
 import { attachThrottledVideo } from "@/lib/video-slots";
 import { portfolioItems, type ModalItem, type PortfolioItem } from "@/lib/site-data";
-import { SECTION_Y } from "@/lib/design-tokens";
+import { EASE_OUT_EXPO, SECTION_Y } from "@/lib/design-tokens";
 
 function PortfolioCard({ item, onClick }: { item: PortfolioItem; onClick: () => void }) {
   const [hovered, setHovered] = useState(false);
@@ -44,7 +44,7 @@ function PortfolioCard({ item, onClick }: { item: PortfolioItem; onClick: () => 
           opacity: 1,
           y: 0,
           scale: 1,
-          transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+          transition: { duration: 0.7, ease: EASE_OUT_EXPO },
         },
       }}
       className="group relative cursor-pointer"
@@ -66,7 +66,7 @@ function PortfolioCard({ item, onClick }: { item: PortfolioItem; onClick: () => 
           scale: hovered && !reduced ? 1.02 : 1,
           y: hovered && !reduced ? -4 : 0,
         }}
-        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
         className="relative aspect-[9/16] rounded-2xl md:rounded-[20px] overflow-hidden bg-[#1c1c1e] shadow-tween"
         style={{
           boxShadow: hovered ? "var(--elev-3), var(--glow-soft)" : "var(--elev-1)",
@@ -81,7 +81,7 @@ function PortfolioCard({ item, onClick }: { item: PortfolioItem; onClick: () => 
             playsInline
             preload="none"
             animate={{ scale: hovered && !reduced ? 1.08 : 1 }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
             className="absolute inset-0 w-full h-full object-cover"
           />
         ) : (
@@ -99,7 +99,7 @@ function PortfolioCard({ item, onClick }: { item: PortfolioItem; onClick: () => 
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: hovered ? 1 : 0, y: hovered ? 0 : -10 }}
-          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
           className="absolute top-3 left-3"
         >
           <span className="px-2.5 py-1 text-[11px] font-medium uppercase tracking-wider text-white/90 bg-white/15 backdrop-blur-md rounded-full border border-white/10">
@@ -110,7 +110,7 @@ function PortfolioCard({ item, onClick }: { item: PortfolioItem; onClick: () => 
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: hovered ? 1 : 0, scale: hovered ? 1 : 0.8 }}
-          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
           className="absolute inset-0 flex items-center justify-center pointer-events-none"
         >
           <div className="relative">
@@ -126,7 +126,7 @@ function PortfolioCard({ item, onClick }: { item: PortfolioItem; onClick: () => 
         <div className="absolute bottom-0 left-0 right-0 p-4">
           <motion.div
             animate={{ y: hovered && !reduced ? -4 : 0 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
           >
             <h3 className="text-[15px] md:text-[17px] font-semibold text-white leading-tight line-clamp-2">
               {item.title}
@@ -200,7 +200,7 @@ export function PortfolioLibrary() {
           initial={{ opacity: 0, y: reduced ? 0 : 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.8, ease: EASE_OUT_EXPO }}
           className="mb-12 md:mb-16 text-center"
         >
           <p className="text-[#64d2ff] text-[17px] font-medium mb-4">Explore</p>

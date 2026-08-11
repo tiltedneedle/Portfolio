@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { CheckCircle2, Clock, Play, Quote, X } from "lucide-react";
 import { useFocusTrap } from "@/lib/use-focus-trap";
 import type { ModalItem } from "@/lib/site-data";
+import { EASE_OUT_EXPO, SECTION_Y_TIGHT } from "@/lib/design-tokens";
 
 const CATEGORY_COLORS = ["#2997ff", "#30d158", "#ff9f0a", "#af52de", "#ff375f", "#64d2ff"];
 const METRIC_COLORS = ["#2997ff", "#30d158", "#ff9f0a", "#af52de"];
@@ -32,7 +33,7 @@ export function VideoModal({
   const videoRef = useRef<HTMLVideoElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  useFocusTrap(isOpen && !!item, scrollRef);
+  useFocusTrap(isOpen && !!item, scrollRef, item?.id);
 
   const close = useCallback(() => {
     onClose();
@@ -76,7 +77,7 @@ export function VideoModal({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
             onClick={onBackdrop}
             className="absolute inset-0 bg-black/90 backdrop-blur-xl cursor-pointer"
             aria-label="Close modal"
@@ -87,14 +88,14 @@ export function VideoModal({
             initial={{ opacity: 0, ...(reduced ? {} : { scale: 0.95 }), ...rise }}
             animate={{ opacity: 1, scale: 1, ...riseTo }}
             exit={{ opacity: 0, ...(reduced ? {} : { scale: 0.95 }), ...rise }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
             className="absolute inset-0 z-[101] overflow-y-auto"
             role="dialog"
             aria-modal="true"
             aria-labelledby="video-modal-title"
             tabIndex={-1}
           >
-            <div className="min-h-full flex items-start justify-center p-4 md:p-8 py-12 md:py-16">
+            <div className={`min-h-full flex items-start justify-center p-4 md:p-8 ${SECTION_Y_TIGHT}`}>
               <div
                 className="relative w-full max-w-5xl bg-[#1c1c1e] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
@@ -185,7 +186,7 @@ export function VideoModal({
                           transition={{
                             delay: 0.1 + 0.05 * i,
                             duration: 0.5,
-                            ease: [0.16, 1, 0.3, 1],
+                            ease: EASE_OUT_EXPO,
                           }}
                           className="p-5 md:p-6 rounded-2xl bg-[#2c2c2e] border border-white/[0.06] hover:border-white/[0.1] transition-all duration-300"
                         >
@@ -252,7 +253,7 @@ export function VideoModal({
                         <motion.div
                           initial={{ opacity: 0, ...rise }}
                           animate={{ opacity: 1, ...riseTo }}
-                          transition={{ delay: 0.2, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                          transition={{ delay: 0.2, duration: 0.5, ease: EASE_OUT_EXPO }}
                           className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-[#ff453a]/10 to-transparent border border-[#ff453a]/20"
                         >
                           <h3 className="text-[12px] text-[#ff453a] uppercase tracking-wider font-semibold mb-4">
@@ -268,7 +269,7 @@ export function VideoModal({
                         <motion.div
                           initial={{ opacity: 0, ...rise }}
                           animate={{ opacity: 1, ...riseTo }}
-                          transition={{ delay: 0.3, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                          transition={{ delay: 0.3, duration: 0.5, ease: EASE_OUT_EXPO }}
                           className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-[#30d158]/10 to-transparent border border-[#30d158]/20"
                         >
                           <h3 className="text-[12px] text-[#30d158] uppercase tracking-wider font-semibold mb-4">
@@ -286,7 +287,7 @@ export function VideoModal({
                     <motion.div
                       initial={{ opacity: 0, ...rise }}
                       animate={{ opacity: 1, ...riseTo }}
-                      transition={{ delay: 0.4, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                      transition={{ delay: 0.4, duration: 0.5, ease: EASE_OUT_EXPO }}
                       className="mb-10 p-6 md:p-8 rounded-2xl bg-gradient-to-br from-[#2997ff]/10 to-transparent border border-[#2997ff]/20"
                     >
                       <h3 className="text-[12px] text-[#2997ff] uppercase tracking-wider font-semibold mb-4">
@@ -300,7 +301,7 @@ export function VideoModal({
                     <motion.div
                       initial={{ opacity: 0, ...rise }}
                       animate={{ opacity: 1, ...riseTo }}
-                      transition={{ delay: 0.5, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                      transition={{ delay: 0.5, duration: 0.5, ease: EASE_OUT_EXPO }}
                       className="mb-10 p-8 md:p-10 rounded-2xl bg-[#2c2c2e] border border-white/[0.06] relative overflow-hidden"
                     >
                       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#2997ff] via-[#30d158] to-[#af52de]" />

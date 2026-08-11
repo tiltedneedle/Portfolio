@@ -16,8 +16,18 @@ const FOCUSABLE = [
  * While `active`, keeps Tab focus inside `containerRef` and returns focus to
  * whatever was focused beforehand once it closes. Without this a keyboard user
  * tabs straight out of an open dialog into the page behind it.
+ *
+ * `contentKey` identifies what the dialog is currently showing. Pass it when
+ * the same dialog can swap its contents in place — the lightbox does exactly
+ * that via "More like this". Without it the trap never re-seeds: the element
+ * that had focus is unmounted with the old content, focus falls back to
+ * <body>, and the user is left tabbing through the page behind an open modal.
  */
-export function useFocusTrap(active: boolean, containerRef: RefObject<HTMLElement | null>) {
+export function useFocusTrap(
+  active: boolean,
+  containerRef: RefObject<HTMLElement | null>,
+  contentKey?: string | number | null
+) {
   useEffect(() => {
     if (!active) return;
 
@@ -59,5 +69,5 @@ export function useFocusTrap(active: boolean, containerRef: RefObject<HTMLElemen
       document.removeEventListener("keydown", onKeyDown, true);
       previouslyFocused?.focus?.({ preventScroll: true });
     };
-  }, [active, containerRef]);
+  }, [active, containerRef, contentKey]);
 }

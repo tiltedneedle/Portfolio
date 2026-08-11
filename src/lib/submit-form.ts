@@ -1,5 +1,5 @@
 export type FormPayload = {
-  type: "contact" | "application" | "demo";
+  type: "contact" | "application";
   name: string;
   email: string;
   message: string;

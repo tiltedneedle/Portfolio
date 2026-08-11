@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { SHIFT } from "@/lib/design-tokens";
+import { EASE_OUT_EXPO, SHIFT } from "@/lib/design-tokens";
 
 const serviceLinks = [
   { href: "/services/content-creation", label: "Content Creation" },
@@ -78,7 +78,7 @@ export function NavBar() {
       <motion.header
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.8, ease: EASE_OUT_EXPO }}
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-700",
           scrolled
@@ -126,6 +126,22 @@ export function NavBar() {
                         closeTimer.current = setTimeout(() => setDropdownOpen(false), 200);
                         setHovered(null);
                       }}
+                      // Focus mirrors hover, so the submenu is reachable by keyboard.
+                      onFocus={() => {
+                        if (closeTimer.current) clearTimeout(closeTimer.current);
+                        setDropdownOpen(true);
+                      }}
+                      onBlur={(e) => {
+                        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                          setDropdownOpen(false);
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Escape" && dropdownOpen) {
+                          e.stopPropagation();
+                          setDropdownOpen(false);
+                        }
+                      }}
                     >
                       <Link href={link.href}>
                         <motion.span
@@ -145,7 +161,7 @@ export function NavBar() {
                             className="absolute -bottom-0.5 left-0 right-0 h-px bg-[#f5f5f7]"
                             initial={{ scaleX: 0 }}
                             animate={{ scaleX: hovered === link.href || isActive ? 1 : 0 }}
-                            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                            transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
                           />
                         </motion.span>
                       </Link>
@@ -156,7 +172,7 @@ export function NavBar() {
                             initial={{ opacity: 0, y: SHIFT.sm, scale: 0.96 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: SHIFT.sm, scale: 0.96 }}
-                            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                            transition={{ duration: 0.25, ease: EASE_OUT_EXPO }}
                             className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[280px] rounded-2xl bg-[rgba(28,28,30,0.95)] backdrop-blur-2xl border border-white/[0.08] shadow-[0_8px_40px_rgba(0,0,0,0.5)] overflow-hidden"
                           >
                             <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 bg-[rgba(28,28,30,0.95)] border-t border-l border-white/[0.08]" />
@@ -226,7 +242,7 @@ export function NavBar() {
                         className="absolute -bottom-0.5 left-0 right-0 h-px bg-[#f5f5f7]"
                         initial={{ scaleX: 0 }}
                         animate={{ scaleX: hovered === link.href || isActive ? 1 : 0 }}
-                        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                        transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
                       />
                     </motion.a>
                   );
@@ -250,7 +266,7 @@ export function NavBar() {
                         className="absolute -bottom-0.5 left-0 right-0 h-px bg-[#f5f5f7]"
                         initial={{ scaleX: 0 }}
                         animate={{ scaleX: hovered === link.href || isActive ? 1 : 0 }}
-                        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                        transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
                       />
                     </motion.span>
                   </Link>
@@ -274,7 +290,9 @@ export function NavBar() {
             <motion.button
               className="md:hidden p-1 text-[#f5f5f7]"
               onClick={() => setMobileOpen(!mobileOpen)}
-              aria-label="Toggle menu"
+              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-menu"
               whileTap={{ scale: 0.9 }}
             >
               <AnimatePresence mode="wait">
@@ -311,7 +329,8 @@ export function NavBar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
+            id="mobile-menu"
             className="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl md:hidden"
           >
             <nav className="flex flex-col items-center justify-center h-full gap-10 pt-12">
@@ -328,7 +347,7 @@ export function NavBar() {
                         transition={{
                           delay: 0.08 * index,
                           duration: 0.5,
-                          ease: [0.16, 1, 0.3, 1],
+                          ease: EASE_OUT_EXPO,
                         }}
                         className="flex flex-col items-center"
                       >
@@ -350,7 +369,7 @@ export function NavBar() {
                               initial={{ height: 0, opacity: 0 }}
                               animate={{ height: "auto", opacity: 1 }}
                               exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                              transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
                               className="overflow-hidden mt-4 flex flex-col items-center gap-3"
                             >
                               <Link href="/services" onClick={() => setMobileOpen(false)}>
@@ -385,7 +404,7 @@ export function NavBar() {
                     transition={{
                       delay: 0.08 * index,
                       duration: 0.5,
-                      ease: [0.16, 1, 0.3, 1],
+                      ease: EASE_OUT_EXPO,
                     }}
                     className="text-3xl font-semibold text-[#f5f5f7] hover:text-white transition-all duration-300 hover:scale-105 block"
                     onClick={() => setMobileOpen(false)}
@@ -410,7 +429,7 @@ export function NavBar() {
                   initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
                   animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                   exit={{ opacity: 0 }}
-                  transition={{ delay: 0.4, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ delay: 0.4, duration: 0.5, ease: EASE_OUT_EXPO }}
                   className="mt-6 px-8 py-4 bg-[#f5f5f7] text-[#1c1c1e] rounded-full text-[17px] font-medium transition-all duration-300 hover:bg-white hover:scale-105 block"
                 >
                   Book a Demo

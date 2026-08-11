@@ -7,7 +7,6 @@ const CONTACT_FROM = process.env.CONTACT_FROM;
 const SUBJECTS: Record<string, string> = {
   contact: "New enquiry — Tilted Needle",
   application: "New application — Tilted Needle",
-  demo: "New demo request — Tilted Needle",
 };
 
 // Longest value we'll accept per field, and the overall body cap.
@@ -120,9 +119,21 @@ export async function POST(request: Request) {
   const type = typeof payload.type === "string" && payload.type in SUBJECTS ? payload.type : "contact";
   const subject = SUBJECTS[type];
 
-  if (!payload.name?.trim() || !payload.email?.trim() || !payload.message?.trim()) {
+  // Applications carry their detail in role/experience/link, and the careers
+  // form presents Message as optional — so only the contact form requires it.
+  const needsMessage = type !== "application";
+  if (
+    !payload.name?.trim() ||
+    !payload.email?.trim() ||
+    (needsMessage && !payload.message?.trim())
+  ) {
     return NextResponse.json(
-      { ok: false, error: "Please fill in your name, email, and message." },
+      {
+        ok: false,
+        error: needsMessage
+          ? "Please fill in your name, email, and message."
+          : "Please fill in your name and email.",
+      },
       { status: 400 }
     );
   }

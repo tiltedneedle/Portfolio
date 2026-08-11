@@ -19,8 +19,8 @@ import {
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { submitForm } from "@/lib/submit-form";
+import { EASE_OUT_EXPO, SECTION_Y_INNER } from "@/lib/design-tokens";
 
-const EASE = [0.16, 1, 0.3, 1] as const;
 
 type Perk = { icon: ReactNode; title: string; description: string; gradient: string };
 
@@ -111,7 +111,7 @@ function RoleCard({
       initial={{ opacity: 0, y: reduced ? 0 : 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ delay: 0.08 * index, duration: 0.6, ease: EASE }}
+      transition={{ delay: 0.08 * index, duration: 0.6, ease: EASE_OUT_EXPO }}
       className="group relative rounded-[28px] bg-gradient-to-b from-[#1c1c1e] to-[#161616] overflow-hidden elevate-static"
     >
       <div className="absolute inset-0 rounded-[28px] bg-gradient-to-br from-[#2997ff] to-[#5e5ce6] opacity-0 group-hover:opacity-[0.04] transition-opacity duration-500 pointer-events-none" />
@@ -147,7 +147,7 @@ function RoleCard({
         <motion.span
           aria-hidden="true"
           animate={{ rotate: open ? 45 : 0 }}
-          transition={{ duration: 0.4, ease: EASE }}
+          transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
           className="shrink-0 mt-1 w-10 h-10 rounded-full bg-white/[0.05] flex items-center justify-center text-[#f5f5f7] group-hover:bg-white/[0.09] transition-colors duration-300"
         >
           <Plus className="w-5 h-5" />
@@ -164,7 +164,7 @@ function RoleCard({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: reduced ? 0.01 : 0.5, ease: EASE }}
+            transition={{ duration: reduced ? 0.01 : 0.5, ease: EASE_OUT_EXPO }}
             className="relative overflow-hidden"
           >
             <div className="px-8 md:px-10 pb-8 md:pb-10">
@@ -257,9 +257,10 @@ function ApplicationForm({
       {sent ? (
         <motion.div
           key="success"
+          role="status"
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, ease: EASE }}
+          transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
           className="rounded-[28px] bg-gradient-to-b from-[#1c1c1e] to-[#161616] p-10 md:p-14 text-center"
           style={{ boxShadow: "var(--elev-1)" }}
         >
@@ -288,7 +289,7 @@ function ApplicationForm({
           initial={{ opacity: 0, y: reduced ? 0 : 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, ease: EASE }}
+          transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
           className="rounded-[28px] bg-gradient-to-b from-[#1c1c1e] to-[#161616] p-8 md:p-10 space-y-6"
           style={{ boxShadow: "var(--elev-1)" }}
         >
@@ -407,16 +408,20 @@ function ApplicationForm({
           <motion.button
             type="submit"
             disabled={submitting}
+            aria-busy={submitting}
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
             className="w-full py-4 bg-[#f5f5f7] text-[#1c1c1e] rounded-2xl text-[17px] font-medium transition-all duration-500 hover:bg-white hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {submitting ? (
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                className="w-5 h-5 border-2 border-[#1c1c1e] border-t-transparent rounded-full"
-              />
+              <>
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  className="w-5 h-5 border-2 border-[#1c1c1e] border-t-transparent rounded-full"
+                />
+                <span className="sr-only">Submitting your application…</span>
+              </>
             ) : (
               <>
                 Submit application
@@ -512,7 +517,7 @@ export function CareersPage() {
           <motion.div
             initial={{ opacity: 0, y: reduced ? 0 : 50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: EASE }}
+            transition={{ duration: 1, ease: EASE_OUT_EXPO }}
             className="text-center"
           >
             <motion.p
@@ -527,7 +532,7 @@ export function CareersPage() {
             <motion.h1
               initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              transition={{ delay: 0.3, duration: 1, ease: EASE }}
+              transition={{ delay: 0.3, duration: 1, ease: EASE_OUT_EXPO }}
               className="text-5xl md:text-7xl lg:text-[88px] font-semibold tracking-[-0.03em] leading-[1.05] text-[#f5f5f7] mb-6"
             >
               Join the team
@@ -571,7 +576,7 @@ export function CareersPage() {
         </motion.div>
       </section>
 
-      <section className="relative py-28 md:py-40 bg-black overflow-hidden">
+      <section className={`relative ${SECTION_Y_INNER} bg-black overflow-hidden`}>
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-black to-[#0d0d0d]" />
         <div
           className="absolute inset-0 pointer-events-none"
@@ -605,10 +610,10 @@ export function CareersPage() {
                 initial={{ opacity: 0, y: reduced ? 0 : 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.08 * i, duration: 0.6, ease: EASE }}
+                transition={{ delay: 0.08 * i, duration: 0.6, ease: EASE_OUT_EXPO }}
               >
                 <motion.div
-                  whileHover={{ y: -6, transition: { duration: 0.3, ease: EASE } }}
+                  whileHover={{ y: -6, transition: { duration: 0.3, ease: EASE_OUT_EXPO } }}
                   className="group relative p-8 md:p-10 rounded-[28px] bg-gradient-to-b from-[#1c1c1e] to-[#161616] h-full elevate-static-lg sheen"
                 >
                   <div
@@ -636,7 +641,7 @@ export function CareersPage() {
 
       <section
         id="roles"
-        className="relative py-28 md:py-40 bg-[#0a0a0a] overflow-hidden scroll-mt-24"
+        className={`relative ${SECTION_Y_INNER} bg-[#0a0a0a] overflow-hidden scroll-mt-24`}
       >
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(41,151,255,0.05),transparent_60%)]" />
         <div className="mx-auto max-w-[900px] px-6 relative">
@@ -666,7 +671,7 @@ export function CareersPage() {
 
       <section
         id="apply"
-        className="relative py-28 md:py-40 bg-black overflow-hidden scroll-mt-24"
+        className={`relative ${SECTION_Y_INNER} bg-black overflow-hidden scroll-mt-24`}
       >
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(175,82,222,0.05),transparent_60%)]" />
         <div className="mx-auto max-w-[760px] px-6 relative">

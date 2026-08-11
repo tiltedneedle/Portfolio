@@ -3,6 +3,7 @@
 import { type ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import type { LegalSection } from "@/lib/legal-data";
+import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
 // Minimal inline markdown: **bold** and [label](href).
 function renderInline(text: string): ReactNode[] {
@@ -65,7 +66,7 @@ export function LegalPage({ title, lastUpdated, sections }: Props) {
           <motion.div
             initial={{ opacity: 0, y: reduced ? 0 : 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.9, ease: EASE_OUT_EXPO }}
           >
             <motion.p
               initial={{ opacity: 0, y: reduced ? 0 : 12 }}
@@ -83,7 +84,7 @@ export function LegalPage({ title, lastUpdated, sections }: Props) {
                 filter: reduced ? "blur(0px)" : "blur(8px)",
               }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              transition={{ delay: 0.15, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ delay: 0.15, duration: 0.9, ease: EASE_OUT_EXPO }}
               className="text-4xl md:text-6xl lg:text-[64px] font-semibold tracking-[-0.03em] leading-[1.05] text-[#f5f5f7]"
             >
               {title}
@@ -117,7 +118,7 @@ export function LegalPage({ title, lastUpdated, sections }: Props) {
                 transition={{
                   duration: 0.6,
                   delay: reduced ? 0 : Math.min(0.04 * i, 0.2),
-                  ease: [0.16, 1, 0.3, 1],
+                  ease: EASE_OUT_EXPO,
                 }}
               >
                 <h2 className="text-[24px] md:text-[28px] font-semibold tracking-[-0.02em] text-[#f5f5f7] mb-5">

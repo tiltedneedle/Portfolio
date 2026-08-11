@@ -9,6 +9,7 @@ import { NavBar } from "@/components/NavBar";
 import { useFocusTrap } from "@/lib/use-focus-trap";
 import { attachThrottledVideo } from "@/lib/video-slots";
 import { boardVideos, type BoardVideo } from "@/lib/board-videos";
+import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
 /* ------------------------------------------------------------------ layout */
 
@@ -167,11 +168,10 @@ export function PortfolioBoard() {
   const [isMobile, setIsMobile] = useState(false);
   const [size, setSize] = useState({ w: 1200, h: 800 });
   const pinchDist = useRef(0);
-  const pinchMid = useRef({ x: 0, y: 0 });
   const dialogRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
 
-  useFocusTrap(!!selected, dialogRef);
+  useFocusTrap(!!selected, dialogRef, selected?.id);
 
   // The lightbox had no keyboard dismiss.
   useEffect(() => {
@@ -208,8 +208,19 @@ export function PortfolioBoard() {
   }, []);
 
   // Intro: fit the whole board, then fly in to the brand card and settle.
+  //
+  // Runs exactly once. `isMobile` used to be a dependency and `measure` updates
+  // it on every resize, so rotating a phone or dragging a window across 768px
+  // tore the sequence down and replayed all 4.1s of it — mid-session, over
+  // whatever the visitor had panned to. The breakpoint is read at run time
+  // instead, and the guard makes a replay impossible.
+  const introPlayed = useRef(false);
   useEffect(() => {
+    if (introPlayed.current) return;
+    introPlayed.current = true;
+
     const { w, h } = getSize();
+    const mobile = window.innerWidth < 768;
     const fitScale = Math.max(
       minScaleFor(w, h),
       Math.min(1.8, 0.95 * Math.min(w / canvasW, h / canvasH))
@@ -224,7 +235,7 @@ export function PortfolioBoard() {
 
     const focusX = brandX + 160;
     const focusY = brandY + 190;
-    const target = isMobile ? 0.8 : 1.15;
+    const target = mobile ? 0.8 : 1.15;
     const targetX = w / 2 - focusX * target;
     const targetY = h / 2 - focusY * target;
 
@@ -266,7 +277,7 @@ export function PortfolioBoard() {
       clearTimeout(t3);
       clearTimeout(t4);
     };
-  }, [getSize, isMobile, reduced]);
+  }, [getSize, reduced]);
 
   const onWheel = useCallback(
     (e: React.WheelEvent) => {
@@ -343,10 +354,6 @@ export function PortfolioBoard() {
           e.touches[0].clientX - e.touches[1].clientX,
           e.touches[0].clientY - e.touches[1].clientY
         );
-        pinchMid.current = {
-          x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
-          y: (e.touches[0].clientY + e.touches[1].clientY) / 2,
-        };
       }
     },
     [pos, phase]
@@ -386,7 +393,6 @@ export function PortfolioBoard() {
           setScale(next);
         }
         pinchDist.current = dist;
-        pinchMid.current = mid;
       }
     },
     [dragging, dragStart, dragOrigin, scale, pos, getSize, phase]
@@ -414,6 +420,9 @@ export function PortfolioBoard() {
   const onBoardKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (phase !== "done" || selected) return;
+      // Panning unmounts off-screen tiles. If focus is on one, it would be
+      // destroyed mid-keypress and focus would fall back to <body>.
+      if ((e.target as HTMLElement).closest("[data-frame]")) return;
       const { w, h } = getSize();
       const step = e.shiftKey ? 240 : 80;
       const min = minScaleFor(w, h);
@@ -517,11 +526,18 @@ export function PortfolioBoard() {
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
-        onKeyDown={onBoardKeyDown}
-        tabIndex={0}
-        role="application"
-        aria-label="Portfolio board. Use the arrow keys to pan, plus and minus to zoom, and 0 to fit the whole board."
       >
+        {/* Keyboard surface for the board. role="application" is deliberately
+            scoped here rather than on <main>: on the landmark it erased the
+            main landmark and put the whole page into forms mode, so screen
+            readers lost browse-mode navigation over the heading and controls. */}
+        <div
+          className="absolute inset-0 z-30 pointer-events-none focus-visible:outline-2 focus-visible:outline-black/40 focus-visible:outline-offset-[-6px] rounded-sm"
+          tabIndex={0}
+          role="application"
+          aria-label="Portfolio board. Use the arrow keys to pan, plus and minus to zoom, and 0 to fit the whole board."
+          onKeyDown={onBoardKeyDown}
+        />
         <div
           className="absolute inset-0 opacity-[0.02] pointer-events-none"
           style={{
@@ -687,7 +703,7 @@ export function PortfolioBoard() {
               initial={{ opacity: 0, scale: 0.92, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92, y: 20 }}
-              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
               onClick={(e) => e.stopPropagation()}
               className="relative bg-white rounded-2xl overflow-hidden max-w-3xl w-full max-h-[85vh] shadow-2xl flex flex-col"
               ref={dialogRef}

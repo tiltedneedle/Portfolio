@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { stats } from "@/lib/site-data";
+import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
 // Deterministic particle offsets — avoids a hydration mismatch that random
 // positions would cause.
@@ -41,7 +42,7 @@ export function Hero() {
       opacity: 1,
       y: 0,
       filter: "blur(0px)",
-      transition: { duration: reduced ? 0.01 : 1, ease: [0.16, 1, 0.3, 1] as const },
+      transition: { duration: reduced ? 0.01 : 1, ease: EASE_OUT_EXPO },
     },
   };
 
@@ -131,7 +132,7 @@ export function Hero() {
                 scale: 1,
                 transition: {
                   duration: reduced ? 0.01 : 1.2,
-                  ease: [0.16, 1, 0.3, 1] as const,
+                  ease: EASE_OUT_EXPO,
                 },
               },
             }}
@@ -197,7 +198,7 @@ export function Hero() {
                   transition={{
                     delay: reduced ? 0 : 1 + 0.15 * i,
                     duration: reduced ? 0.01 : 0.8,
-                    ease: [0.16, 1, 0.3, 1],
+                    ease: EASE_OUT_EXPO,
                   }}
                   className="text-center group"
                 >
@@ -220,7 +221,7 @@ export function Hero() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 2, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ delay: 2, duration: 1, ease: EASE_OUT_EXPO }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20"
       >
         <motion.div

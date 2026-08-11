@@ -8,11 +8,9 @@ export type PortfolioItem = {
   client: string;
   year: string;
   categories: string[];
-  tags: string[];
   metrics: Metric[];
   summary: string;
   videoUrl: string;
-  featured?: boolean;
   description?: string;
   challenge?: string;
   solution?: string;
@@ -29,7 +27,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Steve Varsano",
     year: "2024",
     categories: ["Short-form", "Personal Brand"],
-    tags: ["Luxury", "Aviation"],
     metrics: [
       { label: "Views", value: "1B+" },
       { label: "Followers", value: "4M+" },
@@ -38,7 +35,6 @@ export const portfolioItems: PortfolioItem[] = [
     ],
     summary:
       "Built Steve Varsano into the most recognizable private jet broker on social media, generating over $150M in jet sales through viral content strategy.",
-    featured: true,
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/selling-19m-jet-8-hours.mp4",
     description:
       "Steve Varsano, founder of The Jet Business, approached us with a bold vision: to become the most recognized private jet broker in the world through social media. With decades of experience in aviation but zero social presence, Steve needed a partner who understood both luxury positioning and viral content mechanics.",
@@ -63,7 +59,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Noor Charchafchi",
     year: "2024",
     categories: ["Short-form", "Interiors"],
-    tags: ["Luxury", "Interiors"],
     metrics: [
       { label: "Views", value: "6M+" },
       { label: "Followers", value: "200k+" },
@@ -72,7 +67,6 @@ export const portfolioItems: PortfolioItem[] = [
     ],
     summary:
       "6M organic views and 200k+ new Instagram followers in 7 days for Celine Interior Design, driving $5.6M+ in direct sales over 12 months.",
-    featured: true,
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/vimana-customer-service.mp4",
     description:
       "Noor Charchafchi, founder of Celine Interior Design, was ready to take her high-end studio from a respected name in design circles to a household one. Despite a portfolio of breathtaking interiors, her digital presence didn't reflect the calibre of her work or the clientele she wanted to attract.",
@@ -102,7 +96,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Alexis Gauthier",
     year: "2023",
     categories: ["Short-form", "Hospitality"],
-    tags: ["Food", "Hospitality"],
     metrics: [
       { label: "Views", value: "14M+" },
       { label: "Revenue", value: "£100k/mo" },
@@ -111,7 +104,6 @@ export const portfolioItems: PortfolioItem[] = [
     ],
     summary:
       "Transformed a struggling restaurant from £3k/mo to £100k+/mo through strategic viral content.",
-    featured: true,
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/food-on-plane.mp4",
     description:
       "Alexis Gauthier, a Michelin-trained chef, was watching his dream restaurant slip away. Despite exceptional food and service, his establishment was generating just £3,000 per month, far below sustainability. He needed a dramatic turnaround, and traditional marketing wasn't delivering.",
@@ -136,7 +128,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "EuroEyes",
     year: "2024",
     categories: ["Ads", "Healthcare"],
-    tags: ["Healthcare", "Performance"],
     metrics: [
       { label: "Views", value: "12M+" },
       { label: "Revenue", value: "£1.893M" },
@@ -145,7 +136,6 @@ export const portfolioItems: PortfolioItem[] = [
     ],
     summary:
       "Generated £1.893M+ revenue from £212k ad spend in 12 months, achieving exceptional ROAS in healthcare sector.",
-    featured: true,
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/saving-1-month-a-year-fv.mp4",
     description:
       "EuroEyes, a leading laser eye surgery provider, was struggling to acquire patients cost-effectively through digital channels. With strict healthcare advertising regulations and a service that requires significant trust-building, they needed a performance partner who understood both compliance and conversion.",
@@ -175,7 +165,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Frankie Mardell",
     year: "2024",
     categories: ["Short-form", "Personal Brand"],
-    tags: ["Luxury", "Watches"],
     metrics: [
       { label: "Views", value: "10M+" },
       { label: "Followers", value: "+130k" },
@@ -184,7 +173,6 @@ export const portfolioItems: PortfolioItem[] = [
     ],
     summary:
       "Grew a luxury watch dealer's audience by 130k followers and 10M+ views in 6 months, lifting revenue 400%+ to record quarters.",
-    featured: true,
     videoUrl:
       "https://d6lso8oygmnu9.cloudfront.net/videos/wealth-shows-true-character-v6-captioned.mp4",
     description:
@@ -215,7 +203,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Rastah",
     year: "2024",
     categories: ["Short-form", "E-commerce"],
-    tags: ["Fashion", "E-commerce"],
     metrics: [
       { label: "Views", value: "14M+" },
       { label: "Followers", value: "105k" },
@@ -224,7 +211,6 @@ export const portfolioItems: PortfolioItem[] = [
     ],
     summary:
       "Scaled followers from 12k to 105k while achieving 900% online sales growth in just 3 months.",
-    featured: true,
     videoUrl:
       "https://d6lso8oygmnu9.cloudfront.net/videos/running-multiple-businesses-v7-captioned.mp4",
     description:
@@ -255,13 +241,11 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Private Client",
     year: "2024",
     categories: ["Short-form", "Luxury"],
-    tags: ["Real Estate", "Luxury"],
     metrics: [
       { label: "Views", value: "8M+" },
       { label: "Inquiries", value: "+340%" },
     ],
     summary: "Premium property content strategy driving qualified luxury buyer inquiries.",
-    featured: true,
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/my-future-fv-revised.mp4",
     description:
       "A prestigious real estate developer approached us to transform their digital marketing approach. With $50M+ properties sitting on the market longer than expected, they needed a strategy that reached ultra-high-net-worth individuals where traditional real estate marketing couldn't.",
@@ -286,14 +270,12 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Private Client",
     year: "2024",
     categories: ["Ads", "Long-form"],
-    tags: ["Technology", "SaaS"],
     metrics: [
       { label: "Views", value: "5M+" },
       { label: "Signups", value: "12k+" },
     ],
     summary:
       "Product launch campaign combining short-form virality with targeted performance ads.",
-    featured: true,
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/network-sof-v9-revised.mp4",
     description:
       "A stealth-mode tech startup preparing for their public launch needed a campaign that would generate massive awareness and convert that attention into product signups, all within a compressed timeline and limited budget compared to venture-backed competitors.",
@@ -323,7 +305,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Steve Varsano",
     year: "2024",
     categories: ["Short-form", "Personal Brand"],
-    tags: ["Mindset", "Motivation"],
     metrics: [{ label: "Views", value: "2.4M+" }],
     summary: "Steve Varsano on the importance of gratitude in business and life.",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/being-grateful-final-captioned.mp4",
@@ -334,7 +315,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Ameerh",
     year: "2024",
     categories: ["Short-form", "Luxury"],
-    tags: ["Automotive", "Luxury"],
     metrics: [{ label: "Views", value: "6.2M+" }],
     summary: "Exclusive walkthrough of the iconic Porsche Carrera GT.",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/carrera-gt-tour-v4-captioned.mp4",
@@ -345,7 +325,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Steve Varsano",
     year: "2024",
     categories: ["Short-form", "Personal Brand"],
-    tags: ["Business", "Motivation"],
     metrics: [{ label: "Followers", value: "+85k" }],
     summary: "Steve shares his journey to becoming the world's top jet broker.",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/how-i-became-successful-v8-captioned.mp4",
@@ -356,7 +335,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Steve Varsano",
     year: "2023",
     categories: ["Short-form", "Personal Brand"],
-    tags: ["Lifestyle", "Personal"],
     metrics: [{ label: "Views", value: "1.2M+" }],
     summary: "A heartfelt personal story from Steve Varsano.",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/ruby-story-final.mp4",
@@ -367,7 +345,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Private Client",
     year: "2024",
     categories: ["Long-form", "Luxury"],
-    tags: ["Lifestyle", "Travel"],
     metrics: [{ label: "Views", value: "3.8M+" }],
     summary: "A week in the life vlog from Dubai.",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/witl-dubai-fv-rev.mp4",
@@ -378,7 +355,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Steve Varsano",
     year: "2024",
     categories: ["Short-form", "Personal Brand"],
-    tags: ["Mindset", "Motivation"],
     metrics: [{ label: "Views", value: "9M+" }],
     summary: "Breaking down the toxic mindsets that hold people back.",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/toxic-mindset-fv.mp4",
@@ -389,7 +365,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Ameerh",
     year: "2024",
     categories: ["Short-form", "Luxury"],
-    tags: ["Automotive", "Supercar"],
     metrics: [{ label: "Views", value: "5.1M+" }],
     summary: "What it costs to fill up a Koenigsegg Jesko.",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/filling-up-jesko-revised-final.mp4",
@@ -400,7 +375,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Steve Varsano",
     year: "2023",
     categories: ["Short-form", "Personal Brand"],
-    tags: ["Business", "Productivity"],
     metrics: [{ label: "Views", value: "1.8M+" }],
     summary: "A look into the daily schedule of a top jet broker.",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/client-schedule-v5.mp4",
@@ -411,7 +385,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Ameerh",
     year: "2024",
     categories: ["Short-form", "Luxury"],
-    tags: ["Motorsport", "Cars"],
     metrics: [{ label: "Views", value: "4.5M+" }],
     summary: "The raw sound and fury of GT racing up close.",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/gt-racing-is-loud-fv-captioned.mp4",
@@ -422,7 +395,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Private Client",
     year: "2024",
     categories: ["Short-form", "Personal Brand"],
-    tags: ["Sport", "Lifestyle"],
     metrics: [{ label: "Views", value: "7.2M+" }],
     summary: "Featured content with Pierre-Emerick Aubameyang.",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/aubameyang-final-cta.mp4",
@@ -433,7 +405,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Steve Varsano",
     year: "2024",
     categories: ["Short-form", "Luxury"],
-    tags: ["Aviation", "Luxury"],
     metrics: [{ label: "Views", value: "18M+" }],
     summary: "Steve breaks down the best private jets under $10 million.",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/best-budget-plane-10m.mp4",
@@ -444,7 +415,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Steve Varsano",
     year: "2024",
     categories: ["Short-form", "Luxury"],
-    tags: ["Aviation", "Luxury"],
     metrics: [{ label: "Views", value: "12M+" }],
     summary: "The reality of owning a private jet explained.",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/owning-a-jet.mp4",
@@ -455,7 +425,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Steve Varsano",
     year: "2024",
     categories: ["Short-form", "Personal Brand"],
-    tags: ["Motivation", "Business"],
     metrics: [{ label: "Views", value: "3.6M+" }],
     summary: "Steve's advice on pursuing your passion in business.",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/follow-your-passion.mp4",
@@ -466,7 +435,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Steve Varsano",
     year: "2024",
     categories: ["Short-form", "Luxury"],
-    tags: ["Crypto", "Aviation"],
     metrics: [{ label: "Views", value: "8.4M+" }],
     summary: "Can you buy a private jet with cryptocurrency?",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/buying-jet-crypto.mp4",
@@ -477,7 +445,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Ameerh",
     year: "2024",
     categories: ["Short-form", "Luxury"],
-    tags: ["Automotive", "Supercar"],
     metrics: [{ label: "Views", value: "5.8M+" }],
     summary: "Up close with the track-only Bugatti Bolide.",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/bugatti-bollide-fv-captioned.mp4",
@@ -488,7 +455,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Steve Varsano",
     year: "2024",
     categories: ["Short-form", "Luxury"],
-    tags: ["Aviation", "Luxury"],
     metrics: [{ label: "Views", value: "6.1M+" }],
     summary: "A look at the fastest corporate jet in the world.",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/fastest-corporate-jet.mp4",
@@ -499,7 +465,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Ameerh",
     year: "2024",
     categories: ["Short-form", "Luxury"],
-    tags: ["Automotive", "Supercar"],
     metrics: [{ label: "Views", value: "4.3M+" }],
     summary: "Exclusive Pagani content for the ultimate car enthusiast.",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/pagani-video-captioned.mp4",
@@ -510,7 +475,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Steve Varsano",
     year: "2024",
     categories: ["Short-form", "Luxury"],
-    tags: ["Aviation", "Education"],
     metrics: [{ label: "Views", value: "9.7M+" }],
     summary: "Steve explains the different categories of private jets.",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/breakdown-jet-sizes.mp4",
@@ -521,7 +485,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Ameerh",
     year: "2024",
     categories: ["Short-form", "Luxury"],
-    tags: ["Automotive", "Luxury"],
     metrics: [{ label: "Views", value: "3.2M+" }],
     summary: "Full review of the classic Aston Martin DB9.",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/aston-martin-db9-v4-captioned.mp4",
@@ -532,7 +495,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Steve Varsano",
     year: "2024",
     categories: ["Short-form", "Personal Brand"],
-    tags: ["Motivation", "Business"],
     metrics: [{ label: "Views", value: "4.9M+" }],
     summary: "Steve on the importance of persistence in business.",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/never-giving-up.mp4",
@@ -543,7 +505,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Ameerh",
     year: "2024",
     categories: ["Short-form", "Luxury"],
-    tags: ["Automotive", "Supercar"],
     metrics: [{ label: "Views", value: "6.5M+" }],
     summary: "The experience of buying a Bugatti.",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/buying-a-buggatti-vf-captioned.mp4",
@@ -554,7 +515,6 @@ export const portfolioItems: PortfolioItem[] = [
     client: "Ameerh",
     year: "2024",
     categories: ["Long-form", "Luxury"],
-    tags: ["Automotive", "Supercar"],
     metrics: [{ label: "Views", value: "3.2M+" }],
     summary: "Behind the scenes of building the Naran hypercar.",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/building-the-naran-v4-captioned.mp4",

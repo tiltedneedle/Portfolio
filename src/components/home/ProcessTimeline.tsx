@@ -19,9 +19,8 @@ import {
   Users,
 } from "lucide-react";
 import { servicesList } from "@/lib/services-data";
-import { SECTION_Y, SHIFT } from "@/lib/design-tokens";
+import { EASE_OUT_EXPO, SECTION_Y, SHIFT } from "@/lib/design-tokens";
 
-const EASE = [0.16, 1, 0.3, 1] as const;
 
 const FALLBACK_ICONS = [Search, Lightbulb, PenLine, Camera, Scissors, Send, TrendingUp];
 
@@ -91,7 +90,7 @@ export function ProcessTimeline() {
         <motion.div
           initial={{ opacity: 0, y: reduced ? 0 : 40 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, ease: EASE }}
+          transition={{ duration: 0.8, ease: EASE_OUT_EXPO }}
           className="text-center mb-10"
         >
           <p className="text-[#30d158] text-[17px] font-medium mb-4">Our Process</p>
@@ -126,7 +125,7 @@ export function ProcessTimeline() {
                   <motion.span
                     layoutId="process-tab-pill"
                     className="absolute inset-0 rounded-full bg-white"
-                    transition={{ duration: 0.4, ease: EASE }}
+                    transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
                   />
                 )}
                 <span className="relative z-10">{t.label}</span>
@@ -156,7 +155,7 @@ export function ProcessTimeline() {
             initial={{ opacity: 0, y: reduced ? 0 : 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: reduced ? 0 : -16 }}
-            transition={{ duration: 0.4, ease: EASE }}
+            transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
           >
             <div className={`grid ${gridCols} gap-x-4 gap-y-12 justify-items-center mx-auto`}>
               {track.steps.map((step, i) => {
@@ -168,7 +167,7 @@ export function ProcessTimeline() {
                     key={`${track.id}-${step.step}`}
                     initial={{ opacity: 0, y: reduced ? 0 : 24 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.04 * i, ease: EASE }}
+                    transition={{ duration: 0.5, delay: 0.04 * i, ease: EASE_OUT_EXPO }}
                     onMouseEnter={() => setHoveredStep(step.step)}
                     onMouseLeave={() => setHoveredStep(null)}
                     onClick={() => setOpenStep(isOpen ? null : step.step)}
@@ -239,7 +238,7 @@ export function ProcessTimeline() {
                 opacity: openStepData ? 1 : 0,
                 marginTop: openStepData ? 48 : 0,
               }}
-              transition={{ duration: 0.5, ease: EASE }}
+              transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
               className="overflow-hidden"
             >
               {openStepData && (

@@ -5,14 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ChevronRight, Code2, Play, Target, Users, Video } from "lucide-react";
-import { SECTION_Y } from "@/lib/design-tokens";
-
-const serviceRoutes: Record<string, string> = {
-  "content-creation": "content-creation",
-  "influencer-marketing": "influencer-marketing",
-  "paid-advertising-performance": "paid-advertising-performance",
-  "app-web-development": "app-web-development",
-};
+import { EASE_OUT_EXPO, SECTION_Y } from "@/lib/design-tokens";
 
 type Service = {
   id: string;
@@ -122,7 +115,6 @@ export function ServicesShowcase() {
   // never plays, so failures are tracked and the affordance is withdrawn too.
   const [failed, setFailed] = useState<Record<string, boolean>>({});
   const videoRef = useRef<HTMLVideoElement>(null);
-  const tabsRef = useRef<HTMLDivElement>(null);
 
   const hasVideo = !!active.videoUrl && !failed[active.videoUrl];
 
@@ -155,7 +147,7 @@ export function ServicesShowcase() {
           initial={{ opacity: 0, y: reduced ? 0 : 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.8, ease: EASE_OUT_EXPO }}
           className="text-center mb-6"
         >
           <p className="text-[#2997ff] text-[17px] font-medium mb-4">Services</p>
@@ -171,11 +163,13 @@ export function ServicesShowcase() {
           transition={{ delay: 0.2, duration: 0.6 }}
           className="mb-16"
         >
-          <div ref={tabsRef} className="flex justify-center gap-2 flex-wrap px-4">
+          <div className="flex justify-center gap-2 flex-wrap px-4">
             {services.map((service) => (
               <motion.button
                 key={service.id}
                 onClick={() => setActive(service)}
+                aria-pressed={active.id === service.id}
+                aria-controls="service-detail-panel"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className={`
@@ -199,10 +193,12 @@ export function ServicesShowcase() {
         <AnimatePresence mode="wait">
           <motion.div
             key={active.id}
+            id="service-detail-panel"
+            aria-live="polite"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
             className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center"
           >
             <div
@@ -312,7 +308,7 @@ export function ServicesShowcase() {
                 ))}
               </motion.div>
 
-              <Link href={`/services/${serviceRoutes[active.id] || active.id}`}>
+              <Link href={`/services/${active.id}`}>
                 <motion.span
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}

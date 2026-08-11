@@ -7,7 +7,7 @@ import { ArrowUpRight, CheckCircle2, Send } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { submitForm } from "@/lib/submit-form";
-import { SECTION_Y, SHIFT } from "@/lib/design-tokens";
+import { EASE_OUT_EXPO, SECTION_Y, SHIFT } from "@/lib/design-tokens";
 
 export function ContactForm() {
   const [submitting, setSubmitting] = useState(false);
@@ -65,7 +65,7 @@ export function ContactForm() {
           initial={{ opacity: 0, y: reduced ? 0 : 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: reduced ? 0.01 : 0.8, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: reduced ? 0.01 : 0.8, ease: EASE_OUT_EXPO }}
           className="mb-20 text-center"
         >
           <p className="text-[#ff375f] text-[17px] font-medium mb-4">Contact</p>
@@ -88,7 +88,7 @@ export function ContactForm() {
             initial={{ opacity: 0, x: reduced ? 0 : -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: reduced ? 0.01 : 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: reduced ? 0.01 : 0.8, delay: 0.1, ease: EASE_OUT_EXPO }}
             className="space-y-10"
           >
             <motion.div
@@ -163,17 +163,18 @@ export function ContactForm() {
             transition={{
               duration: reduced ? 0.01 : 0.8,
               delay: reduced ? 0 : 0.2,
-              ease: [0.16, 1, 0.3, 1],
+              ease: EASE_OUT_EXPO,
             }}
           >
             <AnimatePresence mode="wait">
               {sent ? (
                 <motion.div
                   key="success"
+                  role="status"
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
                   className="h-full flex items-center justify-center"
                 >
                   <div className="text-center">
@@ -308,16 +309,21 @@ export function ContactForm() {
                     <motion.button
                       type="submit"
                       disabled={submitting}
+                      aria-busy={submitting}
                       whileHover={{ scale: 1.01 }}
                       whileTap={{ scale: 0.99 }}
                       className="w-full py-4 bg-[#f5f5f7] text-[#1c1c1e] rounded-2xl text-[17px] font-medium transition-all duration-500 hover:bg-white hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                       {submitting ? (
-                        <motion.div
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                          className="w-5 h-5 border-2 border-[#1c1c1e] border-t-transparent rounded-full"
-                        />
+                        <>
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                            className="w-5 h-5 border-2 border-[#1c1c1e] border-t-transparent rounded-full"
+                          />
+                          {/* Keeps the button named while it is disabled. */}
+                          <span className="sr-only">Sending your message…</span>
+                        </>
                       ) : (
                         <>
                           Send Message

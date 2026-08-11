@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, CheckCircle2, Clock, Shield, Star, Video } from "lucide-react";
-import { REVEAL } from "@/lib/design-tokens";
+import { EASE_OUT_EXPO, REVEAL } from "@/lib/design-tokens";
 
 const stats = [
   { value: "2B+", label: "Organic Views" },
@@ -23,6 +23,7 @@ const expectations = [
 export function BookDemoPage() {
   const reduced = useReducedMotion();
   const [schedulerLoaded, setSchedulerLoaded] = useState(false);
+  const [schedulerStalled, setSchedulerStalled] = useState(false);
 
   // Calendly posts a message once its widget paints — use it to drop the spinner.
   useEffect(() => {
@@ -37,6 +38,15 @@ export function BookDemoPage() {
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
   }, []);
+
+  // Calendly can fail silently — blocked by an extension, filtered by a
+  // corporate proxy, or simply down. Give the spinner a deadline so the page
+  // always offers a way to book.
+  useEffect(() => {
+    if (schedulerLoaded) return;
+    const timer = setTimeout(() => setSchedulerStalled(true), 8000);
+    return () => clearTimeout(timer);
+  }, [schedulerLoaded]);
 
   // `reduced` must only remove the movement, never the whole reveal.
   // useReducedMotion() is null during SSR, so the server always rendered the
@@ -59,7 +69,7 @@ export function BookDemoPage() {
         <div className="mx-auto max-w-[1200px] px-6 relative">
           <motion.div
             {...reveal}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.8, ease: EASE_OUT_EXPO }}
             className="text-center max-w-3xl mx-auto"
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1c1c1e] border border-white/[0.06] text-[13px] text-[#86868b] mb-8">
@@ -110,11 +120,43 @@ export function BookDemoPage() {
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-10 lg:gap-16 items-start">
             <div className="relative order-2 lg:order-1" style={{ minHeight: "700px" }}>
               {!schedulerLoaded && (
-                <div className="absolute inset-0 flex items-center justify-center bg-[#1c1c1e] rounded-2xl z-10">
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="w-8 h-8 border-2 border-[#2997ff] border-t-transparent rounded-full animate-spin" />
-                    <p className="text-[13px] text-[#86868b]">Loading scheduler…</p>
-                  </div>
+                <div className="absolute inset-0 flex items-center justify-center bg-[#1c1c1e] rounded-2xl z-10 p-6">
+                  {schedulerStalled ? (
+                    // A privacy blocker, a corporate proxy or a Calendly outage
+                    // all leave widget.js silent. Without this the spinner span
+                    // forever on the primary conversion page, with no way to book.
+                    <div className="flex flex-col items-center gap-4 text-center" role="status">
+                      <p className="text-[17px] text-[#f5f5f7] font-medium">
+                        The scheduler didn&apos;t load
+                      </p>
+                      <p className="text-[15px] text-[#86868b] max-w-xs leading-relaxed">
+                        An ad blocker or network policy may be blocking it. You can still book
+                        directly, or just email us.
+                      </p>
+                      <div className="flex flex-wrap justify-center gap-3 mt-1">
+                        <a
+                          href="https://calendly.com/editor-novasma/30min"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#f5f5f7] text-[#1c1c1e] text-[15px] font-medium transition-colors duration-300 hover:bg-white"
+                        >
+                          Open the scheduler
+                          <ArrowRight className="w-4 h-4" />
+                        </a>
+                        <a
+                          href="mailto:info@tiltedneedle.com?subject=Booking%20a%20demo"
+                          className="inline-flex items-center px-5 py-2.5 rounded-full border border-white/20 text-[#f5f5f7] text-[15px] font-medium transition-colors duration-300 hover:border-white/40"
+                        >
+                          Email us
+                        </a>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="w-8 h-8 border-2 border-[#2997ff] border-t-transparent rounded-full animate-spin" />
+                      <p className="text-[13px] text-[#86868b]">Loading scheduler…</p>
+                    </div>
+                  )}
                 </div>
               )}
               <div

@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
 // Frozen at build time; the Footer effect corrects it if the visitor's year differs.
 const BUILD_YEAR = new Date().getFullYear();
@@ -128,7 +129,7 @@ export function Footer() {
                       className="absolute -bottom-0.5 left-0 right-0 h-px bg-[#f5f5f7]"
                       initial={{ scaleX: 0 }}
                       animate={{ scaleX: hoveredLink === link.label ? 1 : 0 }}
-                      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                      transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
                     />
                   </motion.span>
                 );
@@ -166,7 +167,7 @@ export function Footer() {
           initial={{ scaleX: 0 }}
           whileInView={{ scaleX: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.8, delay: 0.4, ease: EASE_OUT_EXPO }}
           className="h-px bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.08)] to-transparent mb-10"
           style={{ transformOrigin: "center" }}
         />

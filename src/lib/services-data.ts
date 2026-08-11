@@ -4,6 +4,11 @@ export type ServiceBenefit = { title: string; description: string };
 
 export type ServiceFaq = { question: string; answer: string };
 
+/** The lucide glyphs the service pages actually render. Narrowed from `string`
+ *  so a stale or misspelled name is a compile error rather than a silently
+ *  blank icon — `Record<string, ReactNode>` happily returns undefined. */
+export type ServiceIconName = "Video" | "Users" | "Target" | "Code2";
+
 export type Service = {
   id: string;
   slug: string;
@@ -22,7 +27,7 @@ export type Service = {
   };
   stats: { value: string; label: string }[];
   faq: ServiceFaq[];
-  iconName: string;
+  iconName: ServiceIconName;
   gradient: string;
   imageUrl: string;
 };

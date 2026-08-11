@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
+import { EASE_OUT_EXPO, SECTION_Y_TIGHT } from "@/lib/design-tokens";
 
 // Intrinsic dimensions are declared so the row reserves correct space before
 // the images decode — without them the marquee reflows as each logo lands.
@@ -46,12 +47,12 @@ export function BrandsMarquee() {
     : { animate: { x: ["0%", "-100%"] }, transition: { duration: 30, ease: "linear" as const, repeat: Infinity } };
 
   return (
-    <section className="relative bg-black py-12 md:py-16 overflow-hidden border-t border-white/[0.04]">
+    <section className={`relative bg-black ${SECTION_Y_TIGHT} overflow-hidden border-t border-white/[0.04]`}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
         className="text-center mb-8"
       >
         <p className="text-[11px] text-[#86868b] uppercase tracking-[0.2em] font-medium">

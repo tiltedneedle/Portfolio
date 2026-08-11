@@ -1,49 +1,40 @@
 "use client";
 
-import { useRef, useState, type ReactNode } from "react";
+import {
+  useRef,
+  useState,
+  type ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion,
+  useReducedMotion,
+  useScroll,
+  useTransform } from "framer-motion";
 import {
   ArrowRight,
-  BarChart3,
   Check,
   ChevronDown,
   ChevronRight,
   Code2,
-  Database,
-  Mail,
-  ShoppingBag,
   Target,
   Users,
   Video,
-  Zap,
 } from "lucide-react";
-import { servicesList, type Service } from "@/lib/services-data";
+import { servicesList, type Service, type ServiceIconName } from "@/lib/services-data";
+import { EASE_OUT_EXPO, SECTION_Y_INNER } from "@/lib/design-tokens";
 
-const EASE = [0.16, 1, 0.3, 1] as const;
 
-const ICONS_LG: Record<string, ReactNode> = {
-  Zap: <Zap className="w-6 h-6" />,
+const ICONS_LG: Record<ServiceIconName, ReactNode> = {
   Video: <Video className="w-6 h-6" />,
   Target: <Target className="w-6 h-6" />,
-  BarChart3: <BarChart3 className="w-6 h-6" />,
   Users: <Users className="w-6 h-6" />,
-  Mail: <Mail className="w-6 h-6" />,
-  Database: <Database className="w-6 h-6" />,
-  ShoppingBag: <ShoppingBag className="w-6 h-6" />,
   Code2: <Code2 className="w-6 h-6" />,
 };
 
-const ICONS_SM: Record<string, ReactNode> = {
-  Zap: <Zap className="w-5 h-5" />,
+const ICONS_SM: Record<ServiceIconName, ReactNode> = {
   Video: <Video className="w-5 h-5" />,
   Target: <Target className="w-5 h-5" />,
-  BarChart3: <BarChart3 className="w-5 h-5" />,
   Users: <Users className="w-5 h-5" />,
-  Mail: <Mail className="w-5 h-5" />,
-  Database: <Database className="w-5 h-5" />,
-  ShoppingBag: <ShoppingBag className="w-5 h-5" />,
   Code2: <Code2 className="w-5 h-5" />,
 };
 
@@ -146,7 +137,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
               <motion.div
                 initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                transition={{ delay: 0.1, duration: 1, ease: EASE }}
+                transition={{ delay: 0.1, duration: 1, ease: EASE_OUT_EXPO }}
               >
                 <motion.div
                   className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${service.gradient} flex items-center justify-center mb-8 text-white shadow-lg`}
@@ -196,7 +187,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
             <motion.div
               initial={{ opacity: 0, x: 40, scale: 0.95 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
-              transition={{ delay: 0.3, duration: 0.8, ease: EASE }}
+              transition={{ delay: 0.3, duration: 0.8, ease: EASE_OUT_EXPO }}
               className="relative"
             >
               <div className="relative aspect-[4/3] rounded-3xl overflow-hidden">
@@ -246,7 +237,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
         </div>
       </section>
 
-      <section className="relative py-28 md:py-40 bg-black overflow-hidden">
+      <section className={`relative ${SECTION_Y_INNER} bg-black overflow-hidden`}>
         <div className="absolute top-1/2 right-[-10%] -translate-y-1/2 w-[500px] h-[400px] rounded-3xl overflow-hidden opacity-[0.04] rotate-[3deg] pointer-events-none hidden lg:block">
           <Image
             src={service.imageUrl}
@@ -262,7 +253,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: EASE }}
+            transition={{ duration: 0.8, ease: EASE_OUT_EXPO }}
           >
             <p
               className={`text-[17px] font-medium bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent mb-4`}
@@ -279,7 +270,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
         </div>
       </section>
 
-      <section className="relative py-28 md:py-40 bg-[#0a0a0a] overflow-hidden">
+      <section className={`relative ${SECTION_Y_INNER} bg-[#0a0a0a] overflow-hidden`}>
         <div className="absolute inset-0 bg-gradient-to-b from-black via-[#0a0a0a] to-black" />
         <div
           className="absolute inset-0 pointer-events-none"
@@ -339,7 +330,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
         </div>
       </section>
 
-      <section className="relative py-28 md:py-40 bg-black">
+      <section className={`relative ${SECTION_Y_INNER} bg-black`}>
         <div className="mx-auto max-w-[1200px] px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -365,7 +356,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.1 * i, duration: 0.6, ease: EASE }}
+                transition={{ delay: 0.1 * i, duration: 0.6, ease: EASE_OUT_EXPO }}
                 className="group p-8 rounded-3xl bg-gradient-to-b from-[#1c1c1e] to-[#161616] hover:from-[#222222] hover:to-[#1a1a1a] transition-colors duration-500 elevate-static"
               >
                 <div className="flex items-start gap-5">
@@ -391,13 +382,13 @@ export function ServiceDetailPage({ service }: { service: Service }) {
         </div>
       </section>
 
-      <section className="relative py-28 md:py-40 bg-[#0a0a0a] overflow-hidden">
+      <section className={`relative ${SECTION_Y_INNER} bg-[#0a0a0a] overflow-hidden`}>
         <div className="absolute inset-0 bg-gradient-to-b from-black via-[#0a0a0a] to-black" />
         <motion.div
           initial={{ scaleY: 0 }}
           whileInView={{ scaleY: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 1.5, ease: EASE }}
+          transition={{ duration: 1.5, ease: EASE_OUT_EXPO }}
           className={`absolute left-[calc(50%-240px)] md:left-[calc(50%-280px)] top-[200px] bottom-[120px] w-px bg-gradient-to-b ${service.gradient} opacity-[0.08] origin-top hidden lg:block pointer-events-none`}
         />
 
@@ -426,7 +417,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                 initial={{ opacity: 0, x: reduced ? 0 : -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.1 * i, duration: 0.6, ease: EASE }}
+                transition={{ delay: 0.1 * i, duration: 0.6, ease: EASE_OUT_EXPO }}
                 className="group flex items-start gap-6 p-6 md:p-8 rounded-2xl bg-[#1c1c1e]/40 border border-white/[0.04] hover:bg-[#1c1c1e] hover:border-white/[0.08] transition-all duration-500"
               >
                 <div
@@ -451,7 +442,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
       </section>
 
       {service.secondaryProcess && (
-        <section className="relative py-28 md:py-40 bg-black overflow-hidden">
+        <section className={`relative ${SECTION_Y_INNER} bg-black overflow-hidden`}>
           <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-black to-[#0a0a0a]" />
           <div className="mx-auto max-w-[1000px] px-6 relative">
             <motion.div
@@ -481,7 +472,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                   initial={{ opacity: 0, y: reduced ? 0 : 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: (i % 2) * 0.06, duration: 0.5, ease: EASE }}
+                  transition={{ delay: (i % 2) * 0.06, duration: 0.5, ease: EASE_OUT_EXPO }}
                   className="group flex items-start gap-5 p-6 rounded-2xl bg-[#1c1c1e]/40 border border-white/[0.04] hover:bg-[#1c1c1e] hover:border-white/[0.08] transition-all duration-500"
                 >
                   <div
@@ -506,7 +497,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
         </section>
       )}
 
-      <section className="relative py-28 md:py-40 bg-black">
+      <section className={`relative ${SECTION_Y_INNER} bg-black`}>
         <div className="mx-auto max-w-[800px] px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -567,7 +558,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                       height: openFaq === i ? "auto" : 0,
                       opacity: openFaq === i ? 1 : 0,
                     }}
-                    transition={{ duration: 0.3, ease: EASE }}
+                    transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
                     className="overflow-hidden"
                   >
                     <p className="text-[15px] text-[#86868b] leading-relaxed px-6 pb-6">
@@ -581,7 +572,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
         </div>
       </section>
 
-      <section className="relative py-28 md:py-40 bg-[#0a0a0a] overflow-hidden">
+      <section className={`relative ${SECTION_Y_INNER} bg-[#0a0a0a] overflow-hidden`}>
         <div className="absolute inset-0 bg-gradient-to-b from-black via-[#0a0a0a] to-[#0d0d0d]" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[300px] rounded-tl-3xl overflow-hidden opacity-[0.025] pointer-events-none hidden lg:block">
           <Image
@@ -641,7 +632,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
         </div>
       </section>
 
-      <section className="relative py-28 md:py-40 bg-black overflow-hidden">
+      <section className={`relative ${SECTION_Y_INNER} bg-black overflow-hidden`}>
         <div className="absolute inset-0">
           <video
             autoPlay
@@ -669,7 +660,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: EASE }}
+            transition={{ duration: 0.8, ease: EASE_OUT_EXPO }}
           >
             <p
               className={`text-[17px] font-medium bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent mb-4`}

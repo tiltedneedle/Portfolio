@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
@@ -12,6 +12,58 @@ const stats = [
 ];
 
 const SHOWREEL = "https://cdn.pixabay.com/video/2019/02/19/21536-318978190_small.mp4";
+
+// Live studio clocks. Rendered empty on the server and on the client's first
+// paint so hydration matches, then filled by effect and kept fresh.
+function StudioClocks() {
+  const [now, setNow] = useState<{ ldn: string; dxb: string } | null>(null);
+
+  useEffect(() => {
+    const fmt = (tz: string) =>
+      new Intl.DateTimeFormat("en-GB", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+        timeZone: tz,
+      }).format(new Date());
+    const tick = () => setNow({ ldn: fmt("Europe/London"), dxb: fmt("Asia/Dubai") });
+    tick();
+    const t = setInterval(tick, 30_000);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <span className="eyebrow tabular-nums" aria-label="Studio local times">
+      {now ? "ldn " + now.ldn + " — dxb " + now.dxb : " "}
+    </span>
+  );
+}
+
+// One line of the statement, revealed from behind a mask. The mask carries a
+// hair of bottom padding (pulled back with a negative margin) so descenders
+// aren't clipped by the overflow once the line settles.
+function MaskedLine({
+  children,
+  delay,
+  reduced,
+}: {
+  children: React.ReactNode;
+  delay: number;
+  reduced: boolean;
+}) {
+  return (
+    <span className="block overflow-hidden pb-[0.12em] -mb-[0.12em]">
+      <motion.span
+        className="block"
+        initial={{ y: reduced ? 0 : "110%" }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.9, delay, ease: EASE_OUT_EXPO }}
+      >
+        {children}
+      </motion.span>
+    </span>
+  );
+}
 
 export function Statement() {
   const reduced = useReducedMotion();
@@ -35,19 +87,26 @@ export function Statement() {
   return (
     <section className="relative bg-[var(--paper)] pt-32 md:pt-40 pb-16 md:pb-24">
       <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
-        <motion.p {...rise(0)} className="eyebrow mb-8">
-          Social-first content studio &mdash; London &middot; Dubai &middot; Global
-        </motion.p>
+        <motion.div {...rise(0)} className="mb-8 flex items-baseline justify-between gap-6">
+          <p className="eyebrow">
+            Social-first content studio &mdash; London &middot; Dubai &middot; Global
+          </p>
+          <span className="hidden sm:block">
+            <StudioClocks />
+          </span>
+        </motion.div>
 
-        <motion.h1
-          {...rise(0.08)}
-          className="font-thin text-[color:var(--ink)] leading-[1.14] text-[13vw] sm:text-[64px] md:text-[84px] lg:text-[104px] max-w-[16ch]"
-        >
-          Built to make brands go <span className="em-serif">viral</span>.
-        </motion.h1>
+        <h1 className="font-thin text-[color:var(--ink)] leading-[1.14] text-[13vw] sm:text-[64px] md:text-[84px] lg:text-[104px]">
+          <MaskedLine delay={0.05} reduced={!!reduced}>
+            Built to make brands
+          </MaskedLine>
+          <MaskedLine delay={0.16} reduced={!!reduced}>
+            go <span className="em-serif">viral</span>.
+          </MaskedLine>
+        </h1>
 
         <motion.div
-          {...rise(0.16)}
+          {...rise(0.3)}
           className="mt-10 md:mt-14 flex flex-wrap items-end justify-between gap-8"
         >
           <p className="text-[17px] md:text-[21px] text-[color:var(--ink-mid)] max-w-[44ch] leading-relaxed">
@@ -68,7 +127,7 @@ export function Statement() {
         </motion.div>
       </div>
 
-      <motion.div {...rise(0.24)} className="mx-auto max-w-[1600px] px-6 md:px-[60px] mt-14 md:mt-20">
+      <motion.div {...rise(0.42)} className="mx-auto max-w-[1600px] px-6 md:px-[60px] mt-14 md:mt-20">
         <div className="plate aspect-[21/9] w-full">
           <video
             ref={videoRef}

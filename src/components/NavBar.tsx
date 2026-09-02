@@ -36,6 +36,11 @@ export function NavBar() {
   const pathname = usePathname();
   const reduced = useReducedMotion();
 
+  // The bar sits on two different grounds: a dark hero at the top of "/", and
+  // paper everywhere else — and everywhere once scrolled. One fixed colour
+  // cannot serve both, so the ink treatment keys off this.
+  const onPaper = scrolled || pathname !== "/";
+
   useEffect(() => {
     let ticking = false;
     const sections = ["services", "process", "results", "portfolio", "contact"];
@@ -82,7 +87,7 @@ export function NavBar() {
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-700",
           scrolled
-            ? "bg-[rgba(22,22,23,0.8)] backdrop-blur-2xl border-b border-[rgba(255,255,255,0.08)] shadow-[0_1px_40px_rgba(0,0,0,0.3)]"
+            ? "bg-[rgba(244,244,244,0.82)] backdrop-blur-2xl border-b border-black/[0.08]"
             : "bg-transparent"
         )}
       >
@@ -147,7 +152,13 @@ export function NavBar() {
                         <motion.span
                           className={cn(
                             "relative flex text-[12px] transition-all duration-300 py-1 items-center gap-1 cursor-pointer",
-                            isActive ? "text-[#f5f5f7]" : "text-[#86868b] hover:text-[#f5f5f7]"
+                            onPaper
+                              ? isActive
+                                ? "text-[color:var(--ink)]"
+                                : "text-[color:var(--ink-mid)] hover:text-[color:var(--ink)]"
+                              : isActive
+                                ? "text-white"
+                                : "text-white/70 hover:text-white"
                           )}
                         >
                           {link.label}
@@ -158,7 +169,10 @@ export function NavBar() {
                             )}
                           />
                           <motion.span
-                            className="absolute -bottom-0.5 left-0 right-0 h-px bg-[#f5f5f7]"
+                            className={cn(
+                          "absolute -bottom-0.5 left-0 right-0 h-px",
+                          onPaper ? "bg-[color:var(--ink)]" : "bg-white"
+                        )}
                             initial={{ scaleX: 0 }}
                             animate={{ scaleX: hovered === link.href || isActive ? 1 : 0 }}
                             transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
@@ -173,14 +187,14 @@ export function NavBar() {
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: SHIFT.sm, scale: 0.96 }}
                             transition={{ duration: 0.25, ease: EASE_OUT_EXPO }}
-                            className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[280px] rounded-2xl bg-[rgba(28,28,30,0.95)] backdrop-blur-2xl border border-white/[0.08] shadow-[0_8px_40px_rgba(0,0,0,0.5)] overflow-hidden"
+                            className="absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[280px] rounded-[2px] bg-[rgba(28,28,30,0.95)] backdrop-blur-2xl border border-white/[0.08] shadow-[0_8px_40px_rgba(0,0,0,0.5)] overflow-hidden"
                           >
                             <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 bg-[rgba(28,28,30,0.95)] border-t border-l border-white/[0.08]" />
                             <div className="p-2 relative">
                               <Link href="/services" onClick={() => setDropdownOpen(false)}>
                                 <motion.div
                                   whileHover={{ backgroundColor: "rgba(255,255,255,0.06)" }}
-                                  className="px-4 py-2.5 rounded-xl transition-colors duration-200"
+                                  className="px-4 py-2.5 rounded-[2px] transition-colors duration-200"
                                 >
                                   <span className="text-[13px] font-medium text-[#f5f5f7]">
                                     All Services
@@ -200,7 +214,7 @@ export function NavBar() {
                                   <motion.div
                                     whileHover={{ backgroundColor: "rgba(255,255,255,0.06)" }}
                                     className={cn(
-                                      "px-4 py-2 rounded-xl transition-colors duration-200",
+                                      "px-4 py-2 rounded-[2px] transition-colors duration-200",
                                       pathname === service.href ? "bg-white/[0.04]" : ""
                                     )}
                                   >
@@ -234,12 +248,21 @@ export function NavBar() {
                       onMouseLeave={() => setHovered(null)}
                       className={cn(
                         "relative text-[12px] transition-all duration-300 py-1",
-                        isActive ? "text-[#f5f5f7]" : "text-[#86868b] hover:text-[#f5f5f7]"
+                        onPaper
+                              ? isActive
+                                ? "text-[color:var(--ink)]"
+                                : "text-[color:var(--ink-mid)] hover:text-[color:var(--ink)]"
+                              : isActive
+                                ? "text-white"
+                                : "text-white/70 hover:text-white"
                       )}
                     >
                       {link.label}
                       <motion.span
-                        className="absolute -bottom-0.5 left-0 right-0 h-px bg-[#f5f5f7]"
+                        className={cn(
+                          "absolute -bottom-0.5 left-0 right-0 h-px",
+                          onPaper ? "bg-[color:var(--ink)]" : "bg-white"
+                        )}
                         initial={{ scaleX: 0 }}
                         animate={{ scaleX: hovered === link.href || isActive ? 1 : 0 }}
                         transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
@@ -258,12 +281,21 @@ export function NavBar() {
                         // doesn't expand the box, which left route links (Careers)
                         // 2px shorter and a pixel lower than the hash links.
                         "relative block text-[12px] transition-all duration-300 py-1",
-                        isActive ? "text-[#f5f5f7]" : "text-[#86868b] hover:text-[#f5f5f7]"
+                        onPaper
+                              ? isActive
+                                ? "text-[color:var(--ink)]"
+                                : "text-[color:var(--ink-mid)] hover:text-[color:var(--ink)]"
+                              : isActive
+                                ? "text-white"
+                                : "text-white/70 hover:text-white"
                       )}
                     >
                       {link.label}
                       <motion.span
-                        className="absolute -bottom-0.5 left-0 right-0 h-px bg-[#f5f5f7]"
+                        className={cn(
+                          "absolute -bottom-0.5 left-0 right-0 h-px",
+                          onPaper ? "bg-[color:var(--ink)]" : "bg-white"
+                        )}
                         initial={{ scaleX: 0 }}
                         animate={{ scaleX: hovered === link.href || isActive ? 1 : 0 }}
                         transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
@@ -275,7 +307,14 @@ export function NavBar() {
             </div>
 
             <Link href="/book-demo" className="hidden md:flex">
-              <motion.span className="flex items-center gap-1 text-[12px] text-[#86868b] hover:text-[#f5f5f7] transition-colors duration-300 group">
+              <motion.span
+                className={cn(
+                  "flex items-center gap-1 text-[12px] transition-colors duration-300 group",
+                  onPaper
+                    ? "text-[color:var(--ink-mid)] hover:text-[color:var(--ink)]"
+                    : "text-white/70 hover:text-white"
+                )}
+              >
                 Book a Demo
                 <motion.span
                   className="inline-block"
@@ -353,7 +392,7 @@ export function NavBar() {
                       >
                         <button
                           onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
-                          className="text-3xl font-semibold text-[#f5f5f7] hover:text-white transition-all duration-300 inline-flex items-center gap-2"
+                          className="text-3xl font-extralight text-[#f5f5f7] hover:text-white transition-all duration-300 inline-flex items-center gap-2"
                         >
                           {link.label}
                           <ChevronDown
@@ -406,7 +445,7 @@ export function NavBar() {
                       duration: 0.5,
                       ease: EASE_OUT_EXPO,
                     }}
-                    className="text-3xl font-semibold text-[#f5f5f7] hover:text-white transition-all duration-300 hover:scale-105 block"
+                    className="text-3xl font-extralight text-[#f5f5f7] hover:text-white transition-all duration-300 hover:scale-105 block"
                     onClick={() => setMobileOpen(false)}
                   >
                     {link.label}

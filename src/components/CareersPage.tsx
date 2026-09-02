@@ -112,9 +112,9 @@ function RoleCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: 0.08 * index, duration: 0.6, ease: EASE_OUT_EXPO }}
-      className="group relative rounded-[28px] bg-gradient-to-b from-[#1c1c1e] to-[#161616] overflow-hidden elevate-static"
+      className="group relative rounded-[2px] bg-gradient-to-b from-white to-[#fafafa] overflow-hidden plate"
     >
-      <div className="absolute inset-0 rounded-[28px] bg-gradient-to-br from-[#2997ff] to-[#5e5ce6] opacity-0 group-hover:opacity-[0.04] transition-opacity duration-500 pointer-events-none" />
+      <div className="absolute inset-0 rounded-[2px] bg-gradient-to-br from-[#2997ff] to-[#5e5ce6] opacity-0 group-hover:opacity-[0.04] transition-opacity duration-500 pointer-events-none" />
 
       <button
         type="button"
@@ -125,19 +125,19 @@ function RoleCard({
         className="relative w-full text-left p-8 md:p-10 flex items-start justify-between gap-6"
       >
         <div className="flex-1">
-          <h3 className="text-[22px] md:text-[26px] font-semibold text-[#f5f5f7] tracking-[-0.02em] group-hover:text-white transition-colors duration-300">
+          <h3 className="text-[22px] md:text-[26px] font-light text-[color:var(--ink)] group-hover:text-[color:var(--ink)] transition-colors duration-300">
             {role.title}
           </h3>
           <div className="mt-4 flex flex-wrap items-center gap-2.5">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] text-[12px] text-[#a1a1a6] font-medium">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/[0.03] text-[12px] text-[color:var(--ink-mid)] font-medium">
               <MapPin className="w-3.5 h-3.5 text-[#2997ff]" />
               {role.location}
             </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] text-[12px] text-[#a1a1a6] font-medium">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/[0.03] text-[12px] text-[color:var(--ink-mid)] font-medium">
               <Briefcase className="w-3.5 h-3.5 text-[#2997ff]" />
               {role.type}
             </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/[0.04] text-[12px] text-[#a1a1a6] font-medium">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/[0.03] text-[12px] text-[color:var(--ink-mid)] font-medium">
               <Clock className="w-3.5 h-3.5 text-[#2997ff]" />
               On-site
             </span>
@@ -148,7 +148,7 @@ function RoleCard({
           aria-hidden="true"
           animate={{ rotate: open ? 45 : 0 }}
           transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
-          className="shrink-0 mt-1 w-10 h-10 rounded-full bg-white/[0.05] flex items-center justify-center text-[#f5f5f7] group-hover:bg-white/[0.09] transition-colors duration-300"
+          className="shrink-0 mt-1 w-10 h-10 rounded-full bg-black/[0.03] flex items-center justify-center text-[color:var(--ink)] group-hover:bg-black/[0.03] transition-colors duration-300"
         >
           <Plus className="w-5 h-5" />
         </motion.span>
@@ -169,12 +169,12 @@ function RoleCard({
           >
             <div className="px-8 md:px-10 pb-8 md:pb-10">
               <div className="h-px w-full bg-gradient-to-r from-transparent via-white/[0.08] to-transparent mb-7" />
-              <p className="text-[17px] md:text-[17px] text-[#a1a1a6] leading-relaxed max-w-2xl">
+              <p className="text-[17px] md:text-[17px] text-[color:var(--ink-mid)] leading-relaxed max-w-2xl">
                 {role.description}
               </p>
 
               <div className="mt-8">
-                <h4 className="text-[12px] text-[#86868b] uppercase tracking-[0.08em] font-medium mb-4">
+                <h4 className="text-[12px] text-[color:var(--ink-mid)] uppercase tracking-[0.08em] font-medium mb-4">
                   Key Requirements
                 </h4>
                 <ul className="space-y-3">
@@ -183,7 +183,7 @@ function RoleCard({
                       <span className="shrink-0 w-6 h-6 rounded-full bg-[#2997ff]/10 flex items-center justify-center">
                         <Check className="w-3.5 h-3.5 text-[#2997ff]" />
                       </span>
-                      <span className="text-[15px] md:text-[17px] text-[#f5f5f7]">
+                      <span className="text-[15px] md:text-[17px] text-[color:var(--ink)]">
                         {requirement}
                       </span>
                     </li>
@@ -261,22 +261,22 @@ function ApplicationForm({
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
-          className="rounded-[28px] bg-gradient-to-b from-[#1c1c1e] to-[#161616] p-10 md:p-14 text-center"
-          style={{ boxShadow: "var(--elev-1)" }}
+          className="rounded-[2px] bg-gradient-to-b from-white to-[#fafafa] p-10 md:p-14 text-center"
+          style={{ boxShadow: "var(--lift)" }}
         >
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.15, duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
-            className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-b from-[#2c2c2e] to-[#1c1c1e] flex items-center justify-center"
+            className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-b from-white to-[#f0f0f0] flex items-center justify-center"
             style={{ boxShadow: "var(--glow-medium)" }}
           >
             <CheckCircle2 className="w-7 h-7 text-[#30d158]" />
           </motion.div>
-          <h3 className="text-2xl font-semibold text-[#f5f5f7] mb-2">
+          <h3 className="text-2xl font-light text-[color:var(--ink)] mb-2">
             {handedOff ? "Almost there" : "Application received"}
           </h3>
-          <p className="text-[17px] text-[#86868b] max-w-md mx-auto">
+          <p className="text-[17px] text-[color:var(--ink-mid)] max-w-md mx-auto">
             {handedOff
               ? "We've opened your email app with your application ready. Send it and we'll read every word."
               : "Thanks for applying to Tilted Needle. We read every application and will be in touch if there's a fit."}
@@ -290,14 +290,14 @@ function ApplicationForm({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
-          className="rounded-[28px] bg-gradient-to-b from-[#1c1c1e] to-[#161616] p-8 md:p-10 space-y-6"
-          style={{ boxShadow: "var(--elev-1)" }}
+          className="rounded-[2px] bg-gradient-to-b from-white to-[#fafafa] p-8 md:p-10 space-y-6"
+          style={{ boxShadow: "var(--lift)" }}
         >
           <div className="grid sm:grid-cols-2 gap-6">
             <div>
               <label
                 htmlFor="app-name"
-                className="block text-[12px] uppercase tracking-[0.08em] mb-3 text-[#86868b]"
+                className="block text-[12px] uppercase tracking-[0.08em] mb-3 text-[color:var(--ink-mid)]"
               >
                 Full name
               </label>
@@ -313,7 +313,7 @@ function ApplicationForm({
             <div>
               <label
                 htmlFor="app-email"
-                className="block text-[12px] uppercase tracking-[0.08em] mb-3 text-[#86868b]"
+                className="block text-[12px] uppercase tracking-[0.08em] mb-3 text-[color:var(--ink-mid)]"
               >
                 Email
               </label>
@@ -332,7 +332,7 @@ function ApplicationForm({
             <div>
               <label
                 htmlFor="app-role"
-                className="block text-[12px] uppercase tracking-[0.08em] mb-3 text-[#86868b]"
+                className="block text-[12px] uppercase tracking-[0.08em] mb-3 text-[color:var(--ink-mid)]"
               >
                 Role
               </label>
@@ -341,10 +341,10 @@ function ApplicationForm({
                 name="role"
                 value={role}
                 onChange={(e) => onRoleChange(e.target.value)}
-                className={`h-11 w-full rounded-xl border-0 bg-[#1c1c1e] px-4 text-[15px] text-[#f5f5f7] outline-none ring-1 ring-white/[0.06] focus-visible:ring-2 focus-visible:ring-[rgba(255,255,255,0.15)] ${fieldClass}`}
+                className={`h-11 w-full rounded-[2px] border-0 bg-white px-4 text-[15px] text-[color:var(--ink)] outline-none ring-1 ring-white/[0.06] focus-visible:ring-2 focus-visible:ring-[rgba(255,255,255,0.15)] ${fieldClass}`}
               >
                 {roleOptions.map((option) => (
-                  <option key={option} value={option} className="bg-[#1c1c1e] text-[#f5f5f7]">
+                  <option key={option} value={option} className="bg-white text-[color:var(--ink)]">
                     {option}
                   </option>
                 ))}
@@ -353,7 +353,7 @@ function ApplicationForm({
             <div>
               <label
                 htmlFor="app-exp"
-                className="block text-[12px] uppercase tracking-[0.08em] mb-3 text-[#86868b]"
+                className="block text-[12px] uppercase tracking-[0.08em] mb-3 text-[color:var(--ink-mid)]"
               >
                 Experience
               </label>
@@ -370,7 +370,7 @@ function ApplicationForm({
           <div>
             <label
               htmlFor="app-link"
-              className="block text-[12px] uppercase tracking-[0.08em] mb-3 text-[#86868b]"
+              className="block text-[12px] uppercase tracking-[0.08em] mb-3 text-[color:var(--ink-mid)]"
             >
               Portfolio, showreel or CV link
             </label>
@@ -386,7 +386,7 @@ function ApplicationForm({
           <div>
             <label
               htmlFor="app-message"
-              className="block text-[12px] uppercase tracking-[0.08em] mb-3 text-[#86868b]"
+              className="block text-[12px] uppercase tracking-[0.08em] mb-3 text-[color:var(--ink-mid)]"
             >
               Message
             </label>
@@ -411,7 +411,7 @@ function ApplicationForm({
             aria-busy={submitting}
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
-            className="w-full py-4 bg-[#f5f5f7] text-[#1c1c1e] rounded-2xl text-[17px] font-medium transition-all duration-500 hover:bg-white hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full py-4 bg-[#f5f5f7] text-[#1c1c1e] rounded-[2px] text-[17px] font-medium transition-all duration-500 hover:bg-white hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {submitting ? (
               <>
@@ -430,11 +430,11 @@ function ApplicationForm({
             )}
           </motion.button>
 
-          <p className="text-[12px] text-[#86868b] text-center">
+          <p className="text-[12px] text-[color:var(--ink-mid)] text-center">
             Or email us directly at{" "}
             <a
               href="mailto:info@tiltedneedle.com"
-              className="text-[#a1a1a6] hover:text-[#f5f5f7] underline-offset-2 hover:underline"
+              className="text-[color:var(--ink-mid)] hover:text-[color:var(--ink)] underline-offset-2 hover:underline"
             >
               info@tiltedneedle.com
             </a>
@@ -470,7 +470,7 @@ export function CareersPage() {
     <>
       <section
         ref={heroRef}
-        className="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden bg-black min-h-[85vh] flex items-center"
+        className="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden bg-[var(--paper)] min-h-[85vh] flex items-center"
       >
         <motion.div style={{ scale: reduced ? 1 : videoScale }} className="absolute inset-0">
           <video
@@ -494,7 +494,7 @@ export function CareersPage() {
           className="absolute inset-0 pointer-events-none"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)",
+              "linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)",
             backgroundSize: "80px 80px",
           }}
         />
@@ -524,7 +524,7 @@ export function CareersPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.8 }}
-              className="text-[#2997ff] text-[17px] font-medium mb-4"
+              className="eyebrow-serif block mb-5"
             >
               Careers
             </motion.p>
@@ -533,7 +533,7 @@ export function CareersPage() {
               initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ delay: 0.3, duration: 1, ease: EASE_OUT_EXPO }}
-              className="text-5xl md:text-7xl lg:text-[88px] font-semibold tracking-[-0.03em] leading-[1.05] text-[#f5f5f7] mb-6"
+              className="text-5xl md:text-7xl lg:text-[88px] font-thin leading-[1.05] text-[color:var(--ink)] mb-6"
             >
               Join the team
               <br />
@@ -549,7 +549,7 @@ export function CareersPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.8 }}
-              className="text-xl md:text-[22px] text-[#86868b] max-w-2xl mx-auto leading-relaxed mb-10"
+              className="text-xl md:text-[22px] text-[color:var(--ink-mid)] max-w-2xl mx-auto leading-relaxed mb-10"
             >
               Tilted Needle is a social-media production company based in London and Dubai, working
               with world-class brands and creators. Our team is global, on shoots for clients from
@@ -576,8 +576,8 @@ export function CareersPage() {
         </motion.div>
       </section>
 
-      <section className={`relative ${SECTION_Y_INNER} bg-black overflow-hidden`}>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-black to-[#0d0d0d]" />
+      <section className={`relative ${SECTION_Y_INNER} bg-[var(--paper)] overflow-hidden`}>
+        <div className="absolute inset-0 bg-gradient-to-b from-[var(--paper)] via-[var(--paper)] to-[var(--paper)]" />
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -594,11 +594,11 @@ export function CareersPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-20"
           >
-            <p className="text-[#2997ff] text-[17px] font-medium mb-4">Why Tilted Needle</p>
-            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-semibold text-[#f5f5f7] tracking-[-0.025em]">
+            <p className="eyebrow-serif block mb-5">Why Tilted Needle</p>
+            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-thin text-[color:var(--ink)]">
               A studio built to win.
             </h2>
-            <p className="mt-6 text-xl md:text-[22px] text-[#86868b] max-w-xl mx-auto">
+            <p className="mt-6 text-xl md:text-[22px] text-[color:var(--ink-mid)] max-w-xl mx-auto">
               Small team. Big briefs. The standard never drops.
             </p>
           </motion.div>
@@ -614,22 +614,22 @@ export function CareersPage() {
               >
                 <motion.div
                   whileHover={{ y: -6, transition: { duration: 0.3, ease: EASE_OUT_EXPO } }}
-                  className="group relative p-8 md:p-10 rounded-[28px] bg-gradient-to-b from-[#1c1c1e] to-[#161616] h-full elevate-static-lg sheen"
+                  className="group relative p-8 md:p-10 rounded-[2px] bg-gradient-to-b from-white to-[#fafafa] h-full plate sheen"
                 >
                   <div
-                    className={`absolute inset-0 rounded-[28px] bg-gradient-to-br ${perk.gradient} opacity-0 group-hover:opacity-[0.04] transition-opacity duration-500`}
+                    className={`absolute inset-0 rounded-[2px] bg-gradient-to-br ${perk.gradient} opacity-0 group-hover:opacity-[0.04] transition-opacity duration-500`}
                   />
                   <motion.div
-                    className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${perk.gradient} flex items-center justify-center mb-6 text-white shadow-lg`}
+                    className={`w-14 h-14 rounded-[2px] bg-gradient-to-br ${perk.gradient} flex items-center justify-center mb-6 text-[color:var(--ink)] shadow-lg`}
                     whileHover={{ scale: 1.1, rotate: 5 }}
                     transition={{ duration: 0.3 }}
                   >
                     {perk.icon}
                   </motion.div>
-                  <h3 className="text-[22px] md:text-[24px] font-semibold text-[#f5f5f7] mb-3 group-hover:text-white transition-colors duration-300">
+                  <h3 className="text-[22px] md:text-[24px] font-light text-[color:var(--ink)] mb-3 group-hover:text-[color:var(--ink)] transition-colors duration-300">
                     {perk.title}
                   </h3>
-                  <p className="text-[15px] md:text-[17px] text-[#86868b] leading-relaxed group-hover:text-[#a1a1a6] transition-colors duration-300">
+                  <p className="text-[15px] md:text-[17px] text-[color:var(--ink-mid)] leading-relaxed group-hover:text-[color:var(--ink-mid)] transition-colors duration-300">
                     {perk.description}
                   </p>
                 </motion.div>
@@ -641,7 +641,7 @@ export function CareersPage() {
 
       <section
         id="roles"
-        className={`relative ${SECTION_Y_INNER} bg-[#0a0a0a] overflow-hidden scroll-mt-24`}
+        className={`relative ${SECTION_Y_INNER} bg-[var(--paper)] overflow-hidden scroll-mt-24`}
       >
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(41,151,255,0.05),transparent_60%)]" />
         <div className="mx-auto max-w-[900px] px-6 relative">
@@ -652,11 +652,11 @@ export function CareersPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16 md:mb-20"
           >
-            <p className="text-[#2997ff] text-[17px] font-medium mb-4">Open roles</p>
-            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-semibold text-[#f5f5f7] tracking-[-0.025em]">
+            <p className="eyebrow-serif block mb-5">Open roles</p>
+            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-thin text-[color:var(--ink)]">
               Where you come in.
             </h2>
-            <p className="mt-6 text-xl md:text-[22px] text-[#86868b] max-w-xl mx-auto">
+            <p className="mt-6 text-xl md:text-[22px] text-[color:var(--ink-mid)] max-w-xl mx-auto">
               We hire senior. If you&apos;re exceptional at your craft, we want to hear from you.
             </p>
           </motion.div>
@@ -671,7 +671,7 @@ export function CareersPage() {
 
       <section
         id="apply"
-        className={`relative ${SECTION_Y_INNER} bg-black overflow-hidden scroll-mt-24`}
+        className={`relative ${SECTION_Y_INNER} bg-[var(--paper)] overflow-hidden scroll-mt-24`}
       >
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(175,82,222,0.05),transparent_60%)]" />
         <div className="mx-auto max-w-[760px] px-6 relative">
@@ -682,11 +682,11 @@ export function CareersPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-12 md:mb-16"
           >
-            <p className="text-[#af52de] text-[17px] font-medium mb-4">Apply now</p>
-            <h2 className="text-4xl md:text-5xl lg:text-[56px] font-semibold text-[#f5f5f7] tracking-[-0.025em] leading-[1.08]">
+            <p className="eyebrow-serif block mb-5">Apply now</p>
+            <h2 className="text-4xl md:text-5xl lg:text-[56px] font-thin text-[color:var(--ink)] leading-[1.08]">
               Send us your application.
             </h2>
-            <p className="mt-6 text-xl md:text-[22px] text-[#86868b] max-w-xl mx-auto leading-relaxed">
+            <p className="mt-6 text-xl md:text-[22px] text-[color:var(--ink-mid)] max-w-xl mx-auto leading-relaxed">
               Apply for a role above or send an open application. Share your showreel, portfolio or
               CV, we read every one.
             </p>

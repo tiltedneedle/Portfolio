@@ -87,12 +87,12 @@ export function CaseStudyCards({ caseStudies }: { caseStudies: CaseStudy[] }) {
   };
 
   return (
-    <section id="results" className={`${SECTION_Y} bg-black relative overflow-hidden`}>
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-black to-black pointer-events-none" />
+    <section id="results" className={`${SECTION_Y} bg-[var(--paper)] relative overflow-hidden`}>
+      <div className="absolute inset-0 bg-gradient-to-b from-[var(--paper)] via-[var(--paper)] to-[var(--paper)] pointer-events-none" />
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: "radial-gradient(rgba(255,255,255,0.015) 1px, transparent 1px)",
+          backgroundImage: "radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px)",
           backgroundSize: "40px 40px",
         }}
       />
@@ -105,16 +105,16 @@ export function CaseStudyCards({ caseStudies }: { caseStudies: CaseStudy[] }) {
           transition={{ duration: 0.8, ease: EASE_OUT_EXPO }}
           className="mb-16 md:mb-20 text-center"
         >
-          <p className="text-[#ff9f0a] text-[17px] font-medium mb-4">Case Studies</p>
-          <h2 className="text-[32px] md:text-[48px] lg:text-[56px] font-semibold text-[#f5f5f7] tracking-[-0.02em] leading-[1.1]">
-            Real results. Real brands.
+          <p className="eyebrow-serif block mb-5">Case Studies</p>
+          <h2 className="text-[32px] md:text-[48px] lg:text-[56px] font-thin text-[color:var(--ink)] leading-[1.1]">
+            Real results. <span className="em-serif">Real</span> brands.
           </h2>
           <motion.p
             initial={{ opacity: 0, y: REVEAL.sm }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.15, duration: 0.6 }}
-            className="mt-6 text-[17px] md:text-[22px] text-[#86868b] leading-[1.4] max-w-2xl mx-auto"
+            className="mt-6 text-[17px] md:text-[22px] text-[color:var(--ink-mid)] leading-[1.4] max-w-2xl mx-auto"
           >
             Deep dives into our most successful campaigns and the strategies behind them.
           </motion.p>
@@ -143,12 +143,12 @@ export function CaseStudyCards({ caseStudies }: { caseStudies: CaseStudy[] }) {
               variants={cardVariants}
               onMouseEnter={() => onEnter(study.id)}
               onMouseLeave={() => onLeave(study.id)}
-              className="group relative rounded-2xl md:rounded-3xl overflow-hidden cursor-pointer bg-[#1c1c1e] shadow-tween"
+              className="group relative rounded-[2px] md:rounded-[2px] overflow-hidden cursor-pointer bg-white shadow-tween"
               style={{
                 boxShadow:
                   hovered === study.id
-                    ? "var(--elev-4), var(--glow-soft)"
-                    : "var(--elev-1)",
+                    ? "var(--lift-hover)"
+                    : "var(--lift)",
               }}
               onClick={() => open(study)}
               role="button"
@@ -180,7 +180,7 @@ export function CaseStudyCards({ caseStudies }: { caseStudies: CaseStudy[] }) {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1c1c1e] via-transparent to-transparent" />
                 <motion.div
                   animate={{ opacity: hovered === study.id ? 0.4 : 0 }}
-                  className="absolute inset-0 bg-black/40"
+                  className="absolute inset-0 bg-[var(--paper)]/40"
                 />
 
                 <motion.div
@@ -198,7 +198,7 @@ export function CaseStudyCards({ caseStudies }: { caseStudies: CaseStudy[] }) {
                 </motion.div>
 
                 <div className="absolute top-4 left-4">
-                  <span className="px-3 py-1.5 text-[11px] font-medium uppercase tracking-wider text-white bg-white/15 backdrop-blur-md rounded-full border border-white/10">
+                  <span className="px-3 py-1.5 text-[11px] font-medium uppercase tracking-wider text-[color:var(--ink)] bg-white/15 backdrop-blur-md rounded-full border border-black/[0.10]">
                     {study.highlight}
                   </span>
                 </div>
@@ -207,10 +207,10 @@ export function CaseStudyCards({ caseStudies }: { caseStudies: CaseStudy[] }) {
               <div className="p-6 md:p-8">
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div>
-                    <h3 className="text-xl md:text-2xl font-semibold text-white mb-1">
+                    <h3 className="text-xl md:text-2xl font-light text-[color:var(--ink)] mb-1">
                       {study.client}
                     </h3>
-                    <p className="text-[15px] text-[#86868b]">{study.title}</p>
+                    <p className="text-[15px] text-[color:var(--ink-mid)]">{study.title}</p>
                   </div>
                   <motion.div
                     animate={{
@@ -220,17 +220,17 @@ export function CaseStudyCards({ caseStudies }: { caseStudies: CaseStudy[] }) {
                     transition={{ duration: 0.3 }}
                     className="flex-shrink-0"
                   >
-                    <ArrowUpRight className="w-5 h-5 text-[#86868b] group-hover:text-white transition-colors" />
+                    <ArrowUpRight className="w-5 h-5 text-[color:var(--ink-mid)] group-hover:text-[color:var(--ink)] transition-colors" />
                   </motion.div>
                 </div>
 
                 <div className="flex gap-6">
                   {study.metrics.slice(0, 2).map((metric) => (
                     <div key={metric.label}>
-                      <div className="text-2xl md:text-3xl font-semibold text-white tabular-nums">
+                      <div className="text-2xl md:text-3xl font-extralight text-[color:var(--ink)] tabular-nums">
                         {metric.value}
                       </div>
-                      <div className="text-[11px] text-[#86868b] uppercase tracking-wider mt-0.5">
+                      <div className="text-[11px] text-[color:var(--ink-mid)] uppercase tracking-wider mt-0.5">
                         {metric.label}
                       </div>
                     </div>

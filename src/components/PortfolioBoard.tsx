@@ -564,7 +564,7 @@ export function PortfolioBoard() {
               style={{ background: "transparent" }}
             >
               <div
-                className="w-14 h-14 rounded-xl flex items-center justify-center"
+                className="w-14 h-14 rounded-[2px] flex items-center justify-center"
                 style={{
                   background: "rgba(0,0,0,0.06)",
                   boxShadow:
@@ -581,7 +581,7 @@ export function PortfolioBoard() {
               </div>
 
               <h1
-                className="text-[28px] font-semibold leading-tight tracking-[-0.03em] mt-4"
+                className="text-[28px] font-light leading-tight mt-4"
                 style={{
                   color: "#c8c8ca",
                   textShadow:
@@ -609,7 +609,7 @@ export function PortfolioBoard() {
 
               <Link
                 href="/book-demo"
-                className="mt-5 inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-[13px] font-semibold transition-colors"
+                className="mt-5 inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-[13px] font-medium transition-colors"
                 style={{
                   background: "rgba(0,0,0,0.05)",
                   color: "#b0b0b4",
@@ -705,7 +705,7 @@ export function PortfolioBoard() {
               exit={{ opacity: 0, scale: 0.92, y: 20 }}
               transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
               onClick={(e) => e.stopPropagation()}
-              className="relative bg-white rounded-2xl overflow-hidden max-w-3xl w-full max-h-[85vh] shadow-2xl flex flex-col"
+              className="relative bg-white rounded-[2px] overflow-hidden max-w-3xl w-full max-h-[85vh] shadow-2xl flex flex-col"
               ref={dialogRef}
               role="dialog"
               aria-modal="true"
@@ -734,7 +734,7 @@ export function PortfolioBoard() {
               <div className="p-5 md:p-8">
                 <h2
                   id="board-modal-title"
-                  className="text-[clamp(1.1rem,3vw,1.8rem)] font-semibold text-[#1c1c1e] leading-tight tracking-[-0.02em]"
+                  className="text-[clamp(1.1rem,3vw,1.8rem)] font-medium text-[#1c1c1e] leading-tight"
                 >
                   {selected.title}
                 </h2>
@@ -744,7 +744,7 @@ export function PortfolioBoard() {
                 <div className="mt-4 md:mt-5 flex flex-wrap gap-3">
                   <Link
                     href="/book-demo"
-                    className="inline-flex items-center px-5 md:px-6 py-2.5 md:py-3 bg-[#1c1c1e] text-white rounded-full text-[13px] md:text-[15px] font-semibold hover:bg-black active:scale-[0.97] transition-all"
+                    className="inline-flex items-center px-5 md:px-6 py-2.5 md:py-3 bg-[#1c1c1e] text-white rounded-full text-[13px] md:text-[15px] font-medium hover:bg-black active:scale-[0.97] transition-all"
                   >
                     Book a Demo
                   </Link>

@@ -61,7 +61,7 @@ export function Footer() {
           <div className="md:col-span-2">
             <Link href="/">
               <motion.span
-                className="inline-flex items-center gap-2.5 text-2xl font-semibold text-[#f5f5f7] transition-all duration-300 hover:text-white mb-4"
+                className="inline-flex items-center gap-2.5 text-2xl font-light text-[#f5f5f7] transition-all duration-300 hover:text-white mb-4"
                 whileHover={{ scale: 1.02 }}
               >
                 <Image

@@ -1,19 +1,36 @@
 import type { Metadata, Viewport } from "next";
+import localFont from "next/font/local";
+import { FilmGrain } from "@/components/FilmGrain";
 import { organizationSchema, websiteSchema } from "@/lib/structured-data";
 import "./globals.css";
 
-// This site ships no webfonts, deliberately.
+// Two faces, both vendored as woff2 so the build needs no network.
 //
-// The original loaded Inter (7 subsets, 212 KB in the build, 47 KB preloaded)
-// and Cormorant Garamond (4 weights, ~37 KB preloaded) — and rendered neither.
-// Both were wired up as CSS variables that nothing ever referenced, while the
-// actual stack in globals.css is `-apple-system, BlinkMacSystemFont,
-// "SF Pro Display", …`. Measured on the built page: of 527 text-bearing
-// elements, zero resolved to Inter.
+// A previous revision declared webfonts and never referenced them: of 527
+// text-bearing elements, zero resolved to Inter, because the stack in
+// globals.css was still `-apple-system, …`. Both variables below ARE in that
+// stack now — if you add a face here, put it in the stack too or it does
+// nothing but cost bytes.
 //
-// So both are gone. The system stack is what the design was always rendering
-// in, it needs no network at build or runtime, and it has no swap flash.
-// If a real webfont is ever wanted, add it here AND put it in the stack.
+// The display face is Instrument Serif (SIL OFL). The reference site uses
+// PP Migra, which is commercially licensed and not ours to ship.
+const sans = localFont({
+  src: "./fonts/inter-latin-var.woff2",
+  weight: "100 900",
+  style: "normal",
+  variable: "--font-sans",
+  display: "swap",
+  adjustFontFallback: "Arial",
+});
+
+const displaySerif = localFont({
+  src: "./fonts/instrument-serif-italic.woff2",
+  weight: "400",
+  style: "italic",
+  variable: "--font-display",
+  display: "swap",
+  adjustFontFallback: "Times New Roman",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tiltedneedle.com"),
@@ -64,8 +81,9 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${sans.variable} ${displaySerif.variable}`}>
       <body className="antialiased">
+        <FilmGrain />
         {children}
         <script
           type="application/ld+json"

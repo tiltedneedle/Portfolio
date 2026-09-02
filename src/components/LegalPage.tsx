@@ -14,7 +14,7 @@ function renderInline(text: string): ReactNode[] {
       const bold = part.match(/^\*\*([^*]+)\*\*$/);
       if (bold) {
         return (
-          <strong key={i} className="font-semibold text-[#f5f5f7]">
+          <strong key={i} className="font-medium text-[color:var(--ink)]">
             {bold[1]}
           </strong>
         );
@@ -51,13 +51,13 @@ export function LegalPage({ title, lastUpdated, sections }: Props) {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-black pt-32 pb-16 md:pt-44 md:pb-24">
+      <section className="relative overflow-hidden bg-[var(--paper)] pt-32 pb-16 md:pt-44 md:pb-24">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(41,151,255,0.06),transparent_60%)] pointer-events-none" />
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)",
+              "linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)",
             backgroundSize: "80px 80px",
           }}
         />
@@ -85,7 +85,7 @@ export function LegalPage({ title, lastUpdated, sections }: Props) {
               }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ delay: 0.15, duration: 0.9, ease: EASE_OUT_EXPO }}
-              className="text-4xl md:text-6xl lg:text-[64px] font-semibold tracking-[-0.03em] leading-[1.05] text-[#f5f5f7]"
+              className="text-4xl md:text-6xl lg:text-[64px] font-thin leading-[1.05] text-[color:var(--ink)]"
             >
               {title}
             </motion.h1>
@@ -94,7 +94,7 @@ export function LegalPage({ title, lastUpdated, sections }: Props) {
               initial={{ opacity: 0, y: reduced ? 0 : 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.7 }}
-              className="mt-6 text-[15px] text-[#86868b]"
+              className="mt-6 text-[15px] text-[color:var(--ink-mid)]"
             >
               Last updated: {lastUpdated}
             </motion.p>
@@ -102,8 +102,8 @@ export function LegalPage({ title, lastUpdated, sections }: Props) {
         </div>
       </section>
 
-      <section className="relative bg-black pb-28 md:pb-40">
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-black to-[#0a0a0a] pointer-events-none" />
+      <section className="relative bg-[var(--paper)] pb-28 md:pb-40">
+        <div className="absolute inset-0 bg-gradient-to-b from-[var(--paper)] via-[var(--paper)] to-[var(--paper)] pointer-events-none" />
 
         <div className="relative mx-auto max-w-[760px] px-6">
           <div className="h-px bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.08)] to-transparent mb-14 md:mb-16" />
@@ -121,14 +121,14 @@ export function LegalPage({ title, lastUpdated, sections }: Props) {
                   ease: EASE_OUT_EXPO,
                 }}
               >
-                <h2 className="text-[24px] md:text-[28px] font-semibold tracking-[-0.02em] text-[#f5f5f7] mb-5">
+                <h2 className="text-[24px] md:text-[28px] font-light text-[color:var(--ink)] mb-5">
                   {section.heading}
                 </h2>
 
                 {section.paragraphs?.map((paragraph, p) => (
                   <p
                     key={p}
-                    className="text-[17px] md:text-[17px] leading-[1.7] text-[#a1a1a6] mb-4 last:mb-0"
+                    className="text-[17px] md:text-[17px] leading-[1.7] text-[color:var(--ink-mid)] mb-4 last:mb-0"
                   >
                     {renderInline(paragraph)}
                   </p>
@@ -139,7 +139,7 @@ export function LegalPage({ title, lastUpdated, sections }: Props) {
                     {section.bullets.map((bullet, b) => (
                       <li
                         key={b}
-                        className="relative pl-6 text-[17px] md:text-[17px] leading-[1.7] text-[#a1a1a6]"
+                        className="relative pl-6 text-[17px] md:text-[17px] leading-[1.7] text-[color:var(--ink-mid)]"
                       >
                         <span
                           aria-hidden="true"

@@ -46,7 +46,7 @@ export function ServicesOverview() {
     <>
       <section
         ref={heroRef}
-        className="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden bg-black min-h-[85vh] flex items-center"
+        className="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden bg-[var(--paper)] min-h-[85vh] flex items-center"
       >
         <motion.div style={{ scale: reduced ? 1 : videoScale }} className="absolute inset-0">
           <video
@@ -61,15 +61,15 @@ export function ServicesOverview() {
               type="video/mp4"
             />
           </video>
-          <div className="absolute inset-0 bg-black/70" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black" />
+          <div className="absolute inset-0 bg-[var(--paper)]/70" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[var(--paper)]/60 via-transparent to-[var(--paper)]" />
         </motion.div>
 
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)",
+              "linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)",
             backgroundSize: "80px 80px",
           }}
         />
@@ -99,7 +99,7 @@ export function ServicesOverview() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.8 }}
-              className="text-[#2997ff] text-[17px] font-medium mb-4"
+              className="eyebrow-serif block mb-5"
             >
               Our Services
             </motion.p>
@@ -108,7 +108,7 @@ export function ServicesOverview() {
               initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ delay: 0.3, duration: 1, ease: EASE_OUT_EXPO }}
-              className="text-5xl md:text-7xl lg:text-[88px] font-semibold tracking-[-0.03em] leading-[1.05] text-[#f5f5f7] mb-6"
+              className="text-5xl md:text-7xl lg:text-[88px] font-thin leading-[1.05] text-[color:var(--ink)] mb-6"
             >
               Everything your brand
               <br />
@@ -124,7 +124,7 @@ export function ServicesOverview() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.8 }}
-              className="text-xl md:text-[22px] text-[#86868b] max-w-2xl mx-auto leading-relaxed mb-10"
+              className="text-xl md:text-[22px] text-[color:var(--ink-mid)] max-w-2xl mx-auto leading-relaxed mb-10"
             >
               From viral content creation to full-funnel performance marketing. A complete growth
               stack built to scale.
@@ -150,7 +150,7 @@ export function ServicesOverview() {
         </motion.div>
       </section>
 
-      <section className="relative py-16 bg-[#0a0a0a] border-y border-white/[0.04] overflow-hidden">
+      <section className="relative py-16 bg-[var(--paper)] border-y border-black/[0.10] overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(41,151,255,0.04),transparent_70%)]" />
         <div className="mx-auto max-w-[1000px] px-6 relative">
           <div className="grid grid-cols-3 gap-8">
@@ -163,10 +163,10 @@ export function ServicesOverview() {
                 transition={{ delay: 0.1 * i, duration: 0.6, ease: EASE_OUT_EXPO }}
                 className="text-center"
               >
-                <div className="text-3xl md:text-5xl lg:text-[56px] font-semibold text-[#f5f5f7] tracking-[-0.02em]">
+                <div className="text-3xl md:text-5xl lg:text-[56px] font-thin text-[color:var(--ink)]">
                   {stat.value}
                 </div>
-                <div className="mt-2 text-[12px] md:text-[15px] text-[#86868b] uppercase tracking-[0.08em]">
+                <div className="mt-2 text-[12px] md:text-[15px] text-[color:var(--ink-mid)] uppercase tracking-[0.08em]">
                   {stat.label}
                 </div>
               </motion.div>
@@ -175,10 +175,10 @@ export function ServicesOverview() {
         </div>
       </section>
 
-      <section className={`relative ${SECTION_Y_INNER} bg-black overflow-hidden`}>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-black to-[#0d0d0d]" />
+      <section className={`relative ${SECTION_Y_INNER} bg-[var(--paper)] overflow-hidden`}>
+        <div className="absolute inset-0 bg-gradient-to-b from-[var(--paper)] via-[var(--paper)] to-[var(--paper)]" />
 
-        <div className="absolute top-[5%] left-[-5%] w-[350px] h-[250px] rounded-3xl overflow-hidden opacity-[0.04] rotate-[-8deg] pointer-events-none">
+        <div className="absolute top-[5%] left-[-5%] w-[350px] h-[250px] rounded-[2px] overflow-hidden opacity-[0.04] rotate-[-8deg] pointer-events-none">
           <Image
             src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=600&h=400&fit=crop"
             alt=""
@@ -187,7 +187,7 @@ export function ServicesOverview() {
             className="object-cover"
           />
         </div>
-        <div className="absolute top-[35%] right-[-8%] w-[300px] h-[200px] rounded-3xl overflow-hidden opacity-[0.035] rotate-[6deg] pointer-events-none">
+        <div className="absolute top-[35%] right-[-8%] w-[300px] h-[200px] rounded-[2px] overflow-hidden opacity-[0.035] rotate-[6deg] pointer-events-none">
           <Image
             src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop"
             alt=""
@@ -196,7 +196,7 @@ export function ServicesOverview() {
             className="object-cover"
           />
         </div>
-        <div className="absolute bottom-[10%] left-[3%] w-[280px] h-[200px] rounded-3xl overflow-hidden opacity-[0.03] rotate-[4deg] pointer-events-none">
+        <div className="absolute bottom-[10%] left-[3%] w-[280px] h-[200px] rounded-[2px] overflow-hidden opacity-[0.03] rotate-[4deg] pointer-events-none">
           <Image
             src="https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&h=400&fit=crop"
             alt=""
@@ -228,10 +228,10 @@ export function ServicesOverview() {
             transition={{ duration: 0.8 }}
             className="text-center mb-20"
           >
-            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-semibold text-[#f5f5f7] tracking-[-0.025em]">
+            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-thin text-[color:var(--ink)]">
               What we do.
             </h2>
-            <p className="mt-6 text-xl md:text-[22px] text-[#86868b] max-w-xl mx-auto">
+            <p className="mt-6 text-xl md:text-[22px] text-[color:var(--ink-mid)] max-w-xl mx-auto">
               Four core capabilities. One integrated growth engine.
             </p>
           </motion.div>
@@ -248,21 +248,21 @@ export function ServicesOverview() {
                 <Link href={`/services/${service.slug}`}>
                   <motion.div
                     whileHover={{ y: -6, transition: { duration: 0.3, ease: EASE_OUT_EXPO } }}
-                    className="group relative p-8 md:p-10 rounded-[28px] bg-gradient-to-b from-[#1c1c1e] to-[#161616] h-full cursor-pointer elevate-static-lg sheen"
+                    className="group relative p-8 md:p-10 rounded-[2px] bg-gradient-to-b from-white to-[#fafafa] h-full cursor-pointer plate sheen"
                   >
                     <div
-                      className={`absolute inset-0 rounded-[28px] bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-[0.04] transition-opacity duration-500`}
+                      className={`absolute inset-0 rounded-[2px] bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-[0.04] transition-opacity duration-500`}
                     />
 
                     <motion.div
-                      className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${service.gradient} flex items-center justify-center mb-6 text-white shadow-lg`}
+                      className={`w-14 h-14 rounded-[2px] bg-gradient-to-br ${service.gradient} flex items-center justify-center mb-6 text-[color:var(--ink)] shadow-lg`}
                       whileHover={{ scale: 1.1, rotate: 5 }}
                       transition={{ duration: 0.3 }}
                     >
                       {ICONS[service.iconName]}
                     </motion.div>
 
-                    <h3 className="text-[22px] md:text-[24px] font-semibold text-[#f5f5f7] mb-2 group-hover:text-white transition-colors duration-300">
+                    <h3 className="text-[22px] md:text-[24px] font-light text-[color:var(--ink)] mb-2 group-hover:text-[color:var(--ink)] transition-colors duration-300">
                       {service.title}
                     </h3>
 
@@ -272,7 +272,7 @@ export function ServicesOverview() {
                       {service.tagline}
                     </p>
 
-                    <p className="text-[15px] text-[#86868b] leading-relaxed mb-6 group-hover:text-[#a1a1a6] transition-colors duration-300">
+                    <p className="text-[15px] text-[color:var(--ink-mid)] leading-relaxed mb-6 group-hover:text-[color:var(--ink-mid)] transition-colors duration-300">
                       {service.description}
                     </p>
 
@@ -280,14 +280,14 @@ export function ServicesOverview() {
                       {service.features.slice(0, 4).map((feature) => (
                         <span
                           key={feature}
-                          className="px-3 py-1.5 rounded-full bg-white/[0.04] text-[12px] text-[#a1a1a6] font-medium group-hover:bg-white/[0.07] transition-colors duration-300"
+                          className="px-3 py-1.5 rounded-full bg-black/[0.03] text-[12px] text-[color:var(--ink-mid)] font-medium group-hover:bg-black/[0.03] transition-colors duration-300"
                         >
                           {feature}
                         </span>
                       ))}
                     </div>
 
-                    <div className="flex items-center gap-2 text-[15px] text-[#f5f5f7] group-hover:text-white transition-colors">
+                    <div className="flex items-center gap-2 text-[15px] text-[color:var(--ink)] group-hover:text-[color:var(--ink)] transition-colors">
                       Learn more
                       <motion.span
                         className="inline-block"
@@ -305,7 +305,7 @@ export function ServicesOverview() {
         </div>
       </section>
 
-      <section className={`relative ${SECTION_Y_INNER} bg-[#0a0a0a] overflow-hidden`}>
+      <section className={`relative ${SECTION_Y_INNER} bg-[var(--paper)] overflow-hidden`}>
         <div className="absolute inset-0">
           <video
             autoPlay
@@ -325,7 +325,7 @@ export function ServicesOverview() {
         <motion.div
           animate={reduced ? {} : { opacity: [0.03, 0.06, 0.03], scale: [1, 1.1, 1] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-to-t from-white/5 to-transparent blur-[150px] pointer-events-none"
+          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-to-t from-black/[0.03] to-transparent blur-[150px] pointer-events-none"
         />
 
         {!reduced && (
@@ -355,12 +355,12 @@ export function ServicesOverview() {
             transition={{ duration: 0.8, ease: EASE_OUT_EXPO }}
           >
             <p className="text-[#ff375f] text-[17px] font-medium mb-4">Ready to grow?</p>
-            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-semibold text-[#f5f5f7] tracking-[-0.025em] mb-6 leading-tight">
+            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-thin text-[color:var(--ink)] mb-6 leading-tight">
               Let&apos;s build something
               <br />
               extraordinary.
             </h2>
-            <p className="text-xl md:text-[22px] text-[#86868b] leading-relaxed mb-10">
+            <p className="text-xl md:text-[22px] text-[color:var(--ink-mid)] leading-relaxed mb-10">
               Book a free strategy session and discover how we can accelerate your brand&apos;s
               growth.
             </p>

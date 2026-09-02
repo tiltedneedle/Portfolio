@@ -47,7 +47,7 @@ export function BrandsMarquee() {
     : { animate: { x: ["0%", "-100%"] }, transition: { duration: 30, ease: "linear" as const, repeat: Infinity } };
 
   return (
-    <section className={`relative bg-black ${SECTION_Y_TIGHT} overflow-hidden border-t border-white/[0.04]`}>
+    <section className={`relative bg-[var(--paper)] ${SECTION_Y_TIGHT} overflow-hidden border-t border-black/[0.10]`}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -55,14 +55,14 @@ export function BrandsMarquee() {
         transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
         className="text-center mb-8"
       >
-        <p className="text-[11px] text-[#86868b] uppercase tracking-[0.2em] font-medium">
+        <p className="text-[11px] text-[color:var(--ink-mid)] uppercase tracking-[0.2em] font-medium">
           Trusted by world-class brands
         </p>
       </motion.div>
 
       <div className="relative">
-        <div className="absolute left-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
+        <div className="absolute left-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-r from-[var(--paper)] to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-24 md:w-40 bg-gradient-to-l from-[var(--paper)] to-transparent z-10 pointer-events-none" />
 
         <div className="flex overflow-hidden">
           <motion.div

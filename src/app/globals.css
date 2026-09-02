@@ -1,102 +1,64 @@
 @import "tailwindcss";
 
 @theme {
-  --default-font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
-    "SF Pro Text", system-ui, sans-serif;
+  --default-font-family: var(--font-sans), "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-display), Georgia, "Times New Roman", serif;
 }
 
-/* ============================================================== design tokens
-   Surfaces step in perceptible increments — earlier revisions carried pairs
-   like #1c1c1e / #1d1d1f that differ by 1/255 and read as one colour.
-   Accents are Apple's system palette; nothing outside this set should appear.
+/* ============================================================== design system
+   Editorial, light-ground, film-agency. The previous revision was a dark
+   Apple-style system; this is deliberately its inverse.
+
+   Three rules carry the look, and breaking any one of them breaks it:
+     1. Display type is ULTRALIGHT (100-200) and large. Never bold.
+     2. Emphasis comes from swapping a word to the serif italic, not from
+        weight, colour or size.
+     3. Corners are either square (2px) or fully round (pills). Nothing between.
    ========================================================================== */
 
 :root {
-  /* surfaces, darkest to lightest */
-  --surface-0: #000000;
-  --surface-1: #0a0a0a;
-  --surface-2: #161616;
-  --surface-3: #1c1c1e;
-  --surface-4: #2c2c2e;
-  --surface-5: #3c3c3e;
+  /* ground and ink */
+  --paper: #f4f4f4;
+  --paper-pure: #ffffff;
+  --tint: #f0f8f3; /* the one pale accent wash */
+  --ink: #000000;
+  --ink-soft: rgba(0, 0, 0, 0.81);
+  --ink-mid: #6b6b6b;
+  --ink-faint: #8a8a8a; /* decorative + large text only; fails AA below 24px */
 
-  /* text, brightest to dimmest — every value clears WCAG AA on surface-0..4 */
-  --text: #f5f5f7;
-  --text-secondary: #d1d1d6;
-  --text-body: #a1a1a6;
-  --text-muted: #86868b;
+  /* inverted blocks — full-bleed dark sections used for contrast */
+  --slab: #1e1e1e;
+  --slab-deep: #000000;
+  --slab-ink: #ffffff;
+  --slab-ink-soft: rgba(255, 255, 255, 0.88);
+  --slab-ink-mid: #8e8e8e;
 
   /* hairlines */
-  --line: #ffffff14;
-  --line-strong: #ffffff29;
+  --rule: rgba(0, 0, 0, 0.12);
+  --rule-strong: rgba(0, 0, 0, 0.24);
+  --rule-inverse: rgba(255, 255, 255, 0.16);
 
-  /* accents */
-  --accent-blue: #2997ff;
-  --accent-indigo: #5e5ce6;
-  --accent-green: #30d158;
-  --accent-orange: #ff9f0a;
-  --accent-pink: #ff375f;
-  --accent-purple: #af52de;
-  --accent-cyan: #64d2ff;
-  --accent-red: #ff453a;
+  /* radii — square or pill, nothing between */
+  --r-sharp: 2px;
+  --r-pill: 100px;
 
-  /* legacy aliases still referenced by base styles */
-  --bg: var(--surface-0);
-  --background: var(--surface-0);
-  --foreground: var(--text);
-  --muted: var(--text-muted);
-  --muted-dark: #6e6e73; /* scrollbar thumb only — non-text, 3:1 applies */
-
-  /* motion: one curve for UI, one for playful overshoot */
+  /* motion */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --ease-ios: cubic-bezier(0.25, 0.1, 0.25, 1);
-  --ease-ios-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-
-  /* Type scale. Sizes are authored as arbitrary px because the design needs
-     15/17/19, which Tailwind's named steps don't provide — mixing the two
-     conventions is what produced 22 sizes with 1px-apart neighbours
-     (14/15, 16/17, 18/19, 21/22). Consolidated to:
-
-       11  micro labels, eyebrows
-       12  small labels, legal
-       13  captions, helper text
-       15  body small, form controls
-       17  body
-       19  body large
-       20  22  lead paragraphs
-       24  28  32  sub-headings
-       48  56  64  72  88  display
-
-     Named utilities (text-2xl…text-7xl) remain, but only inside responsive
-     ramps such as `text-4xl md:text-5xl lg:text-[64px]`. Don't reintroduce a
-     bare `text-sm` / `text-base` / `text-lg`. */
-
   --dur-fast: 200ms;
-  --dur-base: 300ms;
-  --dur-slow: 500ms;
-  --dur-slower: 800ms;
+  --dur-base: 400ms;
+  --dur-slow: 700ms;
 
-  /* elevation: stacked shadows — a tight contact shadow plus a wide ambient
-     one, with a hairline ring so cards stay defined on near-black. */
-  --elev-1: 0 1px 2px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05);
-  --elev-2: 0 4px 12px -2px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
-  --elev-3: 0 12px 32px -8px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
-  --elev-4: 0 24px 64px -12px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.1);
-  --glow-soft: 0 0 40px rgba(255, 255, 255, 0.06);
-  --glow-medium: 0 0 40px rgba(255, 255, 255, 0.1);
-  --glow-strong: 0 0 60px rgba(255, 255, 255, 0.12);
+  /* elevation is nearly absent by design — paper doesn't float */
+  --lift: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --lift-hover: 0 12px 40px -12px rgba(0, 0, 0, 0.18);
 
-  /* The /portfolio board is a light surface and needs its own scale —
-     white-on-near-white can't borrow the dark elevations. */
-  --elev-light-1: 0 2px 12px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);
-  --elev-light-3: 0 12px 40px -8px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.08);
-
-  /* Catches the notional light source on a card's top edge. */
-  --edge-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.02);
-  --edge-highlight-hover: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  /* gutters and measures */
+  --gutter: 30px;
+  --gutter-lg: 80px;
+  --measure-wide: 1600px;
+  --measure: 1440px;
+  --measure-text: 1140px;
 }
 
 /* ==================================================================== base */
@@ -107,219 +69,245 @@
 
 html {
   scroll-behavior: smooth;
+  background: var(--paper);
 }
 
 body {
-  background: var(--surface-0);
-  color: var(--text);
+  background: var(--paper);
+  color: var(--ink-soft);
+  font-family: var(--font-sans), "Helvetica Neue", Arial, sans-serif;
+  font-weight: 400;
+  /* The reference sets no tracking anywhere. Negative tracking is the single
+     fastest way to make this look like a tech site instead of a film one. */
+  letter-spacing: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-feature-settings: "kern" 1, "liga" 1;
-  letter-spacing: -0.01em;
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
-    system-ui, sans-serif;
   overflow-x: hidden;
 }
 
 ::selection {
-  color: var(--text);
-  background: #fff3;
+  background: var(--ink);
+  color: var(--paper);
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
-
 ::-webkit-scrollbar-track {
-  background: var(--surface-0);
+  background: var(--paper);
 }
-
 ::-webkit-scrollbar-thumb {
-  background: var(--muted-dark);
-  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--r-pill);
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+  background: rgba(0, 0, 0, 0.35);
 }
 
 :focus-visible {
-  outline: 2px solid #ffffff80;
-  outline-offset: 4px;
-  border-radius: 4px;
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: var(--r-sharp);
 }
 
-/* ============================================================== keyframes
-   Only what is referenced. Fourteen orphaned keyframes and thirty-three unused
-   utility classes were removed from this file.
-   ====================================================================== */
+/* ============================================================== typography */
 
-@keyframes pulse-orb {
-  0%,
-  100% {
-    opacity: 0.15;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.25;
-    transform: scale(1.2);
-  }
+.display {
+  font-weight: 100;
+  line-height: 1.3;
+  letter-spacing: normal;
 }
 
-@keyframes ambient-glow {
-  0%,
-  100% {
-    opacity: 0.015;
-  }
-  50% {
-    opacity: 0.03;
-  }
+/* The signature move: one word of a heading set in the serif italic. */
+.em-serif {
+  font-family: var(--font-display), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
 }
 
-@keyframes shimmer {
+/* Small caps-ish label used above section headings. */
+.eyebrow {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+}
+
+.eyebrow-serif {
+  font-family: var(--font-display), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 15px;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--ink-mid);
+}
+
+/* ================================================================ surfaces */
+
+.slab {
+  background: var(--slab);
+  color: var(--slab-ink-soft);
+}
+
+.slab-deep {
+  background: var(--slab-deep);
+  color: var(--slab-ink-soft);
+}
+
+.rule {
+  border-color: var(--rule);
+}
+
+/* ================================================================= controls */
+
+.pill {
+  border-radius: var(--r-pill);
+  font-weight: 500;
+  letter-spacing: normal;
+  transition:
+    background-color var(--dur-base) var(--ease-out-expo),
+    color var(--dur-base) var(--ease-out-expo),
+    border-color var(--dur-base) var(--ease-out-expo);
+}
+
+.pill-solid {
+  background: var(--ink);
+  color: var(--paper);
+}
+.pill-solid:hover {
+  background: var(--slab);
+}
+
+.pill-outline {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--rule-strong);
+}
+.pill-outline:hover {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+/* A rule that draws itself in on hover — used on editorial links. */
+.underline-draw {
+  position: relative;
+}
+.underline-draw::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-base) var(--ease-out-expo);
+}
+.underline-draw:hover::after {
+  transform: scaleX(1);
+}
+
+/* ============================================================== media cards */
+
+/* Paper doesn't float, so imagery lifts by shadow only — no scale, no ring. */
+.plate {
+  border-radius: var(--r-sharp);
+  overflow: hidden;
+  background: #e6e6e6;
+  box-shadow: var(--lift);
+  transition: box-shadow var(--dur-slow) var(--ease-out-expo);
+}
+.plate:hover {
+  box-shadow: var(--lift-hover);
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.04) 25%,
+    rgba(0, 0, 0, 0.07) 37%,
+    rgba(0, 0, 0, 0.04) 63%
+  );
+  background-size: 400% 100%;
+  animation: skeleton-sweep 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-sweep {
   0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-@keyframes gradient-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
     background-position: 100% 50%;
   }
   100% {
-    background-position: 0% 50%;
+    background-position: 0 50%;
   }
 }
 
-@keyframes text-glow-pulse {
-  0%,
-  100% {
-    text-shadow: 0 0 30px #ffffff1a;
-  }
-  50% {
-    text-shadow: 0 0 60px #fff3, 0 0 100px #ffffff1a;
-  }
-}
-
-/* Slow breathing bloom for resting elevated surfaces. */
-@keyframes elevation-breathe {
-  0%,
-  100% {
-    box-shadow: var(--elev-2);
-  }
-  50% {
-    box-shadow: var(--elev-3);
-  }
-}
-
-/* A specular highlight that sweeps across a surface on hover. */
-@keyframes sheen-sweep {
-  0% {
-    transform: translateX(-120%) skewX(-20deg);
-    opacity: 0;
-  }
-  40% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(220%) skewX(-20deg);
-    opacity: 0;
-  }
-}
-
-.animate-shimmer {
-  background-size: 200% 100%;
-  animation: shimmer 2s ease-in-out infinite;
-}
-
-.animate-gradient-shift {
-  background-size: 200% 200%;
-  animation: gradient-shift 8s infinite;
-}
-
-.animate-text-glow {
-  animation: text-glow-pulse 4s ease-in-out infinite;
-}
-
-/* ============================================================== elevation
-   Shadow, lift and ring animate together on one curve so surfaces feel like
-   physical objects rather than boxes that happen to move.
+/* ============================================================== film grain
+   The reference runs an animated grain canvas over the whole page. This is a
+   from-scratch SVG feTurbulence version: one repeating tile, stepped through a
+   few offsets so it shimmers like real film rather than sitting static.
    ====================================================================== */
 
-/* Every card in this codebase gets its lift from Framer Motion, so these
-   classes deliberately animate shadow only — a CSS `transform` here would
-   fight `whileHover` for the same property. */
-.elevate-static {
-  box-shadow: var(--elev-1), var(--edge-highlight);
-  transition: box-shadow var(--dur-slow) var(--ease-out-expo);
-}
-
-.elevate-static:hover {
-  box-shadow: var(--elev-3), var(--edge-highlight-hover);
-}
-
-/* Same, one step deeper — for the large feature cards. */
-.elevate-static-lg {
-  box-shadow: var(--elev-2), var(--edge-highlight);
-  transition: box-shadow var(--dur-slow) var(--ease-out-expo);
-}
-
-.elevate-static-lg:hover {
-  box-shadow: var(--elev-4), var(--edge-highlight-hover);
-}
-
-/* Sits behind a lazily-loaded <video>. An unloaded video paints nothing, so the
-   skeleton shows through and is covered the moment the first frame arrives —
-   no readiness state to track. */
-.skeleton {
-  background-image: linear-gradient(
-    90deg,
-    var(--surface-3) 0%,
-    var(--surface-4) 50%,
-    var(--surface-3) 100%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.8s ease-in-out infinite;
-}
-
-/* For surfaces whose shadow value is driven by React state rather than :hover —
-   without this the shadow snaps between values instead of easing. */
-.shadow-tween {
-  transition: box-shadow var(--dur-slow) var(--ease-out-expo);
-}
-
-/* Sweeping highlight. Put on a relatively-positioned, overflow-hidden parent. */
-.sheen {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-}
-
-.sheen::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
+.grain {
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
   pointer-events: none;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.08) 50%,
-    transparent 100%
-  );
-  transform: translateX(-120%) skewX(-20deg);
-  opacity: 0;
+  z-index: 9999;
+  opacity: 0.32;
+  mix-blend-mode: multiply;
+  background-repeat: repeat;
+  background-size: 180px 180px;
+  will-change: transform;
+  animation: grain-shift 700ms steps(1) infinite;
 }
 
-.sheen:hover::after {
-  animation: sheen-sweep 900ms var(--ease-out-expo);
+@keyframes grain-shift {
+  0% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(-3%, 2%);
+  }
+  40% {
+    transform: translate(2%, -4%);
+  }
+  60% {
+    transform: translate(-2%, -2%);
+  }
+  80% {
+    transform: translate(3%, 3%);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+/* ================================================================== reveals */
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
 }
 
 /* ============================================================ reduced motion */
@@ -332,15 +320,17 @@ body {
   *,
   *::before,
   *::after {
-    scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
 
-  /* No sweep, no breathing — the resting elevation stays. */
-  .sheen:hover::after {
+  /* Grain still reads as texture when it stops moving — keep it, freeze it. */
+  .grain {
     animation: none;
-    opacity: 0;
+  }
+
+  .skeleton {
+    animation: none;
   }
 }

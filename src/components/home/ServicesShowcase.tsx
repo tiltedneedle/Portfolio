@@ -130,8 +130,8 @@ export function ServicesShowcase() {
   }, [hovering, active, hasVideo]);
 
   return (
-    <section id="services" className={`${SECTION_Y} relative overflow-hidden bg-black`}>
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0d0d0d] via-black to-[#0a0a0a]" />
+    <section id="services" className={`${SECTION_Y} relative overflow-hidden bg-[var(--paper)]`}>
+      <div className="absolute inset-0 bg-gradient-to-b from-[var(--paper)] via-[var(--paper)] to-[var(--paper)]" />
 
       <motion.div
         animate={reduced ? {} : { opacity: [0.02, 0.05, 0.02], scale: [1, 1.2, 1] }}
@@ -150,9 +150,9 @@ export function ServicesShowcase() {
           transition={{ duration: 0.8, ease: EASE_OUT_EXPO }}
           className="text-center mb-6"
         >
-          <p className="text-[#2997ff] text-[17px] font-medium mb-4">Services</p>
-          <h2 className="text-4xl md:text-5xl lg:text-[64px] font-semibold text-[#f5f5f7] tracking-[-0.025em] leading-[1.1]">
-            Take a closer look.
+          <p className="eyebrow-serif block mb-5">Services</p>
+          <h2 className="text-4xl md:text-5xl lg:text-[64px] font-thin text-[color:var(--ink)] leading-[1.1]">
+            Take a <span className="em-serif">closer</span> look.
           </h2>
         </motion.div>
 
@@ -178,7 +178,7 @@ export function ServicesShowcase() {
                   ${
                     active.id === service.id
                       ? "bg-white text-black"
-                      : "bg-[#1c1c1e] text-[#86868b] hover:bg-[#2c2c2e] hover:text-white"
+                      : "bg-white text-[color:var(--ink-mid)] hover:bg-[#efefef] hover:text-[color:var(--ink)]"
                   }
                 `}
               >
@@ -207,14 +207,14 @@ export function ServicesShowcase() {
               onMouseLeave={() => setHovering(false)}
             >
               <motion.div
-                className="relative aspect-[4/3] rounded-3xl overflow-hidden"
+                className="relative aspect-[4/3] rounded-[2px] overflow-hidden"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.4 }}
               >
                 <div
-                  className={`absolute -inset-[2px] rounded-3xl bg-gradient-to-br ${active.gradient} opacity-60`}
+                  className={`absolute -inset-[2px] rounded-[2px] bg-gradient-to-br ${active.gradient} opacity-60`}
                 />
-                <div className="absolute inset-[2px] rounded-[22px] overflow-hidden bg-[#1c1c1e]">
+                <div className="absolute inset-[2px] rounded-[2px] overflow-hidden bg-white">
                   {hasVideo && (
                     <motion.div
                       initial={{ opacity: 0 }}
@@ -245,7 +245,7 @@ export function ServicesShowcase() {
                     loading="lazy"
                   />
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
                   {hasVideo && (
                     <motion.div
@@ -254,8 +254,8 @@ export function ServicesShowcase() {
                       transition={{ duration: 0.3 }}
                       className="absolute inset-0 flex items-center justify-center"
                     >
-                      <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
-                        <Play className="w-7 h-7 text-white ml-1" fill="currentColor" />
+                      <div className="w-16 h-16 rounded-full bg-black/[0.10] backdrop-blur-md flex items-center justify-center">
+                        <Play className="w-7 h-7 text-[color:var(--ink)] ml-1" fill="currentColor" />
                       </div>
                     </motion.div>
                   )}
@@ -268,7 +268,7 @@ export function ServicesShowcase() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.1 }}
-                className={`text-2xl md:text-3xl lg:text-[32px] font-semibold bg-gradient-to-r ${active.gradient} bg-clip-text text-transparent`}
+                className={`text-2xl md:text-3xl lg:text-[32px] font-extralight bg-gradient-to-r ${active.gradient} bg-clip-text text-transparent`}
               >
                 {active.tagline}
               </motion.p>
@@ -277,7 +277,7 @@ export function ServicesShowcase() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.15 }}
-                className="text-[17px] md:text-[19px] text-[#a1a1a6] leading-relaxed"
+                className="text-[17px] md:text-[19px] text-[color:var(--ink-mid)] leading-relaxed"
               >
                 {active.description}
               </motion.p>
@@ -299,9 +299,9 @@ export function ServicesShowcase() {
                     <div
                       className={`w-6 h-6 rounded-full bg-gradient-to-br ${active.gradient} flex items-center justify-center flex-shrink-0 opacity-80 group-hover:opacity-100 transition-opacity`}
                     >
-                      <ChevronRight className="w-4 h-4 text-white" />
+                      <ChevronRight className="w-4 h-4 text-[color:var(--ink)]" />
                     </div>
-                    <span className="text-[15px] text-[#d1d1d6] group-hover:text-white transition-colors">
+                    <span className="text-[15px] text-[color:var(--ink-soft)] group-hover:text-[color:var(--ink)] transition-colors">
                       {feature}
                     </span>
                   </motion.div>
@@ -318,7 +318,7 @@ export function ServicesShowcase() {
                   className={`
                     mt-8 px-8 py-4 rounded-full text-[15px] font-medium inline-block
                     bg-gradient-to-r ${active.gradient}
-                    text-white shadow-lg
+                    text-[color:var(--ink)] shadow-lg
                     hover:shadow-xl transition-shadow duration-300
                   `}
                 >
@@ -349,10 +349,10 @@ export function ServicesShowcase() {
               transition={{ delay: 0.4 + 0.1 * i }}
               className="text-center"
             >
-              <div className="text-3xl md:text-4xl lg:text-[48px] font-semibold text-white tracking-tight">
+              <div className="text-3xl md:text-4xl lg:text-[48px] font-thin text-[color:var(--ink)]">
                 {stat.value}
               </div>
-              <div className="text-[13px] text-[#86868b] uppercase tracking-wider mt-2">
+              <div className="text-[13px] text-[color:var(--ink-mid)] uppercase tracking-wider mt-2">
                 {stat.label}
               </div>
             </motion.div>

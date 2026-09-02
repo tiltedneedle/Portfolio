@@ -51,7 +51,7 @@ export function Hero() {
   return (
     <section
       ref={ref}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[color:var(--slab-deep)]"
     >
       <motion.div style={{ scale: reduced ? 1 : videoScale }} className="absolute inset-0 z-0">
         <video
@@ -136,7 +136,7 @@ export function Hero() {
                 },
               },
             }}
-            className="text-5xl md:text-7xl lg:text-[88px] font-semibold tracking-[-0.03em] leading-[1.02]"
+            className="text-5xl md:text-7xl lg:text-[88px] font-thin leading-[1.02]"
           >
             <motion.span
               className="block text-[#f5f5f7] animate-text-glow"
@@ -149,7 +149,7 @@ export function Hero() {
               className="block bg-gradient-to-r from-[#a1a1a6] via-[#f5f5f7] to-[#a1a1a6] bg-clip-text text-transparent animate-gradient-shift"
               style={{ backgroundSize: "200% 100%" }}
             >
-              go viral.
+              go <span className="em-serif">viral</span>.
             </motion.span>
           </motion.h1>
 
@@ -203,7 +203,7 @@ export function Hero() {
                   className="text-center group"
                 >
                   <motion.div
-                    className="text-3xl md:text-5xl lg:text-6xl font-semibold text-[#f5f5f7] tracking-[-0.02em] transition-all duration-500 group-hover:scale-105"
+                    className="text-3xl md:text-5xl lg:text-6xl font-extralight text-[#f5f5f7] transition-all duration-500 group-hover:scale-105"
                     whileHover={{ textShadow: "0 0 30px rgba(255,255,255,0.3)" }}
                   >
                     {stat.value}

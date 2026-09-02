@@ -75,13 +75,13 @@ export function ProcessTimeline() {
         : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 max-w-[920px]";
 
   return (
-    <section id="process" className={`${SECTION_Y} relative overflow-hidden bg-[#0a0a0a]`}>
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-[#0a0a0a] to-[#0d0d0d]" />
+    <section id="process" className={`${SECTION_Y} relative overflow-hidden bg-[var(--paper)]`}>
+      <div className="absolute inset-0 bg-gradient-to-b from-[var(--paper)] via-[var(--paper)] to-[var(--paper)]" />
       <div
         className="absolute inset-0 opacity-[0.02] pointer-events-none"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)",
+            "linear-gradient(rgba(0,0,0,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.07) 1px, transparent 1px)",
           backgroundSize: "60px 60px",
         }}
       />
@@ -93,11 +93,11 @@ export function ProcessTimeline() {
           transition={{ duration: 0.8, ease: EASE_OUT_EXPO }}
           className="text-center mb-10"
         >
-          <p className="text-[#30d158] text-[17px] font-medium mb-4">Our Process</p>
-          <h2 className="text-4xl md:text-5xl lg:text-[64px] font-semibold text-[#f5f5f7] tracking-[-0.025em] leading-[1.1]">
-            Tailored to every service.
+          <p className="eyebrow-serif block mb-5">Our Process</p>
+          <h2 className="text-4xl md:text-5xl lg:text-[64px] font-thin text-[color:var(--ink)] leading-[1.1]">
+            Tailored to <span className="em-serif">every</span> service.
           </h2>
-          <p className="mt-6 text-xl md:text-[22px] text-[#86868b] max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-6 text-xl md:text-[22px] text-[color:var(--ink-mid)] max-w-2xl mx-auto leading-relaxed">
             Each service runs on its own proven, end-to-end process. Choose one to see exactly
             how we work.
           </p>
@@ -109,7 +109,7 @@ export function ProcessTimeline() {
           transition={{ delay: 0.2, duration: 0.6 }}
           className="flex justify-center mb-4"
         >
-          <div className="inline-flex flex-wrap justify-center p-1 rounded-[20px] md:rounded-full bg-[#1c1c1e] border border-white/[0.06] max-w-full gap-1">
+          <div className="inline-flex flex-wrap justify-center p-1 rounded-[2px] md:rounded-full bg-black/[0.05] border border-black/[0.08] max-w-full gap-1">
             {tracks.map((t) => (
               <button
                 key={t.id}
@@ -118,13 +118,13 @@ export function ProcessTimeline() {
                   setOpenStep(null);
                 }}
                 className={`relative px-4 md:px-6 py-2.5 rounded-full text-[12px] md:text-[15px] font-medium transition-colors duration-300 whitespace-nowrap ${
-                  activeTrack === t.id ? "text-black" : "text-[#86868b] hover:text-white"
+                  activeTrack === t.id ? "text-black" : "text-[color:var(--ink-mid)] hover:text-[color:var(--ink)]"
                 }`}
               >
                 {activeTrack === t.id && (
                   <motion.span
                     layoutId="process-tab-pill"
-                    className="absolute inset-0 rounded-full bg-white"
+                    className="absolute inset-0 rounded-full bg-white shadow-[0_1px_3px_rgba(0,0,0,0.10)]"
                     transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
                   />
                 )}
@@ -142,7 +142,7 @@ export function ProcessTimeline() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.3 }}
-              className="text-[15px] text-[#86868b]"
+              className="text-[15px] text-[color:var(--ink-mid)]"
             >
               {track.subtitle}
             </motion.p>
@@ -185,7 +185,7 @@ export function ProcessTimeline() {
                     }}
                     onFocus={() => setHoveredStep(step.step)}
                     onBlur={() => setHoveredStep(null)}
-                    className="relative cursor-pointer group flex flex-col items-center w-full max-w-[180px] rounded-2xl focus-visible:outline-2 focus-visible:outline-white/50 focus-visible:outline-offset-4"
+                    className="relative cursor-pointer group flex flex-col items-center w-full max-w-[180px] rounded-[2px] focus-visible:outline-2 focus-visible:outline-white/50 focus-visible:outline-offset-4"
                   >
                     <div className="relative w-[64px] h-[64px] mb-5">
                       <motion.div
@@ -200,18 +200,18 @@ export function ProcessTimeline() {
                       <div
                         className={`relative w-full h-full rounded-full flex items-center justify-center transition-all duration-500 ${
                           isHovered || isOpen
-                            ? "bg-gradient-to-br from-[#30d158] to-[#2997ff] text-white"
-                            : "bg-[#1c1c1e] border border-[#3c3c3e] text-[#86868b]"
+                            ? "bg-gradient-to-br from-[#30d158] to-[#2997ff] text-[color:var(--ink)]"
+                            : "bg-white border border-[#3c3c3e] text-[color:var(--ink-mid)]"
                         }`}
                       >
                         {stepIcon(step.title, i)}
                       </div>
                       <div className="absolute -top-1 right-0 translate-x-1">
                         <span
-                          className={`text-[11px] font-bold px-2 py-0.5 rounded-full transition-colors duration-300 ${
+                          className={`text-[11px] font-light px-2 py-0.5 rounded-full transition-colors duration-300 ${
                             isHovered || isOpen
                               ? "bg-[#30d158] text-black"
-                              : "bg-[#2c2c2e] text-[#a1a1a6]"
+                              : "bg-[#efefef] text-[color:var(--ink-mid)]"
                           }`}
                         >
                           {String(step.step).padStart(2, "0")}
@@ -220,8 +220,8 @@ export function ProcessTimeline() {
                     </div>
 
                     <h3
-                      className={`text-[15px] font-semibold text-center leading-snug transition-colors duration-300 ${
-                        isHovered || isOpen ? "text-white" : "text-[#f5f5f7]"
+                      className={`text-[15px] font-medium text-center leading-snug transition-colors duration-300 ${
+                        isHovered || isOpen ? "text-[color:var(--ink)]" : "text-[color:var(--ink)]"
                       }`}
                     >
                       {step.title}
@@ -250,21 +250,21 @@ export function ProcessTimeline() {
                   initial={{ opacity: 0, y: SHIFT.md }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="flex items-start gap-6 p-7 md:p-8 rounded-3xl bg-[#1c1c1e] border border-white/5 max-w-3xl mx-auto"
+                  className="flex items-start gap-6 p-7 md:p-8 rounded-[2px] bg-white border border-black/[0.08] max-w-3xl mx-auto"
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#30d158] to-[#2997ff] flex items-center justify-center flex-shrink-0 text-white">
+                  <div className="w-14 h-14 rounded-[2px] bg-gradient-to-br from-[#30d158] to-[#2997ff] flex items-center justify-center flex-shrink-0 text-[color:var(--ink)]">
                     {stepIcon(openStepData.title, openStep ? openStep - 1 : 0)}
                   </div>
                   <div>
                     <div className="flex items-center gap-3 mb-3 flex-wrap">
-                      <span className="px-2.5 py-1 rounded-full bg-[#30d158] text-black text-[12px] font-semibold">
+                      <span className="px-2.5 py-1 rounded-full bg-[#30d158] text-black text-[12px] font-medium">
                         Step {String(openStep).padStart(2, "0")}
                       </span>
-                      <h4 className="text-xl md:text-2xl font-semibold text-white">
+                      <h4 className="text-xl md:text-2xl font-light text-[color:var(--ink)]">
                         {openStepData.title}
                       </h4>
                     </div>
-                    <p className="text-[17px] text-[#a1a1a6] leading-relaxed">
+                    <p className="text-[17px] text-[color:var(--ink-mid)] leading-relaxed">
                       {openStepData.description}
                     </p>
                   </div>
@@ -278,7 +278,7 @@ export function ProcessTimeline() {
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
           transition={{ delay: 0.6 }}
-          className="mt-12 text-center text-[13px] text-[#86868b] flex items-center justify-center gap-1.5"
+          className="mt-12 text-center text-[13px] text-[color:var(--ink-mid)] flex items-center justify-center gap-1.5"
         >
           Tap any step to learn more <ArrowRight className="w-3.5 h-3.5" />
         </motion.p>

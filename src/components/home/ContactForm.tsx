@@ -69,8 +69,8 @@ export function ContactForm() {
           className="mb-20 text-center"
         >
           <p className="text-[#ff375f] text-[17px] font-medium mb-4">Contact</p>
-          <h2 className="text-4xl md:text-5xl lg:text-[64px] font-semibold text-[#f5f5f7] tracking-[-0.025em]">
-            Let&apos;s create together.
+          <h2 className="text-4xl md:text-5xl lg:text-[64px] font-thin text-[#f5f5f7]">
+            Let&apos;s create <span className="em-serif">together</span>.
           </h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -93,12 +93,12 @@ export function ContactForm() {
           >
             <motion.div
               whileHover={{ y: -4, transition: { duration: 0.3 } }}
-              className="p-8 rounded-3xl bg-gradient-to-b from-[#1c1c1e] to-[#161616] group cursor-pointer elevate-static-lg sheen"
+              className="p-8 rounded-[2px] bg-gradient-to-b from-[#1c1c1e] to-[#161616] group cursor-pointer elevate-static-lg sheen"
             >
               <div className="w-12 h-12 rounded-full bg-[rgba(255,255,255,0.06)] flex items-center justify-center mb-5 group-hover:bg-[rgba(255,255,255,0.1)] transition-colors duration-300">
                 <ArrowUpRight className="w-5 h-5 text-[#f5f5f7]" />
               </div>
-              <h3 className="text-[19px] font-semibold text-[#f5f5f7] mb-2 group-hover:text-white transition-colors duration-300">
+              <h3 className="text-[19px] font-medium text-[#f5f5f7] mb-2 group-hover:text-white transition-colors duration-300">
                 Book a Demo
               </h3>
               <p className="text-[15px] text-[#86868b] mb-5 leading-relaxed group-hover:text-[#a1a1a6] transition-colors duration-300">
@@ -191,7 +191,7 @@ export function ContactForm() {
                       initial={{ opacity: 0, y: SHIFT.sm }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
-                      className="text-2xl font-semibold text-[#f5f5f7] mb-2"
+                      className="text-2xl font-light text-[#f5f5f7] mb-2"
                     >
                       {handedOff ? "Almost there" : "Message sent"}
                     </motion.h3>
@@ -312,7 +312,7 @@ export function ContactForm() {
                       aria-busy={submitting}
                       whileHover={{ scale: 1.01 }}
                       whileTap={{ scale: 0.99 }}
-                      className="w-full py-4 bg-[#f5f5f7] text-[#1c1c1e] rounded-2xl text-[17px] font-medium transition-all duration-500 hover:bg-white hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      className="w-full py-4 bg-[#f5f5f7] text-[#1c1c1e] rounded-[2px] text-[17px] font-medium transition-all duration-500 hover:bg-white hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                       {submitting ? (
                         <>

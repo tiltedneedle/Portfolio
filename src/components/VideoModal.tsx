@@ -97,7 +97,7 @@ export function VideoModal({
           >
             <div className={`min-h-full flex items-start justify-center p-4 md:p-8 ${SECTION_Y_TIGHT}`}>
               <div
-                className="relative w-full max-w-5xl bg-[#1c1c1e] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl"
+                className="relative w-full max-w-5xl bg-[#1c1c1e] rounded-[2px] md:rounded-[2px] overflow-hidden shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
               >
                 <motion.button
@@ -146,7 +146,7 @@ export function VideoModal({
                                 backgroundColor: `${color}15`,
                                 borderColor: `${color}30`,
                               }}
-                              className="px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider rounded-full border"
+                              className="px-3 py-1.5 text-[11px] font-medium uppercase tracking-wider rounded-full border"
                             >
                               {category}
                             </span>
@@ -154,12 +154,12 @@ export function VideoModal({
                         })}
                       </div>
 
-                      <p className="text-[13px] font-semibold text-[#2997ff] uppercase tracking-wider mb-2">
+                      <p className="text-[13px] font-medium text-[#2997ff] uppercase tracking-wider mb-2">
                         Featured Work
                       </p>
                       <h2
                         id="video-modal-title"
-                        className="text-3xl md:text-4xl lg:text-[48px] font-semibold text-[#f5f5f7] tracking-[-0.02em] leading-[1.1]"
+                        className="text-3xl md:text-4xl lg:text-[48px] font-thin text-[#f5f5f7] leading-[1.1]"
                       >
                         {item.title}
                       </h2>
@@ -188,11 +188,11 @@ export function VideoModal({
                             duration: 0.5,
                             ease: EASE_OUT_EXPO,
                           }}
-                          className="p-5 md:p-6 rounded-2xl bg-[#2c2c2e] border border-white/[0.06] hover:border-white/[0.1] transition-all duration-300"
+                          className="p-5 md:p-6 rounded-[2px] bg-[#2c2c2e] border border-white/[0.06] hover:border-white/[0.1] transition-all duration-300"
                         >
                           <div
                             style={{ color }}
-                            className="text-3xl md:text-4xl font-semibold tracking-tight tabular-nums"
+                            className="text-3xl md:text-4xl font-extralight tabular-nums"
                           >
                             {metric.value}
                           </div>
@@ -213,10 +213,10 @@ export function VideoModal({
                   )}
 
                   {(item.services || item.duration) && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 p-6 md:p-8 rounded-2xl bg-[#2c2c2e]/50 border border-white/[0.06]">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 p-6 md:p-8 rounded-[2px] bg-[#2c2c2e]/50 border border-white/[0.06]">
                       {item.services && item.services.length > 0 && (
                         <div>
-                          <h3 className="text-[12px] text-[#30d158] uppercase tracking-wider font-semibold mb-4">
+                          <h3 className="text-[12px] text-[#30d158] uppercase tracking-wider font-medium mb-4">
                             Services Provided
                           </h3>
                           <ul className="space-y-3">
@@ -235,7 +235,7 @@ export function VideoModal({
 
                       {item.duration && (
                         <div>
-                          <h3 className="text-[12px] text-[#ff9f0a] uppercase tracking-wider font-semibold mb-4">
+                          <h3 className="text-[12px] text-[#ff9f0a] uppercase tracking-wider font-medium mb-4">
                             Project Duration
                           </h3>
                           <div className="flex items-center gap-3 text-[15px] text-[#d1d1d6]">
@@ -254,9 +254,9 @@ export function VideoModal({
                           initial={{ opacity: 0, ...rise }}
                           animate={{ opacity: 1, ...riseTo }}
                           transition={{ delay: 0.2, duration: 0.5, ease: EASE_OUT_EXPO }}
-                          className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-[#ff453a]/10 to-transparent border border-[#ff453a]/20"
+                          className="p-6 md:p-8 rounded-[2px] bg-gradient-to-br from-[#ff453a]/10 to-transparent border border-[#ff453a]/20"
                         >
-                          <h3 className="text-[12px] text-[#ff453a] uppercase tracking-wider font-semibold mb-4">
+                          <h3 className="text-[12px] text-[#ff453a] uppercase tracking-wider font-medium mb-4">
                             The Challenge
                           </h3>
                           <p className="text-[15px] text-[#d1d1d6] leading-relaxed">
@@ -270,9 +270,9 @@ export function VideoModal({
                           initial={{ opacity: 0, ...rise }}
                           animate={{ opacity: 1, ...riseTo }}
                           transition={{ delay: 0.3, duration: 0.5, ease: EASE_OUT_EXPO }}
-                          className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-[#30d158]/10 to-transparent border border-[#30d158]/20"
+                          className="p-6 md:p-8 rounded-[2px] bg-gradient-to-br from-[#30d158]/10 to-transparent border border-[#30d158]/20"
                         >
-                          <h3 className="text-[12px] text-[#30d158] uppercase tracking-wider font-semibold mb-4">
+                          <h3 className="text-[12px] text-[#30d158] uppercase tracking-wider font-medium mb-4">
                             Our Solution
                           </h3>
                           <p className="text-[15px] text-[#d1d1d6] leading-relaxed">
@@ -288,9 +288,9 @@ export function VideoModal({
                       initial={{ opacity: 0, ...rise }}
                       animate={{ opacity: 1, ...riseTo }}
                       transition={{ delay: 0.4, duration: 0.5, ease: EASE_OUT_EXPO }}
-                      className="mb-10 p-6 md:p-8 rounded-2xl bg-gradient-to-br from-[#2997ff]/10 to-transparent border border-[#2997ff]/20"
+                      className="mb-10 p-6 md:p-8 rounded-[2px] bg-gradient-to-br from-[#2997ff]/10 to-transparent border border-[#2997ff]/20"
                     >
-                      <h3 className="text-[12px] text-[#2997ff] uppercase tracking-wider font-semibold mb-4">
+                      <h3 className="text-[12px] text-[#2997ff] uppercase tracking-wider font-medium mb-4">
                         The Results
                       </h3>
                       <p className="text-[15px] text-[#d1d1d6] leading-relaxed">{item.results}</p>
@@ -302,7 +302,7 @@ export function VideoModal({
                       initial={{ opacity: 0, ...rise }}
                       animate={{ opacity: 1, ...riseTo }}
                       transition={{ delay: 0.5, duration: 0.5, ease: EASE_OUT_EXPO }}
-                      className="mb-10 p-8 md:p-10 rounded-2xl bg-[#2c2c2e] border border-white/[0.06] relative overflow-hidden"
+                      className="mb-10 p-8 md:p-10 rounded-[2px] bg-[#2c2c2e] border border-white/[0.06] relative overflow-hidden"
                     >
                       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#2997ff] via-[#30d158] to-[#af52de]" />
                       <Quote className="absolute top-8 left-8 w-10 h-10 text-[#2997ff]/20" />
@@ -312,12 +312,12 @@ export function VideoModal({
                         </p>
                         <footer className="flex items-center gap-4">
                           <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#2997ff] to-[#30d158] flex items-center justify-center">
-                            <span className="text-white font-semibold text-[17px]">
+                            <span className="text-white font-medium text-[17px]">
                               {item.testimonial.author.charAt(0)}
                             </span>
                           </div>
                           <div>
-                            <cite className="text-[15px] text-[#f5f5f7] not-italic font-semibold">
+                            <cite className="text-[15px] text-[#f5f5f7] not-italic font-medium">
                               {item.testimonial.author}
                             </cite>
                             <p className="text-[13px] text-[#a1a1a6] mt-0.5">
@@ -331,10 +331,10 @@ export function VideoModal({
 
                   {relatedItems.length > 0 && (
                     <div className="pt-8 border-t border-white/[0.06]">
-                      <p className="text-[12px] text-[#af52de] uppercase tracking-wider font-semibold mb-2">
+                      <p className="text-[12px] text-[#af52de] uppercase tracking-wider font-medium mb-2">
                         Related
                       </p>
-                      <h3 className="text-[20px] text-[#f5f5f7] font-semibold mb-6">
+                      <h3 className="text-[20px] text-[#f5f5f7] font-light mb-6">
                         More like this
                       </h3>
                       <div className="grid grid-cols-3 gap-4">
@@ -344,7 +344,7 @@ export function VideoModal({
                             onClick={() => onSelectRelated?.(related)}
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            className="group relative aspect-video rounded-xl overflow-hidden bg-[#2c2c2e] border border-white/[0.06] hover:border-white/[0.1] transition-all duration-300"
+                            className="group relative aspect-video rounded-[2px] overflow-hidden bg-[#2c2c2e] border border-white/[0.06] hover:border-white/[0.1] transition-all duration-300"
                           >
                             <div className="w-full h-full bg-gradient-to-br from-[#3c3c3e] to-[#2c2c2e]" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
@@ -354,7 +354,7 @@ export function VideoModal({
                               </div>
                             </div>
                             <div className="absolute bottom-0 left-0 right-0 p-4">
-                              <p className="text-[13px] font-semibold text-[#f5f5f7] line-clamp-1">
+                              <p className="text-[13px] font-medium text-[#f5f5f7] line-clamp-1">
                                 {related.title}
                               </p>
                               <p className="text-[11px] text-[#a1a1a6] mt-1">{related.client}</p>

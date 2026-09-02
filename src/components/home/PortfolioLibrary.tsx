@@ -67,9 +67,9 @@ function PortfolioCard({ item, onClick }: { item: PortfolioItem; onClick: () => 
           y: hovered && !reduced ? -4 : 0,
         }}
         transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
-        className="relative aspect-[9/16] rounded-2xl md:rounded-[20px] overflow-hidden bg-[#1c1c1e] shadow-tween"
+        className="relative aspect-[9/16] rounded-[2px] md:rounded-[2px] overflow-hidden bg-white shadow-tween"
         style={{
-          boxShadow: hovered ? "var(--elev-3), var(--glow-soft)" : "var(--elev-1)",
+          boxShadow: hovered ? "var(--lift-hover)" : "var(--lift)",
         }}
       >
         <div className="absolute inset-0 skeleton" aria-hidden="true" />
@@ -102,7 +102,7 @@ function PortfolioCard({ item, onClick }: { item: PortfolioItem; onClick: () => 
           transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
           className="absolute top-3 left-3"
         >
-          <span className="px-2.5 py-1 text-[11px] font-medium uppercase tracking-wider text-white/90 bg-white/15 backdrop-blur-md rounded-full border border-white/10">
+          <span className="px-2.5 py-1 text-[11px] font-medium uppercase tracking-wider text-white bg-white/15 backdrop-blur-md rounded-full border border-black/[0.10]">
             {item.categories[0]}
           </span>
         </motion.div>
@@ -115,7 +115,7 @@ function PortfolioCard({ item, onClick }: { item: PortfolioItem; onClick: () => 
         >
           <div className="relative">
             {hovered && !reduced && (
-              <div className="absolute inset-0 rounded-full bg-white/20 animate-ping" />
+              <div className="absolute inset-0 rounded-full bg-white/25 animate-ping" />
             )}
             <div className="w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-xl">
               <Play className="w-5 h-5 text-black ml-0.5" fill="currentColor" />
@@ -128,7 +128,7 @@ function PortfolioCard({ item, onClick }: { item: PortfolioItem; onClick: () => 
             animate={{ y: hovered && !reduced ? -4 : 0 }}
             transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
           >
-            <h3 className="text-[15px] md:text-[17px] font-semibold text-white leading-tight line-clamp-2">
+            <h3 className="text-[15px] md:text-[17px] font-medium text-white leading-tight line-clamp-2">
               {item.title}
             </h3>
             <p className="mt-1 text-[13px] text-white/60 line-clamp-1">{item.client}</p>
@@ -138,10 +138,10 @@ function PortfolioCard({ item, onClick }: { item: PortfolioItem; onClick: () => 
               transition={{ duration: 0.3 }}
               className="overflow-hidden"
             >
-              <div className="flex gap-4 mt-3 pt-3 border-t border-white/10">
+              <div className="flex gap-4 mt-3 pt-3 border-t border-white/15">
                 {item.metrics.slice(0, 2).map((metric) => (
                   <div key={metric.label} className="flex flex-col">
-                    <span className="text-[15px] font-semibold text-white tabular-nums">
+                    <span className="text-[15px] font-medium text-white tabular-nums">
                       {metric.value}
                     </span>
                     <span className="text-[11px] text-white/50 uppercase tracking-wider">
@@ -182,15 +182,15 @@ export function PortfolioLibrary() {
   return (
     <section
       id="portfolio"
-      className={`relative ${SECTION_Y} bg-[#0a0a0a] overflow-hidden`}
+      className={`relative ${SECTION_Y} bg-[var(--paper)] overflow-hidden`}
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-[#0a0a0a] to-[#0a0a0a] pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[var(--paper)] via-[var(--paper)] to-[var(--paper)] pointer-events-none" />
       <div className="absolute top-[30%] left-[-5%] w-[400px] h-[400px] rounded-full bg-[#64d2ff]/10 blur-[160px] pointer-events-none opacity-[0.03]" />
       <div className="absolute bottom-[20%] right-[-3%] w-[350px] h-[350px] rounded-full bg-[#af52de]/8 blur-[140px] pointer-events-none opacity-[0.03]" />
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage: "radial-gradient(rgba(255,255,255,0.01) 1px, transparent 1px)",
+          backgroundImage: "radial-gradient(rgba(0,0,0,0.04) 1px, transparent 1px)",
           backgroundSize: "28px 28px",
         }}
       />
@@ -203,12 +203,12 @@ export function PortfolioLibrary() {
           transition={{ duration: 0.8, ease: EASE_OUT_EXPO }}
           className="mb-12 md:mb-16 text-center"
         >
-          <p className="text-[#64d2ff] text-[17px] font-medium mb-4">Explore</p>
-          <h2 className="text-[32px] md:text-[48px] lg:text-[56px] font-semibold text-[#f5f5f7] tracking-[-0.02em] leading-[1.1]">
+          <p className="eyebrow-serif block mb-5">Explore</p>
+          <h2 className="text-[32px] md:text-[48px] lg:text-[56px] font-thin text-[color:var(--ink)] leading-[1.1]">
             Portfolio Library
           </h2>
-          <p className="mt-6 text-[17px] md:text-[22px] text-[#86868b] leading-[1.4]">
-            1,000+ projects delivered across industries.
+          <p className="mt-6 text-[17px] md:text-[22px] text-[color:var(--ink-mid)] leading-[1.4]">
+            1,000+ projects <span className="em-serif">delivered</span> across industries.
           </p>
         </motion.div>
 
@@ -248,7 +248,7 @@ export function PortfolioLibrary() {
             <motion.span
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center gap-2 px-8 py-4 bg-[#1c1c1e] hover:bg-[#2c2c2e] text-white text-[15px] font-medium rounded-full border border-white/10 transition-colors duration-300"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-white hover:bg-[#efefef] text-[color:var(--ink)] text-[15px] font-medium rounded-full border border-black/[0.10] transition-colors duration-300"
             >
               View More
               <ArrowRight className="w-4 h-4" />

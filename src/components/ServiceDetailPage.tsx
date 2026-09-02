@@ -58,7 +58,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
     <>
       <section
         ref={heroRef}
-        className="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden bg-black min-h-[80vh] flex items-center"
+        className="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden bg-[var(--paper)] min-h-[80vh] flex items-center"
       >
         <motion.div style={{ y: reduced ? 0 : heroY }} className="absolute inset-0">
           <Image
@@ -69,9 +69,9 @@ export function ServiceDetailPage({ service }: { service: Service }) {
             priority
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-black/75" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40" />
+          <div className="absolute inset-0 bg-[var(--paper)]/75" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[var(--paper)] via-[var(--paper)]/70 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[var(--paper)] via-transparent to-[var(--paper)]/60" />
         </motion.div>
 
         <motion.div
@@ -87,7 +87,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
           className="absolute inset-0 pointer-events-none"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.01) 1px, transparent 1px)",
+              "linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px)",
             backgroundSize: "60px 60px",
           }}
         />
@@ -119,17 +119,17 @@ export function ServiceDetailPage({ service }: { service: Service }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="flex items-center gap-2 text-[15px] text-[#86868b] mb-8"
+            className="flex items-center gap-2 text-[15px] text-[color:var(--ink-mid)] mb-8"
           >
-            <Link href="/" className="hover:text-[#f5f5f7] transition-colors">
+            <Link href="/" className="hover:text-[color:var(--ink)] transition-colors">
               Home
             </Link>
             <ChevronRight className="w-3 h-3" />
-            <Link href="/services" className="hover:text-[#f5f5f7] transition-colors">
+            <Link href="/services" className="hover:text-[color:var(--ink)] transition-colors">
               Services
             </Link>
             <ChevronRight className="w-3 h-3" />
-            <span className="text-[#f5f5f7]">{service.shortTitle}</span>
+            <span className="text-[color:var(--ink)]">{service.shortTitle}</span>
           </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
@@ -140,23 +140,23 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                 transition={{ delay: 0.1, duration: 1, ease: EASE_OUT_EXPO }}
               >
                 <motion.div
-                  className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${service.gradient} flex items-center justify-center mb-8 text-white shadow-lg`}
+                  className={`w-16 h-16 rounded-[2px] bg-gradient-to-br ${service.gradient} flex items-center justify-center mb-8 text-[color:var(--ink)] shadow-lg`}
                   whileHover={{ scale: 1.1, rotate: 5 }}
                 >
                   {ICONS_LG[service.iconName]}
                 </motion.div>
 
-                <h1 className="text-4xl md:text-5xl lg:text-[56px] font-semibold tracking-[-0.03em] leading-[1.08] text-[#f5f5f7] mb-4">
+                <h1 className="text-4xl md:text-5xl lg:text-[56px] font-thin leading-[1.08] text-[color:var(--ink)] mb-4">
                   {service.title}
                 </h1>
 
                 <p
-                  className={`text-2xl md:text-[28px] font-semibold bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent mb-6`}
+                  className={`text-2xl md:text-[28px] font-extralight bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent mb-6`}
                 >
                   {service.tagline}
                 </p>
 
-                <p className="text-[17px] md:text-[19px] text-[#86868b] leading-relaxed mb-8">
+                <p className="text-[17px] md:text-[19px] text-[color:var(--ink-mid)] leading-relaxed mb-8">
                   {service.description}
                 </p>
 
@@ -175,7 +175,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                     <motion.span
                       whileHover={{ scale: 1.03 }}
                       whileTap={{ scale: 0.98 }}
-                      className="inline-flex items-center gap-2 px-8 py-4 bg-transparent text-[#f5f5f7] border border-[rgba(255,255,255,0.3)] rounded-full text-[17px] font-medium transition-all duration-300 hover:border-[rgba(255,255,255,0.5)] hover:bg-white/5"
+                      className="inline-flex items-center gap-2 px-8 py-4 bg-transparent text-[color:var(--ink)] border border-[rgba(255,255,255,0.3)] rounded-full text-[17px] font-medium transition-all duration-300 hover:border-[rgba(255,255,255,0.5)] hover:bg-black/[0.04]"
                     >
                       All Services
                     </motion.span>
@@ -190,11 +190,11 @@ export function ServiceDetailPage({ service }: { service: Service }) {
               transition={{ delay: 0.3, duration: 0.8, ease: EASE_OUT_EXPO }}
               className="relative"
             >
-              <div className="relative aspect-[4/3] rounded-3xl overflow-hidden">
+              <div className="relative aspect-[4/3] rounded-[2px] overflow-hidden">
                 <div
-                  className={`absolute -inset-[2px] rounded-3xl bg-gradient-to-br ${service.gradient} opacity-60`}
+                  className={`absolute -inset-[2px] rounded-[2px] bg-gradient-to-br ${service.gradient} opacity-60`}
                 />
-                <div className="absolute inset-[2px] rounded-[22px] overflow-hidden bg-[#1c1c1e]">
+                <div className="absolute inset-[2px] rounded-[2px] overflow-hidden bg-white">
                   <Image
                     src={service.imageUrl}
                     alt={service.title}
@@ -210,7 +210,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
         </motion.div>
       </section>
 
-      <section className="relative py-16 bg-[#0a0a0a] border-y border-white/[0.04] overflow-hidden">
+      <section className="relative py-16 bg-[var(--paper)] border-y border-black/[0.10] overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.02),transparent_70%)]" />
         <div className="mx-auto max-w-[900px] px-6">
           <div className="grid grid-cols-3 gap-8">
@@ -224,11 +224,11 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                 className="text-center"
               >
                 <div
-                  className={`text-3xl md:text-5xl font-semibold bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent tracking-[-0.02em]`}
+                  className={`text-3xl md:text-5xl font-extralight bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent`}
                 >
                   {stat.value}
                 </div>
-                <div className="mt-2 text-[12px] md:text-[15px] text-[#86868b] uppercase tracking-[0.08em]">
+                <div className="mt-2 text-[12px] md:text-[15px] text-[color:var(--ink-mid)] uppercase tracking-[0.08em]">
                   {stat.label}
                 </div>
               </motion.div>
@@ -237,8 +237,8 @@ export function ServiceDetailPage({ service }: { service: Service }) {
         </div>
       </section>
 
-      <section className={`relative ${SECTION_Y_INNER} bg-black overflow-hidden`}>
-        <div className="absolute top-1/2 right-[-10%] -translate-y-1/2 w-[500px] h-[400px] rounded-3xl overflow-hidden opacity-[0.04] rotate-[3deg] pointer-events-none hidden lg:block">
+      <section className={`relative ${SECTION_Y_INNER} bg-[var(--paper)] overflow-hidden`}>
+        <div className="absolute top-1/2 right-[-10%] -translate-y-1/2 w-[500px] h-[400px] rounded-[2px] overflow-hidden opacity-[0.04] rotate-[3deg] pointer-events-none hidden lg:block">
           <Image
             src={service.imageUrl}
             alt=""
@@ -260,18 +260,18 @@ export function ServiceDetailPage({ service }: { service: Service }) {
             >
               The Deep Dive
             </p>
-            <h2 className="text-3xl md:text-4xl lg:text-[48px] font-semibold text-[#f5f5f7] tracking-[-0.025em] leading-tight mb-8">
+            <h2 className="text-3xl md:text-4xl lg:text-[48px] font-thin text-[color:var(--ink)] leading-tight mb-8">
               Why it matters.
             </h2>
-            <p className="text-[17px] md:text-[19px] text-[#a1a1a6] leading-[1.7]">
+            <p className="text-[17px] md:text-[19px] text-[color:var(--ink-mid)] leading-[1.7]">
               {service.longDescription}
             </p>
           </motion.div>
         </div>
       </section>
 
-      <section className={`relative ${SECTION_Y_INNER} bg-[#0a0a0a] overflow-hidden`}>
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-[#0a0a0a] to-black" />
+      <section className={`relative ${SECTION_Y_INNER} bg-[var(--paper)] overflow-hidden`}>
+        <div className="absolute inset-0 bg-gradient-to-b from-[var(--paper)] via-[var(--paper)] to-[var(--paper)]" />
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -301,7 +301,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
             >
               What&apos;s Included
             </p>
-            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-semibold text-[#f5f5f7] tracking-[-0.025em]">
+            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-thin text-[color:var(--ink)]">
               Everything you need.
             </h2>
           </motion.div>
@@ -314,14 +314,14 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.06 * i, duration: 0.5 }}
-                className="flex items-center gap-4 p-5 rounded-2xl bg-[#1c1c1e]/60 border border-white/[0.04] group hover:bg-[#1c1c1e] transition-all duration-300"
+                className="flex items-center gap-4 p-5 rounded-[2px] bg-white/70 border border-black/[0.10] group hover:bg-white transition-all duration-300"
               >
                 <div
-                  className={`w-10 h-10 rounded-xl bg-gradient-to-br ${service.gradient} flex items-center justify-center flex-shrink-0 opacity-80 group-hover:opacity-100 transition-opacity`}
+                  className={`w-10 h-10 rounded-[2px] bg-gradient-to-br ${service.gradient} flex items-center justify-center flex-shrink-0 opacity-80 group-hover:opacity-100 transition-opacity`}
                 >
-                  <Check className="w-5 h-5 text-white" />
+                  <Check className="w-5 h-5 text-[color:var(--ink)]" />
                 </div>
-                <span className="text-[17px] text-[#d1d1d6] group-hover:text-white transition-colors">
+                <span className="text-[17px] text-[color:var(--ink-soft)] group-hover:text-[color:var(--ink)] transition-colors">
                   {feature}
                 </span>
               </motion.div>
@@ -330,7 +330,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
         </div>
       </section>
 
-      <section className={`relative ${SECTION_Y_INNER} bg-black`}>
+      <section className={`relative ${SECTION_Y_INNER} bg-[var(--paper)]`}>
         <div className="mx-auto max-w-[1200px] px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -344,7 +344,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
             >
               Why Choose Us
             </p>
-            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-semibold text-[#f5f5f7] tracking-[-0.025em]">
+            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-thin text-[color:var(--ink)]">
               The advantage.
             </h2>
           </motion.div>
@@ -357,21 +357,21 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 * i, duration: 0.6, ease: EASE_OUT_EXPO }}
-                className="group p-8 rounded-3xl bg-gradient-to-b from-[#1c1c1e] to-[#161616] hover:from-[#222222] hover:to-[#1a1a1a] transition-colors duration-500 elevate-static"
+                className="group p-8 rounded-[2px] bg-gradient-to-b from-white to-[#fafafa] hover:from-white hover:to-white transition-colors duration-500 plate"
               >
                 <div className="flex items-start gap-5">
                   <div
-                    className={`w-12 h-12 rounded-xl bg-gradient-to-br ${service.gradient} flex items-center justify-center flex-shrink-0 opacity-60 group-hover:opacity-100 transition-opacity duration-500`}
+                    className={`w-12 h-12 rounded-[2px] bg-gradient-to-br ${service.gradient} flex items-center justify-center flex-shrink-0 opacity-60 group-hover:opacity-100 transition-opacity duration-500`}
                   >
-                    <span className="text-white text-[19px] font-bold">
+                    <span className="text-[color:var(--ink)] text-[19px] font-light">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                   </div>
                   <div>
-                    <h3 className="text-[19px] font-semibold text-[#f5f5f7] mb-2 group-hover:text-white transition-colors">
+                    <h3 className="text-[19px] font-medium text-[color:var(--ink)] mb-2 group-hover:text-[color:var(--ink)] transition-colors">
                       {benefit.title}
                     </h3>
-                    <p className="text-[15px] text-[#86868b] leading-relaxed group-hover:text-[#a1a1a6] transition-colors">
+                    <p className="text-[15px] text-[color:var(--ink-mid)] leading-relaxed group-hover:text-[color:var(--ink-mid)] transition-colors">
                       {benefit.description}
                     </p>
                   </div>
@@ -382,8 +382,8 @@ export function ServiceDetailPage({ service }: { service: Service }) {
         </div>
       </section>
 
-      <section className={`relative ${SECTION_Y_INNER} bg-[#0a0a0a] overflow-hidden`}>
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-[#0a0a0a] to-black" />
+      <section className={`relative ${SECTION_Y_INNER} bg-[var(--paper)] overflow-hidden`}>
+        <div className="absolute inset-0 bg-gradient-to-b from-[var(--paper)] via-[var(--paper)] to-[var(--paper)]" />
         <motion.div
           initial={{ scaleY: 0 }}
           whileInView={{ scaleY: 1 }}
@@ -405,7 +405,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
             >
               Our Process
             </p>
-            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-semibold text-[#f5f5f7] tracking-[-0.025em]">
+            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-thin text-[color:var(--ink)]">
               How it works.
             </h2>
           </motion.div>
@@ -418,20 +418,20 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 * i, duration: 0.6, ease: EASE_OUT_EXPO }}
-                className="group flex items-start gap-6 p-6 md:p-8 rounded-2xl bg-[#1c1c1e]/40 border border-white/[0.04] hover:bg-[#1c1c1e] hover:border-white/[0.08] transition-all duration-500"
+                className="group flex items-start gap-6 p-6 md:p-8 rounded-[2px] bg-white/40 border border-black/[0.10] hover:bg-white hover:border-black/[0.10] transition-all duration-500"
               >
                 <div
                   className={`w-14 h-14 rounded-full bg-gradient-to-br ${service.gradient} flex items-center justify-center flex-shrink-0`}
                 >
-                  <span className="text-white text-[19px] font-bold">
+                  <span className="text-[color:var(--ink)] text-[19px] font-light">
                     {String(step.step).padStart(2, "0")}
                   </span>
                 </div>
                 <div>
-                  <h3 className="text-[19px] font-semibold text-[#f5f5f7] mb-2 group-hover:text-white transition-colors">
+                  <h3 className="text-[19px] font-medium text-[color:var(--ink)] mb-2 group-hover:text-[color:var(--ink)] transition-colors">
                     {step.title}
                   </h3>
-                  <p className="text-[15px] text-[#86868b] leading-relaxed group-hover:text-[#a1a1a6] transition-colors">
+                  <p className="text-[15px] text-[color:var(--ink-mid)] leading-relaxed group-hover:text-[color:var(--ink-mid)] transition-colors">
                     {step.description}
                   </p>
                 </div>
@@ -442,8 +442,8 @@ export function ServiceDetailPage({ service }: { service: Service }) {
       </section>
 
       {service.secondaryProcess && (
-        <section className={`relative ${SECTION_Y_INNER} bg-black overflow-hidden`}>
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-black to-[#0a0a0a]" />
+        <section className={`relative ${SECTION_Y_INNER} bg-[var(--paper)] overflow-hidden`}>
+          <div className="absolute inset-0 bg-gradient-to-b from-[var(--paper)] via-[var(--paper)] to-[var(--paper)]" />
           <div className="mx-auto max-w-[1000px] px-6 relative">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -457,10 +457,10 @@ export function ServiceDetailPage({ service }: { service: Service }) {
               >
                 Going Long
               </p>
-              <h2 className="text-4xl md:text-5xl lg:text-[56px] font-semibold text-[#f5f5f7] tracking-[-0.025em]">
+              <h2 className="text-4xl md:text-5xl lg:text-[56px] font-thin text-[color:var(--ink)]">
                 {service.secondaryProcess.title}
               </h2>
-              <p className="mt-6 text-[17px] md:text-[19px] text-[#86868b] max-w-2xl mx-auto">
+              <p className="mt-6 text-[17px] md:text-[19px] text-[color:var(--ink-mid)] max-w-2xl mx-auto">
                 {service.secondaryProcess.subtitle}
               </p>
             </motion.div>
@@ -473,20 +473,20 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: (i % 2) * 0.06, duration: 0.5, ease: EASE_OUT_EXPO }}
-                  className="group flex items-start gap-5 p-6 rounded-2xl bg-[#1c1c1e]/40 border border-white/[0.04] hover:bg-[#1c1c1e] hover:border-white/[0.08] transition-all duration-500"
+                  className="group flex items-start gap-5 p-6 rounded-[2px] bg-white/40 border border-black/[0.10] hover:bg-white hover:border-black/[0.10] transition-all duration-500"
                 >
                   <div
                     className={`w-11 h-11 rounded-full bg-gradient-to-br ${service.gradient} flex items-center justify-center flex-shrink-0`}
                   >
-                    <span className="text-white text-[15px] font-bold">
+                    <span className="text-[color:var(--ink)] text-[15px] font-light">
                       {String(step.step).padStart(2, "0")}
                     </span>
                   </div>
                   <div>
-                    <h3 className="text-[17px] font-semibold text-[#f5f5f7] mb-1.5 group-hover:text-white transition-colors">
+                    <h3 className="text-[17px] font-medium text-[color:var(--ink)] mb-1.5 group-hover:text-[color:var(--ink)] transition-colors">
                       {step.title}
                     </h3>
-                    <p className="text-[15px] text-[#86868b] leading-relaxed group-hover:text-[#a1a1a6] transition-colors">
+                    <p className="text-[15px] text-[color:var(--ink-mid)] leading-relaxed group-hover:text-[color:var(--ink-mid)] transition-colors">
                       {step.description}
                     </p>
                   </div>
@@ -497,7 +497,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
         </section>
       )}
 
-      <section className={`relative ${SECTION_Y_INNER} bg-black`}>
+      <section className={`relative ${SECTION_Y_INNER} bg-[var(--paper)]`}>
         <div className="mx-auto max-w-[800px] px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -511,7 +511,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
             >
               FAQ
             </p>
-            <h2 className="text-4xl md:text-5xl font-semibold text-[#f5f5f7] tracking-[-0.025em]">
+            <h2 className="text-4xl md:text-5xl font-extralight text-[color:var(--ink)]">
               Common questions.
             </h2>
           </motion.div>
@@ -529,14 +529,14 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                     question announced its entire answer as the button's name —
                     and nested a heading inside interactive content. The panel is
                     now a sibling, linked by aria-controls. */}
-                <div className="rounded-2xl bg-[#1c1c1e]/60 border border-white/[0.04] hover:bg-[#1c1c1e] transition-all duration-300">
+                <div className="rounded-[2px] bg-white/70 border border-black/[0.10] hover:bg-white transition-all duration-300">
                   <h3>
                     <button
                       onClick={() => setOpenFaq(openFaq === i ? null : i)}
                       aria-expanded={openFaq === i}
                       aria-controls={`faq-panel-${i}`}
                       id={`faq-trigger-${i}`}
-                      className="w-full text-left p-6 flex items-center justify-between gap-4 text-[17px] font-medium text-[#f5f5f7] rounded-2xl"
+                      className="w-full text-left p-6 flex items-center justify-between gap-4 text-[17px] font-medium text-[color:var(--ink)] rounded-[2px]"
                     >
                       {item.question}
                       <motion.span
@@ -545,7 +545,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                         className="flex-shrink-0"
                         aria-hidden="true"
                       >
-                        <ChevronDown className="w-5 h-5 text-[#86868b]" />
+                        <ChevronDown className="w-5 h-5 text-[color:var(--ink-mid)]" />
                       </motion.span>
                     </button>
                   </h3>
@@ -561,7 +561,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                     transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
                     className="overflow-hidden"
                   >
-                    <p className="text-[15px] text-[#86868b] leading-relaxed px-6 pb-6">
+                    <p className="text-[15px] text-[color:var(--ink-mid)] leading-relaxed px-6 pb-6">
                       {item.answer}
                     </p>
                   </motion.div>
@@ -572,8 +572,8 @@ export function ServiceDetailPage({ service }: { service: Service }) {
         </div>
       </section>
 
-      <section className={`relative ${SECTION_Y_INNER} bg-[#0a0a0a] overflow-hidden`}>
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-[#0a0a0a] to-[#0d0d0d]" />
+      <section className={`relative ${SECTION_Y_INNER} bg-[var(--paper)] overflow-hidden`}>
+        <div className="absolute inset-0 bg-gradient-to-b from-[var(--paper)] via-[var(--paper)] to-[var(--paper)]" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[300px] rounded-tl-3xl overflow-hidden opacity-[0.025] pointer-events-none hidden lg:block">
           <Image
             src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&h=400&fit=crop"
@@ -592,7 +592,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-semibold text-[#f5f5f7] tracking-[-0.025em]">
+            <h2 className="text-3xl md:text-4xl font-extralight text-[color:var(--ink)]">
               Explore other services
             </h2>
           </motion.div>
@@ -609,19 +609,19 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                 <Link href={`/services/${other.slug}`}>
                   <motion.div
                     whileHover={{ y: -4 }}
-                    className="group p-6 rounded-2xl bg-[#1c1c1e]/60 border border-white/[0.04] hover:bg-[#1c1c1e] transition-all duration-300"
+                    className="group p-6 rounded-[2px] bg-white/70 border border-black/[0.10] hover:bg-white transition-all duration-300"
                   >
                     <div className="flex items-center gap-3 mb-3">
                       <div
-                        className={`w-10 h-10 rounded-xl bg-gradient-to-br ${other.gradient} flex items-center justify-center text-white`}
+                        className={`w-10 h-10 rounded-[2px] bg-gradient-to-br ${other.gradient} flex items-center justify-center text-[color:var(--ink)]`}
                       >
                         {ICONS_SM[other.iconName]}
                       </div>
-                      <h3 className="text-[17px] font-semibold text-[#f5f5f7] group-hover:text-white transition-colors">
+                      <h3 className="text-[17px] font-medium text-[color:var(--ink)] group-hover:text-[color:var(--ink)] transition-colors">
                         {other.shortTitle}
                       </h3>
                     </div>
-                    <p className="text-[13px] text-[#86868b] leading-relaxed line-clamp-2">
+                    <p className="text-[13px] text-[color:var(--ink-mid)] leading-relaxed line-clamp-2">
                       {other.tagline}
                     </p>
                   </motion.div>
@@ -632,7 +632,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
         </div>
       </section>
 
-      <section className={`relative ${SECTION_Y_INNER} bg-black overflow-hidden`}>
+      <section className={`relative ${SECTION_Y_INNER} bg-[var(--paper)] overflow-hidden`}>
         <div className="absolute inset-0">
           <video
             autoPlay
@@ -646,13 +646,13 @@ export function ServiceDetailPage({ service }: { service: Service }) {
               type="video/mp4"
             />
           </video>
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[var(--paper)] via-[var(--paper)] to-[var(--paper)]" />
         </div>
 
         <motion.div
           animate={reduced ? {} : { opacity: [0.03, 0.06, 0.03], scale: [1, 1.1, 1] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-to-t from-white/5 to-transparent blur-[150px] pointer-events-none"
+          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-to-t from-black/[0.03] to-transparent blur-[150px] pointer-events-none"
         />
 
         <div className="mx-auto max-w-[800px] px-6 text-center relative">
@@ -667,10 +667,10 @@ export function ServiceDetailPage({ service }: { service: Service }) {
             >
               Ready to get started?
             </p>
-            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-semibold text-[#f5f5f7] tracking-[-0.025em] mb-6 leading-tight">
+            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-thin text-[color:var(--ink)] mb-6 leading-tight">
               Let&apos;s grow your brand.
             </h2>
-            <p className="text-xl md:text-[22px] text-[#86868b] leading-relaxed mb-10">
+            <p className="text-xl md:text-[22px] text-[color:var(--ink-mid)] leading-relaxed mb-10">
               Book a free strategy session and see how {service.shortTitle} can transform your
               business.
             </p>

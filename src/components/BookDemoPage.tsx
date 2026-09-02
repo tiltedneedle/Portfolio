@@ -60,7 +60,7 @@ export function BookDemoPage() {
   };
 
   return (
-    <div className="bg-black min-h-screen">
+    <div className="bg-[var(--paper)] min-h-screen">
       <section className="relative pt-32 pb-16 md:pt-40 md:pb-20 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[600px] bg-gradient-to-b from-[#2997ff]/[0.07] to-transparent blur-[120px] rounded-full" />
@@ -72,12 +72,12 @@ export function BookDemoPage() {
             transition={{ duration: 0.8, ease: EASE_OUT_EXPO }}
             className="text-center max-w-3xl mx-auto"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1c1c1e] border border-white/[0.06] text-[13px] text-[#86868b] mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-black/[0.10] text-[13px] text-[color:var(--ink-mid)] mb-8">
               <Clock className="w-3.5 h-3.5 text-[#2997ff]" />
               Free 30-minute strategy session
             </div>
 
-            <h1 className="text-4xl md:text-6xl lg:text-[72px] font-semibold tracking-[-0.03em] leading-[1.05] text-[#f5f5f7] mb-5">
+            <h1 className="text-4xl md:text-6xl lg:text-[72px] font-thin leading-[1.05] text-[color:var(--ink)] mb-5">
               Let&apos;s build your
               <br />
               <span className="bg-gradient-to-r from-[#2997ff] to-[#af52de] bg-clip-text text-transparent">
@@ -85,7 +85,7 @@ export function BookDemoPage() {
               </span>
             </h1>
 
-            <p className="text-[19px] md:text-xl text-[#86868b] max-w-xl mx-auto leading-relaxed">
+            <p className="text-[19px] md:text-xl text-[color:var(--ink-mid)] max-w-xl mx-auto leading-relaxed">
               Book a call with our team. We&apos;ll map out a custom plan to scale your brand. No
               strings attached.
             </p>
@@ -103,12 +103,12 @@ export function BookDemoPage() {
             {stats.map((stat) => (
               <div
                 key={stat.label}
-                className="text-center py-5 rounded-2xl bg-[#1c1c1e]/50 border border-white/[0.04]"
+                className="text-center py-5 rounded-[2px] bg-white/60 border border-black/[0.10]"
               >
-                <p className="text-2xl md:text-3xl font-semibold text-[#f5f5f7] tracking-tight">
+                <p className="text-2xl md:text-3xl font-extralight text-[color:var(--ink)]">
                   {stat.value}
                 </p>
-                <p className="text-[13px] text-[#86868b] mt-1">{stat.label}</p>
+                <p className="text-[13px] text-[color:var(--ink-mid)] mt-1">{stat.label}</p>
               </div>
             ))}
           </motion.div>
@@ -120,16 +120,16 @@ export function BookDemoPage() {
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-10 lg:gap-16 items-start">
             <div className="relative order-2 lg:order-1" style={{ minHeight: "700px" }}>
               {!schedulerLoaded && (
-                <div className="absolute inset-0 flex items-center justify-center bg-[#1c1c1e] rounded-2xl z-10 p-6">
+                <div className="absolute inset-0 flex items-center justify-center bg-white rounded-[2px] z-10 p-6">
                   {schedulerStalled ? (
                     // A privacy blocker, a corporate proxy or a Calendly outage
                     // all leave widget.js silent. Without this the spinner span
                     // forever on the primary conversion page, with no way to book.
                     <div className="flex flex-col items-center gap-4 text-center" role="status">
-                      <p className="text-[17px] text-[#f5f5f7] font-medium">
+                      <p className="text-[17px] text-[color:var(--ink)] font-medium">
                         The scheduler didn&apos;t load
                       </p>
-                      <p className="text-[15px] text-[#86868b] max-w-xs leading-relaxed">
+                      <p className="text-[15px] text-[color:var(--ink-mid)] max-w-xs leading-relaxed">
                         An ad blocker or network policy may be blocking it. You can still book
                         directly, or just email us.
                       </p>
@@ -145,7 +145,7 @@ export function BookDemoPage() {
                         </a>
                         <a
                           href="mailto:info@tiltedneedle.com?subject=Booking%20a%20demo"
-                          className="inline-flex items-center px-5 py-2.5 rounded-full border border-white/20 text-[#f5f5f7] text-[15px] font-medium transition-colors duration-300 hover:border-white/40"
+                          className="inline-flex items-center px-5 py-2.5 rounded-full border border-black/[0.16] text-[color:var(--ink)] text-[15px] font-medium transition-colors duration-300 hover:border-black/[0.36]"
                         >
                           Email us
                         </a>
@@ -154,7 +154,7 @@ export function BookDemoPage() {
                   ) : (
                     <div className="flex flex-col items-center gap-3">
                       <div className="w-8 h-8 border-2 border-[#2997ff] border-t-transparent rounded-full animate-spin" />
-                      <p className="text-[13px] text-[#86868b]">Loading scheduler…</p>
+                      <p className="text-[13px] text-[color:var(--ink-mid)]">Loading scheduler…</p>
                     </div>
                   )}
                 </div>
@@ -171,8 +171,8 @@ export function BookDemoPage() {
               transition={{ duration: 0.7, delay: 0.3 }}
               className="order-1 lg:order-2 space-y-6"
             >
-              <div className="p-6 rounded-2xl bg-[#1c1c1e]/60 border border-white/[0.05]">
-                <h2 className="text-[17px] font-semibold text-[#f5f5f7] mb-5 flex items-center gap-2.5">
+              <div className="p-6 rounded-[2px] bg-white/70 border border-black/[0.10]">
+                <h2 className="text-[17px] font-medium text-[color:var(--ink)] mb-5 flex items-center gap-2.5">
                   <Star className="w-4 h-4 text-[#2997ff]" />
                   What to expect
                 </h2>
@@ -180,45 +180,45 @@ export function BookDemoPage() {
                   {expectations.map((item, i) => (
                     <div key={i} className="flex items-start gap-3">
                       <CheckCircle2 className="w-[18px] h-[18px] text-[#30d158] flex-shrink-0 mt-0.5" />
-                      <span className="text-[15px] text-[#a1a1a6] leading-relaxed">{item}</span>
+                      <span className="text-[15px] text-[color:var(--ink-mid)] leading-relaxed">{item}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="p-6 rounded-2xl bg-[#1c1c1e]/60 border border-white/[0.05]">
-                <h2 className="text-[17px] font-semibold text-[#f5f5f7] mb-4 flex items-center gap-2.5">
+              <div className="p-6 rounded-[2px] bg-white/70 border border-black/[0.10]">
+                <h2 className="text-[17px] font-medium text-[color:var(--ink)] mb-4 flex items-center gap-2.5">
                   <Video className="w-4 h-4 text-[#2997ff]" />
                   Call details
                 </h2>
-                <div className="space-y-3 text-[15px] text-[#a1a1a6]">
-                  <div className="flex items-center justify-between py-2 border-b border-white/[0.04]">
+                <div className="space-y-3 text-[15px] text-[color:var(--ink-mid)]">
+                  <div className="flex items-center justify-between py-2 border-b border-black/[0.10]">
                     <span>Duration</span>
-                    <span className="text-[#f5f5f7] font-medium">30 minutes</span>
+                    <span className="text-[color:var(--ink)] font-medium">30 minutes</span>
                   </div>
-                  <div className="flex items-center justify-between py-2 border-b border-white/[0.04]">
+                  <div className="flex items-center justify-between py-2 border-b border-black/[0.10]">
                     <span>Format</span>
-                    <span className="text-[#f5f5f7] font-medium">Video call</span>
+                    <span className="text-[color:var(--ink)] font-medium">Video call</span>
                   </div>
-                  <div className="flex items-center justify-between py-2 border-b border-white/[0.04]">
+                  <div className="flex items-center justify-between py-2 border-b border-black/[0.10]">
                     <span>Cost</span>
                     <span className="text-[#30d158] font-medium">Free</span>
                   </div>
                   <div className="flex items-center justify-between py-2">
                     <span>Location</span>
-                    <span className="text-[#f5f5f7] font-medium">Google Meet</span>
+                    <span className="text-[color:var(--ink)] font-medium">Google Meet</span>
                   </div>
                 </div>
               </div>
 
-              <div className="p-6 rounded-2xl bg-gradient-to-br from-[#1c1c1e]/80 to-[#1c1c1e]/40 border border-white/[0.05]">
+              <div className="p-6 rounded-[2px] bg-gradient-to-br from-[#1c1c1e]/80 to-[#1c1c1e]/40 border border-black/[0.10]">
                 <div className="flex items-start gap-3">
                   <Shield className="w-5 h-5 text-[#2997ff] flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-[15px] text-[#f5f5f7] font-medium mb-1">
+                    <p className="text-[15px] text-[color:var(--ink)] font-medium mb-1">
                       No commitment required
                     </p>
-                    <p className="text-[13px] text-[#86868b] leading-relaxed">
+                    <p className="text-[13px] text-[color:var(--ink-mid)] leading-relaxed">
                       This is a free strategy session. Come with questions, leave with a plan. No
                       pressure, no contracts.
                     </p>
@@ -227,10 +227,10 @@ export function BookDemoPage() {
               </div>
 
               <div className="pt-2">
-                <p className="text-[13px] text-[#86868b] mb-1.5">Prefer email instead?</p>
+                <p className="text-[13px] text-[color:var(--ink-mid)] mb-1.5">Prefer email instead?</p>
                 <a
                   href="mailto:info@tiltedneedle.com"
-                  className="text-[15px] text-[#f5f5f7] hover:text-[#2997ff] transition-colors inline-flex items-center gap-2 group"
+                  className="text-[15px] text-[color:var(--ink)] hover:text-[#2997ff] transition-colors inline-flex items-center gap-2 group"
                 >
                   info@tiltedneedle.com
                   <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
@@ -241,7 +241,7 @@ export function BookDemoPage() {
         </div>
       </section>
 
-      <section className="relative py-20 md:py-28 border-t border-white/[0.04]">
+      <section className="relative py-20 md:py-28 border-t border-black/[0.10]">
         <div className="mx-auto max-w-[640px] px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: reduced ? 0 : REVEAL.md }}
@@ -249,10 +249,10 @@ export function BookDemoPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
           >
-            <h2 className="text-2xl md:text-3xl font-semibold text-[#f5f5f7] tracking-[-0.02em] mb-4">
+            <h2 className="text-2xl md:text-3xl font-extralight text-[color:var(--ink)] mb-4">
               Not ready for a call yet?
             </h2>
-            <p className="text-[17px] text-[#86868b] leading-relaxed mb-8">
+            <p className="text-[17px] text-[color:var(--ink-mid)] leading-relaxed mb-8">
               Explore our work and see how we&apos;ve helped brands generate billions of views.
             </p>
             <div className="flex flex-wrap justify-center gap-3">
@@ -264,7 +264,7 @@ export function BookDemoPage() {
               </Link>
               <Link
                 href="/services"
-                className="inline-flex items-center gap-2 px-7 py-3.5 text-[#f5f5f7] border border-white/20 rounded-full text-[15px] font-medium transition-all duration-200 hover:border-white/40 hover:bg-white/[0.04] hover:scale-[1.02] active:scale-[0.98]"
+                className="inline-flex items-center gap-2 px-7 py-3.5 text-[color:var(--ink)] border border-black/[0.16] rounded-full text-[15px] font-medium transition-all duration-200 hover:border-black/[0.36] hover:bg-black/[0.03] hover:scale-[1.02] active:scale-[0.98]"
               >
                 Explore Services
               </Link>

@@ -19,9 +19,9 @@ const socials = [
 
 const footerLinks = [
   { label: "Services", href: "/services" },
-  { label: "Process", href: "/#process" },
+  { label: "Work", href: "/#work" },
   { label: "Results", href: "/#results" },
-  { label: "Portfolio", href: "/#portfolio" },
+  { label: "Portfolio", href: "/portfolio" },
   { label: "Careers", href: "/careers" },
   { label: "Contact", href: "/#contact" },
   { label: "Book a Demo", href: "/book-demo" },

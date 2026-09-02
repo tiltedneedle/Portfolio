@@ -18,9 +18,9 @@ const serviceLinks = [
 
 const navLinks = [
   { href: "/services", label: "Services", hasDropdown: true },
-  { href: "/#process", label: "Process" },
+  { href: "/#work", label: "Work" },
   { href: "/#results", label: "Results" },
-  { href: "/#portfolio", label: "Portfolio" },
+  { href: "/portfolio", label: "Portfolio" },
   { href: "/careers", label: "Careers" },
   { href: "/#contact", label: "Contact" },
 ];
@@ -39,11 +39,11 @@ export function NavBar() {
   // The bar sits on two different grounds: a dark hero at the top of "/", and
   // paper everywhere else — and everywhere once scrolled. One fixed colour
   // cannot serve both, so the ink treatment keys off this.
-  const onPaper = scrolled || pathname !== "/";
+  const onPaper = scrolled || pathname !== "/careers";
 
   useEffect(() => {
     let ticking = false;
-    const sections = ["services", "process", "results", "portfolio", "contact"];
+    const sections = ["work", "services", "results", "contact"];
 
     const update = () => {
       ticking = false;
@@ -97,14 +97,17 @@ export function NavBar() {
               <motion.span
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center gap-2 text-[15px] font-medium text-[#f5f5f7] hover:text-white transition-colors duration-300"
+                className={cn(
+                  "inline-flex items-center gap-2 text-[15px] font-medium transition-colors duration-300",
+                  onPaper ? "text-[color:var(--ink)]" : "text-white"
+                )}
               >
                 <Image
                   src="/white-logo.png"
                   alt="Tilted Needle"
                   width={32}
                   height={32}
-                  className="object-contain"
+                  className={cn("object-contain", onPaper && "invert")}
                 />
                 Tilted Needle
               </motion.span>

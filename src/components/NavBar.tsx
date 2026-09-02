@@ -36,10 +36,9 @@ export function NavBar() {
   const pathname = usePathname();
   const reduced = useReducedMotion();
 
-  // The bar sits on two different grounds: a dark hero at the top of "/", and
-  // paper everywhere else — and everywhere once scrolled. One fixed colour
-  // cannot serve both, so the ink treatment keys off this.
-  const onPaper = scrolled || pathname !== "/careers";
+  // Every page now opens on paper — the last dark hero (careers) was rebuilt
+  // as a paper statement. The flag stays so a future dark route can flip it.
+  const onPaper = true;
 
   useEffect(() => {
     let ticking = false;

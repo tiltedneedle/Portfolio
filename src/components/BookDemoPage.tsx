@@ -1,15 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, CheckCircle2, Clock, Shield, Star, Video } from "lucide-react";
-import { EASE_OUT_EXPO, REVEAL } from "@/lib/design-tokens";
+import { SectionTag } from "@/components/editorial/SectionTag";
+import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
 const stats = [
-  { value: "2B+", label: "Organic Views" },
-  { value: "$250M+", label: "Revenue Generated" },
-  { value: "11+", label: "Flagship Clients" },
+  { value: "2B+", label: "organic views" },
+  { value: "$250M+", label: "revenue generated" },
+  { value: "11+", label: "flagship clients" },
 ];
 
 const expectations = [
@@ -20,12 +19,21 @@ const expectations = [
   "No obligation, just honest, expert advice",
 ];
 
+const details = [
+  { label: "duration", value: "30 minutes" },
+  { label: "format", value: "Video call" },
+  { label: "cost", value: "Free" },
+  { label: "location", value: "Google Meet" },
+];
+
 export function BookDemoPage() {
   const reduced = useReducedMotion();
   const [schedulerLoaded, setSchedulerLoaded] = useState(false);
-  const [schedulerStalled, setSchedulerStalled] = useState(false);
+  const [schedulerFailed, setSchedulerFailed] = useState(false);
 
-  // Calendly posts a message once its widget paints — use it to drop the spinner.
+  // Calendly posts a message once its widget paints — use it to drop the
+  // skeleton. If nothing arrives, surface the direct link instead of spinning
+  // forever.
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
       if (
@@ -36,125 +44,83 @@ export function BookDemoPage() {
       }
     };
     window.addEventListener("message", onMessage);
-    return () => window.removeEventListener("message", onMessage);
+    const bail = setTimeout(() => setSchedulerFailed(true), 12000);
+    return () => {
+      window.removeEventListener("message", onMessage);
+      clearTimeout(bail);
+    };
   }, []);
 
-  // Calendly can fail silently — blocked by an extension, filtered by a
-  // corporate proxy, or simply down. Give the spinner a deadline so the page
-  // always offers a way to book.
-  useEffect(() => {
-    if (schedulerLoaded) return;
-    const timer = setTimeout(() => setSchedulerStalled(true), 8000);
-    return () => clearTimeout(timer);
-  }, [schedulerLoaded]);
-
-  // `reduced` must only remove the movement, never the whole reveal.
-  // useReducedMotion() is null during SSR, so the server always rendered the
-  // `initial` state — opacity:0. Dropping `animate` on the client (where it
-  // resolves to true) left nothing to animate that back to 1, so a
-  // reduced-motion visitor could get a page of invisible content. Opacity is
-  // always animated; only the offset is conditional.
-  const reveal = {
-    initial: { opacity: 0, y: reduced ? 0 : REVEAL.sm },
+  const rise = (delay: number) => ({
+    initial: { opacity: 0, y: reduced ? 0 : 24 },
     animate: { opacity: 1, y: 0 },
-  };
+    transition: { duration: 0.8, delay, ease: EASE_OUT_EXPO },
+  });
 
   return (
-    <div className="bg-[var(--paper)] min-h-screen">
-      <section className="relative pt-32 pb-16 md:pt-40 md:pb-20 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[600px] bg-gradient-to-b from-[#2997ff]/[0.07] to-transparent blur-[120px] rounded-full" />
-        </div>
-
-        <div className="mx-auto max-w-[1200px] px-6 relative">
-          <motion.div
-            {...reveal}
-            transition={{ duration: 0.8, ease: EASE_OUT_EXPO }}
-            className="text-center max-w-3xl mx-auto"
+    <div className="bg-[var(--paper)]">
+      <section className="pt-32 md:pt-40 pb-12 md:pb-16">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
+          <motion.p {...rise(0)} className="eyebrow mb-8">
+            book a demo &mdash; free 30-minute strategy session
+          </motion.p>
+          <motion.h1
+            {...rise(0.08)}
+            className="font-thin text-[color:var(--ink)] leading-[1.14] text-[11vw] sm:text-[56px] md:text-[72px] lg:text-[88px] max-w-[16ch]"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-black/[0.10] text-[13px] text-[color:var(--ink-mid)] mb-8">
-              <Clock className="w-3.5 h-3.5 text-[#2997ff]" />
-              Free 30-minute strategy session
-            </div>
-
-            <h1 className="text-4xl md:text-6xl lg:text-[72px] font-thin leading-[1.05] text-[color:var(--ink)] mb-5">
-              Let&apos;s build your
-              <br />
-              <span className="bg-gradient-to-r from-[#2997ff] to-[#af52de] bg-clip-text text-transparent">
-                growth strategy
-              </span>
-            </h1>
-
-            <p className="text-[19px] md:text-xl text-[color:var(--ink-mid)] max-w-xl mx-auto leading-relaxed">
-              Book a call with our team. We&apos;ll map out a custom plan to scale your brand. No
-              strings attached.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      <section className="relative pb-12 md:pb-16">
-        <div className="mx-auto max-w-[720px] px-6">
-          <motion.div
-            {...reveal}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="grid grid-cols-3 gap-4"
+            Let&apos;s build your growth <span className="em-serif">strategy</span>.
+          </motion.h1>
+          <motion.p
+            {...rise(0.16)}
+            className="mt-10 text-[17px] md:text-[21px] text-[color:var(--ink-mid)] max-w-[48ch] leading-relaxed"
           >
-            {stats.map((stat) => (
+            Book a call with our team. We&apos;ll map out a custom plan to scale
+            your brand. No strings attached.
+          </motion.p>
+
+          <motion.div
+            {...rise(0.24)}
+            className="mt-12 grid grid-cols-1 sm:grid-cols-3 border-t border-[color:var(--rule)] max-w-[900px]"
+          >
+            {stats.map((s) => (
               <div
-                key={stat.label}
-                className="text-center py-5 rounded-[2px] bg-white/60 border border-black/[0.10]"
+                key={s.label}
+                className="py-6 flex items-baseline gap-4 sm:block border-b sm:border-b-0 border-[color:var(--rule)] last:border-b-0"
               >
-                <p className="text-2xl md:text-3xl font-extralight text-[color:var(--ink)]">
-                  {stat.value}
-                </p>
-                <p className="text-[13px] text-[color:var(--ink-mid)] mt-1">{stat.label}</p>
+                <span className="block text-[32px] md:text-[40px] font-thin text-[color:var(--ink)] leading-none">
+                  {s.value}
+                </span>
+                <span className="eyebrow-serif mt-2 block">{s.label}</span>
               </div>
             ))}
           </motion.div>
         </div>
       </section>
 
-      <section className="relative pb-20 md:pb-28">
-        <div className="mx-auto max-w-[1200px] px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-10 lg:gap-16 items-start">
+      <section className="pb-24 md:pb-36">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-14 lg:gap-20 items-start">
             <div className="relative order-2 lg:order-1" style={{ minHeight: "700px" }}>
               {!schedulerLoaded && (
-                <div className="absolute inset-0 flex items-center justify-center bg-white rounded-[2px] z-10 p-6">
-                  {schedulerStalled ? (
-                    // A privacy blocker, a corporate proxy or a Calendly outage
-                    // all leave widget.js silent. Without this the spinner span
-                    // forever on the primary conversion page, with no way to book.
-                    <div className="flex flex-col items-center gap-4 text-center" role="status">
-                      <p className="text-[17px] text-[color:var(--ink)] font-medium">
-                        The scheduler didn&apos;t load
-                      </p>
-                      <p className="text-[15px] text-[color:var(--ink-mid)] max-w-xs leading-relaxed">
-                        An ad blocker or network policy may be blocking it. You can still book
-                        directly, or just email us.
-                      </p>
-                      <div className="flex flex-wrap justify-center gap-3 mt-1">
-                        <a
-                          href="https://calendly.com/editor-novasma/30min"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#f5f5f7] text-[#1c1c1e] text-[15px] font-medium transition-colors duration-300 hover:bg-white"
-                        >
-                          Open the scheduler
-                          <ArrowRight className="w-4 h-4" />
-                        </a>
-                        <a
-                          href="mailto:info@tiltedneedle.com?subject=Booking%20a%20demo"
-                          className="inline-flex items-center px-5 py-2.5 rounded-full border border-black/[0.16] text-[color:var(--ink)] text-[15px] font-medium transition-colors duration-300 hover:border-black/[0.36]"
-                        >
-                          Email us
-                        </a>
-                      </div>
-                    </div>
+                <div className="absolute inset-0 z-10 flex items-center justify-center border border-[color:var(--rule)] rounded-[2px] bg-white">
+                  {schedulerFailed ? (
+                    <p className="px-8 text-center text-[15px] text-[color:var(--ink-mid)]">
+                      The scheduler didn&apos;t load.{" "}
+                      <a
+                        href="https://calendly.com/editor-novasma/30min"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline-draw text-[color:var(--ink)]"
+                      >
+                        Open it in a new tab <span aria-hidden="true">&#8600;</span>
+                      </a>
+                    </p>
                   ) : (
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="w-8 h-8 border-2 border-[#2997ff] border-t-transparent rounded-full animate-spin" />
-                      <p className="text-[13px] text-[color:var(--ink-mid)]">Loading scheduler…</p>
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="skeleton h-2 w-40 rounded-full" />
+                      <p className="text-[13px] text-[color:var(--ink-mid)]">
+                        Loading scheduler&hellip;
+                      </p>
                     </div>
                   )}
                 </div>
@@ -166,110 +132,37 @@ export function BookDemoPage() {
               />
             </div>
 
-            <motion.div
-              {...reveal}
-              transition={{ duration: 0.7, delay: 0.3 }}
-              className="order-1 lg:order-2 space-y-6"
-            >
-              <div className="p-6 rounded-[2px] bg-white/70 border border-black/[0.10]">
-                <h2 className="text-[17px] font-medium text-[color:var(--ink)] mb-5 flex items-center gap-2.5">
-                  <Star className="w-4 h-4 text-[#2997ff]" />
-                  What to expect
-                </h2>
-                <div className="space-y-3.5">
-                  {expectations.map((item, i) => (
-                    <div key={i} className="flex items-start gap-3">
-                      <CheckCircle2 className="w-[18px] h-[18px] text-[#30d158] flex-shrink-0 mt-0.5" />
-                      <span className="text-[15px] text-[color:var(--ink-mid)] leading-relaxed">{item}</span>
+            <div className="order-1 lg:order-2">
+              <SectionTag>what to expect</SectionTag>
+              <div className="mt-8">
+                {expectations.map((item) => (
+                  <p
+                    key={item}
+                    className="border-t border-[color:var(--rule)] py-4 text-[15px] text-[color:var(--ink-soft)] leading-relaxed"
+                  >
+                    {item}
+                  </p>
+                ))}
+                <div className="border-t border-[color:var(--rule)]" />
+              </div>
+
+              <div className="mt-14">
+                <SectionTag>call details</SectionTag>
+                <div className="mt-8">
+                  {details.map((d) => (
+                    <div
+                      key={d.label}
+                      className="flex items-baseline justify-between border-t border-[color:var(--rule)] py-4"
+                    >
+                      <span className="eyebrow-serif">{d.label}</span>
+                      <span className="text-[15px] text-[color:var(--ink)]">{d.value}</span>
                     </div>
                   ))}
+                  <div className="border-t border-[color:var(--rule)]" />
                 </div>
               </div>
-
-              <div className="p-6 rounded-[2px] bg-white/70 border border-black/[0.10]">
-                <h2 className="text-[17px] font-medium text-[color:var(--ink)] mb-4 flex items-center gap-2.5">
-                  <Video className="w-4 h-4 text-[#2997ff]" />
-                  Call details
-                </h2>
-                <div className="space-y-3 text-[15px] text-[color:var(--ink-mid)]">
-                  <div className="flex items-center justify-between py-2 border-b border-black/[0.10]">
-                    <span>Duration</span>
-                    <span className="text-[color:var(--ink)] font-medium">30 minutes</span>
-                  </div>
-                  <div className="flex items-center justify-between py-2 border-b border-black/[0.10]">
-                    <span>Format</span>
-                    <span className="text-[color:var(--ink)] font-medium">Video call</span>
-                  </div>
-                  <div className="flex items-center justify-between py-2 border-b border-black/[0.10]">
-                    <span>Cost</span>
-                    <span className="text-[#30d158] font-medium">Free</span>
-                  </div>
-                  <div className="flex items-center justify-between py-2">
-                    <span>Location</span>
-                    <span className="text-[color:var(--ink)] font-medium">Google Meet</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-6 rounded-[2px] bg-gradient-to-br from-[#1c1c1e]/80 to-[#1c1c1e]/40 border border-black/[0.10]">
-                <div className="flex items-start gap-3">
-                  <Shield className="w-5 h-5 text-[#2997ff] flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-[15px] text-[color:var(--ink)] font-medium mb-1">
-                      No commitment required
-                    </p>
-                    <p className="text-[13px] text-[color:var(--ink-mid)] leading-relaxed">
-                      This is a free strategy session. Come with questions, leave with a plan. No
-                      pressure, no contracts.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-2">
-                <p className="text-[13px] text-[color:var(--ink-mid)] mb-1.5">Prefer email instead?</p>
-                <a
-                  href="mailto:info@tiltedneedle.com"
-                  className="text-[15px] text-[color:var(--ink)] hover:text-[#2997ff] transition-colors inline-flex items-center gap-2 group"
-                >
-                  info@tiltedneedle.com
-                  <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-                </a>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      <section className="relative py-20 md:py-28 border-t border-black/[0.10]">
-        <div className="mx-auto max-w-[640px] px-6 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: reduced ? 0 : REVEAL.md }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-          >
-            <h2 className="text-2xl md:text-3xl font-extralight text-[color:var(--ink)] mb-4">
-              Not ready for a call yet?
-            </h2>
-            <p className="text-[17px] text-[color:var(--ink-mid)] leading-relaxed mb-8">
-              Explore our work and see how we&apos;ve helped brands generate billions of views.
-            </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              <Link
-                href="/#portfolio"
-                className="inline-flex items-center gap-2 px-7 py-3.5 bg-[#f5f5f7] text-[#1c1c1e] rounded-full text-[15px] font-medium transition-all duration-200 hover:bg-white hover:scale-[1.02] active:scale-[0.98]"
-              >
-                View Our Work
-              </Link>
-              <Link
-                href="/services"
-                className="inline-flex items-center gap-2 px-7 py-3.5 text-[color:var(--ink)] border border-black/[0.16] rounded-full text-[15px] font-medium transition-all duration-200 hover:border-black/[0.36] hover:bg-black/[0.03] hover:scale-[1.02] active:scale-[0.98]"
-              >
-                Explore Services
-              </Link>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
     </div>

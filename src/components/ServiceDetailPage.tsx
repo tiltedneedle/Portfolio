@@ -1,692 +1,244 @@
 "use client";
 
-import {
-  useRef,
-  useState,
-  type ReactNode } from "react";
-import Link from "next/link";
+import { useState } from "react";
 import Image from "next/image";
-import { motion,
-  useReducedMotion,
-  useScroll,
-  useTransform } from "framer-motion";
-import {
-  ArrowRight,
-  Check,
-  ChevronDown,
-  ChevronRight,
-  Code2,
-  Target,
-  Users,
-  Video,
-} from "lucide-react";
-import { servicesList, type Service, type ServiceIconName } from "@/lib/services-data";
-import { EASE_OUT_EXPO, SECTION_Y_INNER } from "@/lib/design-tokens";
+import Link from "next/link";
+import { motion, useReducedMotion } from "framer-motion";
+import { SectionTag } from "@/components/editorial/SectionTag";
+import { servicesList, type Service } from "@/lib/services-data";
+import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
+function LastWordSerif({ text }: { text: string }) {
+  const words = text.split(" ");
+  const last = words.pop();
+  return (
+    <span>
+      {words.join(" ")} <span className="em-serif">{last}</span>
+    </span>
+  );
+}
 
-const ICONS_LG: Record<ServiceIconName, ReactNode> = {
-  Video: <Video className="w-6 h-6" />,
-  Target: <Target className="w-6 h-6" />,
-  Users: <Users className="w-6 h-6" />,
-  Code2: <Code2 className="w-6 h-6" />,
-};
-
-const ICONS_SM: Record<ServiceIconName, ReactNode> = {
-  Video: <Video className="w-5 h-5" />,
-  Target: <Target className="w-5 h-5" />,
-  Users: <Users className="w-5 h-5" />,
-  Code2: <Code2 className="w-5 h-5" />,
-};
-
-const glowColor = (gradient: string) =>
-  gradient.split(" ")[0].replace("from-[", "").replace("]", "");
+function StepRows({ steps }: { steps: Service["process"] }) {
+  const reduced = useReducedMotion();
+  return (
+    <div className="mt-10 md:mt-14">
+      {steps.map((step, i) => (
+        <motion.div
+          key={step.step}
+          initial={{ opacity: 0, y: reduced ? 0 : 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.5, delay: 0.03 * i, ease: EASE_OUT_EXPO }}
+          className="grid grid-cols-[auto_1fr] md:grid-cols-[auto_minmax(0,420px)_1fr] items-baseline gap-x-6 md:gap-x-12 gap-y-2 border-t border-[color:var(--rule)] py-6 md:py-8"
+        >
+          <span className="text-[13px] text-[color:var(--ink-mid)] tabular-nums pl-1">
+            {String(step.step).padStart(2, "0")}
+          </span>
+          <h3 className="text-[21px] md:text-[25px] font-light text-[color:var(--ink)]">
+            {step.title}
+          </h3>
+          <p className="col-start-2 md:col-start-3 text-[15px] leading-relaxed text-[color:var(--ink-mid)] max-w-[68ch]">
+            {step.description}
+          </p>
+        </motion.div>
+      ))}
+      <div className="border-t border-[color:var(--rule)]" />
+    </div>
+  );
+}
 
 export function ServiceDetailPage({ service }: { service: Service }) {
   const reduced = useReducedMotion();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const heroRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, 100]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+  const index = servicesList.findIndex((s) => s.slug === service.slug) + 1;
 
-  const otherServices = servicesList.filter((s) => s.id !== service.id);
+  const rise = (delay: number) => ({
+    initial: { opacity: 0, y: reduced ? 0 : 24 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.8, delay, ease: EASE_OUT_EXPO },
+  });
 
   return (
-    <>
-      <section
-        ref={heroRef}
-        className="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden bg-[var(--paper)] min-h-[80vh] flex items-center"
-      >
-        <motion.div style={{ y: reduced ? 0 : heroY }} className="absolute inset-0">
-          <Image
-            src={service.imageUrl}
-            alt=""
-            fill
-            sizes="100vw"
-            priority
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-[var(--paper)]/75" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[var(--paper)] via-[var(--paper)]/70 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[var(--paper)] via-transparent to-[var(--paper)]/60" />
-        </motion.div>
-
-        <motion.div
-          animate={reduced ? {} : { scale: [1, 1.2, 1], opacity: [0.04, 0.08, 0.04] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] rounded-full blur-[200px] pointer-events-none"
-          style={{
-            background: `radial-gradient(circle, ${glowColor(service.gradient)}30, transparent 70%)`,
-          }}
-        />
-
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
-
-        {!reduced && (
-          <div className="absolute inset-0 pointer-events-none">
-            {[...Array(8)].map((_, i) => (
-              <motion.div
-                key={i}
-                animate={{ y: [0, -60 - 10 * i, 0], opacity: [0, 0.4, 0] }}
-                transition={{
-                  duration: 5 + 0.8 * i,
-                  repeat: Infinity,
-                  delay: 0.7 * i,
-                  ease: "easeInOut",
-                }}
-                className="absolute w-1 h-1 rounded-full bg-white/60"
-                style={{ left: `${10 + 11 * i}%`, top: `${50 + (i % 4) * 12}%` }}
-              />
-            ))}
-          </div>
-        )}
-
-        <motion.div
-          style={{ opacity: reduced ? 1 : heroOpacity }}
-          className="mx-auto max-w-[1200px] px-6 relative"
-        >
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex items-center gap-2 text-[15px] text-[color:var(--ink-mid)] mb-8"
+    <div className="bg-[var(--paper)]">
+      <section className="pt-32 md:pt-40 pb-16 md:pb-20">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
+          <motion.p {...rise(0)} className="eyebrow mb-8">
+            service {String(index).padStart(2, "0")} &mdash; {service.shortTitle}
+          </motion.p>
+          <motion.h1
+            {...rise(0.08)}
+            className="font-thin text-[color:var(--ink)] leading-[1.14] text-[11vw] sm:text-[56px] md:text-[72px] lg:text-[88px] max-w-[18ch]"
           >
-            <Link href="/" className="hover:text-[color:var(--ink)] transition-colors">
-              Home
-            </Link>
-            <ChevronRight className="w-3 h-3" />
-            <Link href="/services" className="hover:text-[color:var(--ink)] transition-colors">
-              Services
-            </Link>
-            <ChevronRight className="w-3 h-3" />
-            <span className="text-[color:var(--ink)]">{service.shortTitle}</span>
-          </motion.div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <div>
-              <motion.div
-                initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                transition={{ delay: 0.1, duration: 1, ease: EASE_OUT_EXPO }}
-              >
-                <motion.div
-                  className={`w-16 h-16 rounded-[2px] bg-gradient-to-br ${service.gradient} flex items-center justify-center mb-8 text-[color:var(--ink)] shadow-lg`}
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                >
-                  {ICONS_LG[service.iconName]}
-                </motion.div>
-
-                <h1 className="text-4xl md:text-5xl lg:text-[56px] font-thin leading-[1.08] text-[color:var(--ink)] mb-4">
-                  {service.title}
-                </h1>
-
-                <p
-                  className={`text-2xl md:text-[28px] font-extralight bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent mb-6`}
-                >
-                  {service.tagline}
-                </p>
-
-                <p className="text-[17px] md:text-[19px] text-[color:var(--ink-mid)] leading-relaxed mb-8">
-                  {service.description}
-                </p>
-
-                <div className="flex flex-wrap gap-4">
-                  <Link href="/book-demo">
-                    <motion.span
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="inline-flex items-center gap-2 px-8 py-4 bg-[#f5f5f7] text-[#1c1c1e] rounded-full text-[17px] font-medium transition-all duration-300 hover:bg-white hover:shadow-[0_0_40px_rgba(255,255,255,0.15)]"
-                    >
-                      Book a Demo
-                      <ArrowRight className="w-4 h-4" />
-                    </motion.span>
-                  </Link>
-                  <Link href="/services">
-                    <motion.span
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="inline-flex items-center gap-2 px-8 py-4 bg-transparent text-[color:var(--ink)] border border-[rgba(255,255,255,0.3)] rounded-full text-[17px] font-medium transition-all duration-300 hover:border-[rgba(255,255,255,0.5)] hover:bg-black/[0.04]"
-                    >
-                      All Services
-                    </motion.span>
-                  </Link>
-                </div>
-              </motion.div>
+            <LastWordSerif text={service.title} />
+          </motion.h1>
+          <motion.div
+            {...rise(0.16)}
+            className="mt-10 flex flex-wrap items-end justify-between gap-8"
+          >
+            <p className="text-[17px] md:text-[21px] text-[color:var(--ink-mid)] max-w-[52ch] leading-relaxed">
+              {service.description}
+            </p>
+            <div className="flex items-center gap-6 shrink-0">
+              <Link href="/book-demo" className="pill pill-solid px-7 py-3 text-[15px]">
+                Book a demo
+              </Link>
+              <a href="#process" className="underline-draw text-[15px] text-[color:var(--ink)]">
+                how we work <span aria-hidden="true">&#8600;</span>
+              </a>
             </div>
+          </motion.div>
+        </div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 40, scale: 0.95 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              transition={{ delay: 0.3, duration: 0.8, ease: EASE_OUT_EXPO }}
-              className="relative"
-            >
-              <div className="relative aspect-[4/3] rounded-[2px] overflow-hidden">
-                <div
-                  className={`absolute -inset-[2px] rounded-[2px] bg-gradient-to-br ${service.gradient} opacity-60`}
-                />
-                <div className="absolute inset-[2px] rounded-[2px] overflow-hidden bg-white">
-                  <Image
-                    src={service.imageUrl}
-                    alt={service.title}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                </div>
+        <motion.div {...rise(0.24)} className="mx-auto max-w-[1600px] px-6 md:px-[60px] mt-14">
+          <div className="plate relative aspect-[21/9] w-full">
+            <Image
+              src={service.imageUrl}
+              alt=""
+              fill
+              sizes="100vw"
+              priority
+              className="object-cover"
+            />
+          </div>
+          <div className="mt-2 grid grid-cols-1 sm:grid-cols-3 border-t border-[color:var(--rule)]">
+            {service.stats.map((s) => (
+              <div
+                key={s.label}
+                className="py-7 sm:py-9 flex items-baseline gap-4 sm:block border-b sm:border-b-0 border-[color:var(--rule)] last:border-b-0"
+              >
+                <span className="block text-[40px] md:text-[50px] font-thin text-[color:var(--ink)] leading-none">
+                  {s.value}
+                </span>
+                <span className="eyebrow-serif mt-2 block">{s.label.toLowerCase()}</span>
               </div>
-            </motion.div>
+            ))}
           </div>
         </motion.div>
       </section>
 
-      <section className="relative py-16 bg-[var(--paper)] border-y border-black/[0.10] overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.02),transparent_70%)]" />
-        <div className="mx-auto max-w-[900px] px-6">
-          <div className="grid grid-cols-3 gap-8">
-            {service.stats.map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 * i, duration: 0.6 }}
-                className="text-center"
-              >
-                <div
-                  className={`text-3xl md:text-5xl font-extralight bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent`}
-                >
-                  {stat.value}
-                </div>
-                <div className="mt-2 text-[12px] md:text-[15px] text-[color:var(--ink-mid)] uppercase tracking-[0.08em]">
-                  {stat.label}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className={`relative ${SECTION_Y_INNER} bg-[var(--paper)] overflow-hidden`}>
-        <div className="absolute top-1/2 right-[-10%] -translate-y-1/2 w-[500px] h-[400px] rounded-[2px] overflow-hidden opacity-[0.04] rotate-[3deg] pointer-events-none hidden lg:block">
-          <Image
-            src={service.imageUrl}
-            alt=""
-            fill
-            sizes="500px"
-            className="object-cover blur-[2px]"
-          />
-        </div>
-
-        <div className="mx-auto max-w-[800px] px-6 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: EASE_OUT_EXPO }}
-          >
-            <p
-              className={`text-[17px] font-medium bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent mb-4`}
-            >
-              The Deep Dive
-            </p>
-            <h2 className="text-3xl md:text-4xl lg:text-[48px] font-thin text-[color:var(--ink)] leading-tight mb-8">
-              Why it matters.
-            </h2>
-            <p className="text-[17px] md:text-[19px] text-[color:var(--ink-mid)] leading-[1.7]">
-              {service.longDescription}
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      <section className={`relative ${SECTION_Y_INNER} bg-[var(--paper)] overflow-hidden`}>
-        <div className="absolute inset-0 bg-gradient-to-b from-[var(--paper)] via-[var(--paper)] to-[var(--paper)]" />
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: "radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px)",
-            backgroundSize: "24px 24px",
-          }}
-        />
-        <motion.div
-          animate={reduced ? {} : { opacity: [0.02, 0.05, 0.02], scale: [1, 1.1, 1] }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full blur-[200px] pointer-events-none"
-          style={{
-            background: `radial-gradient(circle, ${glowColor(service.gradient)}15, transparent 70%)`,
-          }}
-        />
-
-        <div className="mx-auto max-w-[1200px] px-6 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-20"
-          >
-            <p
-              className={`text-[17px] font-medium bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent mb-4`}
-            >
-              What&apos;s Included
-            </p>
-            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-thin text-[color:var(--ink)]">
-              Everything you need.
-            </h2>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <section className="py-16 md:py-24">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
+          <SectionTag>what&apos;s included</SectionTag>
+          <div className="mt-10 md:mt-14 grid grid-cols-1 md:grid-cols-2 gap-x-16">
             {service.features.map((feature, i) => (
-              <motion.div
+              <motion.p
                 key={feature}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: reduced ? 0 : 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.06 * i, duration: 0.5 }}
-                className="flex items-center gap-4 p-5 rounded-[2px] bg-white/70 border border-black/[0.10] group hover:bg-white transition-all duration-300"
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.45, delay: 0.02 * i, ease: EASE_OUT_EXPO }}
+                className="border-t border-[color:var(--rule)] py-5 md:py-6 text-[17px] md:text-[20px] font-light text-[color:var(--ink)]"
               >
-                <div
-                  className={`w-10 h-10 rounded-[2px] bg-gradient-to-br ${service.gradient} flex items-center justify-center flex-shrink-0 opacity-80 group-hover:opacity-100 transition-opacity`}
-                >
-                  <Check className="w-5 h-5 text-[color:var(--ink)]" />
-                </div>
-                <span className="text-[17px] text-[color:var(--ink-soft)] group-hover:text-[color:var(--ink)] transition-colors">
-                  {feature}
-                </span>
-              </motion.div>
+                {feature}
+              </motion.p>
             ))}
           </div>
+          <div className="border-t border-[color:var(--rule)]" />
         </div>
       </section>
 
-      <section className={`relative ${SECTION_Y_INNER} bg-[var(--paper)]`}>
-        <div className="mx-auto max-w-[1200px] px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-20"
-          >
-            <p
-              className={`text-[17px] font-medium bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent mb-4`}
-            >
-              Why Choose Us
-            </p>
-            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-thin text-[color:var(--ink)]">
-              The advantage.
-            </h2>
-          </motion.div>
+      <section id="process" className="py-16 md:py-24 scroll-mt-16">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
+          <SectionTag>the process</SectionTag>
+          <StepRows steps={service.process} />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {service.secondaryProcess && (
+            <div className="mt-16 md:mt-24">
+              <p className="eyebrow-serif">{service.secondaryProcess.subtitle.toLowerCase()}</p>
+              <h3 className="mt-3 text-[25px] md:text-[32px] font-extralight text-[color:var(--ink)]">
+                <LastWordSerif text={service.secondaryProcess.title} />
+              </h3>
+              <StepRows steps={service.secondaryProcess.steps} />
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className="py-16 md:py-24">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
+          <SectionTag>why tilted needle</SectionTag>
+          <div className="mt-10 md:mt-14 grid grid-cols-1 md:grid-cols-2 gap-x-16">
             {service.benefits.map((benefit, i) => (
               <motion.div
                 key={benefit.title}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: reduced ? 0 : 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 * i, duration: 0.6, ease: EASE_OUT_EXPO }}
-                className="group p-8 rounded-[2px] bg-gradient-to-b from-white to-[#fafafa] hover:from-white hover:to-white transition-colors duration-500 plate"
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.5, delay: 0.04 * i, ease: EASE_OUT_EXPO }}
+                className="border-t border-[color:var(--rule)] py-8 md:py-10"
               >
-                <div className="flex items-start gap-5">
-                  <div
-                    className={`w-12 h-12 rounded-[2px] bg-gradient-to-br ${service.gradient} flex items-center justify-center flex-shrink-0 opacity-60 group-hover:opacity-100 transition-opacity duration-500`}
-                  >
-                    <span className="text-[color:var(--ink)] text-[19px] font-light">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                  </div>
-                  <div>
-                    <h3 className="text-[19px] font-medium text-[color:var(--ink)] mb-2 group-hover:text-[color:var(--ink)] transition-colors">
-                      {benefit.title}
-                    </h3>
-                    <p className="text-[15px] text-[color:var(--ink-mid)] leading-relaxed group-hover:text-[color:var(--ink-mid)] transition-colors">
-                      {benefit.description}
-                    </p>
-                  </div>
-                </div>
+                <h3 className="text-[21px] md:text-[25px] font-light text-[color:var(--ink)]">
+                  {benefit.title}
+                </h3>
+                <p className="mt-3 text-[15px] leading-relaxed text-[color:var(--ink-mid)] max-w-[58ch]">
+                  {benefit.description}
+                </p>
               </motion.div>
             ))}
           </div>
+          <div className="border-t border-[color:var(--rule)]" />
         </div>
       </section>
 
-      <section className={`relative ${SECTION_Y_INNER} bg-[var(--paper)] overflow-hidden`}>
-        <div className="absolute inset-0 bg-gradient-to-b from-[var(--paper)] via-[var(--paper)] to-[var(--paper)]" />
-        <motion.div
-          initial={{ scaleY: 0 }}
-          whileInView={{ scaleY: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1.5, ease: EASE_OUT_EXPO }}
-          className={`absolute left-[calc(50%-240px)] md:left-[calc(50%-280px)] top-[200px] bottom-[120px] w-px bg-gradient-to-b ${service.gradient} opacity-[0.08] origin-top hidden lg:block pointer-events-none`}
-        />
-
-        <div className="mx-auto max-w-[1000px] px-6 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-20"
-          >
-            <p
-              className={`text-[17px] font-medium bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent mb-4`}
-            >
-              Our Process
-            </p>
-            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-thin text-[color:var(--ink)]">
-              How it works.
-            </h2>
-          </motion.div>
-
-          <div className="space-y-6">
-            {service.process.map((step, i) => (
-              <motion.div
-                key={step.step}
-                initial={{ opacity: 0, x: reduced ? 0 : -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 * i, duration: 0.6, ease: EASE_OUT_EXPO }}
-                className="group flex items-start gap-6 p-6 md:p-8 rounded-[2px] bg-white/40 border border-black/[0.10] hover:bg-white hover:border-black/[0.10] transition-all duration-500"
-              >
-                <div
-                  className={`w-14 h-14 rounded-full bg-gradient-to-br ${service.gradient} flex items-center justify-center flex-shrink-0`}
-                >
-                  <span className="text-[color:var(--ink)] text-[19px] font-light">
-                    {String(step.step).padStart(2, "0")}
-                  </span>
-                </div>
-                <div>
-                  <h3 className="text-[19px] font-medium text-[color:var(--ink)] mb-2 group-hover:text-[color:var(--ink)] transition-colors">
-                    {step.title}
-                  </h3>
-                  <p className="text-[15px] text-[color:var(--ink-mid)] leading-relaxed group-hover:text-[color:var(--ink-mid)] transition-colors">
-                    {step.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {service.secondaryProcess && (
-        <section className={`relative ${SECTION_Y_INNER} bg-[var(--paper)] overflow-hidden`}>
-          <div className="absolute inset-0 bg-gradient-to-b from-[var(--paper)] via-[var(--paper)] to-[var(--paper)]" />
-          <div className="mx-auto max-w-[1000px] px-6 relative">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="text-center mb-20"
-            >
-              <p
-                className={`text-[17px] font-medium bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent mb-4`}
-              >
-                Going Long
-              </p>
-              <h2 className="text-4xl md:text-5xl lg:text-[56px] font-thin text-[color:var(--ink)]">
-                {service.secondaryProcess.title}
-              </h2>
-              <p className="mt-6 text-[17px] md:text-[19px] text-[color:var(--ink-mid)] max-w-2xl mx-auto">
-                {service.secondaryProcess.subtitle}
-              </p>
-            </motion.div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {service.secondaryProcess.steps.map((step, i) => (
-                <motion.div
-                  key={step.step}
-                  initial={{ opacity: 0, y: reduced ? 0 : 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: (i % 2) * 0.06, duration: 0.5, ease: EASE_OUT_EXPO }}
-                  className="group flex items-start gap-5 p-6 rounded-[2px] bg-white/40 border border-black/[0.10] hover:bg-white hover:border-black/[0.10] transition-all duration-500"
-                >
-                  <div
-                    className={`w-11 h-11 rounded-full bg-gradient-to-br ${service.gradient} flex items-center justify-center flex-shrink-0`}
-                  >
-                    <span className="text-[color:var(--ink)] text-[15px] font-light">
-                      {String(step.step).padStart(2, "0")}
-                    </span>
-                  </div>
-                  <div>
-                    <h3 className="text-[17px] font-medium text-[color:var(--ink)] mb-1.5 group-hover:text-[color:var(--ink)] transition-colors">
-                      {step.title}
-                    </h3>
-                    <p className="text-[15px] text-[color:var(--ink-mid)] leading-relaxed group-hover:text-[color:var(--ink-mid)] transition-colors">
-                      {step.description}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      <section className={`relative ${SECTION_Y_INNER} bg-[var(--paper)]`}>
-        <div className="mx-auto max-w-[800px] px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <p
-              className={`text-[17px] font-medium bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent mb-4`}
-            >
-              FAQ
-            </p>
-            <h2 className="text-4xl md:text-5xl font-extralight text-[color:var(--ink)]">
-              Common questions.
-            </h2>
-          </motion.div>
-
-          <div className="space-y-3">
+      <section className="py-16 md:py-24">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
+          <SectionTag>faq</SectionTag>
+          <div className="mt-10 md:mt-14 max-w-[900px]">
             {service.faq.map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.08 * i, duration: 0.5 }}
-              >
-                {/* The answer used to sit inside the button, so every collapsed
-                    question announced its entire answer as the button's name —
-                    and nested a heading inside interactive content. The panel is
-                    now a sibling, linked by aria-controls. */}
-                <div className="rounded-[2px] bg-white/70 border border-black/[0.10] hover:bg-white transition-all duration-300">
-                  <h3>
-                    <button
-                      onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                      aria-expanded={openFaq === i}
-                      aria-controls={`faq-panel-${i}`}
-                      id={`faq-trigger-${i}`}
-                      className="w-full text-left p-6 flex items-center justify-between gap-4 text-[17px] font-medium text-[color:var(--ink)] rounded-[2px]"
+              <div key={item.question} className="border-t border-[color:var(--rule)]">
+                <h3>
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    aria-expanded={openFaq === i}
+                    aria-controls={"faq-panel-" + i}
+                    id={"faq-trigger-" + i}
+                    className="group flex w-full items-baseline justify-between gap-6 py-6 text-left text-[17px] md:text-[20px] font-light text-[color:var(--ink)]"
+                  >
+                    {item.question}
+                    <span
+                      aria-hidden="true"
+                      className="shrink-0 text-[color:var(--ink-mid)] transition-transform duration-300"
+                      style={{ transform: openFaq === i ? "rotate(45deg)" : "none" }}
                     >
-                      {item.question}
-                      <motion.span
-                        animate={{ rotate: openFaq === i ? 180 : 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="flex-shrink-0"
-                        aria-hidden="true"
-                      >
-                        <ChevronDown className="w-5 h-5 text-[color:var(--ink-mid)]" />
-                      </motion.span>
-                    </button>
-                  </h3>
-                  <motion.div
-                    id={`faq-panel-${i}`}
-                    role="region"
-                    aria-labelledby={`faq-trigger-${i}`}
-                    initial={false}
-                    animate={{
-                      height: openFaq === i ? "auto" : 0,
-                      opacity: openFaq === i ? 1 : 0,
-                    }}
-                    transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
-                    className="overflow-hidden"
-                  >
-                    <p className="text-[15px] text-[color:var(--ink-mid)] leading-relaxed px-6 pb-6">
-                      {item.answer}
-                    </p>
-                  </motion.div>
-                </div>
-              </motion.div>
+                      +
+                    </span>
+                  </button>
+                </h3>
+                <motion.div
+                  id={"faq-panel-" + i}
+                  role="region"
+                  aria-labelledby={"faq-trigger-" + i}
+                  initial={false}
+                  animate={{ height: openFaq === i ? "auto" : 0, opacity: openFaq === i ? 1 : 0 }}
+                  transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
+                  className="overflow-hidden"
+                >
+                  <p className="pb-7 text-[15px] leading-relaxed text-[color:var(--ink-mid)] max-w-[62ch]">
+                    {item.answer}
+                  </p>
+                </motion.div>
+              </div>
             ))}
+            <div className="border-t border-[color:var(--rule)]" />
           </div>
         </div>
       </section>
 
-      <section className={`relative ${SECTION_Y_INNER} bg-[var(--paper)] overflow-hidden`}>
-        <div className="absolute inset-0 bg-gradient-to-b from-[var(--paper)] via-[var(--paper)] to-[var(--paper)]" />
-        <div className="absolute bottom-0 right-0 w-[400px] h-[300px] rounded-tl-3xl overflow-hidden opacity-[0.025] pointer-events-none hidden lg:block">
-          <Image
-            src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&h=400&fit=crop"
-            alt=""
-            fill
-            sizes="400px"
-            className="object-cover"
-          />
-        </div>
-
-        <div className="mx-auto max-w-[1200px] px-6 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-extralight text-[color:var(--ink)]">
-              Explore other services
-            </h2>
-          </motion.div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {otherServices.slice(0, 6).map((other, i) => (
-              <motion.div
-                key={other.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.06 * i, duration: 0.5 }}
-              >
-                <Link href={`/services/${other.slug}`}>
-                  <motion.div
-                    whileHover={{ y: -4 }}
-                    className="group p-6 rounded-[2px] bg-white/70 border border-black/[0.10] hover:bg-white transition-all duration-300"
-                  >
-                    <div className="flex items-center gap-3 mb-3">
-                      <div
-                        className={`w-10 h-10 rounded-[2px] bg-gradient-to-br ${other.gradient} flex items-center justify-center text-[color:var(--ink)]`}
-                      >
-                        {ICONS_SM[other.iconName]}
-                      </div>
-                      <h3 className="text-[17px] font-medium text-[color:var(--ink)] group-hover:text-[color:var(--ink)] transition-colors">
-                        {other.shortTitle}
-                      </h3>
-                    </div>
-                    <p className="text-[13px] text-[color:var(--ink-mid)] leading-relaxed line-clamp-2">
-                      {other.tagline}
-                    </p>
-                  </motion.div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className={`relative ${SECTION_Y_INNER} bg-[var(--paper)] overflow-hidden`}>
-        <div className="absolute inset-0">
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover opacity-[0.06]"
-          >
-            <source
-              src="https://videos.pexels.com/video-files/856973/856973-hd_1920_1080_25fps.mp4"
-              type="video/mp4"
-            />
-          </video>
-          <div className="absolute inset-0 bg-gradient-to-b from-[var(--paper)] via-[var(--paper)] to-[var(--paper)]" />
-        </div>
-
-        <motion.div
-          animate={reduced ? {} : { opacity: [0.03, 0.06, 0.03], scale: [1, 1.1, 1] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-to-t from-black/[0.03] to-transparent blur-[150px] pointer-events-none"
-        />
-
-        <div className="mx-auto max-w-[800px] px-6 text-center relative">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: EASE_OUT_EXPO }}
-          >
-            <p
-              className={`text-[17px] font-medium bg-gradient-to-r ${service.gradient} bg-clip-text text-transparent mb-4`}
-            >
-              Ready to get started?
-            </p>
-            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-thin text-[color:var(--ink)] mb-6 leading-tight">
-              Let&apos;s grow your brand.
-            </h2>
-            <p className="text-xl md:text-[22px] text-[color:var(--ink-mid)] leading-relaxed mb-10">
-              Book a free strategy session and see how {service.shortTitle} can transform your
-              business.
-            </p>
-            <Link href="/book-demo">
-              <motion.span
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center gap-2 px-10 py-5 bg-[#f5f5f7] text-[#1c1c1e] rounded-full text-[17px] font-medium transition-all duration-300 hover:bg-white hover:shadow-[0_0_40px_rgba(255,255,255,0.15)]"
-              >
-                Book a Demo
-                <ArrowRight className="w-5 h-5" />
-              </motion.span>
+      <section className="py-20 md:py-32">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
+          <h2 className="font-thin text-[color:var(--ink)] leading-[1.15] text-[9vw] sm:text-[44px] md:text-[64px] max-w-[16ch]">
+            Ready to make your brand go <span className="em-serif">viral</span>?
+          </h2>
+          <div className="mt-10 flex items-center gap-6">
+            <Link href="/book-demo" className="pill pill-solid px-7 py-3 text-[15px]">
+              Book a demo
             </Link>
-          </motion.div>
+            <Link href="/services" className="underline-draw text-[15px] text-[color:var(--ink)]">
+              all services <span aria-hidden="true">&#8600;</span>
+            </Link>
+          </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

@@ -1,57 +1,34 @@
 "use client";
 
-import { useRef, useState, type ReactNode } from "react";
-import { motion, AnimatePresence, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import {
-  ArrowRight,
-  Briefcase,
-  Check,
-  CheckCircle2,
-  Clock,
-  Earth,
-  Gauge,
-  MapPin,
-  Plus,
-  Send,
-  Sparkles,
-  Star,
-} from "lucide-react";
-import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
+import { useRef, useState } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { SectionTag } from "@/components/editorial/SectionTag";
 import { submitForm } from "@/lib/submit-form";
-import { EASE_OUT_EXPO, SECTION_Y_INNER } from "@/lib/design-tokens";
+import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
+const CAREERS_REEL =
+  "https://videos.pexels.com/video-files/3045163/3045163-hd_1920_1080_25fps.mp4";
 
-type Perk = { icon: ReactNode; title: string; description: string; gradient: string };
-
-const perks: Perk[] = [
+const perks = [
   {
-    icon: <Star className="w-6 h-6" />,
     title: "Work with icons",
     description:
-      "Create for names that define their categories: The Jet Business, Aston Martin, Koenigsegg and the creators shaping culture. The brief is always world-class.",
-    gradient: "from-[#2997ff] to-[#5e5ce6]",
+      "Shoot alongside founders, athletes and brands whose content reaches hundreds of millions.",
   },
   {
-    icon: <Earth className="w-6 h-6" />,
     title: "Global shoots",
     description:
-      "From London to Dubai, LA to Hong Kong. We go where the story is, and bring the right people with us to capture it properly.",
-    gradient: "from-[#ff375f] to-[#af52de]",
+      "London and Dubai are home base; the work travels wherever the story is.",
   },
   {
-    icon: <Sparkles className="w-6 h-6" />,
     title: "Best-in-class craft",
     description:
-      "Cinematic capture, obsessive editing, a relentless standard. We sweat the frame, the cut and the hook until it's right.",
-    gradient: "from-[#30d158] to-[#2997ff]",
+      "Thousands of published videos have refined a formula — and a bar — you will be held to.",
   },
   {
-    icon: <Gauge className="w-6 h-6" />,
     title: "Move fast",
     description:
-      "A small, senior team that ships. No bloated process, just sharp people taking ownership and turning briefs into views.",
-    gradient: "from-[#ff9f0a] to-[#ff375f]",
+      "Small team, no committees. What you cut this week is live this week.",
   },
 ];
 
@@ -92,123 +69,8 @@ const roles: Role[] = [
 
 const roleOptions = [...roles.map((r) => r.title), "Open application"];
 
-function RoleCard({
-  role,
-  index,
-  onApply,
-}: {
-  role: Role;
-  index: number;
-  onApply: (title: string) => void;
-}) {
-  const reduced = useReducedMotion();
-  const [open, setOpen] = useState(index === 0);
-  const panelId = `role-panel-${index}`;
-  const buttonId = `role-button-${index}`;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: reduced ? 0 : 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: 0.08 * index, duration: 0.6, ease: EASE_OUT_EXPO }}
-      className="group relative rounded-[2px] bg-gradient-to-b from-white to-[#fafafa] overflow-hidden plate"
-    >
-      <div className="absolute inset-0 rounded-[2px] bg-gradient-to-br from-[#2997ff] to-[#5e5ce6] opacity-0 group-hover:opacity-[0.04] transition-opacity duration-500 pointer-events-none" />
-
-      <button
-        type="button"
-        id={buttonId}
-        aria-expanded={open}
-        aria-controls={panelId}
-        onClick={() => setOpen((v) => !v)}
-        className="relative w-full text-left p-8 md:p-10 flex items-start justify-between gap-6"
-      >
-        <div className="flex-1">
-          <h3 className="text-[22px] md:text-[26px] font-light text-[color:var(--ink)] group-hover:text-[color:var(--ink)] transition-colors duration-300">
-            {role.title}
-          </h3>
-          <div className="mt-4 flex flex-wrap items-center gap-2.5">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/[0.03] text-[12px] text-[color:var(--ink-mid)] font-medium">
-              <MapPin className="w-3.5 h-3.5 text-[#2997ff]" />
-              {role.location}
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/[0.03] text-[12px] text-[color:var(--ink-mid)] font-medium">
-              <Briefcase className="w-3.5 h-3.5 text-[#2997ff]" />
-              {role.type}
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/[0.03] text-[12px] text-[color:var(--ink-mid)] font-medium">
-              <Clock className="w-3.5 h-3.5 text-[#2997ff]" />
-              On-site
-            </span>
-          </div>
-        </div>
-
-        <motion.span
-          aria-hidden="true"
-          animate={{ rotate: open ? 45 : 0 }}
-          transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
-          className="shrink-0 mt-1 w-10 h-10 rounded-full bg-black/[0.03] flex items-center justify-center text-[color:var(--ink)] group-hover:bg-black/[0.03] transition-colors duration-300"
-        >
-          <Plus className="w-5 h-5" />
-        </motion.span>
-      </button>
-
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            key="content"
-            id={panelId}
-            role="region"
-            aria-labelledby={buttonId}
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: reduced ? 0.01 : 0.5, ease: EASE_OUT_EXPO }}
-            className="relative overflow-hidden"
-          >
-            <div className="px-8 md:px-10 pb-8 md:pb-10">
-              <div className="h-px w-full bg-gradient-to-r from-transparent via-white/[0.08] to-transparent mb-7" />
-              <p className="text-[17px] md:text-[17px] text-[color:var(--ink-mid)] leading-relaxed max-w-2xl">
-                {role.description}
-              </p>
-
-              <div className="mt-8">
-                <h4 className="text-[12px] text-[color:var(--ink-mid)] uppercase tracking-[0.08em] font-medium mb-4">
-                  Key Requirements
-                </h4>
-                <ul className="space-y-3">
-                  {role.requirements.map((requirement) => (
-                    <li key={requirement} className="flex items-center gap-3">
-                      <span className="shrink-0 w-6 h-6 rounded-full bg-[#2997ff]/10 flex items-center justify-center">
-                        <Check className="w-3.5 h-3.5 text-[#2997ff]" />
-                      </span>
-                      <span className="text-[15px] md:text-[17px] text-[color:var(--ink)]">
-                        {requirement}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="mt-9">
-                <button
-                  type="button"
-                  onClick={() => onApply(role.title)}
-                  aria-label={`Apply for ${role.title}`}
-                  className="group/apply inline-flex items-center gap-2 px-7 py-3.5 bg-[#f5f5f7] text-[#1c1c1e] rounded-full text-[15px] font-medium transition-all duration-300 hover:bg-white hover:shadow-[0_0_40px_rgba(255,255,255,0.15)]"
-                >
-                  Apply for this role
-                  <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover/apply:translate-x-1" />
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-}
+const inputClass =
+  "w-full rounded-[2px] border border-[color:var(--rule-strong)] bg-white px-4 py-3 text-[15px] text-[color:var(--ink)] placeholder:text-[color:var(--ink-faint)] outline-none transition-colors duration-300 focus:border-[color:var(--ink)]";
 
 function ApplicationForm({
   role,
@@ -223,9 +85,6 @@ function ApplicationForm({
   // See ContactForm: a mailto hand-off has not been delivered yet.
   const [handedOff, setHandedOff] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const fieldClass =
-    "transition-all duration-300 focus:shadow-[0_0_0_4px_rgba(255,255,255,0.05)]";
 
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -258,25 +117,23 @@ function ApplicationForm({
         <motion.div
           key="success"
           role="status"
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, y: reduced ? 0 : 16 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
-          className="rounded-[2px] bg-gradient-to-b from-white to-[#fafafa] p-10 md:p-14 text-center"
-          style={{ boxShadow: "var(--lift)" }}
+          className="border-t border-[color:var(--rule)] py-14"
         >
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.15, duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
-            className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-b from-white to-[#f0f0f0] flex items-center justify-center"
-            style={{ boxShadow: "var(--glow-medium)" }}
-          >
-            <CheckCircle2 className="w-7 h-7 text-[#30d158]" />
-          </motion.div>
-          <h3 className="text-2xl font-light text-[color:var(--ink)] mb-2">
-            {handedOff ? "Almost there" : "Application received"}
+          <h3 className="text-[25px] md:text-[32px] font-extralight text-[color:var(--ink)]">
+            {handedOff ? (
+              <span>
+                Almost <span className="em-serif">there</span>.
+              </span>
+            ) : (
+              <span>
+                Application <span className="em-serif">received</span>.
+              </span>
+            )}
           </h3>
-          <p className="text-[17px] text-[color:var(--ink-mid)] max-w-md mx-auto">
+          <p className="mt-4 text-[15px] text-[color:var(--ink-mid)] max-w-[52ch] leading-relaxed">
             {handedOff
               ? "We've opened your email app with your application ready. Send it and we'll read every word."
               : "Thanks for applying to Tilted Needle. We read every application and will be in touch if there's a fit."}
@@ -286,415 +143,265 @@ function ApplicationForm({
         <motion.form
           key="form"
           onSubmit={onSubmit}
-          initial={{ opacity: 0, y: reduced ? 0 : 20 }}
+          initial={{ opacity: 0, y: reduced ? 0 : 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.6, ease: EASE_OUT_EXPO }}
-          className="rounded-[2px] bg-gradient-to-b from-white to-[#fafafa] p-8 md:p-10 space-y-6"
-          style={{ boxShadow: "var(--lift)" }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-7 border-t border-[color:var(--rule)] pt-12"
         >
-          <div className="grid sm:grid-cols-2 gap-6">
-            <div>
-              <label
-                htmlFor="app-name"
-                className="block text-[12px] uppercase tracking-[0.08em] mb-3 text-[color:var(--ink-mid)]"
-              >
-                Full name
-              </label>
-              <Input
-                id="app-name"
-                name="name"
-                type="text"
-                required
-                placeholder="Your name"
-                className={fieldClass}
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="app-email"
-                className="block text-[12px] uppercase tracking-[0.08em] mb-3 text-[color:var(--ink-mid)]"
-              >
-                Email
-              </label>
-              <Input
-                id="app-email"
-                name="email"
-                type="email"
-                required
-                placeholder="you@email.com"
-                className={fieldClass}
-              />
-            </div>
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-6">
-            <div>
-              <label
-                htmlFor="app-role"
-                className="block text-[12px] uppercase tracking-[0.08em] mb-3 text-[color:var(--ink-mid)]"
-              >
-                Role
-              </label>
-              <select
-                id="app-role"
-                name="role"
-                value={role}
-                onChange={(e) => onRoleChange(e.target.value)}
-                className={`h-11 w-full rounded-[2px] border-0 bg-white px-4 text-[15px] text-[color:var(--ink)] outline-none ring-1 ring-white/[0.06] focus-visible:ring-2 focus-visible:ring-[rgba(255,255,255,0.15)] ${fieldClass}`}
-              >
-                {roleOptions.map((option) => (
-                  <option key={option} value={option} className="bg-white text-[color:var(--ink)]">
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label
-                htmlFor="app-exp"
-                className="block text-[12px] uppercase tracking-[0.08em] mb-3 text-[color:var(--ink-mid)]"
-              >
-                Experience
-              </label>
-              <Input
-                id="app-exp"
-                name="experience"
-                type="text"
-                placeholder="e.g. 10+ years"
-                className={fieldClass}
-              />
-            </div>
-          </div>
-
           <div>
-            <label
-              htmlFor="app-link"
-              className="block text-[12px] uppercase tracking-[0.08em] mb-3 text-[color:var(--ink-mid)]"
-            >
-              Portfolio, showreel or CV link
+            <label htmlFor="app-name" className="eyebrow mb-3 block">
+              name
             </label>
-            <Input
+            <input id="app-name" name="name" type="text" required className={inputClass} />
+          </div>
+          <div>
+            <label htmlFor="app-email" className="eyebrow mb-3 block">
+              email
+            </label>
+            <input id="app-email" name="email" type="email" required className={inputClass} />
+          </div>
+          <div>
+            <label htmlFor="app-role" className="eyebrow mb-3 block">
+              role
+            </label>
+            <select
+              id="app-role"
+              name="role"
+              value={role}
+              onChange={(e) => onRoleChange(e.target.value)}
+              className={inputClass}
+            >
+              {roleOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="app-exp" className="eyebrow mb-3 block">
+              years of experience
+            </label>
+            <input id="app-exp" name="experience" type="text" className={inputClass} />
+          </div>
+          <div className="md:col-span-2">
+            <label htmlFor="app-link" className="eyebrow mb-3 block">
+              portfolio / cv link
+            </label>
+            <input
               id="app-link"
               name="link"
               type="url"
               placeholder="https://"
-              className={fieldClass}
+              className={inputClass}
             />
           </div>
-
-          <div>
-            <label
-              htmlFor="app-message"
-              className="block text-[12px] uppercase tracking-[0.08em] mb-3 text-[color:var(--ink-mid)]"
-            >
-              Message
+          <div className="md:col-span-2">
+            <label htmlFor="app-message" className="eyebrow mb-3 block">
+              anything else (optional)
             </label>
-            <Textarea
-              id="app-message"
-              name="message"
-              rows={4}
-              placeholder="Tell us about your experience and why you'd be a great fit..."
-              className={fieldClass}
-            />
+            <textarea id="app-message" name="message" rows={5} className={inputClass} />
           </div>
 
-          {error && (
-            <p className="text-[15px] text-[#ff453a]" role="alert">
+          <div className="md:col-span-2 flex flex-wrap items-center gap-6">
+            <button
+              type="submit"
+              disabled={submitting}
+              className="pill pill-solid px-8 py-3.5 text-[15px] disabled:opacity-60"
+            >
+              {submitting ? "Sending…" : "Send application"}
+            </button>
+            <p aria-live="polite" className="text-[13px] text-[color:var(--ink-mid)]">
               {error}
             </p>
-          )}
-
-          <motion.button
-            type="submit"
-            disabled={submitting}
-            aria-busy={submitting}
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.99 }}
-            className="w-full py-4 bg-[#f5f5f7] text-[#1c1c1e] rounded-[2px] text-[17px] font-medium transition-all duration-500 hover:bg-white hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-          >
-            {submitting ? (
-              <>
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  className="w-5 h-5 border-2 border-[#1c1c1e] border-t-transparent rounded-full"
-                />
-                <span className="sr-only">Submitting your application…</span>
-              </>
-            ) : (
-              <>
-                Submit application
-                <Send className="w-4 h-4" />
-              </>
-            )}
-          </motion.button>
-
-          <p className="text-[12px] text-[color:var(--ink-mid)] text-center">
-            Or email us directly at{" "}
-            <a
-              href="mailto:info@tiltedneedle.com"
-              className="text-[color:var(--ink-mid)] hover:text-[color:var(--ink)] underline-offset-2 hover:underline"
-            >
-              info@tiltedneedle.com
-            </a>
-          </p>
+          </div>
         </motion.form>
       )}
     </AnimatePresence>
   );
 }
 
+function RoleRow({
+  role,
+  index,
+  onApply,
+}: {
+  role: Role;
+  index: number;
+  onApply: (title: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="border-t border-[color:var(--rule)]">
+      <h3>
+        <button
+          onClick={() => setOpen(!open)}
+          aria-expanded={open}
+          aria-controls={"role-panel-" + index}
+          id={"role-trigger-" + index}
+          className="grid w-full grid-cols-[auto_1fr_auto] items-baseline gap-x-6 md:gap-x-12 py-7 md:py-9 text-left"
+        >
+          <span className="text-[13px] text-[color:var(--ink-mid)] tabular-nums pl-1">
+            {String(index + 1).padStart(2, "0")}
+          </span>
+          <span>
+            <span className="block text-[21px] md:text-[32px] font-extralight text-[color:var(--ink)]">
+              {role.title}
+            </span>
+            <span className="eyebrow-serif mt-1 block">
+              {role.location.toLowerCase()} &middot; {role.type.toLowerCase()}
+            </span>
+          </span>
+          <span
+            aria-hidden="true"
+            className="text-[21px] text-[color:var(--ink-mid)] transition-transform duration-300 pr-1"
+            style={{ transform: open ? "rotate(45deg)" : "none" }}
+          >
+            +
+          </span>
+        </button>
+      </h3>
+      <motion.div
+        id={"role-panel-" + index}
+        role="region"
+        aria-labelledby={"role-trigger-" + index}
+        initial={false}
+        animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
+        transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
+        className="overflow-hidden"
+      >
+        <div className="pb-9 md:grid md:grid-cols-[auto_1fr] md:gap-x-12">
+          <span aria-hidden="true" className="hidden md:block text-[13px] pl-1">
+            &nbsp;&nbsp;
+          </span>
+          <div>
+            <p className="text-[15px] leading-relaxed text-[color:var(--ink-mid)] max-w-[62ch]">
+              {role.description}
+            </p>
+            <p className="mt-4 text-[13px] text-[color:var(--ink-mid)]">
+              {role.requirements.join(" · ").toLowerCase()}
+            </p>
+            <button
+              onClick={() => onApply(role.title)}
+              className="underline-draw mt-6 text-[15px] text-[color:var(--ink)]"
+            >
+              apply for this role <span aria-hidden="true">&#8600;</span>
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 export function CareersPage() {
   const reduced = useReducedMotion();
-  const heroRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
-  const videoScale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
-  const [selectedRole, setSelectedRole] = useState("Open application");
-
-  const scrollToId = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
-  };
+  const [selectedRole, setSelectedRole] = useState(roleOptions[0]);
+  const applyRef = useRef<HTMLDivElement>(null);
 
   const applyFor = (title: string) => {
     setSelectedRole(title);
-    scrollToId("apply");
+    applyRef.current?.scrollIntoView({ behavior: reduced ? "auto" : "smooth" });
   };
 
+  const rise = (delay: number) => ({
+    initial: { opacity: 0, y: reduced ? 0 : 24 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.8, delay, ease: EASE_OUT_EXPO },
+  });
+
   return (
-    <>
-      <section
-        ref={heroRef}
-        className="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden bg-[var(--paper)] min-h-[85vh] flex items-center"
-      >
-        <motion.div style={{ scale: reduced ? 1 : videoScale }} className="absolute inset-0">
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            className="absolute inset-0 w-full h-full object-cover opacity-80"
+    <div className="bg-[var(--paper)]">
+      <section className="pt-32 md:pt-40 pb-16 md:pb-20">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
+          <motion.p {...rise(0)} className="eyebrow mb-8">
+            careers &mdash; london &middot; dubai
+          </motion.p>
+          <motion.h1
+            {...rise(0.08)}
+            className="font-thin text-[color:var(--ink)] leading-[1.14] text-[11vw] sm:text-[56px] md:text-[72px] lg:text-[88px] max-w-[16ch]"
           >
-            <source
-              src="https://videos.pexels.com/video-files/3045163/3045163-hd_1920_1080_25fps.mp4"
-              type="video/mp4"
+            Join the team behind the <span className="em-serif">views</span>.
+          </motion.h1>
+          <motion.p
+            {...rise(0.16)}
+            className="mt-10 text-[17px] md:text-[21px] text-[color:var(--ink-mid)] max-w-[52ch] leading-relaxed"
+          >
+            A social-media production company working with world-class brands and
+            creators. If your bar is as high as ours, we should talk.
+          </motion.p>
+        </div>
+
+        <motion.div {...rise(0.24)} className="mx-auto max-w-[1600px] px-6 md:px-[60px] mt-14">
+          <div className="plate aspect-[21/9] w-full">
+            <video
+              src={CAREERS_REEL}
+              muted
+              loop
+              playsInline
+              autoPlay={!reduced}
+              preload="metadata"
+              className="h-full w-full object-cover"
+              aria-label="Behind the scenes of a Tilted Needle shoot"
             />
-          </video>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20" />
-        </motion.div>
-
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)",
-            backgroundSize: "80px 80px",
-          }}
-        />
-
-        <motion.div
-          animate={reduced ? {} : { x: [0, 30, -20, 0], y: [0, -40, 20, 0], opacity: [0.15, 0.3, 0.2, 0.15] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-[20%] right-[10%] w-[400px] h-[400px] rounded-full bg-[#2997ff]/20 blur-[150px] pointer-events-none"
-        />
-        <motion.div
-          animate={reduced ? {} : { x: [0, -25, 15, 0], y: [0, 30, -20, 0], opacity: [0.1, 0.2, 0.15, 0.1] }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-[20%] left-[5%] w-[350px] h-[350px] rounded-full bg-[#af52de]/15 blur-[130px] pointer-events-none"
-        />
-
-        <motion.div
-          style={{ opacity: reduced ? 1 : heroOpacity }}
-          className="mx-auto max-w-[1200px] px-6 relative w-full"
-        >
-          <motion.div
-            initial={{ opacity: 0, y: reduced ? 0 : 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: EASE_OUT_EXPO }}
-            className="text-center"
-          >
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.8 }}
-              className="eyebrow-serif block mb-5"
-            >
-              Careers
-            </motion.p>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              transition={{ delay: 0.3, duration: 1, ease: EASE_OUT_EXPO }}
-              className="text-5xl md:text-7xl lg:text-[88px] font-thin leading-[1.05] text-[color:var(--ink)] mb-6"
-            >
-              Join the team
-              <br />
-              <span
-                className="bg-gradient-to-r from-[#a1a1a6] via-[#f5f5f7] to-[#a1a1a6] bg-clip-text text-transparent animate-gradient-shift"
-                style={{ backgroundSize: "200% 100%" }}
-              >
-                behind the views.
-              </span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
-              className="text-xl md:text-[22px] text-[color:var(--ink-mid)] max-w-2xl mx-auto leading-relaxed mb-10"
-            >
-              Tilted Needle is a social-media production company based in London and Dubai, working
-              with world-class brands and creators. Our team is global, on shoots for clients from
-              LA to Hong Kong.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7, duration: 0.6 }}
-            >
-              <motion.button
-                type="button"
-                onClick={() => scrollToId("roles")}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[#f5f5f7] text-[#1c1c1e] rounded-full text-[17px] font-medium transition-all duration-300 hover:bg-white hover:shadow-[0_0_40px_rgba(255,255,255,0.15)]"
-              >
-                View open roles
-                <ArrowRight className="w-4 h-4" />
-              </motion.button>
-            </motion.div>
-          </motion.div>
+          </div>
         </motion.div>
       </section>
 
-      <section className={`relative ${SECTION_Y_INNER} bg-[var(--paper)] overflow-hidden`}>
-        <div className="absolute inset-0 bg-gradient-to-b from-[var(--paper)] via-[var(--paper)] to-[var(--paper)]" />
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: "radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px)",
-            backgroundSize: "32px 32px",
-          }}
-        />
-
-        <div className="mx-auto max-w-[1200px] px-6 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-20"
-          >
-            <p className="eyebrow-serif block mb-5">Why Tilted Needle</p>
-            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-thin text-[color:var(--ink)]">
-              A studio built to win.
-            </h2>
-            <p className="mt-6 text-xl md:text-[22px] text-[color:var(--ink-mid)] max-w-xl mx-auto">
-              Small team. Big briefs. The standard never drops.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <section className="py-16 md:py-24">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
+          <SectionTag>life here</SectionTag>
+          <div className="mt-10 md:mt-14 grid grid-cols-1 md:grid-cols-2 gap-x-16">
             {perks.map((perk, i) => (
               <motion.div
                 key={perk.title}
-                initial={{ opacity: 0, y: reduced ? 0 : 40 }}
+                initial={{ opacity: 0, y: reduced ? 0 : 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.08 * i, duration: 0.6, ease: EASE_OUT_EXPO }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.5, delay: 0.04 * i, ease: EASE_OUT_EXPO }}
+                className="border-t border-[color:var(--rule)] py-8 md:py-10"
               >
-                <motion.div
-                  whileHover={{ y: -6, transition: { duration: 0.3, ease: EASE_OUT_EXPO } }}
-                  className="group relative p-8 md:p-10 rounded-[2px] bg-gradient-to-b from-white to-[#fafafa] h-full plate sheen"
-                >
-                  <div
-                    className={`absolute inset-0 rounded-[2px] bg-gradient-to-br ${perk.gradient} opacity-0 group-hover:opacity-[0.04] transition-opacity duration-500`}
-                  />
-                  <motion.div
-                    className={`w-14 h-14 rounded-[2px] bg-gradient-to-br ${perk.gradient} flex items-center justify-center mb-6 text-[color:var(--ink)] shadow-lg`}
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {perk.icon}
-                  </motion.div>
-                  <h3 className="text-[22px] md:text-[24px] font-light text-[color:var(--ink)] mb-3 group-hover:text-[color:var(--ink)] transition-colors duration-300">
-                    {perk.title}
-                  </h3>
-                  <p className="text-[15px] md:text-[17px] text-[color:var(--ink-mid)] leading-relaxed group-hover:text-[color:var(--ink-mid)] transition-colors duration-300">
-                    {perk.description}
-                  </p>
-                </motion.div>
+                <h3 className="text-[21px] md:text-[25px] font-light text-[color:var(--ink)]">
+                  {perk.title}
+                </h3>
+                <p className="mt-3 text-[15px] leading-relaxed text-[color:var(--ink-mid)] max-w-[54ch]">
+                  {perk.description}
+                </p>
               </motion.div>
             ))}
           </div>
+          <div className="border-t border-[color:var(--rule)]" />
         </div>
       </section>
 
-      <section
-        id="roles"
-        className={`relative ${SECTION_Y_INNER} bg-[var(--paper)] overflow-hidden scroll-mt-24`}
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(41,151,255,0.05),transparent_60%)]" />
-        <div className="mx-auto max-w-[900px] px-6 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16 md:mb-20"
-          >
-            <p className="eyebrow-serif block mb-5">Open roles</p>
-            <h2 className="text-4xl md:text-5xl lg:text-[64px] font-thin text-[color:var(--ink)]">
-              Where you come in.
-            </h2>
-            <p className="mt-6 text-xl md:text-[22px] text-[color:var(--ink-mid)] max-w-xl mx-auto">
-              We hire senior. If you&apos;re exceptional at your craft, we want to hear from you.
-            </p>
-          </motion.div>
-
-          <div className="space-y-5">
+      <section id="roles" className="py-16 md:py-24 scroll-mt-16">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
+          <SectionTag>open roles</SectionTag>
+          <div className="mt-10 md:mt-14">
             {roles.map((role, i) => (
-              <RoleCard key={role.title} role={role} index={i} onApply={applyFor} />
+              <RoleRow key={role.title} role={role} index={i} onApply={applyFor} />
             ))}
+            <div className="border-t border-[color:var(--rule)]" />
+          </div>
+          <p className="mt-8 text-[15px] text-[color:var(--ink-mid)]">
+            Nothing that fits? Send an open application below anyway.
+          </p>
+        </div>
+      </section>
+
+      <section id="apply" ref={applyRef} className="py-16 md:py-24 scroll-mt-16">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
+          <SectionTag>apply</SectionTag>
+          <h2 className="mt-8 mb-12 font-thin text-[color:var(--ink)] leading-[1.15] text-[9vw] sm:text-[44px] md:text-[64px] max-w-[16ch]">
+            Send us your <span className="em-serif">application</span>.
+          </h2>
+          <div className="max-w-[900px]">
+            <ApplicationForm role={selectedRole} onRoleChange={setSelectedRole} />
           </div>
         </div>
       </section>
-
-      <section
-        id="apply"
-        className={`relative ${SECTION_Y_INNER} bg-[var(--paper)] overflow-hidden scroll-mt-24`}
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(175,82,222,0.05),transparent_60%)]" />
-        <div className="mx-auto max-w-[760px] px-6 relative">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-12 md:mb-16"
-          >
-            <p className="eyebrow-serif block mb-5">Apply now</p>
-            <h2 className="text-4xl md:text-5xl lg:text-[56px] font-thin text-[color:var(--ink)] leading-[1.08]">
-              Send us your application.
-            </h2>
-            <p className="mt-6 text-xl md:text-[22px] text-[color:var(--ink-mid)] max-w-xl mx-auto leading-relaxed">
-              Apply for a role above or send an open application. Share your showreel, portfolio or
-              CV, we read every one.
-            </p>
-          </motion.div>
-
-          <ApplicationForm role={selectedRole} onRoleChange={setSelectedRole} />
-        </div>
-      </section>
-    </>
+    </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { SectionTag } from "@/components/editorial/SectionTag";
+import { CutLink } from "@/components/room/CutLink";
 import { servicesList } from "@/lib/services-data";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
@@ -16,6 +16,7 @@ function LastWordSerif({ text }: { text: string }) {
   );
 }
 
+/** The studio. Four capabilities as an index of slates. */
 export function ServicesOverview() {
   const reduced = useReducedMotion();
 
@@ -26,33 +27,26 @@ export function ServicesOverview() {
   });
 
   return (
-    <div className="bg-[var(--paper)]">
-      <section className="pt-32 md:pt-40 pb-16 md:pb-24">
-        <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
-          <motion.p {...rise(0)} className="eyebrow mb-8">
-            services
+    <div className="bg-[color:var(--stage)]">
+      <section className="pb-16 pt-32 md:pb-24 md:pt-40">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-14">
+          <motion.p {...rise(0)} className="mono mb-8">
+            02 &mdash; The studio
           </motion.p>
-          <motion.h1
-            {...rise(0.08)}
-            className="font-thin text-[color:var(--ink)] leading-[1.14] text-[11vw] sm:text-[56px] md:text-[72px] lg:text-[88px] max-w-[16ch]"
-          >
-            Four capabilities, one <span className="em-serif">growth</span> engine.
+          <motion.h1 {...rise(0.08)} className="display max-w-[12ch] text-[clamp(56px,9.5vw,150px)]">
+            Four capabilities, one <span className="em-serif">engine.</span>
           </motion.h1>
-          <motion.p
-            {...rise(0.16)}
-            className="mt-10 text-[17px] md:text-[21px] text-[color:var(--ink-mid)] max-w-[52ch] leading-relaxed"
-          >
-            Content creation, influencer marketing, paid &amp; performance, and app
-            &amp; web development &mdash; run as one integrated system, not four
-            separate vendors.
+          <motion.p {...rise(0.16)} className="mt-10 max-w-[52ch] text-[19px] leading-relaxed text-[color:var(--ink-soft)] md:text-[21px]">
+            Content creation, influencer marketing, paid and performance, and app and web
+            development, run as one integrated system rather than four separate vendors.
           </motion.p>
         </div>
       </section>
 
       <section className="pb-20 md:pb-28">
-        <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
-          <SectionTag>the index</SectionTag>
-          <div className="mt-10 md:mt-14">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-14">
+          <p className="mono">The index</p>
+          <div className="mt-8 md:mt-10">
             {servicesList.map((service, i) => (
               <motion.div
                 key={service.slug}
@@ -61,33 +55,28 @@ export function ServicesOverview() {
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.6, delay: 0.05 * i, ease: EASE_OUT_EXPO }}
               >
-                <Link
+                <CutLink
                   href={"/services/" + service.slug}
-                  className="group block border-t border-[color:var(--rule)] py-10 md:py-14 transition-colors duration-500 hover:bg-white"
+                  className="group block border-t border-[color:var(--rule)] py-10 transition-colors duration-500 hover:bg-[color:var(--stage-2)] md:py-14"
+                  data-cursor="Open"
                 >
                   <div className="grid grid-cols-[auto_1fr_auto] items-baseline gap-x-6 md:gap-x-12">
-                    <span className="text-[13px] text-[color:var(--ink-mid)] tabular-nums pl-1">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
+                    <span className="mono pl-1">{String(i + 1).padStart(2, "0")}</span>
                     <div>
-                      <h2 className="text-[32px] md:text-[50px] font-thin leading-[1.15] text-[color:var(--ink)]">
+                      <h2 className="display text-[clamp(32px,4.5vw,72px)]">
                         <LastWordSerif text={service.shortTitle} />
                       </h2>
-                      <p className="mt-3 text-[15px] md:text-[17px] text-[color:var(--ink-mid)] max-w-[64ch]">
-                        {service.tagline}
-                      </p>
-                      <p className="mt-4 hidden md:block text-[13px] text-[color:var(--ink-mid)]">
-                        {service.features.slice(0, 4).join(" · ").toLowerCase()}
-                      </p>
+                      <p className="mt-3 max-w-[64ch] text-[15px] text-[color:var(--ink-soft)] md:text-[17px]">{service.tagline}</p>
+                      <p className="mono mt-4 hidden md:block">{service.features.slice(0, 4).join(" / ")}</p>
                     </div>
                     <span
                       aria-hidden="true"
-                      className="text-[21px] text-[color:var(--ink-mid)] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1 group-hover:translate-y-1 group-hover:text-[color:var(--ink)] pr-1"
+                      className="pr-1 text-[21px] text-[color:var(--ink-mid)] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-1 group-hover:text-[color:var(--ink)]"
                     >
-                      &#8600;
+                      &#8599;
                     </span>
                   </div>
-                </Link>
+                </CutLink>
               </motion.div>
             ))}
             <div className="border-t border-[color:var(--rule)]" />
@@ -96,16 +85,16 @@ export function ServicesOverview() {
       </section>
 
       <section className="pb-24 md:pb-36">
-        <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
-          <h2 className="font-thin text-[color:var(--ink)] leading-[1.15] text-[9vw] sm:text-[44px] md:text-[64px] max-w-[16ch]">
-            Not sure where to <span className="em-serif">start</span>?
+        <div className="mx-auto max-w-[1600px] px-6 md:px-14">
+          <h2 className="display max-w-[14ch] text-[clamp(44px,7vw,110px)]">
+            Not sure where to <span className="em-serif">start?</span>
           </h2>
-          <div className="mt-10 flex items-center gap-6">
-            <Link href="/book-demo" className="pill pill-solid px-7 py-3 text-[15px]">
+          <div className="mt-10 flex items-center gap-8">
+            <CutLink href="/book-demo" className="pill pill-solid px-7 py-3 text-[15px]">
               Book a demo
-            </Link>
-            <Link href="/#work" className="underline-draw text-[15px] text-[color:var(--ink)]">
-              see the work <span aria-hidden="true">&#8600;</span>
+            </CutLink>
+            <Link href="/#work" className="slate-link text-[13px]">
+              See the work &#8599;
             </Link>
           </div>
         </div>

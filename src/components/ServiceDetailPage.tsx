@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { SectionTag } from "@/components/editorial/SectionTag";
+import { CutLink } from "@/components/room/CutLink";
 import { servicesList, type Service } from "@/lib/services-data";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
@@ -21,7 +20,7 @@ function LastWordSerif({ text }: { text: string }) {
 function StepRows({ steps }: { steps: Service["process"] }) {
   const reduced = useReducedMotion();
   return (
-    <div className="mt-10 md:mt-14">
+    <div className="mt-8 md:mt-10">
       {steps.map((step, i) => (
         <motion.div
           key={step.step}
@@ -29,15 +28,11 @@ function StepRows({ steps }: { steps: Service["process"] }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.5, delay: 0.03 * i, ease: EASE_OUT_EXPO }}
-          className="grid grid-cols-[auto_1fr] md:grid-cols-[auto_minmax(0,420px)_1fr] items-baseline gap-x-6 md:gap-x-12 gap-y-2 border-t border-[color:var(--rule)] py-6 md:py-8"
+          className="grid grid-cols-[auto_1fr] items-baseline gap-x-6 gap-y-2 border-t border-[color:var(--rule)] py-6 md:grid-cols-[auto_minmax(0,420px)_1fr] md:gap-x-12 md:py-8"
         >
-          <span className="text-[13px] text-[color:var(--ink-mid)] tabular-nums pl-1">
-            {String(step.step).padStart(2, "0")}
-          </span>
-          <h3 className="text-[21px] md:text-[25px] font-light text-[color:var(--ink)]">
-            {step.title}
-          </h3>
-          <p className="col-start-2 md:col-start-3 text-[15px] leading-relaxed text-[color:var(--ink-mid)] max-w-[68ch]">
+          <span className="mono pl-1">{String(step.step).padStart(2, "0")}</span>
+          <h3 className="text-[21px] text-[color:var(--ink)] md:text-[25px]">{step.title}</h3>
+          <p className="col-start-2 max-w-[68ch] text-[15px] leading-relaxed text-[color:var(--ink-mid)] md:col-start-3">
             {step.description}
           </p>
         </motion.div>
@@ -47,6 +42,7 @@ function StepRows({ steps }: { steps: Service["process"] }) {
   );
 }
 
+/** One capability, as a film page reads: slate, the picture, the numbers, the process. */
 export function ServiceDetailPage({ service }: { service: Service }) {
   const reduced = useReducedMotion();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -59,57 +55,40 @@ export function ServiceDetailPage({ service }: { service: Service }) {
   });
 
   return (
-    <div className="bg-[var(--paper)]">
-      <section className="pt-32 md:pt-40 pb-16 md:pb-20">
-        <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
-          <motion.p {...rise(0)} className="eyebrow mb-8">
-            service {String(index).padStart(2, "0")} &mdash; {service.shortTitle}
+    <div className="bg-[color:var(--stage)]">
+      <section className="pb-16 pt-32 md:pb-20 md:pt-40">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-14">
+          <motion.p {...rise(0)} className="mono mb-8">
+            Service {String(index).padStart(2, "0")} <span className="text-[color:var(--ink-faint)]">/</span> {service.shortTitle}
           </motion.p>
-          <motion.h1
-            {...rise(0.08)}
-            className="font-thin text-[color:var(--ink)] leading-[1.14] text-[11vw] sm:text-[56px] md:text-[72px] lg:text-[88px] max-w-[18ch]"
-          >
+          <motion.h1 {...rise(0.08)} className="display max-w-[14ch] text-[clamp(56px,9.5vw,150px)]">
             <LastWordSerif text={service.title} />
           </motion.h1>
-          <motion.div
-            {...rise(0.16)}
-            className="mt-10 flex flex-wrap items-end justify-between gap-8"
-          >
-            <p className="text-[17px] md:text-[21px] text-[color:var(--ink-mid)] max-w-[52ch] leading-relaxed">
-              {service.description}
-            </p>
-            <div className="flex items-center gap-6 shrink-0">
-              <Link href="/book-demo" className="pill pill-solid px-7 py-3 text-[15px]">
+          <motion.div {...rise(0.16)} className="mt-10 flex flex-wrap items-end justify-between gap-8">
+            <p className="max-w-[52ch] text-[19px] leading-relaxed text-[color:var(--ink-soft)] md:text-[21px]">{service.description}</p>
+            <div className="flex shrink-0 items-center gap-8">
+              <CutLink href="/book-demo" className="pill pill-solid px-7 py-3 text-[15px]">
                 Book a demo
-              </Link>
-              <a href="#process" className="underline-draw text-[15px] text-[color:var(--ink)]">
-                how we work <span aria-hidden="true">&#8600;</span>
+              </CutLink>
+              <a href="#process" className="slate-link text-[13px]">
+                How we work &darr;
               </a>
             </div>
           </motion.div>
         </div>
 
-        <motion.div {...rise(0.24)} className="mx-auto max-w-[1600px] px-6 md:px-[60px] mt-14">
+        <motion.div {...rise(0.24)} className="mx-auto mt-14 max-w-[1600px] px-6 md:px-14">
           <div className="plate relative aspect-[21/9] w-full">
-            <Image
-              src={service.imageUrl}
-              alt=""
-              fill
-              sizes="100vw"
-              priority
-              className="object-cover"
-            />
+            <Image src={service.imageUrl} alt="" fill sizes="100vw" priority className="object-cover" />
           </div>
-          <div className="mt-2 grid grid-cols-1 sm:grid-cols-3 border-t border-[color:var(--rule)]">
+          <div className="mt-2 grid grid-cols-1 border-t border-[color:var(--rule)] sm:grid-cols-3">
             {service.stats.map((s) => (
               <div
                 key={s.label}
-                className="py-7 sm:py-9 flex items-baseline gap-4 sm:block border-b sm:border-b-0 border-[color:var(--rule)] last:border-b-0"
+                className="flex items-baseline gap-4 border-b border-[color:var(--rule)] py-7 last:border-b-0 sm:block sm:border-b-0 sm:py-9"
               >
-                <span className="block text-[40px] md:text-[50px] font-thin text-[color:var(--ink)] leading-none">
-                  {s.value}
-                </span>
-                <span className="eyebrow-serif mt-2 block">{s.label.toLowerCase()}</span>
+                <span className="display tabular block text-[clamp(40px,5vw,80px)] leading-none">{s.value}</span>
+                <span className="mono mt-3 block">{s.label}</span>
               </div>
             ))}
           </div>
@@ -117,9 +96,9 @@ export function ServiceDetailPage({ service }: { service: Service }) {
       </section>
 
       <section className="py-16 md:py-24">
-        <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
-          <SectionTag>what&apos;s included</SectionTag>
-          <div className="mt-10 md:mt-14 grid grid-cols-1 md:grid-cols-2 gap-x-16">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-14">
+          <p className="mono">What is included</p>
+          <div className="mt-8 grid grid-cols-1 gap-x-16 md:mt-10 md:grid-cols-2">
             {service.features.map((feature, i) => (
               <motion.p
                 key={feature}
@@ -127,7 +106,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.45, delay: 0.02 * i, ease: EASE_OUT_EXPO }}
-                className="border-t border-[color:var(--rule)] py-5 md:py-6 text-[17px] md:text-[20px] font-light text-[color:var(--ink)]"
+                className="border-t border-[color:var(--rule)] py-5 text-[17px] text-[color:var(--ink)] md:py-6 md:text-[20px]"
               >
                 {feature}
               </motion.p>
@@ -137,15 +116,15 @@ export function ServiceDetailPage({ service }: { service: Service }) {
         </div>
       </section>
 
-      <section id="process" className="py-16 md:py-24 scroll-mt-16">
-        <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
-          <SectionTag>the process</SectionTag>
+      <section id="process" className="scroll-mt-16 py-16 md:py-24">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-14">
+          <p className="mono">The process</p>
           <StepRows steps={service.process} />
 
           {service.secondaryProcess && (
             <div className="mt-16 md:mt-24">
-              <p className="eyebrow-serif">{service.secondaryProcess.subtitle.toLowerCase()}</p>
-              <h3 className="mt-3 text-[25px] md:text-[32px] font-extralight text-[color:var(--ink)]">
+              <p className="mono">{service.secondaryProcess.subtitle}</p>
+              <h3 className="display mt-3 text-[clamp(28px,3.5vw,56px)]">
                 <LastWordSerif text={service.secondaryProcess.title} />
               </h3>
               <StepRows steps={service.secondaryProcess.steps} />
@@ -155,9 +134,9 @@ export function ServiceDetailPage({ service }: { service: Service }) {
       </section>
 
       <section className="py-16 md:py-24">
-        <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
-          <SectionTag>why tilted needle</SectionTag>
-          <div className="mt-10 md:mt-14 grid grid-cols-1 md:grid-cols-2 gap-x-16">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-14">
+          <p className="mono">Why Tilted Needle</p>
+          <div className="mt-8 grid grid-cols-1 gap-x-16 md:mt-10 md:grid-cols-2">
             {service.benefits.map((benefit, i) => (
               <motion.div
                 key={benefit.title}
@@ -167,12 +146,8 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                 transition={{ duration: 0.5, delay: 0.04 * i, ease: EASE_OUT_EXPO }}
                 className="border-t border-[color:var(--rule)] py-8 md:py-10"
               >
-                <h3 className="text-[21px] md:text-[25px] font-light text-[color:var(--ink)]">
-                  {benefit.title}
-                </h3>
-                <p className="mt-3 text-[15px] leading-relaxed text-[color:var(--ink-mid)] max-w-[58ch]">
-                  {benefit.description}
-                </p>
+                <h3 className="text-[21px] text-[color:var(--ink)] md:text-[25px]">{benefit.title}</h3>
+                <p className="mt-3 max-w-[58ch] text-[15px] leading-relaxed text-[color:var(--ink-mid)]">{benefit.description}</p>
               </motion.div>
             ))}
           </div>
@@ -181,9 +156,9 @@ export function ServiceDetailPage({ service }: { service: Service }) {
       </section>
 
       <section className="py-16 md:py-24">
-        <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
-          <SectionTag>faq</SectionTag>
-          <div className="mt-10 md:mt-14 max-w-[900px]">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-14">
+          <p className="mono">FAQ</p>
+          <div className="mt-8 max-w-[900px] md:mt-10">
             {service.faq.map((item, i) => (
               <div key={item.question} className="border-t border-[color:var(--rule)]">
                 <h3>
@@ -192,7 +167,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                     aria-expanded={openFaq === i}
                     aria-controls={"faq-panel-" + i}
                     id={"faq-trigger-" + i}
-                    className="group flex w-full items-baseline justify-between gap-6 py-6 text-left text-[17px] md:text-[20px] font-light text-[color:var(--ink)]"
+                    className="group flex w-full items-baseline justify-between gap-6 py-6 text-left text-[17px] text-[color:var(--ink)] md:text-[20px]"
                   >
                     {item.question}
                     <span
@@ -213,9 +188,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
                   transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
                   className="overflow-hidden"
                 >
-                  <p className="pb-7 text-[15px] leading-relaxed text-[color:var(--ink-mid)] max-w-[62ch]">
-                    {item.answer}
-                  </p>
+                  <p className="max-w-[62ch] pb-7 text-[15px] leading-relaxed text-[color:var(--ink-mid)]">{item.answer}</p>
                 </motion.div>
               </div>
             ))}
@@ -225,17 +198,17 @@ export function ServiceDetailPage({ service }: { service: Service }) {
       </section>
 
       <section className="py-20 md:py-32">
-        <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
-          <h2 className="font-thin text-[color:var(--ink)] leading-[1.15] text-[9vw] sm:text-[44px] md:text-[64px] max-w-[16ch]">
-            Ready to make your brand go <span className="em-serif">viral</span>?
+        <div className="mx-auto max-w-[1600px] px-6 md:px-14">
+          <h2 className="display max-w-[14ch] text-[clamp(44px,7vw,110px)]">
+            Ready to go <span className="em-serif">viral?</span>
           </h2>
-          <div className="mt-10 flex items-center gap-6">
-            <Link href="/book-demo" className="pill pill-solid px-7 py-3 text-[15px]">
+          <div className="mt-10 flex items-center gap-8">
+            <CutLink href="/book-demo" className="pill pill-solid px-7 py-3 text-[15px]">
               Book a demo
-            </Link>
-            <Link href="/services" className="underline-draw text-[15px] text-[color:var(--ink)]">
-              all services <span aria-hidden="true">&#8600;</span>
-            </Link>
+            </CutLink>
+            <CutLink href="/services" className="slate-link text-[13px]">
+              All services &#8599;
+            </CutLink>
           </div>
         </div>
       </section>

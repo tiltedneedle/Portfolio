@@ -1,11 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { ArrowRight, Maximize2, Move, X, ZoomIn, ZoomOut } from "lucide-react";
+import { Maximize2, Move, X, ZoomIn, ZoomOut } from "lucide-react";
 import { NavBar } from "@/components/NavBar";
+import { CutLink } from "@/components/room/CutLink";
 import { useFocusTrap } from "@/lib/use-focus-trap";
 import { attachThrottledVideo } from "@/lib/video-slots";
 import { boardVideos, type BoardVideo } from "@/lib/board-videos";
@@ -126,13 +126,20 @@ function clampPos(x: number, y: number, scale: number, w: number, h: number) {
 // double-release defect the shared one had. It now uses the shared limiter so
 // there is a single accounting of in-flight video loads.
 
-function BoardVideoTile({ src, className }: { src: string; className?: string }) {
+// Every tile carries its title as a slate until the clip reports a frame, so a
+// slow or missing clip is never a black hole in the contact sheet.
+function BoardVideoTile({ src, title, className }: { src: string; title: string; className?: string }) {
   const ref = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
-    return attachThrottledVideo(video, src);
+    const release = attachThrottledVideo(video, src);
+    return () => {
+      release();
+      setPlaying(false);
+    };
   }, [src]);
 
   return (
@@ -143,10 +150,17 @@ function BoardVideoTile({ src, className }: { src: string; className?: string })
         loop
         playsInline
         preload="metadata"
-        className="w-full h-full object-cover pointer-events-none"
-        style={{ background: "#0a0a0a" }}
+        onPlaying={() => setPlaying(true)}
+        className={"w-full h-full object-cover pointer-events-none transition-opacity duration-500 " + (playing ? "opacity-100" : "opacity-0")}
+        style={{ background: "var(--stage-2)" }}
         draggable={false}
       />
+      <span
+        aria-hidden="true"
+        className={"mono pointer-events-none absolute inset-x-0 bottom-0 p-2 text-[9px] leading-snug transition-opacity duration-500 " + (playing ? "opacity-0" : "opacity-100")}
+      >
+        {title}
+      </span>
     </div>
   );
 }
@@ -513,11 +527,8 @@ export function PortfolioBoard() {
 
       <main
         ref={containerRef}
-        className="fixed inset-0 top-12 overflow-hidden select-none touch-none"
-        style={{
-          background: "linear-gradient(145deg, #fafafa 0%, #f5f5f5 50%, #f8f8f8 100%)",
-          cursor: intro ? "default" : dragging ? "grabbing" : "grab",
-        }}
+        className="fixed inset-0 top-14 md:top-16 overflow-hidden select-none touch-none bg-[color:var(--stage)]"
+        style={{ cursor: intro ? "default" : dragging ? "grabbing" : "grab" }}
         onWheel={onWheel}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -532,16 +543,16 @@ export function PortfolioBoard() {
             main landmark and put the whole page into forms mode, so screen
             readers lost browse-mode navigation over the heading and controls. */}
         <div
-          className="absolute inset-0 z-30 pointer-events-none focus-visible:outline-2 focus-visible:outline-black/40 focus-visible:outline-offset-[-6px] rounded-sm"
+          className="absolute inset-0 z-30 pointer-events-none focus-visible:outline-2 focus-visible:outline-[color:var(--rule-strong)] focus-visible:outline-offset-[-6px] rounded-sm"
           tabIndex={0}
           role="application"
           aria-label="Portfolio board. Use the arrow keys to pan, plus and minus to zoom, and 0 to fit the whole board."
           onKeyDown={onBoardKeyDown}
         />
         <div
-          className="absolute inset-0 opacity-[0.02] pointer-events-none"
+          className="absolute inset-0 opacity-[0.12] pointer-events-none"
           style={{
-            backgroundImage: "radial-gradient(circle at 1px 1px, #000 0.4px, transparent 0.4px)",
+            backgroundImage: "radial-gradient(circle at 1px 1px, rgba(242,239,233,0.6) 0.5px, transparent 0.5px)",
             backgroundSize: "20px 20px",
           }}
         />
@@ -559,71 +570,24 @@ export function PortfolioBoard() {
             className="absolute flex flex-col items-center justify-center text-center"
             style={{ left: brandX, top: brandY, width: BRAND_W, height: BRAND_H }}
           >
-            <div
-              className="w-full h-full flex flex-col items-center justify-center"
-              style={{ background: "transparent" }}
-            >
-              <div
-                className="w-14 h-14 rounded-[2px] flex items-center justify-center"
-                style={{
-                  background: "rgba(0,0,0,0.06)",
-                  boxShadow:
-                    "inset 0 2px 4px rgba(0,0,0,0.08), 0 1px 0 rgba(255,255,255,0.7)",
-                }}
-              >
-                <Image
-                  src="/black-logo.png"
-                  alt="Tilted Needle"
-                  width={30}
-                  height={30}
-                  className="object-contain"
-                />
-              </div>
+            <div className="w-full h-full flex flex-col items-center justify-center">
+              <Image src="/white-logo.png" alt="" width={30} height={30} className="object-contain" />
 
-              <h1
-                className="text-[28px] font-light leading-tight mt-4"
-                style={{
-                  color: "#c8c8ca",
-                  textShadow:
-                    "0 -1px 1px rgba(255,255,255,0.8), 0 1px 2px rgba(0,0,0,0.12)",
-                }}
-              >
-                Tilted Needle
-              </h1>
+              <h1 className="display mt-4 text-[40px]">The library</h1>
 
-              <p
-                className="text-[13px] mt-2 max-w-[280px] leading-relaxed text-center"
-                style={{ color: "#b8b8bc" }}
-              >
-                Built to make brands go viral. 2B+ views. $250M+ revenue generated.
+              <p className="mono mt-3 text-center">
+                {frames.length} clips <span className="text-[color:var(--ink-faint)]">/</span> London &middot; Dubai
               </p>
 
-              <div
-                className="flex items-center gap-3 mt-2 text-[11px] uppercase tracking-[0.15em]"
-                style={{ color: "#c4c4c8" }}
-              >
-                <span>London</span>
-                <span className="w-1 h-1 rounded-full bg-[#d4d4d8]" />
-                <span>Dubai</span>
-              </div>
-
-              <Link
-                href="/book-demo"
-                className="mt-5 inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-[13px] font-medium transition-colors"
-                style={{
-                  background: "rgba(0,0,0,0.05)",
-                  color: "#b0b0b4",
-                  boxShadow:
-                    "inset 0 2px 4px rgba(0,0,0,0.06), 0 1px 0 rgba(255,255,255,0.7)",
-                }}
-              >
-                Book a Demo
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-
-              <p className="mt-3 text-[11px]" style={{ color: "#c4c4c8" }}>
-                {frames.length} projects · {isMobile ? "Pinch & drag" : "Scroll to explore"}
+              <p className="mt-3 max-w-[260px] text-center text-[13px] leading-relaxed text-[color:var(--ink-mid)]">
+                The contact sheet. Everything published, laid out on one board.
               </p>
+
+              <CutLink href="/book-demo" className="pill pill-outline mt-6 px-6 py-2.5 text-[13px]">
+                Book a demo
+              </CutLink>
+
+              <p className="mono mt-4">{isMobile ? "Pinch and drag" : "Scroll to zoom, drag to pan"}</p>
             </div>
           </div>
 
@@ -642,18 +606,13 @@ export function PortfolioBoard() {
                     setSelected(frame);
                   }}
                   aria-label={`Play ${frame.title}`}
-                  // Light board, so the global white focus ring would be invisible.
-                  className="block w-full h-full text-left rounded-[3px] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2997ff]"
+                  data-cursor="Play"
+                  className="block w-full h-full text-left rounded-[2px] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ink)]"
                 >
-                  <div
-                    className="bg-white rounded-[3px] overflow-hidden p-[8px] transition-shadow duration-500 group-hover:shadow-[var(--elev-light-3)]"
-                    style={{
-                      boxShadow: "var(--elev-light-1)",
-                      height: "100%",
-                    }}
-                  >
+                  <div className="h-full overflow-hidden rounded-[2px] border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-[5px] transition-colors duration-500 group-hover:border-[color:var(--rule-strong)]">
                     <BoardVideoTile
                       src={frame.src}
+                      title={frame.title}
                       className="w-full h-full relative overflow-hidden rounded-[2px] transition-transform duration-[1s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
                     />
                   </div>
@@ -669,21 +628,22 @@ export function PortfolioBoard() {
                 <button
                   key={control.label}
                   onClick={control.action}
-                  className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-xl border border-black/[0.06] flex items-center justify-center text-[#1c1c1e] hover:bg-white active:scale-95 transition-all shadow-sm"
+                  className="w-10 h-10 rounded-full bg-[rgba(20,20,22,0.8)] backdrop-blur-xl border border-[color:var(--rule)] flex items-center justify-center text-[color:var(--ink)] hover:bg-[color:var(--stage-3)] active:scale-95 transition-all"
                   title={control.label}
+                  aria-label={control.label}
                 >
                   {control.icon}
                 </button>
               ))}
             </div>
 
-            <div className="absolute bottom-6 left-4 md:left-6 hidden md:flex items-center gap-2 text-[12px] text-[#86868b] z-20 bg-white/60 backdrop-blur-xl rounded-full px-4 py-2 border border-black/[0.04]">
+            <div className="mono absolute bottom-6 left-4 md:left-14 hidden md:flex items-center gap-2 z-20 bg-[rgba(11,11,12,0.7)] backdrop-blur-xl px-3 py-2 border border-[color:var(--rule)]">
               <Move className="w-3.5 h-3.5" />
-              Drag to pan · Scroll to zoom · Click to explore
+              Drag to pan &middot; scroll to zoom &middot; click to play
             </div>
 
-            <div className="absolute top-16 md:top-6 right-4 md:right-6 z-20 text-[11px] text-[#86868b] bg-white/50 backdrop-blur-xl rounded-full px-3 py-1.5 border border-black/[0.04]">
-              {frames.length} projects
+            <div className="mono absolute top-16 md:top-6 right-4 md:right-14 z-20 bg-[rgba(11,11,12,0.7)] backdrop-blur-xl px-3 py-2 border border-[color:var(--rule)]">
+              {frames.length} clips
             </div>
           </>
         )}
@@ -705,7 +665,7 @@ export function PortfolioBoard() {
               exit={{ opacity: 0, scale: 0.92, y: 20 }}
               transition={{ duration: 0.4, ease: EASE_OUT_EXPO }}
               onClick={(e) => e.stopPropagation()}
-              className="relative bg-white rounded-[2px] overflow-hidden max-w-3xl w-full max-h-[85vh] shadow-2xl flex flex-col"
+              className="relative bg-[color:var(--stage-2)] border border-[color:var(--rule)] rounded-[2px] overflow-hidden max-w-3xl w-full max-h-[85vh] flex flex-col"
               ref={dialogRef}
               role="dialog"
               aria-modal="true"
@@ -715,7 +675,7 @@ export function PortfolioBoard() {
               <button
                 onClick={() => setSelected(null)}
                 aria-label="Close video"
-                className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm text-white flex items-center justify-center hover:bg-black/60 active:scale-95 transition-all"
+                className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm text-[color:var(--ink)] flex items-center justify-center hover:bg-black/80 active:scale-95 transition-all"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -732,27 +692,16 @@ export function PortfolioBoard() {
               </div>
 
               <div className="p-5 md:p-8">
-                <h2
-                  id="board-modal-title"
-                  className="text-[clamp(1.1rem,3vw,1.8rem)] font-medium text-[#1c1c1e] leading-tight"
-                >
+                <p className="mono">From the library</p>
+                <h2 id="board-modal-title" className="display mt-2 text-[clamp(28px,4vw,48px)]">
                   {selected.title}
                 </h2>
-                <p className="text-[15px] md:text-[15px] text-[#6e6e73] leading-relaxed mt-2">
-                  A case study in bold storytelling and measurable growth.
-                </p>
-                <div className="mt-4 md:mt-5 flex flex-wrap gap-3">
-                  <Link
-                    href="/book-demo"
-                    className="inline-flex items-center px-5 md:px-6 py-2.5 md:py-3 bg-[#1c1c1e] text-white rounded-full text-[13px] md:text-[15px] font-medium hover:bg-black active:scale-[0.97] transition-all"
-                  >
-                    Book a Demo
-                  </Link>
-                  <button
-                    onClick={() => setSelected(null)}
-                    className="inline-flex items-center px-5 md:px-6 py-2.5 md:py-3 bg-[#f5f5f7] text-[#1c1c1e] rounded-full text-[13px] md:text-[15px] font-medium hover:bg-[#e8e8ed] active:scale-[0.97] transition-all"
-                  >
-                    Back to Gallery
+                <div className="mt-5 flex flex-wrap items-center gap-6">
+                  <CutLink href="/book-demo" className="pill pill-solid px-6 py-2.5 text-[13px] md:text-[15px]">
+                    Book a demo
+                  </CutLink>
+                  <button onClick={() => setSelected(null)} className="slate-link text-[13px]">
+                    Back to the board
                   </button>
                 </div>
               </div>

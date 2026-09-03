@@ -97,7 +97,7 @@ export function LegalPage({ title, lastUpdated, sections }: Props) {
             initial={{ opacity: 0, y: reduced ? 0 : 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: EASE_OUT_EXPO }}
-            className="font-thin text-[color:var(--ink)] leading-[1.15] text-[10vw] sm:text-[44px] md:text-[56px]"
+            className="display text-[clamp(48px,8vw,120px)]"
           >
             <LastWordSerif text={title} />
           </motion.h1>
@@ -105,9 +105,9 @@ export function LegalPage({ title, lastUpdated, sections }: Props) {
             initial={{ opacity: 0, y: reduced ? 0 : 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1, ease: EASE_OUT_EXPO }}
-            className="eyebrow-serif mt-6"
+            className="mono mt-6"
           >
-            last updated {lastUpdated.toLowerCase()}
+            Last updated <span className="text-[color:var(--ink-faint)]">/</span> {lastUpdated}
           </motion.p>
         </div>
       </section>
@@ -124,11 +124,9 @@ export function LegalPage({ title, lastUpdated, sections }: Props) {
               className="border-t border-[color:var(--rule)] py-10"
             >
               <div className="md:grid md:grid-cols-[auto_1fr] md:gap-x-12">
-                <span className="text-[13px] text-[color:var(--ink-mid)] tabular-nums">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
+                <span className="mono">{String(i + 1).padStart(2, "0")}</span>
                 <div>
-                  <h2 className="text-[21px] md:text-[25px] font-light text-[color:var(--ink)]">
+                  <h2 className="text-[21px] text-[color:var(--ink)] md:text-[25px]">
                     {section.heading}
                   </h2>
                   {(section.paragraphs ?? []).map((p) => (

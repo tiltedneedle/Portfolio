@@ -5,11 +5,11 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Tilted Needle",
     short_name: "Tilted Needle",
     description:
-      "A social media production company based in London and Dubai. 2B+ organic views. $250M+ revenue generated for clients.",
+      "A short-form production studio in London and Dubai. Six films, 2B+ views, $250M+ in revenue for the people in them.",
     start_url: "/",
     display: "standalone",
-    background_color: "#000000",
-    theme_color: "#000000",
+    background_color: "#0b0b0c",
+    theme_color: "#0b0b0c",
     icons: [
       { src: "/favicon.ico", sizes: "256x256", type: "image/x-icon" },
       { src: "/white-logo.png", sizes: "any", type: "image/png" },

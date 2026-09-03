@@ -37,6 +37,7 @@ function Frame({
   const tc = useRef<HTMLSpanElement>(null);
   const [inView, setInView] = useState(false);
   const [playing, setPlaying] = useState(false);
+  const [dead, setDead] = useState(false);
 
   useEffect(() => {
     const el = root.current;
@@ -48,7 +49,7 @@ function Frame({
     return () => io.disconnect();
   }, [mobile]);
 
-  const shouldPlay = inView && (mobile || live);
+  const shouldPlay = inView && (mobile || live) && !dead;
 
   useEffect(() => {
     const v = videoRef.current;
@@ -92,6 +93,8 @@ function Frame({
           preload="none"
           onPlaying={() => setPlaying(true)}
           onTimeUpdate={onTime}
+          // A source that fails stays on its slate and stops asking for a slot.
+          onError={() => setDead(true)}
           className={
             "absolute inset-0 h-full w-full object-cover transition-opacity duration-700 " +
             (playing ? "opacity-100" : "opacity-0")
@@ -118,7 +121,7 @@ function Frame({
         <div className="absolute inset-x-0 top-0 flex items-center justify-between p-5 mono">
           <span className="flex items-center gap-2">
             <span className={playing ? "lamp" : "lamp-off"} />
-            {playing ? "Playing" : "Cued"}
+            {playing ? "Playing" : dead ? "Offline" : "Cued"}
           </span>
           <span ref={tc} className="tc text-[11px]">
             00:00:00:00
@@ -161,12 +164,21 @@ export function Sequence() {
       setRange(isMobile ? 0 : Math.max(0, el.scrollWidth - window.innerWidth));
     };
     measure();
+    // The strip is sized by its type; a late-arriving display face changes
+    // its width, so measure again once every font has settled.
+    let live = true;
+    document.fonts?.ready.then(() => {
+      if (live) measure();
+    });
     const ro = new ResizeObserver(measure);
     ro.observe(el);
     window.addEventListener("resize", measure);
+    window.addEventListener("orientationchange", measure);
     return () => {
+      live = false;
       ro.disconnect();
       window.removeEventListener("resize", measure);
+      window.removeEventListener("orientationchange", measure);
     };
   }, []);
 
@@ -252,7 +264,7 @@ export function Sequence() {
             <span>
               TC <span ref={tcOut} className="tc">00:00:00:00</span>
             </span>
-            <span aria-live="polite">
+            <span>
               Film {pad2(current.index)} / {pad2(n)} <span className="text-[color:var(--ink-faint)]">/</span>{" "}
               <span className="text-[color:var(--ink-soft)]">{current.title}</span>
             </span>

@@ -42,26 +42,35 @@ accent, mint editorial system retired.
 - [x] Visual pass 1 (desktop 1440, mobile 390): all beats render; slate/caption
       overlap in frames fixed; grain softened.
 
+- [x] Visual pass 2: inner pages (studio, service, careers, book-demo, legal,
+      404) and the library rewritten into the room. Commit `3627051`, pushed.
+- [x] Hardening round 1: Sequence re-measures after `document.fonts.ready` and
+      on orientation change; a failed source marks its frame Offline and stops
+      asking for a slot; CutLink no longer cuts to the page already showing
+      (the pathname never changed, so the frame stayed black until the safety
+      timer); nav numbers are aria-hidden; the film well derives width from
+      its height budget so it is always 9:16; the ruler readout lost its
+      `aria-live` (it changed on every scroll tick).
+- [x] Manifest and JSON-LD carry the new description and stage colour.
+
 ## In flight
 
-- [ ] Visual pass 2: confirm frame fix, check every inner page after the token
-      flip (/services, /services/[slug], /careers, /portfolio, /book-demo,
-      /privacy, 404). Fix anything the flip broke (light-only assumptions).
-- [ ] Commit + push (`git@github-tn:tiltedneedle/Portfolio.git`).
+- [ ] OG image as a slate (`app/opengraph-image.tsx`): Satori needs static
+      TTF/OTF, not the vendored woff2. Vendoring static faces into
+      `src/app/fonts/*.ttf` (see the fetch in the session log). If Google will
+      not serve TTFs, fall back to Satori's default face with slate layout.
+- [ ] Rebuild, verify, commit the hardening round.
 
 ## Next
 
-- [ ] Hardening: Sequence measurement on font load / orientation change; video
-      error path (`onError` -> slate stays, lamp off); Slate timers on unmount;
-      CutLink when navigation fails (safety timer exists: 2.5s).
-- [ ] Reduced-motion audit of every room component (Sequence pin should still
-      work; reveals must not park at opacity 0).
-- [ ] a11y sweep: heading order, focus visibility with custom cursor, `aria-live`
-      readouts not too chatty.
-- [ ] Library (/portfolio) restyled into the room (contact sheet). Currently the
-      old board with the new nav on top.
-- [ ] OG image (`app/opengraph-image.tsx`) still mint; redo as a slate.
+- [ ] Reduced-motion audit of every room component (Sequence pin is scroll-
+      driven so it survives; reveals must not park at opacity 0).
+- [ ] a11y sweep: heading order per page, focus visibility with the custom
+      cursor, contrast of `--ink-faint` text (fails AA below 24px; only use it
+      aria-hidden or decorative).
 - [ ] Posters: run `node scripts/posters.mjs` once videos are re-hosted.
+- [ ] Mono separator spacing: `Crew call <span>/</span> London` rendered as
+      "CREW CALL /LONDON" on careers and the library card; use `{" "}`.
 
 ## Blockers (need the user)
 

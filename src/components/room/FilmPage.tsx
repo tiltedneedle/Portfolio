@@ -83,7 +83,9 @@ export function FilmPage({ film, next }: { film: Film; next: Film }) {
         {/* the well */}
         <div className="md:col-span-5">
           <div className="md:sticky md:top-24">
-            <div className="well mx-auto max-h-[82svh] w-auto max-w-full" style={{ height: "min(82svh, 900px)" }}>
+            {/* Width is derived from the height budget so the well is always 9:16;
+                on a narrow column the width cap wins and the height follows. */}
+            <div className="well mx-auto" style={{ width: "min(100%, calc(min(82svh, 900px) * 9 / 16))" }}>
               {film.poster && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={film.poster} alt="" className="absolute inset-0 h-full w-full object-cover" />

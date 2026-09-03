@@ -121,7 +121,9 @@ export function NavBar() {
                 href={r.href}
                 className={cn("slate-link", isActive(r.href) && "text-[color:var(--ink)]")}
               >
-                <span className="mr-1.5 text-[color:var(--ink-faint)]">{r.n}</span>
+                <span aria-hidden="true" className="mr-1.5 text-[color:var(--ink-faint)]">
+                  {r.n}
+                </span>
                 {r.label}
               </RoomLink>
             ))}
@@ -163,7 +165,9 @@ export function NavBar() {
                     transition={{ delay: 0.05 * i, duration: 0.5, ease: EASE_OUT_EXPO }}
                   >
                     <RoomLink href={r.href} onClick={() => setOpen(false)} className="flex items-baseline gap-4">
-                      <span className="mono">{r.n}</span>
+                      <span aria-hidden="true" className="mono">
+                        {r.n}
+                      </span>
                       <span className="display text-[56px] text-[color:var(--ink)]">{r.label}</span>
                     </RoomLink>
                   </motion.li>

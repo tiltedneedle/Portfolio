@@ -576,7 +576,7 @@ export function PortfolioBoard() {
               <h1 className="display mt-4 text-[40px]">The library</h1>
 
               <p className="mono mt-3 text-center">
-                {frames.length} clips <span className="text-[color:var(--ink-faint)]">/</span> London &middot; Dubai
+                {frames.length} clips <span className="text-[color:var(--ink-faint)]">/</span>{" "}London &middot; Dubai
               </p>
 
               <p className="mt-3 max-w-[260px] text-center text-[13px] leading-relaxed text-[color:var(--ink-mid)]">

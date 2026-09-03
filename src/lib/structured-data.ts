@@ -13,7 +13,7 @@ export const organizationSchema = {
   logo: `${BASE_URL}/white-logo.png`,
   email: "info@tiltedneedle.com",
   description:
-    "A social media production company based in London and Dubai. 2B+ organic views. $250M+ revenue generated for clients.",
+    "A short-form production studio in London and Dubai. Six films, 2B+ views, $250M+ in revenue for the people in them.",
   areaServed: "Worldwide",
   address: [
     { "@type": "PostalAddress", addressLocality: "London", addressCountry: "GB" },

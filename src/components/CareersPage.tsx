@@ -273,7 +273,7 @@ export function CareersPage() {
       <section className="pb-16 pt-32 md:pb-20 md:pt-40">
         <div className="mx-auto max-w-[1600px] px-6 md:px-14">
           <motion.p {...rise(0)} className="mono mb-8">
-            Crew call <span className="text-[color:var(--ink-faint)]">/</span> London &middot; Dubai
+            Crew call <span className="text-[color:var(--ink-faint)]">/</span>{" "}London &middot; Dubai
           </motion.p>
           <motion.h1 {...rise(0.08)} className="display max-w-[12ch] text-[clamp(56px,9.5vw,150px)]">
             The team behind the <span className="em-serif">views.</span>

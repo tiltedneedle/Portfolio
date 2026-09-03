@@ -25,11 +25,13 @@ function Frame({
   live,
   mobile,
   onHover,
+  onFocus,
 }: {
   film: Film;
   live: boolean;
   mobile: boolean;
   onHover: (on: boolean) => void;
+  onFocus: () => void;
 }) {
   const root = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -80,6 +82,7 @@ function Frame({
         className="group absolute inset-0 block"
         aria-label={"Open film " + pad2(film.index) + ": " + film.title + ", " + film.client}
         data-cursor="Open"
+        onFocus={onFocus}
       >
         {film.poster && (
           // eslint-disable-next-line @next/next/no-img-element
@@ -194,6 +197,20 @@ export function Sequence() {
 
   const current = films[hovered ?? active];
 
+  // Keyboard: the strip is translated, not scrolled, so a focused frame can
+  // sit off-screen to the right. Drive the scroll (and so the shuttle) to the
+  // position that brings it under the playhead.
+  const focusFilm = (i: number) => {
+    const el = section.current;
+    if (!el || mobile || range === 0) return;
+    // After the browser's own focus scroll, not before it: an instant jump
+    // here cancels that (smooth) scroll instead of being overridden by it.
+    requestAnimationFrame(() => {
+      const top = el.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: top + (range * i) / (n - 1), behavior: "auto" });
+    });
+  };
+
   return (
     <section
       id="work"
@@ -201,7 +218,9 @@ export function Sequence() {
       className="relative bg-[color:var(--stage)]"
       style={{ height: range > 0 ? "calc(100svh + " + range + "px)" : undefined }}
     >
-      <div className="md:sticky md:top-0 md:flex md:h-[100svh] md:flex-col md:justify-center md:overflow-hidden">
+      {/* overflow-clip, not hidden: a hidden box still scrolls when a child is
+          focused, which would offset the strip under the transform. Clip cannot. */}
+      <div className="md:sticky md:top-0 md:flex md:h-[100svh] md:flex-col md:justify-center md:overflow-clip">
         <motion.div
           ref={track}
           style={mobile ? undefined : { x }}
@@ -227,6 +246,7 @@ export function Sequence() {
               mobile={mobile}
               live={hovered === null ? active === i : hovered === i}
               onHover={(on) => setHovered(on ? i : (h) => (h === i ? null : h))}
+              onFocus={() => focusFilm(i)}
             />
           ))}
 

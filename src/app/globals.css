@@ -413,6 +413,10 @@ html.has-cursor,
 html.has-cursor * {
   cursor: none !important;
 }
+/* Inside an iframe the ring cannot follow; keep the native cursor there. */
+html.has-cursor iframe {
+  cursor: auto !important;
+}
 
 .cursor {
   position: fixed;

@@ -66,17 +66,37 @@ accent, mint editorial system retired.
       after. CutLink now prefetches on pointerenter so the hold is shorter.
 - [x] Contact route: 8s timeout on the Resend call (was unbounded).
 
+- [x] Round two committed (`6d0fb2a`). Heading order verified on every page.
+- [x] Mobile pass 2 on inner pages: no horizontal overflow, h1 at 56px on
+      390px, film well fills the width at 9:16, library pinch-and-drag card.
+- [x] Bundle: ~1.16 MB of client JS across all route chunks, largest chunk
+      224 KB (React + framer). Deps: clsx, framer-motion, lucide-react,
+      tailwind-merge only.
+
+- [x] Keyboard access to the pinned strip: focusing a frame drives the scroll
+      so it lands under the playhead (verified: frame 05 at x 524-888, y 84,
+      scrollY 2530). Two traps found on the way: an `overflow: hidden` box
+      still scrolls when a child is focused (now `overflow: clip`), and this
+      headless browser only advances smooth scrolls when it paints, so scroll
+      checks must force frames with screenshots or set
+      `html{scroll-behavior:auto}` first.
+- [x] Cursor hands back to the native pointer over iframes (Calendly).
+- [x] README rewritten for the room system.
+- [x] Project memory updated (`project_marketing_site_replica.md`).
+
 ## In flight
 
-- [ ] Rebuild, re-run the heading check, commit round two.
+- (nothing; Cut 1 is complete and pushed)
 
 ## Next
 
-- [ ] Posters: run `node scripts/posters.mjs` once videos are re-hosted.
-- [ ] Bundle check: `next build` output sizes; framer-motion is the only
-      motion dependency, lucide only on the board.
-- [ ] Mobile pass 2 on inner pages (390px): display sizes, the film well,
-      the library on touch.
+- [ ] Posters: run `node scripts/posters.mjs` once videos are re-hosted, then
+      `git add public/posters src/lib/posters.json` and rebuild.
+- [ ] When the studio has a real showreel, replace `SHOWREEL` in
+      `room/ColdOpen.tsx` (currently a Pixabay placeholder).
+- [ ] Cut 2 (from the treatment): library as a true contact sheet with the
+      room's data model, sound design, keyboard shuttle (J/K/L), mobile media.
+- [ ] Cut 3: raw-vs-final, BTS, credits, CMS. Needs content that does not exist.
 
 ## Blockers (need the user)
 

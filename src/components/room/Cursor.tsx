@@ -33,6 +33,13 @@ export function Cursor() {
 
     const over = (e: PointerEvent) => {
       const t = e.target as Element | null;
+      // An iframe (the scheduler) swallows pointer events; rather than freeze
+      // the ring at its edge, hand the native cursor back inside it.
+      if (t?.tagName === "IFRAME") {
+        el.style.opacity = "0";
+        return;
+      }
+      el.style.opacity = "1";
       const named = t?.closest("[data-cursor]") as HTMLElement | null;
       if (named) {
         el.dataset.mode = "label";

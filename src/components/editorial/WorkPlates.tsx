@@ -25,6 +25,9 @@ function Plate({
   const videoRef = useRef<HTMLVideoElement>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
+  // Videos are remote and can be slow, blocked or gone; the plate falls back to
+  // the study's own name in the display face rather than an empty rectangle.
+  const [playing, setPlaying] = useState(false);
 
   // Cursor-following "watch" badge. Springs give it a lag that reads as
   // weight; under reduced motion it sits centred instead of chasing.
@@ -82,14 +85,26 @@ function Plate({
         className="group relative block w-full cursor-none text-left max-md:cursor-pointer"
         aria-label={"Open case study: " + study.title + ", " + study.client}
       >
-        <div className={"plate w-full " + (wide ? "aspect-[16/10]" : "aspect-[4/3]")}>
+        <div className={"plate relative w-full " + (wide ? "aspect-[16/10]" : "aspect-[4/3]")}>
           <div className="absolute inset-0 skeleton" aria-hidden="true" />
+          <div
+            aria-hidden="true"
+            className={
+              "absolute inset-0 flex items-end p-6 md:p-8 transition-opacity duration-700 " +
+              (playing ? "opacity-0" : "opacity-100")
+            }
+          >
+            <span className="em-serif text-[32px] md:text-[44px] leading-none text-[color:var(--ink)]/70">
+              {study.title.toLowerCase()}
+            </span>
+          </div>
           <video
             ref={videoRef}
             muted
             loop
             playsInline
             preload="none"
+            onPlaying={() => setPlaying(true)}
             className="relative h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.015]"
           />
           {reduced ? (

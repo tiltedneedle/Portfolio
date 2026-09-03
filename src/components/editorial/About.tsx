@@ -26,7 +26,7 @@ export function About() {
         >
           A social-first content <span className="em-serif">studio</span> in
           London and Dubai. Thousands of published videos, decoded into a
-          repeatable <span className="em-serif">formula</span> &mdash; content,
+          repeatable <span className="em-serif">formula</span>{" "}&mdash; content,
           influencer, paid and product run as one{" "}
           <span className="em-serif">system</span> built to compound attention
           into revenue.

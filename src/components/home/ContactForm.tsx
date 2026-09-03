@@ -3,18 +3,23 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { ArrowUpRight, CheckCircle2, Send } from "lucide-react";
-import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
 import { submitForm } from "@/lib/submit-form";
-import { EASE_OUT_EXPO, SECTION_Y, SHIFT } from "@/lib/design-tokens";
+import { EASE_OUT_EXPO } from "@/lib/design-tokens";
+
+// Underline-only fields: no box, a hairline that brightens on focus. The one
+// place the paper system's inputs are inverted, because this is the page's
+// single dark slab.
+const fieldClass =
+  "w-full bg-transparent border-0 border-b border-white/25 rounded-none px-0 py-3 text-[17px] text-white placeholder:text-white/35 outline-none transition-colors duration-300 focus:border-white";
+
+const labelClass =
+  "block text-[12px] font-medium uppercase tracking-[0.08em] text-white/55 mb-1";
 
 export function ContactForm() {
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
   // The mailto fallback is a hand-off, not a send — say so rather than claiming delivery.
   const [handedOff, setHandedOff] = useState(false);
-  const [focused, setFocused] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const reduced = useReducedMotion();
 
@@ -41,297 +46,138 @@ export function ContactForm() {
     } else setError(result.error);
   };
 
-  const labelClass = (field: string) =>
-    `block text-[12px] uppercase tracking-[0.08em] mb-3 transition-colors duration-300 ${
-      focused === field ? "text-[#f5f5f7]" : "text-[#86868b]"
-    }`;
-
-  const fieldClass =
-    "transition-all duration-300 focus:shadow-[0_0_0_4px_rgba(255,255,255,0.05)]";
+  const rise = {
+    initial: { opacity: 0, y: reduced ? 0 : 24 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-80px" },
+    transition: { duration: 0.8, ease: EASE_OUT_EXPO },
+  };
 
   return (
-    <section id="contact" className={`${SECTION_Y} relative overflow-hidden bg-black`}>
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-to-t from-white/5 to-transparent blur-[150px] pointer-events-none animate-[ambient-glow_8s_ease-in-out_infinite]" />
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage: "radial-gradient(rgba(255,255,255,0.012) 1px, transparent 1px)",
-          backgroundSize: "32px 32px",
-        }}
-      />
-
-      <div className="mx-auto max-w-[1000px] px-6 relative">
-        <motion.div
-          initial={{ opacity: 0, y: reduced ? 0 : 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: reduced ? 0.01 : 0.8, ease: EASE_OUT_EXPO }}
-          className="mb-20 text-center"
+    <section
+      id="contact"
+      className="relative bg-[color:var(--slab-deep)] text-white py-24 md:py-36 scroll-mt-16"
+    >
+      <div className="mx-auto max-w-[1600px] px-6 md:px-[60px]">
+        <motion.h2
+          {...rise}
+          className="flex items-center gap-2 text-[13px] font-medium uppercase tracking-[0.08em] text-white/55"
         >
-          <p className="text-[#ff375f] text-[17px] font-medium mb-4">Contact</p>
-          <h2 className="text-4xl md:text-5xl lg:text-[64px] font-thin text-[#f5f5f7]">
-            Let&apos;s create <span className="em-serif">together</span>.
-          </h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="mt-6 text-xl md:text-[22px] text-[#86868b] leading-relaxed"
-          >
-            Ready to make your brand go viral? Let&apos;s talk.
-          </motion.p>
-        </motion.div>
+          reach out
+          <span aria-hidden="true" className="text-[15px] leading-none">&#8600;</span>
+        </motion.h2>
 
-        <div className="grid md:grid-cols-2 gap-16 md:gap-20">
-          <motion.div
-            initial={{ opacity: 0, x: reduced ? 0 : -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: reduced ? 0.01 : 0.8, delay: 0.1, ease: EASE_OUT_EXPO }}
-            className="space-y-10"
-          >
-            <motion.div
-              whileHover={{ y: -4, transition: { duration: 0.3 } }}
-              className="p-8 rounded-[2px] bg-gradient-to-b from-[#1c1c1e] to-[#161616] group cursor-pointer elevate-static-lg sheen"
-            >
-              <div className="w-12 h-12 rounded-full bg-[rgba(255,255,255,0.06)] flex items-center justify-center mb-5 group-hover:bg-[rgba(255,255,255,0.1)] transition-colors duration-300">
-                <ArrowUpRight className="w-5 h-5 text-[#f5f5f7]" />
-              </div>
-              <h3 className="text-[19px] font-medium text-[#f5f5f7] mb-2 group-hover:text-white transition-colors duration-300">
-                Book a Demo
-              </h3>
-              <p className="text-[15px] text-[#86868b] mb-5 leading-relaxed group-hover:text-[#a1a1a6] transition-colors duration-300">
-                Schedule a 30-minute discovery call to discuss your project.
-              </p>
-              <Link
-                href="/book-demo"
-                className="inline-flex items-center gap-2 text-[15px] text-[#f5f5f7] hover:text-white transition-all duration-300 group-hover:gap-3"
-              >
-                Book a Demo
-                <motion.span
-                  animate={reduced ? {} : { x: [0, 3, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <ArrowUpRight className="w-4 h-4" />
-                </motion.span>
-              </Link>
-            </motion.div>
+        <motion.p
+          {...rise}
+          className="mt-10 md:mt-14 font-thin leading-[1.14] text-[11vw] sm:text-[56px] md:text-[72px] lg:text-[88px] max-w-[14ch]"
+        >
+          Let&apos;s create <span className="em-serif">together</span>.
+        </motion.p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-              className="group"
-            >
-              <h3 className="text-[12px] text-[#86868b] uppercase tracking-[0.08em] mb-3">
-                Email
-              </h3>
+        <div className="mt-16 md:mt-24 grid grid-cols-1 lg:grid-cols-[minmax(0,420px)_1fr] gap-x-24 gap-y-16">
+          <motion.div {...rise}>
+            <div className="border-t border-white/15 py-6">
+              <p className={labelClass}>email</p>
               <a
                 href="mailto:info@tiltedneedle.com"
-                className="text-[19px] text-[#f5f5f7] hover:text-white transition-all duration-300 inline-flex items-center gap-2"
+                className="underline-draw text-[21px] md:text-[25px] font-light text-white"
               >
                 info@tiltedneedle.com
-                <motion.span
-                  initial={{ opacity: 0, x: -5 }}
-                  whileHover={{ opacity: 1, x: 0 }}
-                  className="text-[#86868b]"
-                >
-                  <ArrowUpRight className="w-4 h-4" />
-                </motion.span>
               </a>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-            >
-              <h3 className="text-[12px] text-[#86868b] uppercase tracking-[0.08em] mb-3">
-                Locations
-              </h3>
-              <p className="text-[17px] text-[#f5f5f7]">London · Dubai · Global</p>
-            </motion.div>
+            </div>
+            <div className="border-t border-white/15 py-6">
+              <p className={labelClass}>studios</p>
+              <p className="text-[21px] md:text-[25px] font-light">
+                London &middot; Dubai &middot; Global
+              </p>
+            </div>
+            <div className="border-t border-b border-white/15 py-6">
+              <p className={labelClass}>prefer to talk</p>
+              <Link
+                href="/book-demo"
+                className="underline-draw text-[21px] md:text-[25px] font-light text-white"
+              >
+                book a 30-minute call <span aria-hidden="true">&#8600;</span>
+              </Link>
+            </div>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, x: reduced ? 0 : 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{
-              duration: reduced ? 0.01 : 0.8,
-              delay: reduced ? 0 : 0.2,
-              ease: EASE_OUT_EXPO,
-            }}
-          >
+          <motion.div {...rise}>
             <AnimatePresence mode="wait">
               {sent ? (
                 <motion.div
                   key="success"
                   role="status"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
+                  initial={{ opacity: 0, y: reduced ? 0 : 16 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
-                  className="h-full flex items-center justify-center"
+                  className="border-t border-white/15 pt-10"
                 >
-                  <div className="text-center">
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.2, duration: 0.5, ease: [0.34, 1.56, 0.64, 1] }}
-                      className="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-b from-[#2c2c2e] to-[#1c1c1e] flex items-center justify-center"
-                      style={{ boxShadow: "var(--glow-medium)" }}
-                    >
-                      <CheckCircle2 className="w-7 h-7 text-[#f5f5f7]" />
-                    </motion.div>
-                    <motion.h3
-                      initial={{ opacity: 0, y: SHIFT.sm }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 }}
-                      className="text-2xl font-light text-[#f5f5f7] mb-2"
-                    >
-                      {handedOff ? "Almost there" : "Message sent"}
-                    </motion.h3>
-                    <motion.p
-                      initial={{ opacity: 0, y: SHIFT.sm }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5 }}
-                      className="text-[17px] text-[#86868b]"
-                    >
-                      {handedOff
-                        ? "We've opened your email app with the message ready. Send it and we'll reply within 24-48 hours."
-                        : "We'll be in touch within 24-48 hours."}
-                    </motion.p>
-                  </div>
+                  <p className="text-[32px] md:text-[44px] font-thin leading-[1.15]">
+                    {handedOff ? (
+                      <span>
+                        Almost <span className="em-serif">there</span>.
+                      </span>
+                    ) : (
+                      <span>
+                        Message <span className="em-serif">sent</span>.
+                      </span>
+                    )}
+                  </p>
+                  <p className="mt-5 text-[17px] text-white/60 max-w-[48ch] leading-relaxed">
+                    {handedOff
+                      ? "We've opened your email app with the message ready. Send it and we'll reply within 24-48 hours."
+                      : "We'll be in touch within 24-48 hours."}
+                  </p>
                 </motion.div>
               ) : (
-                <motion.form key="form" onSubmit={onSubmit} className="space-y-6">
-                  <div className="grid sm:grid-cols-2 gap-6">
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.3 }}
-                    >
-                      <label htmlFor="name" className={labelClass("name")}>
-                        Name
-                      </label>
-                      <Input
-                        id="name"
-                        name="name"
-                        type="text"
-                        required
-                        placeholder="Your name"
-                        onFocus={() => setFocused("name")}
-                        onBlur={() => setFocused(null)}
-                        className={fieldClass}
-                      />
-                    </motion.div>
-
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.35 }}
-                    >
-                      <label htmlFor="email" className={labelClass("email")}>
-                        Email
-                      </label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        required
-                        placeholder="you@company.com"
-                        onFocus={() => setFocused("email")}
-                        onBlur={() => setFocused(null)}
-                        className={fieldClass}
-                      />
-                    </motion.div>
+                <motion.form
+                  key="form"
+                  onSubmit={onSubmit}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-9"
+                >
+                  <div>
+                    <label htmlFor="c-name" className={labelClass}>
+                      name
+                    </label>
+                    <input id="c-name" name="name" type="text" required className={fieldClass} />
                   </div>
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.4 }}
-                  >
-                    <label htmlFor="company" className={labelClass("company")}>
-                      Company
+                  <div>
+                    <label htmlFor="c-email" className={labelClass}>
+                      email
                     </label>
-                    <Input
-                      id="company"
-                      name="company"
-                      type="text"
-                      placeholder="Your company"
-                      onFocus={() => setFocused("company")}
-                      onBlur={() => setFocused(null)}
-                      className={fieldClass}
-                    />
-                  </motion.div>
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.45 }}
-                  >
-                    <label htmlFor="message" className={labelClass("message")}>
-                      Message
+                    <input id="c-email" name="email" type="email" required className={fieldClass} />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label htmlFor="c-company" className={labelClass}>
+                      company
                     </label>
-                    <Textarea
-                      id="message"
+                    <input id="c-company" name="company" type="text" className={fieldClass} />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label htmlFor="c-message" className={labelClass}>
+                      the project
+                    </label>
+                    <textarea
+                      id="c-message"
                       name="message"
-                      required
-                      placeholder="Tell us about your project..."
                       rows={4}
-                      onFocus={() => setFocused("message")}
-                      onBlur={() => setFocused(null)}
-                      className={fieldClass}
+                      required
+                      className={fieldClass + " resize-none"}
                     />
-                  </motion.div>
-
-                  {error && (
-                    <p className="text-[15px] text-[#ff453a]" role="alert">
-                      {error}
-                    </p>
-                  )}
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.5 }}
-                  >
-                    <motion.button
+                  </div>
+                  <div className="md:col-span-2 flex flex-wrap items-center gap-6 pt-2">
+                    <button
                       type="submit"
                       disabled={submitting}
-                      aria-busy={submitting}
-                      whileHover={{ scale: 1.01 }}
-                      whileTap={{ scale: 0.99 }}
-                      className="w-full py-4 bg-[#f5f5f7] text-[#1c1c1e] rounded-[2px] text-[17px] font-medium transition-all duration-500 hover:bg-white hover:shadow-[0_0_40px_rgba(255,255,255,0.15)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      className="pill bg-white text-black px-8 py-3.5 text-[15px] hover:bg-[color:var(--paper)] disabled:opacity-60"
                     >
-                      {submitting ? (
-                        <>
-                          <motion.div
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                            className="w-5 h-5 border-2 border-[#1c1c1e] border-t-transparent rounded-full"
-                          />
-                          {/* Keeps the button named while it is disabled. */}
-                          <span className="sr-only">Sending your message…</span>
-                        </>
-                      ) : (
-                        <>
-                          Send Message
-                          <Send className="w-4 h-4" />
-                        </>
-                      )}
-                    </motion.button>
-                  </motion.div>
+                      {submitting ? "Sending…" : "Send message"}
+                    </button>
+                    <p aria-live="polite" className="text-[13px] text-white/60">
+                      {error}
+                    </p>
+                  </div>
                 </motion.form>
               )}
             </AnimatePresence>

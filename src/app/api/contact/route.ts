@@ -154,6 +154,9 @@ export async function POST(request: Request) {
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
+      // A provider that hangs must not hang the visitor: past this the client
+      // gets the mailto fallback, which is the same outcome as a 5xx.
+      signal: AbortSignal.timeout(8000),
       headers: {
         Authorization: `Bearer ${RESEND_API_KEY}`,
         "Content-Type": "application/json",

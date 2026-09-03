@@ -302,7 +302,7 @@ export function CareersPage() {
 
       <section className="py-16 md:py-24">
         <div className="mx-auto max-w-[1600px] px-6 md:px-14">
-          <p className="mono">Life here</p>
+          <h2 className="mono">Life here</h2>
           <div className="mt-8 grid grid-cols-1 gap-x-16 md:mt-10 md:grid-cols-2">
             {perks.map((perk, i) => (
               <motion.div
@@ -324,7 +324,7 @@ export function CareersPage() {
 
       <section id="roles" className="scroll-mt-16 py-16 md:py-24">
         <div className="mx-auto max-w-[1600px] px-6 md:px-14">
-          <p className="mono">Open roles</p>
+          <h2 className="mono">Open roles</h2>
           <div className="mt-8 md:mt-10">
             {roles.map((role, i) => (
               <RoleRow key={role.title} role={role} index={i} onApply={applyFor} />

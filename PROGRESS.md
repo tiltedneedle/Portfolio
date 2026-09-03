@@ -53,24 +53,30 @@ accent, mint editorial system retired.
       `aria-live` (it changed on every scroll tick).
 - [x] Manifest and JSON-LD carry the new description and stage colour.
 
+- [x] OG image is the slate, in the site's faces. Satori reads TTF/OTF/WOFF
+      only; Google serves static WOFF to an ancient user agent, so
+      `src/app/fonts/*.woff` are vendored copies for the renderer alone.
+- [x] Separator spacing fixed (careers eyebrow, library card).
+
+- [x] Reduced-motion audit passed: slate skipped, native cursor, sequence
+      still shuttles, hero lines land at rest, nothing parked at opacity 0.
+- [x] Heading order: service detail and careers section labels are now h2.
+      Slate labels moved off `--ink-faint` (contrast).
+- [x] Cut measured: black on click, route commit ~470ms later, lift 140ms
+      after. CutLink now prefetches on pointerenter so the hold is shorter.
+- [x] Contact route: 8s timeout on the Resend call (was unbounded).
+
 ## In flight
 
-- [ ] OG image as a slate (`app/opengraph-image.tsx`): Satori needs static
-      TTF/OTF, not the vendored woff2. Vendoring static faces into
-      `src/app/fonts/*.ttf` (see the fetch in the session log). If Google will
-      not serve TTFs, fall back to Satori's default face with slate layout.
-- [ ] Rebuild, verify, commit the hardening round.
+- [ ] Rebuild, re-run the heading check, commit round two.
 
 ## Next
 
-- [ ] Reduced-motion audit of every room component (Sequence pin is scroll-
-      driven so it survives; reveals must not park at opacity 0).
-- [ ] a11y sweep: heading order per page, focus visibility with the custom
-      cursor, contrast of `--ink-faint` text (fails AA below 24px; only use it
-      aria-hidden or decorative).
 - [ ] Posters: run `node scripts/posters.mjs` once videos are re-hosted.
-- [ ] Mono separator spacing: `Crew call <span>/</span> London` rendered as
-      "CREW CALL /LONDON" on careers and the library card; use `{" "}`.
+- [ ] Bundle check: `next build` output sizes; framer-motion is the only
+      motion dependency, lucide only on the board.
+- [ ] Mobile pass 2 on inner pages (390px): display sizes, the film well,
+      the library on touch.
 
 ## Blockers (need the user)
 

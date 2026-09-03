@@ -16,12 +16,20 @@ type Props = ComponentProps<typeof Link>;
  * A link to the page already showing does not cut either: the pathname would
  * never change, so nothing would lift the frame until the safety timer.
  */
-export function CutLink({ href, onClick, ...rest }: Props) {
+export function CutLink({ href, onClick, onPointerEnter, ...rest }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const reduced = useReducedMotion();
   const target = typeof href === "string" ? href : (href.pathname ?? "");
   const cuts = target.startsWith("/") && !target.startsWith("/#") && !rest.target;
+
+  // The black frame is held until the next route commits, so the route must
+  // be ready before the click. Viewport prefetch usually has it; hovering
+  // makes sure, since a cut that waits on the network is a stall, not a cut.
+  const warm = (e: React.PointerEvent<HTMLAnchorElement>) => {
+    onPointerEnter?.(e);
+    if (cuts) router.prefetch(target);
+  };
 
   const handle = (e: MouseEvent<HTMLAnchorElement>) => {
     onClick?.(e);
@@ -39,5 +47,5 @@ export function CutLink({ href, onClick, ...rest }: Props) {
     requestAnimationFrame(() => router.push(target));
   };
 
-  return <Link href={href} onClick={handle} {...rest} />;
+  return <Link href={href} onClick={handle} onPointerEnter={warm} {...rest} />;
 }

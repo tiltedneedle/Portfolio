@@ -90,18 +90,18 @@ export function Slate() {
               }}
             />
 
-            <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3 border-y border-[color:var(--rule-strong)] py-4 mono-lg text-[color:var(--ink-mid)]">
+            <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3 border-y border-[color:var(--rule-strong)] py-4 mono-lg text-[color:var(--ink-soft)]">
               <div>
-                <span className="text-[color:var(--ink-faint)]">Prod.</span> Tilted Needle
+                <span className="text-[color:var(--ink-mid)]">Prod.</span> Tilted Needle
               </div>
               <div className="text-right">
-                <span className="text-[color:var(--ink-faint)]">Reel</span> 2026
+                <span className="text-[color:var(--ink-mid)]">Reel</span> 2026
               </div>
               <div>
-                <span className="text-[color:var(--ink-faint)]">Scene</span> 01
+                <span className="text-[color:var(--ink-mid)]">Scene</span> 01
               </div>
               <div className="text-right">
-                <span className="text-[color:var(--ink-faint)]">Take</span> 01
+                <span className="text-[color:var(--ink-mid)]">Take</span> 01
               </div>
             </div>
 
@@ -112,8 +112,8 @@ export function Slate() {
             </p>
 
             <div className="mt-8 flex items-center justify-between border-t border-[color:var(--rule-strong)] pt-4">
-              <p className="mono-lg text-[color:var(--ink-mid)]">
-                <span className="text-[color:var(--ink-faint)]">TC</span>{" "}
+              <p className="mono-lg text-[color:var(--ink-soft)]">
+                <span className="text-[color:var(--ink-mid)]">TC</span>{" "}
                 <span ref={tc} className="tc">
                   00:00:00:00
                 </span>

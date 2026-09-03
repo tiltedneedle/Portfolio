@@ -97,7 +97,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
 
       <section className="py-16 md:py-24">
         <div className="mx-auto max-w-[1600px] px-6 md:px-14">
-          <p className="mono">What is included</p>
+          <h2 className="mono">What is included</h2>
           <div className="mt-8 grid grid-cols-1 gap-x-16 md:mt-10 md:grid-cols-2">
             {service.features.map((feature, i) => (
               <motion.p
@@ -118,7 +118,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
 
       <section id="process" className="scroll-mt-16 py-16 md:py-24">
         <div className="mx-auto max-w-[1600px] px-6 md:px-14">
-          <p className="mono">The process</p>
+          <h2 className="mono">The process</h2>
           <StepRows steps={service.process} />
 
           {service.secondaryProcess && (
@@ -135,7 +135,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
 
       <section className="py-16 md:py-24">
         <div className="mx-auto max-w-[1600px] px-6 md:px-14">
-          <p className="mono">Why Tilted Needle</p>
+          <h2 className="mono">Why Tilted Needle</h2>
           <div className="mt-8 grid grid-cols-1 gap-x-16 md:mt-10 md:grid-cols-2">
             {service.benefits.map((benefit, i) => (
               <motion.div
@@ -157,7 +157,7 @@ export function ServiceDetailPage({ service }: { service: Service }) {
 
       <section className="py-16 md:py-24">
         <div className="mx-auto max-w-[1600px] px-6 md:px-14">
-          <p className="mono">FAQ</p>
+          <h2 className="mono">FAQ</h2>
           <div className="mt-8 max-w-[900px] md:mt-10">
             {service.faq.map((item, i) => (
               <div key={item.question} className="border-t border-[color:var(--rule)]">

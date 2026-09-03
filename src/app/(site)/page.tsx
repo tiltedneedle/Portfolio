@@ -1,10 +1,10 @@
 import { Statement } from "@/components/editorial/Statement";
-import { About } from "@/components/editorial/About";
-import { WorkPlates } from "@/components/editorial/WorkPlates";
+import { StatementSlab } from "@/components/editorial/StatementSlab";
+import { WorkReel } from "@/components/editorial/WorkReel";
 import { ServiceIndex } from "@/components/editorial/ServiceIndex";
 import { LogoRule } from "@/components/editorial/LogoRule";
 import { ResultsIndex } from "@/components/editorial/ResultsIndex";
-import { WordStrip } from "@/components/editorial/WordStrip";
+import { Socials } from "@/components/editorial/Socials";
 import { ContactForm } from "@/components/home/ContactForm";
 import type { Metadata } from "next";
 
@@ -20,12 +20,12 @@ export default function Home() {
   return (
     <>
       <Statement />
-      <About />
-      <WorkPlates />
+      <StatementSlab />
+      <WorkReel />
       <ServiceIndex />
       <LogoRule />
       <ResultsIndex />
-      <WordStrip />
+      <Socials />
       <ContactForm />
     </>
   );

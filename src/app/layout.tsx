@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { FilmGrain } from "@/components/FilmGrain";
+import { BackToTop } from "@/components/editorial/BackToTop";
 import { organizationSchema, websiteSchema } from "@/lib/structured-data";
 import "./globals.css";
 
@@ -85,6 +86,7 @@ export default function RootLayout({
       <body className="antialiased">
         <FilmGrain />
         {children}
+        <BackToTop />
         <script
           type="application/ld+json"
           // Static, developer-authored JSON — no user input reaches this.

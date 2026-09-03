@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { WordStrip } from "@/components/editorial/WordStrip";
 
 // Frozen at build time; the effect corrects it if the visitor's year differs.
 const BUILD_YEAR = new Date().getFullYear();
@@ -37,7 +38,8 @@ export function Footer() {
   }, []);
 
   return (
-    <footer className="bg-[color:var(--slab-deep)] text-white border-t border-white/10">
+    <footer className="bg-[color:var(--slab-deep)] text-white">
+      <WordStrip />
       <div className="mx-auto max-w-[1600px] px-6 md:px-[60px] py-16 md:py-20">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-y-12 gap-x-10">
           <div className="md:col-span-5">
@@ -105,9 +107,6 @@ export function Footer() {
             <Link href="/terms" className="underline-draw hover:text-white/80 transition-colors">
               terms
             </Link>
-            <a href="#top" className="underline-draw hover:text-white/80 transition-colors">
-              back to top <span aria-hidden="true">&#8599;</span>
-            </a>
           </div>
         </div>
       </div>

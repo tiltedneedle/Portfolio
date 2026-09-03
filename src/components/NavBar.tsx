@@ -86,7 +86,7 @@ export function NavBar() {
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-700",
           scrolled
-            ? "bg-[rgba(244,244,244,0.82)] backdrop-blur-2xl border-b border-black/[0.08]"
+            ? "bg-[rgba(240,248,243,0.85)] backdrop-blur-2xl border-b border-black/[0.08]"
             : "bg-transparent"
         )}
       >
@@ -153,7 +153,7 @@ export function NavBar() {
                       <Link href={link.href}>
                         <motion.span
                           className={cn(
-                            "relative flex text-[12px] transition-all duration-300 py-1 items-center gap-1 cursor-pointer",
+                            "relative flex text-[15px] lowercase transition-all duration-300 py-1 items-center gap-1 cursor-pointer",
                             onPaper
                               ? isActive
                                 ? "text-[color:var(--ink)]"
@@ -249,7 +249,7 @@ export function NavBar() {
                       onMouseEnter={() => setHovered(link.href)}
                       onMouseLeave={() => setHovered(null)}
                       className={cn(
-                        "relative text-[12px] transition-all duration-300 py-1",
+                        "relative text-[15px] lowercase transition-all duration-300 py-1",
                         onPaper
                               ? isActive
                                 ? "text-[color:var(--ink)]"
@@ -282,7 +282,7 @@ export function NavBar() {
                         // inline-block: as a plain inline span the vertical padding
                         // doesn't expand the box, which left route links (Careers)
                         // 2px shorter and a pixel lower than the hash links.
-                        "relative block text-[12px] transition-all duration-300 py-1",
+                        "relative block text-[15px] lowercase transition-all duration-300 py-1",
                         onPaper
                               ? isActive
                                 ? "text-[color:var(--ink)]"
@@ -311,7 +311,7 @@ export function NavBar() {
             <Link href="/book-demo" className="hidden md:flex">
               <motion.span
                 className={cn(
-                  "flex items-center gap-1 text-[12px] transition-colors duration-300 group",
+                  "flex items-center gap-1 text-[15px] lowercase transition-colors duration-300 group",
                   onPaper
                     ? "text-[color:var(--ink-mid)] hover:text-[color:var(--ink)]"
                     : "text-white/70 hover:text-white"

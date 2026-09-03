@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 
-/** Fixed circular up-arrow, bottom right, appearing once the page has scrolled. */
-export function BackToTop() {
+/** A mono "top" mark, bottom right, once the page has scrolled. Nothing floats; this is a label. */
+export function TopMark() {
   const [shown, setShown] = useState(false);
   const reduced = useReducedMotion();
 
@@ -31,11 +31,11 @@ export function BackToTop() {
       onClick={() => window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" })}
       aria-label="Back to top"
       className={
-        "fixed bottom-7 right-7 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-white text-black shadow-[0_8px_30px_rgba(0,0,0,0.18)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-105 " +
-        (shown ? "opacity-100 translate-y-0" : "pointer-events-none opacity-0 translate-y-3")
+        "slate-link fixed bottom-6 right-6 z-40 border border-[color:var(--rule-strong)] bg-[rgba(11,11,12,0.7)] px-3 py-2 backdrop-blur-md transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] md:right-14 " +
+        (shown ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0")
       }
     >
-      <span aria-hidden="true" className="text-[22px] leading-none">&#8593;</span>
+      Top &#8593;
     </button>
   );
 }

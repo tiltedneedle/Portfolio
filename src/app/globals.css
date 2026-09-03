@@ -1,61 +1,76 @@
 @import "tailwindcss";
 
 @theme {
-  --default-font-family: var(--font-sans), "Helvetica Neue", Arial, sans-serif;
-  --font-display: var(--font-display), Georgia, "Times New Roman", serif;
+  --default-font-family: var(--font-sans-face), "Helvetica Neue", Arial, sans-serif;
+  --font-sans: var(--font-sans-face), "Helvetica Neue", Arial, sans-serif;
+  --font-display: var(--font-display-face), "Arial Narrow", Impact, sans-serif;
+  --font-serif: var(--font-serif-face), Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-mono-face), "SFMono-Regular", Consolas, monospace;
 }
 
 /* ============================================================== design system
-   Editorial, light-ground, film-agency. The previous revision was a dark
-   Apple-style system; this is deliberately its inverse.
+   THE EDITING ROOM. A single dark visual world: the site behaves like the suite
+   where a reel is assembled. Four faces, three greys, one lamp.
 
-   Three rules carry the look, and breaking any one of them breaks it:
-     1. Display type is ULTRALIGHT (100-200) and large. Never bold.
-     2. Emphasis comes from swapping a word to the serif italic, not from
-        weight, colour or size.
-     3. Corners are either square (2px) or fully round (pills). Nothing between.
+   Rules that carry the look. Breaking any one of them breaks it:
+     1. Display type is the condensed face, heavy, UPPERCASE, tight leading.
+        One word of a statement drops to the serif italic, lowercase.
+     2. The only interface colour is the tally lamp, and it means STATE
+        (playing, live, error). It never sits on a button.
+     3. Labels are mono, small, uppercase, tracked. Numbers are tabular.
+     4. Corners are square (2px) or pill. Nothing between.
    ========================================================================== */
 
 :root {
-  /* ground and ink */
-  --paper: #f0f8f3; /* the reference's pale mint, measured rgb(240,248,243) */
-  --paper-pure: #ffffff;
-  --tint: #f0f8f3; /* the one pale accent wash */
-  --ink: #000000;
-  --ink-soft: rgba(0, 0, 0, 0.81);
-  --ink-mid: #6b6b6b;
-  --ink-faint: #8a8a8a; /* decorative + large text only; fails AA below 24px */
+  /* the room */
+  --stage: #0b0b0c;
+  --stage-2: #141416; /* raised: wells, panels */
+  --stage-3: #1d1d20; /* hover, pressed, rules-as-surfaces */
 
-  /* inverted blocks — full-bleed dark sections used for contrast */
-  --slab: #1e1e1e;
-  --slab-deep: #000000;
-  --slab-ink: #ffffff;
-  --slab-ink-soft: rgba(255, 255, 255, 0.88);
-  --slab-ink-mid: #8e8e8e;
+  /* ink: warm white, never pure */
+  --ink: #f2efe9;
+  --ink-soft: rgba(242, 239, 233, 0.8);
+  --ink-mid: #8e8a82;
+  --ink-faint: #56534e; /* decorative + large text only; fails AA below 24px */
+
+  /* the lamp: state only */
+  --tally: #e2422b;
+  --tally-glow: rgba(226, 66, 43, 0.35);
 
   /* hairlines */
-  --rule: rgba(0, 0, 0, 0.12);
-  --rule-strong: rgba(0, 0, 0, 0.24);
-  --rule-inverse: rgba(255, 255, 255, 0.16);
+  --rule: rgba(242, 239, 233, 0.1);
+  --rule-strong: rgba(242, 239, 233, 0.24);
 
-  /* radii — square or pill, nothing between */
+  /* legacy aliases: inner pages were built on the paper system and read these */
+  --paper: var(--stage);
+  --paper-pure: #000000;
+  --tint: var(--stage-2);
+  --slab: var(--stage-2);
+  --slab-deep: #000000;
+  --slab-ink: var(--ink);
+  --slab-ink-soft: var(--ink-soft);
+  --slab-ink-mid: var(--ink-mid);
+  --rule-inverse: var(--rule);
+
+  /* radii: square or pill, nothing between */
   --r-sharp: 2px;
   --r-pill: 100px;
 
-  /* motion */
+  /* motion: cuts are instant, moves are long */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-cut: 0ms;
   --dur-fast: 200ms;
   --dur-base: 400ms;
   --dur-slow: 700ms;
 
-  /* elevation is nearly absent by design — paper doesn't float */
-  --lift: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --lift-hover: 0 12px 40px -12px rgba(0, 0, 0, 0.18);
+  /* elevation is absent: nothing floats in a dark room, things glow */
+  --lift: none;
+  --lift-hover: 0 0 0 1px var(--rule-strong);
 
   /* gutters and measures */
-  --gutter: 30px;
-  --gutter-lg: 80px;
+  --gutter: 24px;
+  --gutter-lg: 56px;
   --measure-wide: 1600px;
   --measure: 1440px;
   --measure-text: 1140px;
@@ -69,16 +84,15 @@
 
 html {
   scroll-behavior: smooth;
-  background: var(--paper);
+  background: var(--stage);
+  color-scheme: dark;
 }
 
 body {
-  background: var(--paper);
+  background: var(--stage);
   color: var(--ink-soft);
-  font-family: var(--font-sans), "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-sans-face), "Helvetica Neue", Arial, sans-serif;
   font-weight: 400;
-  /* The reference sets no tracking anywhere. Negative tracking is the single
-     fastest way to make this look like a tech site instead of a film one. */
   letter-spacing: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -87,7 +101,7 @@ body {
 
 ::selection {
   background: var(--ink);
-  color: var(--paper);
+  color: var(--stage);
 }
 
 ::-webkit-scrollbar {
@@ -95,14 +109,14 @@ body {
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--paper);
+  background: var(--stage);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(242, 239, 233, 0.18);
   border-radius: var(--r-pill);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(242, 239, 233, 0.32);
 }
 
 :focus-visible {
@@ -113,52 +127,111 @@ body {
 
 /* ============================================================== typography */
 
+/* Statements and titles. Condensed, heavy, upright, uppercase. */
 .display {
-  font-weight: 100;
-  line-height: 1.3;
-  letter-spacing: normal;
+  font-family: var(--font-display-face), "Arial Narrow", Impact, sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 0.9;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  text-wrap: balance;
 }
 
-/* The signature move: one word of a heading set in the serif italic. */
+/* The signature move: one word of a statement drops to the serif italic. */
 .em-serif {
-  font-family: var(--font-display), Georgia, serif;
+  font-family: var(--font-serif-face), Georgia, serif;
   font-style: italic;
   font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: inherit;
 }
 
-/* Small caps-ish label used above section headings. */
-.eyebrow {
-  font-size: 12px;
+/* Slates, timecodes, readouts, labels. */
+.mono {
+  font-family: var(--font-mono-face), Consolas, monospace;
+  font-size: 11px;
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  font-variant-numeric: tabular-nums;
+}
+
+.mono-lg {
+  font-family: var(--font-mono-face), Consolas, monospace;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Timecode: the room's clock. Ink, not mid. */
+.tc {
+  font-family: var(--font-mono-face), Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+}
+
+/* Older sections still call these; keep them meaningful in the new system. */
+.eyebrow {
+  font-family: var(--font-mono-face), Consolas, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ink-mid);
 }
 
 .eyebrow-serif {
-  font-family: var(--font-display), Georgia, serif;
+  font-family: var(--font-serif-face), Georgia, serif;
   font-style: italic;
   font-weight: 400;
-  font-size: 15px;
+  font-size: 17px;
   letter-spacing: normal;
   text-transform: none;
   color: var(--ink-mid);
 }
 
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
 /* ================================================================ surfaces */
 
 .slab {
-  background: var(--slab);
-  color: var(--slab-ink-soft);
+  background: var(--stage-2);
+  color: var(--ink-soft);
 }
 
 .slab-deep {
-  background: var(--slab-deep);
-  color: var(--slab-ink-soft);
+  background: #000;
+  color: var(--ink-soft);
 }
 
 .rule {
   border-color: var(--rule);
+}
+
+/* The lamp. A dot that means "this is live". */
+.lamp {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--tally);
+  box-shadow: 0 0 10px 2px var(--tally-glow);
+  animation: lamp-breathe 2.4s ease-in-out infinite;
+}
+.lamp-off {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink-faint);
 }
 
 /* ================================================================= controls */
@@ -175,10 +248,10 @@ body {
 
 .pill-solid {
   background: var(--ink);
-  color: var(--paper);
+  color: var(--stage);
 }
 .pill-solid:hover {
-  background: var(--slab);
+  background: #ffffff;
 }
 
 .pill-outline {
@@ -188,11 +261,11 @@ body {
 }
 .pill-outline:hover {
   background: var(--ink);
-  color: var(--paper);
+  color: var(--stage);
   border-color: var(--ink);
 }
 
-/* A rule that draws itself in on hover — used on editorial links. */
+/* A rule that draws itself in on hover, used on editorial links. */
 .underline-draw {
   position: relative;
 }
@@ -212,13 +285,27 @@ body {
   transform: scaleX(1);
 }
 
-/* ============================================================== media cards */
+/* A mono link. */
+.slate-link {
+  font-family: var(--font-mono-face), Consolas, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  transition: color var(--dur-fast) var(--ease-out-expo);
+}
+.slate-link:hover {
+  color: var(--ink);
+}
 
-/* Paper doesn't float, so imagery lifts by shadow only — no scale, no ring. */
+/* ============================================================== media wells */
+
 .plate {
+  position: relative;
   border-radius: var(--r-sharp);
   overflow: hidden;
-  background: #e6e6e6;
+  background: var(--stage-2);
   box-shadow: var(--lift);
   transition: box-shadow var(--dur-slow) var(--ease-out-expo);
 }
@@ -226,12 +313,21 @@ body {
   box-shadow: var(--lift-hover);
 }
 
+/* A 9:16 film well. */
+.well {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  background: var(--stage-2);
+  overflow: hidden;
+  border-radius: var(--r-sharp);
+}
+
 .skeleton {
   background: linear-gradient(
     90deg,
-    rgba(0, 0, 0, 0.04) 25%,
-    rgba(0, 0, 0, 0.07) 37%,
-    rgba(0, 0, 0, 0.04) 63%
+    rgba(242, 239, 233, 0.04) 25%,
+    rgba(242, 239, 233, 0.08) 37%,
+    rgba(242, 239, 233, 0.04) 63%
   );
   background-size: 400% 100%;
   animation: skeleton-sweep 1.4s ease-in-out infinite;
@@ -247,9 +343,9 @@ body {
 }
 
 /* ============================================================== film grain
-   The reference runs an animated grain canvas over the whole page. This is a
-   from-scratch SVG feTurbulence version: one repeating tile, stepped through a
-   few offsets so it shimmers like real film rather than sitting static.
+   One SVG feTurbulence tile, stepped through a few offsets. On a dark ground
+   it is blended with SCREEN; multiply would vanish into the black. Opacity is
+   low; grain should be felt rather than seen.
    ====================================================================== */
 
 .grain {
@@ -258,9 +354,9 @@ body {
   width: 200%;
   height: 200%;
   pointer-events: none;
-  z-index: 9999;
-  opacity: 0.42;
-  mix-blend-mode: multiply;
+  z-index: 9990;
+  opacity: 0.085;
+  mix-blend-mode: screen;
   background-repeat: repeat;
   background-size: 180px 180px;
   will-change: transform;
@@ -288,6 +384,96 @@ body {
   }
 }
 
+/* ============================================================== the cut
+   Route changes are cuts, not fades: one black frame, held for a beat, then
+   the next scene is simply there. body.is-cutting is set by CutLink and
+   cleared by CutOverlay once the new route has committed.
+   ====================================================================== */
+
+.cut-frame {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 9995;
+  opacity: 0;
+  pointer-events: none;
+  transition: none;
+}
+body.is-cutting .cut-frame {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ============================================================== the cursor
+   On fine pointers the native arrow is replaced by a small ring that names
+   what a click will do (PLAY, OPEN, CUT). Touch devices never see it.
+   ====================================================================== */
+
+html.has-cursor,
+html.has-cursor * {
+  cursor: none !important;
+}
+
+.cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 9999;
+  pointer-events: none;
+  will-change: transform;
+}
+.cursor-ring {
+  position: absolute;
+  left: -6px;
+  top: -6px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink);
+  transition:
+    width var(--dur-fast) var(--ease-out-expo),
+    height var(--dur-fast) var(--ease-out-expo),
+    left var(--dur-fast) var(--ease-out-expo),
+    top var(--dur-fast) var(--ease-out-expo),
+    border-color var(--dur-fast) var(--ease-out-expo),
+    background-color var(--dur-fast) var(--ease-out-expo);
+}
+.cursor[data-mode="link"] .cursor-ring {
+  left: -14px;
+  top: -14px;
+  width: 28px;
+  height: 28px;
+}
+.cursor[data-mode="label"] .cursor-ring {
+  left: -4px;
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  background: var(--tally);
+  border-color: var(--tally);
+}
+.cursor-label {
+  position: absolute;
+  left: 14px;
+  top: -7px;
+  white-space: nowrap;
+  font-family: var(--font-mono-face), Consolas, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity var(--dur-fast) var(--ease-out-expo),
+    transform var(--dur-fast) var(--ease-out-expo);
+}
+.cursor[data-mode="label"] .cursor-label {
+  opacity: 1;
+  transform: none;
+}
+
 /* ================================================================== reveals */
 
 @keyframes rise-in {
@@ -310,6 +496,17 @@ body {
   }
 }
 
+/* The lamp breathes while something is live. */
+@keyframes lamp-breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 10px 2px var(--tally-glow);
+  }
+  50% {
+    box-shadow: 0 0 4px 1px var(--tally-glow);
+  }
+}
+
 /* ============================================================ reduced motion */
 
 @media (prefers-reduced-motion: reduce) {
@@ -325,12 +522,9 @@ body {
     animation-iteration-count: 1 !important;
   }
 
-  /* Grain still reads as texture when it stops moving — keep it, freeze it. */
-  .grain {
-    animation: none;
-  }
-
-  .skeleton {
+  .grain,
+  .skeleton,
+  .lamp {
     animation: none;
   }
 }

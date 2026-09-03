@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { servicesList } from "@/lib/services-data";
+import { films } from "@/lib/films";
 
 const BASE_URL = "https://tiltedneedle.com";
 
@@ -29,6 +30,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
     ...servicesList.map((service) => ({
       url: `${BASE_URL}/services/${service.slug}`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
+    ...films.map((film) => ({
+      url: `${BASE_URL}/film/${film.slug}`,
       lastModified,
       changeFrequency: "monthly" as const,
       priority: 0.8,

@@ -69,8 +69,10 @@ const roles: Role[] = [
 
 const roleOptions = [...roles.map((r) => r.title), "Open application"];
 
+// Underline-only fields on paper — the same treatment as the contact slab,
+// inverted for the light ground.
 const inputClass =
-  "w-full rounded-[2px] border border-[color:var(--rule-strong)] bg-white px-4 py-3 text-[15px] text-[color:var(--ink)] placeholder:text-[color:var(--ink-faint)] outline-none transition-colors duration-300 focus:border-[color:var(--ink)]";
+  "w-full bg-transparent border-0 border-b border-[color:var(--rule-strong)] rounded-none px-0 py-3 text-[17px] text-[color:var(--ink)] placeholder:text-[color:var(--ink-faint)] outline-none transition-colors duration-300 focus:border-[color:var(--ink)]";
 
 function ApplicationForm({
   role,

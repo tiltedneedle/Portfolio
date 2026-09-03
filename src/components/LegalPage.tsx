@@ -3,21 +3,67 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
-// Bullets in legal-data carry **bold** lead-ins; render them without a
-// markdown dependency.
-function Bold({ text }: { text: string }) {
-  const parts = text.split("**");
+// legal-data carries **bold** runs and [text](url) links inside plain strings.
+// A hand-written scanner rather than a regex: no escaping to get wrong, and
+// no markdown dependency for two tokens.
+type Token = { kind: "text" | "bold" | "link"; value: string; href?: string };
+
+function tokenize(text: string): Token[] {
+  const out: Token[] = [];
+  let i = 0;
+  while (i < text.length) {
+    const b = text.indexOf("**", i);
+    const l = text.indexOf("[", i);
+    const boldFirst = b !== -1 && (l === -1 || b < l);
+    const next = boldFirst ? b : l;
+    if (next === -1) {
+      out.push({ kind: "text", value: text.slice(i) });
+      break;
+    }
+    if (next > i) out.push({ kind: "text", value: text.slice(i, next) });
+    if (boldFirst) {
+      const close = text.indexOf("**", next + 2);
+      if (close === -1) {
+        out.push({ kind: "text", value: text.slice(next) });
+        break;
+      }
+      out.push({ kind: "bold", value: text.slice(next + 2, close) });
+      i = close + 2;
+    } else {
+      const mid = text.indexOf("](", next);
+      const close = mid === -1 ? -1 : text.indexOf(")", mid + 2);
+      if (mid === -1 || close === -1) {
+        out.push({ kind: "text", value: "[" });
+        i = next + 1;
+        continue;
+      }
+      out.push({ kind: "link", value: text.slice(next + 1, mid), href: text.slice(mid + 2, close) });
+      i = close + 1;
+    }
+  }
+  return out;
+}
+
+function Rich({ text }: { text: string }) {
   return (
     <>
-      {parts.map((part, i) =>
-        i % 2 === 1 ? (
-          <strong key={i} className="font-medium text-[color:var(--ink)]">
-            {part}
-          </strong>
-        ) : (
-          <span key={i}>{part}</span>
-        )
-      )}
+      {tokenize(text).map((tok, i) => {
+        if (tok.kind === "bold") {
+          return (
+            <strong key={i} className="font-medium text-[color:var(--ink)]">
+              {tok.value}
+            </strong>
+          );
+        }
+        if (tok.kind === "link") {
+          return (
+            <a key={i} href={tok.href} className="underline-draw text-[color:var(--ink)]">
+              {tok.value}
+            </a>
+          );
+        }
+        return <span key={i}>{tok.value}</span>;
+      })}
     </>
   );
 }
@@ -90,7 +136,7 @@ export function LegalPage({ title, lastUpdated, sections }: Props) {
                       key={p.slice(0, 40)}
                       className="mt-4 text-[15px] leading-relaxed text-[color:var(--ink-mid)]"
                     >
-                      {p}
+                      <Rich text={p} />
                     </p>
                   ))}
                   {section.bullets && (
@@ -100,7 +146,7 @@ export function LegalPage({ title, lastUpdated, sections }: Props) {
                           key={item.slice(0, 40)}
                           className="text-[15px] leading-relaxed text-[color:var(--ink-mid)] pl-5 relative before:content-['—'] before:absolute before:left-0"
                         >
-                          <Bold text={item} />
+                          <Rich text={item} />
                         </li>
                       ))}
                     </ul>

@@ -2,37 +2,25 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { VideoModal } from "@/components/VideoModal";
+import { EmbedModal } from "@/components/room/EmbedModal";
 import { RunningTimecode, StudioClocks } from "@/components/room/Readouts";
 import { attachThrottledVideo } from "@/lib/video-slots";
 import { films } from "@/lib/films";
+import picksData from "@/lib/published-picks.json";
+import type { Published } from "@/lib/published";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
-import type { ModalItem } from "@/lib/site-data";
 
 /**
  * The cold open. No slate, no title: a film is already running behind the
- * statement, muted, dimmed to the point where the type reads. The statement is
- * the studio's claim, set in the condensed face with one word dropped to the
- * serif italic. Three controls, all mono: view work, play reel, sound.
+ * statement, dimmed to the point where the type reads. When there is no file
+ * to run, the film's still stands in and drifts slowly, so the frame is never
+ * empty. The statement is the studio's claim, set in the condensed face with
+ * one word dropped to the serif italic. Three controls, all mono.
  */
 
-// The reel behind "play reel". A placeholder clip until the studio's own
-// showreel exists; the films themselves are the real work, one section down.
-const SHOWREEL = "https://cdn.pixabay.com/video/2019/02/19/21536-318978190_small.mp4";
-
-const reelItem: ModalItem = {
-  id: "showreel",
-  title: "Showreel",
-  client: "Tilted Needle",
-  year: "2026",
-  categories: ["Reel"],
-  metrics: [
-    { label: "Views", value: "2B+" },
-    { label: "Revenue", value: "$250M+" },
-  ],
-  summary: "A cut of the work: short-form for founders, brands and creators.",
-  videoUrl: SHOWREEL,
-};
+// The reel behind "play reel": the studio's own week-in-the-life short from
+// the published index, until a cut showreel exists.
+const reel = (picksData as unknown as Record<string, Published | null>)["__reel"];
 
 function Masked({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const reduced = useReducedMotion();
@@ -52,6 +40,7 @@ function Masked({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
 
 export function ColdOpen() {
   const bg = films[0];
+  const reduced = useReducedMotion();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [sound, setSound] = useState(false);
@@ -68,34 +57,44 @@ export function ColdOpen() {
     if (v) v.muted = !sound;
   }, [sound]);
 
+  const live = playing || reelOpen;
+
   return (
     <section className="relative h-[100svh] min-h-[640px] overflow-hidden bg-[color:var(--stage)]">
       {/* the film behind everything */}
       <div aria-hidden="true" className="absolute inset-0">
         {bg.poster && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={bg.poster} alt="" className="absolute inset-0 h-full w-full object-cover opacity-50" />
+          <motion.img
+            src={bg.poster}
+            alt=""
+            initial={reduced ? false : { scale: 1.04 }}
+            animate={reduced ? {} : { scale: 1.14 }}
+            transition={{ duration: 38, ease: "linear", repeat: Infinity, repeatType: "mirror" }}
+            className="absolute inset-0 h-full w-full object-cover object-[50%_30%] opacity-45"
+          />
         )}
-        <video
-          ref={videoRef}
-          muted
-          loop
-          playsInline
-          preload="none"
-          onPlaying={() => setPlaying(true)}
-          className={
-            "absolute inset-0 h-full w-full object-cover transition-opacity duration-[1400ms] " +
-            (playing ? "opacity-55" : "opacity-0")
-          }
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[rgba(11,11,12,0.92)] via-[rgba(11,11,12,0.35)] to-[rgba(11,11,12,0.55)]" />
+        {bg.videoUrl && (
+          <video
+            ref={videoRef}
+            muted
+            loop
+            playsInline
+            preload="none"
+            onPlaying={() => setPlaying(true)}
+            className={
+              "absolute inset-0 h-full w-full object-cover transition-opacity duration-[1400ms] " +
+              (playing ? "opacity-55" : "opacity-0")
+            }
+          />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-[rgba(11,11,12,0.94)] via-[rgba(11,11,12,0.45)] to-[rgba(11,11,12,0.6)]" />
       </div>
 
       {/* HUD: the room's instruments */}
       <div className="absolute inset-x-0 top-20 flex items-center justify-between px-6 md:px-14 mono">
         <p className="flex items-center gap-2">
-          <span className={playing ? "lamp" : "lamp-off"} aria-hidden="true" />
-          <span>{playing ? "Rec" : "Standby"}</span>
+          <span className={live ? "lamp" : "lamp-off"} aria-hidden="true" />
+          <span>{live ? "Rec" : "Standby"}</span>
           <RunningTimecode className="ml-2 text-[color:var(--ink-soft)]" />
         </p>
         <StudioClocks className="max-md:hidden" />
@@ -131,28 +130,27 @@ export function ColdOpen() {
             <a href="#work" className="slate-link text-[13px]" data-cursor="Cut">
               View work &darr;
             </a>
-            <button
-              type="button"
-              onClick={() => setReelOpen(true)}
-              className="slate-link text-[13px]"
-              data-cursor="Play"
-            >
-              Play reel &#9654;
-            </button>
-            <button
-              type="button"
-              onClick={() => setSound((s) => !s)}
-              className="slate-link flex items-center gap-2 text-[13px]"
-              aria-pressed={sound}
-            >
-              <span className={sound ? "lamp" : "lamp-off"} aria-hidden="true" />
-              Sound {sound ? "on" : "off"}
-            </button>
+            {reel?.videoId && (
+              <button type="button" onClick={() => setReelOpen(true)} className="slate-link text-[13px]" data-cursor="Play">
+                Play reel &#9654;
+              </button>
+            )}
+            {bg.videoUrl && (
+              <button
+                type="button"
+                onClick={() => setSound((s) => !s)}
+                className="slate-link flex items-center gap-2 text-[13px]"
+                aria-pressed={sound}
+              >
+                <span className={sound ? "lamp" : "lamp-off"} aria-hidden="true" />
+                Sound {sound ? "on" : "off"}
+              </button>
+            )}
           </motion.div>
         </div>
       </div>
 
-      <VideoModal item={reelOpen ? reelItem : null} isOpen={reelOpen} onClose={() => setReelOpen(false)} />
+      {reel && <EmbedModal videoId={reel.videoId} title={reel.title} open={reelOpen} onClose={() => setReelOpen(false)} />}
     </section>
   );
 }

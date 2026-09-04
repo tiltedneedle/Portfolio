@@ -1,22 +1,51 @@
 import { caseStudies, type CaseStudy } from "@/lib/case-studies-data";
 import posters from "@/lib/posters.json";
+import picksData from "@/lib/published-picks.json";
+import type { Published } from "@/lib/published";
+
+// A handful of picks from the published index, chosen at export time, so the
+// home page never carries the full 600-entry index (the library does).
+const picks = picksData as unknown as Record<string, Published | null>;
+function publishedFor(client?: string): Published | undefined {
+  return client ? (picks[client] ?? undefined) : undefined;
+}
 
 /**
  * The six films, as the room addresses them: numbered, slugged, with a poster
- * when one has been extracted. Everything else is the case study as written.
+ * and, where the studio's published index has one, an embeddable public cut.
  *
- * `posters.json` is produced by `scripts/posters.mjs` (ffmpeg, one frame per
- * film). A film without a poster shows its slate, the title card, until the
- * video reports a frame, so nothing ever loads from black.
+ * The original files lived on a CloudFront host that no longer exists (see
+ * RECOVERY.md), so a film's picture now comes from the studio's own index of
+ * published posts: a durable still for the poster, and a YouTube Short to
+ * play when the client has one. A film whose client is not in the index shows
+ * its slate, the title card, so nothing ever loads from black.
+ *
+ * `posters.json` (from `scripts/posters.mjs`) still wins when it exists: that
+ * is the path back to self-hosted files once they are recovered.
  */
 export type Film = CaseStudy & {
   slug: string;
   index: number; // 1-based, as printed on the slate
   poster?: string;
   duration?: number; // seconds, when known
+  /** YouTube video id of the published cut, when there is one to embed. */
+  embedId?: string;
+  /** The published post the still and embed come from. */
+  post?: Published;
 };
 
 const posterMap = posters as Record<string, { poster: string; duration: number }>;
+
+// The host every original file pointed at. It has no DNS record any more, so
+// a URL on it is treated as no URL: no fetch, no slot, straight to the slate.
+const DEAD_HOST = "d6lso8oygmnu9.cloudfront.net";
+
+// Which published client each case study's picture comes from.
+const CLIENT_OF: Record<string, string> = {
+  "Steve Varsano": "The Jet Business",
+  EuroEyes: "EuroEyes",
+  "Frankie Mardell": "Frankie Mardell",
+};
 
 export function slugify(s: string) {
   let out = "";
@@ -37,7 +66,18 @@ export function slugify(s: string) {
 export const films: Film[] = caseStudies.map((cs, i) => {
   const slug = slugify(cs.title);
   const p = posterMap[slug];
-  return { ...cs, slug, index: i + 1, poster: p?.poster, duration: p?.duration };
+  const post = publishedFor(CLIENT_OF[cs.client]);
+  const videoUrl = cs.videoUrl.includes(DEAD_HOST) ? "" : cs.videoUrl;
+  return {
+    ...cs,
+    videoUrl,
+    slug,
+    index: i + 1,
+    poster: p?.poster ?? post?.thumb,
+    duration: p?.duration,
+    embedId: post?.videoId ?? undefined,
+    post,
+  };
 });
 
 export function filmBySlug(slug: string) {

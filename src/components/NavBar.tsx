@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
+import { Wordmark } from "@/components/room/Wordmark";
 import { cn } from "@/lib/utils";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
@@ -36,22 +36,24 @@ function RoomLink({
   href,
   className,
   onClick,
+  onPointerEnter,
   children,
 }: {
   href: string;
   className?: string;
   onClick?: () => void;
+  onPointerEnter?: () => void;
   children: React.ReactNode;
 }) {
   if (href.startsWith("/#")) {
     return (
-      <a href={href} className={className} onClick={onClick}>
+      <a href={href} className={className} onClick={onClick} onPointerEnter={onPointerEnter}>
         {children}
       </a>
     );
   }
   return (
-    <CutLink href={href} className={className} onClick={onClick}>
+    <CutLink href={href} className={className} onClick={onClick} onPointerEnter={onPointerEnter}>
       {children}
     </CutLink>
   );
@@ -60,6 +62,8 @@ function RoomLink({
 export function NavBar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  // Which room the pointer is over; it and everything to its left light up.
+  const [hot, setHot] = useState<number | null>(null);
   const pathname = usePathname();
   const reduced = useReducedMotion();
 
@@ -107,19 +111,22 @@ export function NavBar() {
         )}
       >
         <nav className="flex h-14 items-center justify-between px-6 md:h-16 md:px-14" aria-label="Primary">
-          <CutLink href="/" className="inline-flex items-center gap-3" aria-label="Tilted Needle, home">
-            <Image src="/white-logo.png" alt="" width={22} height={22} className="object-contain" />
-            <span className="display text-[15px] font-bold tracking-[0.08em] text-[color:var(--ink)]">
-              Tilted Needle
-            </span>
+          <CutLink href="/" className="inline-flex items-center" aria-label="Tilted Needle, home">
+            <Wordmark />
           </CutLink>
 
-          <div className="hidden items-center gap-8 md:flex">
-            {rooms.map((r) => (
+          <div className="hidden items-center gap-8 md:flex" onPointerLeave={() => setHot(null)}>
+            {rooms.map((r, i) => (
               <RoomLink
                 key={r.href}
                 href={r.href}
-                className={cn("slate-link", isActive(r.href) && "text-[color:var(--ink)]")}
+                className={cn(
+                  "slate-link room-link",
+                  isActive(r.href) && "text-[color:var(--ink)]",
+                  hot !== null && i <= hot && "is-lit",
+                  hot === i && "is-hot"
+                )}
+                onPointerEnter={() => setHot(i)}
               >
                 <span aria-hidden="true" className="mr-1.5 text-[color:var(--ink-faint)]">
                   {r.n}
@@ -128,7 +135,11 @@ export function NavBar() {
               </RoomLink>
             ))}
             <span aria-hidden="true" className="h-3 w-px bg-[color:var(--rule-strong)]" />
-            <CutLink href="/book-demo" className="slate-link text-[color:var(--ink)]">
+            <CutLink
+              href="/book-demo"
+              className={cn("slate-link room-link text-[color:var(--ink)]", hot !== null && "is-lit", hot === rooms.length && "is-hot")}
+              onPointerEnter={() => setHot(rooms.length)}
+            >
               Book a demo
             </CutLink>
           </div>

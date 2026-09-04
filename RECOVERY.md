@@ -1,5 +1,14 @@
 # Recovering the videos
 
+**Status (2026-09-04):** the site no longer depends on the lost files for its
+picture. `scripts/published.mjs` exports the studio's published index (Route
+3b below) into `src/lib/published.json`; the library shows those 499 clips
+with durable stills and plays the YouTube ones in place, and the films use
+the same index for their posters and embedded cuts. Three films (Celine,
+Gauthier, Rastah) have no index entry and show their slates until Route 1
+or 2 below returns their files. Everything below still applies to getting
+the original exports back.
+
 Every video URL in this repo (6 films, 30 portfolio items, 109 board clips,
 144 in total) points at `https://d6lso8oygmnu9.cloudfront.net/videos/…`.
 That CloudFront distribution belonged to the AWS account behind the old

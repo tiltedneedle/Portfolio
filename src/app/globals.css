@@ -478,6 +478,122 @@ html.has-cursor iframe {
   transform: none;
 }
 
+/* ============================================================== the wordmark
+   A stitch runs through the name every few seconds: each letter tips into a
+   tilted needle stroke and settles back, left to right. Two glyphs stacked
+   per letter; the animation swaps which one shows. The figure leans with it.
+   ====================================================================== */
+
+.wm-text {
+  display: inline-flex;
+  line-height: 1;
+  white-space: nowrap;
+}
+.wm-l {
+  position: relative;
+  display: inline-block;
+  animation: wm-stitch 7s linear infinite;
+  animation-delay: calc(var(--i) * 60ms);
+}
+.wm-a,
+.wm-b {
+  display: inline-block;
+}
+.wm-b {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  text-align: center;
+  opacity: 0;
+  transform: rotate(12deg) translateY(-2%);
+  color: var(--tally);
+}
+/* the needle pass: letter out, stroke in, letter back — 4% of the loop each */
+.wm-l .wm-a {
+  animation: wm-letter 7s linear infinite;
+  animation-delay: calc(var(--i) * 60ms);
+}
+.wm-l .wm-b {
+  animation: wm-needle 7s linear infinite;
+  animation-delay: calc(var(--i) * 60ms);
+}
+@keyframes wm-stitch {
+  0%,
+  2%,
+  6%,
+  100% {
+    transform: translateY(0);
+  }
+  4% {
+    transform: translateY(-8%);
+  }
+}
+@keyframes wm-letter {
+  0%,
+  2%,
+  6%,
+  100% {
+    opacity: 1;
+  }
+  3%,
+  5% {
+    opacity: 0;
+  }
+}
+@keyframes wm-needle {
+  0%,
+  2%,
+  6%,
+  100% {
+    opacity: 0;
+  }
+  3%,
+  5% {
+    opacity: 1;
+  }
+}
+.wm-mark {
+  animation: wm-lean 7s linear infinite;
+  transform-origin: 50% 90%;
+}
+@keyframes wm-lean {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  1% {
+    transform: rotate(0deg);
+  }
+  5% {
+    transform: rotate(-14deg);
+  }
+  14% {
+    transform: rotate(0deg);
+  }
+}
+/* the nav's hover grammar: the hovered room and every room to its left drop
+   to the serif italic, and the hovered one grows */
+.room-link {
+  display: inline-block;
+  transition:
+    transform var(--dur-fast) var(--ease-out-expo),
+    color var(--dur-fast) var(--ease-out-expo);
+  transform-origin: center;
+}
+.room-link.is-lit {
+  font-family: var(--font-serif-face), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 17px;
+  color: var(--ink);
+}
+.room-link.is-hot {
+  transform: scale(1.22);
+}
+
 /* ================================================================== reveals */
 
 @keyframes rise-in {
@@ -528,7 +644,11 @@ html.has-cursor iframe {
 
   .grain,
   .skeleton,
-  .lamp {
+  .lamp,
+  .wm-l,
+  .wm-a,
+  .wm-b,
+  .wm-mark {
     animation: none;
   }
 }

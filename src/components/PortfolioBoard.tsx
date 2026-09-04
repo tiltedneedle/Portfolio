@@ -7,8 +7,7 @@ import { Maximize2, Move, X, ZoomIn, ZoomOut } from "lucide-react";
 import { NavBar } from "@/components/NavBar";
 import { CutLink } from "@/components/room/CutLink";
 import { useFocusTrap } from "@/lib/use-focus-trap";
-import { attachThrottledVideo } from "@/lib/video-slots";
-import { boardVideos, type BoardVideo } from "@/lib/board-videos";
+import { PLATFORM_LABEL, embedUrl, published, type Published } from "@/lib/published";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
 /* ------------------------------------------------------------------ layout */
@@ -43,7 +42,7 @@ const COLUMN_X = Array.from({ length: COLUMNS }, (_, i) => 30 + 176 * i);
 const BRAND_W = 320;
 const BRAND_H = 380;
 
-type Frame = BoardVideo & { x: number; y: number; w: number; h: number };
+type Frame = Published & { x: number; y: number; w: number; h: number };
 
 // Seeded Lehmer shuffle so server and client lay the board out identically.
 function seededShuffle<T>(input: T[]): T[] {
@@ -58,7 +57,9 @@ function seededShuffle<T>(input: T[]): T[] {
 }
 
 function buildBoard() {
-  const shuffled = seededShuffle(boardVideos);
+  // The library is the studio's published index: every clip with a durable
+  // still. Long-form 16:9 videos are left out; the board is a 9:16 contact sheet.
+  const shuffled = seededShuffle(published.filter((p) => p.vertical));
   const columnY = COLUMN_OFFSETS.map((o) => 30 + o);
   const patternIndex = Array(COLUMNS).fill(0);
 
@@ -78,7 +79,8 @@ function buildBoard() {
   const frames: Frame[] = [];
   let index = 0;
 
-  for (let pass = 0; pass < 9; pass++) {
+  const passes = Math.ceil(shuffled.length / COLUMNS) + 1;
+  for (let pass = 0; pass < passes; pass++) {
     for (let col = 0; col < COLUMNS && index < shuffled.length; col++) {
       const h = FRAME_HEIGHTS[HEIGHT_PATTERN[col][patternIndex[col] % HEIGHT_PATTERN[col].length]];
       let y = columnY[col];
@@ -120,46 +122,28 @@ function clampPos(x: number, y: number, scale: number, w: number, h: number) {
   };
 }
 
-/* ------------------------------------------------- throttled video loading */
+/* ------------------------------------------------------------------ tiles */
 
-// The board used to carry a private copy of the slot semaphore, with the same
-// double-release defect the shared one had. It now uses the shared limiter so
-// there is a single accounting of in-flight video loads.
-
-// Every tile carries its title as a slate until the clip reports a frame, so a
-// slow or missing clip is never a black hole in the contact sheet.
-function BoardVideoTile({ src, title, className }: { src: string; title: string; className?: string }) {
-  const ref = useRef<HTMLVideoElement>(null);
-  const [playing, setPlaying] = useState(false);
-
-  useEffect(() => {
-    const video = ref.current;
-    if (!video) return;
-    const release = attachThrottledVideo(video, src);
-    return () => {
-      release();
-      setPlaying(false);
-    };
-  }, [src]);
-
+// A still per clip, lazy, with the platform in the corner. The stills are
+// durable (YouTube's own, or the studio's cached copy) so a tile is never a
+// black hole; the clip itself plays in the lightbox.
+function BoardStill({ frame, className }: { frame: Frame; className?: string }) {
+  const [loaded, setLoaded] = useState(false);
   return (
     <div className={className}>
-      <video
-        ref={ref}
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        onPlaying={() => setPlaying(true)}
-        className={"w-full h-full object-cover pointer-events-none transition-opacity duration-500 " + (playing ? "opacity-100" : "opacity-0")}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={frame.thumb}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        onLoad={() => setLoaded(true)}
+        className={"w-full h-full object-cover pointer-events-none transition-opacity duration-500 " + (loaded ? "opacity-100" : "opacity-0")}
         style={{ background: "var(--stage-2)" }}
         draggable={false}
       />
-      <span
-        aria-hidden="true"
-        className={"mono pointer-events-none absolute inset-x-0 bottom-0 p-2 text-[9px] leading-snug transition-opacity duration-500 " + (playing ? "opacity-0" : "opacity-100")}
-      >
-        {title}
+      <span aria-hidden="true" className="mono pointer-events-none absolute left-2 top-2 text-[9px] text-[color:var(--ink)]/80">
+        {frame.platform === "youtube_shorts" ? "YT" : frame.platform === "instagram" ? "IG" : frame.platform === "tiktok" ? "TT" : "YT"}
       </span>
     </div>
   );
@@ -476,7 +460,7 @@ export function PortfolioBoard() {
   // Only mount frames near the viewport.
   const visible = useMemo(() => {
     const { w, h } = size;
-    const ids = new Set<number>();
+    const ids = new Set<string>();
     for (const frame of frames) {
       const x = frame.x * scale + pos.x;
       const y = frame.y * scale + pos.y;
@@ -610,9 +594,8 @@ export function PortfolioBoard() {
                   className="block w-full h-full text-left rounded-[2px] focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--ink)]"
                 >
                   <div className="h-full overflow-hidden rounded-[2px] border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-[5px] transition-colors duration-500 group-hover:border-[color:var(--rule-strong)]">
-                    <BoardVideoTile
-                      src={frame.src}
-                      title={frame.title}
+                    <BoardStill
+                      frame={frame}
                       className="w-full h-full relative overflow-hidden rounded-[2px] transition-transform duration-[1s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.03]"
                     />
                   </div>
@@ -680,26 +663,33 @@ export function PortfolioBoard() {
                 <X className="w-4 h-4" />
               </button>
 
-              <div className="relative aspect-[9/16] max-h-[55vh] md:max-h-[60vh] bg-black">
-                <video
-                  src={selected.src}
-                  autoPlay
-                  controls
-                  playsInline
-                  loop
-                  className="w-full h-full object-contain"
-                />
+              <div className="relative mx-auto aspect-[9/16] w-full max-h-[55vh] md:max-h-[60vh] bg-black">
+                {selected.videoId ? (
+                  <iframe
+                    src={embedUrl(selected.videoId)}
+                    title={selected.title}
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    allowFullScreen
+                    className="absolute inset-0 h-full w-full"
+                  />
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={selected.thumb} alt="" className="absolute inset-0 h-full w-full object-contain" />
+                )}
               </div>
 
               <div className="p-5 md:p-8">
-                <p className="mono">From the library</p>
-                <h2 id="board-modal-title" className="display mt-2 text-[clamp(28px,4vw,48px)]">
-                  {selected.title}
+                <p className="mono">
+                  {selected.client} <span className="text-[color:var(--ink-faint)]">/</span> {PLATFORM_LABEL[selected.platform]}
+                  {selected.posted ? <span className="text-[color:var(--ink-faint)]"> / {selected.posted.slice(0, 7)}</span> : null}
+                </p>
+                <h2 id="board-modal-title" className="mt-2 text-[17px] leading-snug text-[color:var(--ink)] md:text-[19px]">
+                  {selected.title || selected.subject}
                 </h2>
                 <div className="mt-5 flex flex-wrap items-center gap-6">
-                  <CutLink href="/book-demo" className="pill pill-solid px-6 py-2.5 text-[13px] md:text-[15px]">
-                    Book a demo
-                  </CutLink>
+                  <a href={selected.url} target="_blank" rel="noopener noreferrer" className="pill pill-solid px-6 py-2.5 text-[13px] md:text-[15px]">
+                    {selected.videoId ? "Open on YouTube" : "Watch on " + PLATFORM_LABEL[selected.platform]}
+                  </a>
                   <button onClick={() => setSelected(null)} className="slate-link text-[13px]">
                     Back to the board
                   </button>

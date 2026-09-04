@@ -101,14 +101,31 @@ in is a one-file change in `src/app/layout.tsx`.
 - `src/lib/case-studies-data.ts` — the case studies the films are built on.
 - `src/lib/services-data.ts`, `site-data.ts`, `board-videos.ts`, `legal-data.ts`.
 
-### Posters
+### The published index (where the pictures come from)
+
+The original video files were lost with the previous hosting account (see
+`RECOVERY.md`). The site's pictures now come from the studio's own index of
+published work, exported read-only from the ops database:
+
+```bash
+node scripts/published.mjs
+```
+
+That writes `src/lib/published.json` (every published clip with a durable
+still: YouTube's own 9:16 thumbnail for Shorts, the studio's cached copy for
+the rest) and `src/lib/published-picks.json` (the per-film picks, the reel,
+and the library count, so the home page never carries the full index). The
+library renders the index as a contact sheet and plays YouTube clips in its
+lightbox; Instagram and TikTok posts open as a still with a link. Films whose
+client has a Short embed it on the film page; films whose client is not in
+the index show their slate.
+
+### Posters (self-hosted route)
 
 `node scripts/posters.mjs` pulls one frame per film with ffmpeg and writes
-`public/posters/<slug>.jpg` plus `src/lib/posters.json`. Run it whenever a
-video URL changes. **As of 2026-09-03 every video URL is dead** — the
-CloudFront distribution that served them was lost with the previous hosting
-account and has no DNS record anywhere — so the frames show their slates
-until the studio re-hosts the originals.
+`public/posters/<slug>.jpg` plus `src/lib/posters.json`, which win over the
+index picks when present. Run it once the original files are re-hosted and
+the URLs in the data files point somewhere live.
 
 ## Contact form
 

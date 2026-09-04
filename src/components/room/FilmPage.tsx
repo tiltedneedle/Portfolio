@@ -86,6 +86,18 @@ export function FilmPage({ film, next }: { film: Film; next: Film }) {
             {/* Width is derived from the height budget so the well is always 9:16;
                 on a narrow column the width cap wins and the height follows. */}
             <div className="well mx-auto" style={{ width: "min(100%, calc(min(82svh, 900px) * 9 / 16))" }}>
+              {/* A published cut, when the index has one: YouTube's own player in
+                  the well, from its privacy-enhanced host. The custom transport
+                  below applies to self-hosted files only. */}
+              {film.embedId && (
+                <iframe
+                  src={"https://www.youtube-nocookie.com/embed/" + film.embedId + "?rel=0&modestbranding=1&playsinline=1&color=white"}
+                  title={film.title + ", the published cut"}
+                  allow="autoplay; encrypted-media; picture-in-picture"
+                  allowFullScreen
+                  className="absolute inset-0 z-10 h-full w-full"
+                />
+              )}
               {film.poster && (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={film.poster} alt="" className="absolute inset-0 h-full w-full object-cover" />
@@ -118,17 +130,28 @@ export function FilmPage({ film, next }: { film: Film; next: Film }) {
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={toggle}
-                className="absolute inset-0 block h-full w-full"
-                aria-label={live ? "Pause film" : "Play film"}
-                data-cursor={live ? "Pause" : "Play"}
-              />
+              {!film.embedId && (
+                <button
+                  type="button"
+                  onClick={toggle}
+                  className="absolute inset-0 block h-full w-full"
+                  aria-label={live ? "Pause film" : "Play film"}
+                  data-cursor={live ? "Pause" : "Play"}
+                />
+              )}
             </div>
 
+            {film.embedId && film.post && (
+              <div className="mt-4 flex items-center justify-between mono">
+                <span>Published cut</span>
+                <a href={film.post.url} target="_blank" rel="noopener noreferrer" className="slate-link">
+                  Open on YouTube &#8599;
+                </a>
+              </div>
+            )}
+
             {/* transport */}
-            <div className="mt-4">
+            <div className={film.embedId ? "hidden" : "mt-4"}>
               <button
                 type="button"
                 onClick={scrub}

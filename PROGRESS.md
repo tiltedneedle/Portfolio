@@ -84,9 +84,22 @@ accent, mint editorial system retired.
 - [x] README rewritten for the room system.
 - [x] Project memory updated (`project_marketing_site_replica.md`).
 
+- [x] Media resolved without hosting anything (2026-09-04): the studio's own
+      published index (ops database, 634 posts with durable stills) now feeds
+      the site. `scripts/published.mjs` exports `src/lib/published.json` (the
+      library, 499 vertical clips with stills, YouTube Shorts playable in the
+      lightbox, Instagram/TikTok as still + link) and
+      `src/lib/published-picks.json` (per-film picks + the reel + the count, so
+      the home page never carries the index). Films 01/04/05 have real stills
+      and 01/04 embed the published cut; 02/03/06 (Celine, Gauthier, Rastah)
+      are not in the index and keep their slates.
+- [x] Animated wordmark (`room/Wordmark.tsx`, CSS stitch), nav hover grammar
+      (hovered room grows, it and everything left of it go serif italic),
+      logo strip back as a marquee, Toyota mark uncropped.
+
 ## In flight
 
-- (nothing; Cut 1 is complete and pushed)
+- (nothing)
 
 ## Next
 

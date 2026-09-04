@@ -22,7 +22,9 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
-      { protocol: "https", hostname: "d6lso8oygmnu9.cloudfront.net" },
+      // stills for the published work: YouTube's, and the studio's own cache
+      { protocol: "https", hostname: "i.ytimg.com" },
+      { protocol: "https", hostname: "tkmvuxjnfzbdpditvdbo.supabase.co" },
     ],
     formats: ["image/avif", "image/webp"],
   },

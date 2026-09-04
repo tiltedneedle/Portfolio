@@ -5,6 +5,7 @@ import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-mot
 import { CutLink } from "@/components/room/CutLink";
 import { attachThrottledVideo } from "@/lib/video-slots";
 import { films, pad2, timecode, type Film } from "@/lib/films";
+import picksData from "@/lib/published-picks.json";
 
 /**
  * The sequence. Six films racked on a timeline, each 9:16, standing in the
@@ -19,6 +20,10 @@ import { films, pad2, timecode, type Film } from "@/lib/films";
  */
 
 const NOMINAL_SECONDS = 15; // per film, when the real duration is unknown
+
+// How many clips the library holds, written at export time so the home page
+// does not carry the index itself.
+const LIBRARY_COUNT = Number((picksData as Record<string, unknown>)["__count"] ?? 0);
 
 function Frame({
   film,
@@ -104,12 +109,14 @@ function Frame({
           }
         />
 
-        {/* the slate: stands until a frame arrives */}
+        {/* the slate: stands until a frame arrives. A real still is its own
+            slate (the cut's caption is already in the picture), so the title
+            only stands on frames that have nothing else. */}
         <div
           aria-hidden="true"
           className={
             "absolute inset-0 flex items-center justify-center p-5 pb-32 transition-opacity duration-700 " +
-            (playing ? "opacity-0" : "opacity-100")
+            (playing || film.poster ? "opacity-0" : "opacity-100")
           }
         >
           <p className="display text-center text-[clamp(40px,4.4vw,72px)] leading-[0.9] text-[color:var(--ink)]/70">
@@ -256,7 +263,7 @@ export function Sequence() {
             <CutLink href="/portfolio" className="display mt-4 block text-[clamp(48px,5.5vw,96px)] underline-draw w-fit" data-cursor="Cut">
               The library &#8599;
             </CutLink>
-            <p className="mono mt-4">108 more clips, on the board</p>
+            <p className="mono mt-4">{LIBRARY_COUNT} clips, on the board</p>
           </div>
         </motion.div>
 

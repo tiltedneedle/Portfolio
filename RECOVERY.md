@@ -151,6 +151,24 @@ placeholder behind "play reel" until a showreel exists.
 - How to get paid to create social media videos! — https://youtube.com/shorts/je0o6p_yxwQ
 - How to get paid to make TikToks — https://youtube.com/shorts/UmWrpCKmBmk
 
+## Route 3b: the studio's own post index (ops database)
+
+The ops app's database (content_items + platform_posts) is the studio's own record of every published clip: **661 clips, every one with a live public URL** (YouTube 135, YouTube Shorts 197, Instagram 185, TikTok 144), by client: The Jet Business 69, Ameerh Naran 72, EuroEyes 225, Tilted Needle 137, Frankie Mardell 6, and others. Exported read-only on 2026-09-04 to [](recovery/published-posts.csv) (client, title, subject, produced date, platform, handle, posted date, URL).
+
+The site names clips by their edit filenames () and the index names them by published caption ("The Truth No One Tells You About Aston Martin"), so automatic matching only pairs 8 of the 135 site titles with confidence. Someone who knows the clips can pair the rest from the CSV in an afternoon. The confident pairs:
+
+| Site title | Database clip | Client | Public posts |
+|---|---|---|---|
+| Aston Martin Db9 V4 Captioned | The Truth No One Tells You About Aston Martin | Ameerh Naran | youtube https://www.youtube.com/watch?v=1IwDtZQvcEQ |
+| Aubameyang Final Cta | Pierre Emerick Aubameyang Reviews the Naran Hypercar! | Ameerh Naran | youtube https://www.youtube.com/watch?v=1uBvlg0woQY |
+| Customer Service | At Entree, we lead by example. We care for our team and make sure ever | Entree Bakery and Cafe | instagram https://www.instagram.com/p/DbBoEJGIW3v/ |
+| Week in the life | A week in my life. | Ameerh Naran | instagram https://www.instagram.com/p/DZGjeN8Kp3_/ |
+| What it takes | What It Takes To Be A Racing Driver | Ameerh Naran | youtube https://www.youtube.com/watch?v=sfZ40u_uFdo |
+| The Jet Broker | POV: you're mentored by the world's most famous private jet broker | yusufnik8 | tiktok https://www.tiktok.com/@yusufnik8/video/7651032977241083159 |
+| Week in the Life: Dubai | A week in my life. | Ameerh Naran | instagram https://www.instagram.com/p/DZGjeN8Kp3_/ |
+| week in the life vf3 captioned | A week in my life. | Ameerh Naran | instagram https://www.instagram.com/p/DZGjeN8Kp3_/ |
+
+
 ## Once the files are back
 
 1. Upload them somewhere the studio controls (Cloudflare R2 with a public

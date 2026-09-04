@@ -237,7 +237,7 @@ export function Sequence() {
           <div className="w-full shrink-0 px-6 py-20 md:w-[32vw] md:py-0">
             <p className="mono">01 &mdash; Selected work</p>
             <h2 className="display mt-4 text-[clamp(56px,7vw,120px)]">
-              Six <span className="em-serif">films.</span>
+              Eight <span className="em-serif">films.</span>
             </h2>
             <p className="mt-6 max-w-[34ch] text-[17px] leading-relaxed text-[color:var(--ink-soft)]">
               Shot for the phone, cut for the scroll. Every one is a person, a claim and a

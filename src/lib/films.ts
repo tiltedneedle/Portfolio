@@ -48,6 +48,8 @@ const CLIENT_OF: Record<string, string> = {
   EuroEyes: "EuroEyes",
   "Frankie Mardell": "Frankie Mardell",
   Rastah: "Rastah",
+  "Ameerh Naran": "Ameerh Naran",
+  "Youmi Khoury": "Youmi Khoury",
 };
 
 export function slugify(s: string) {

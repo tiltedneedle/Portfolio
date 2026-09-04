@@ -151,4 +151,50 @@ export const caseStudies: CaseStudy[] = [
     highlight: "+900% online sales in 3 months",
     videoUrl: "https://d6lso8oygmnu9.cloudfront.net/videos/my-business-philosophy-fv.mp4",
   },
+  {
+    id: "cs-7",
+    title: "Aviation & Hypercars",
+    client: "Ameerh Naran",
+    year: "2024",
+    categories: [
+      "Short-form",
+      "Private Aviation",
+    ],
+    metrics: [
+      {
+        label: "Views",
+        value: "25M+",
+      },
+      {
+        label: "Followers",
+        value: "500k+",
+      },
+    ],
+    summary: "Grew Vimana Private Jets founder through high-net-worth storytelling & aviation content.",
+    highlight: "$500M+ jet charter empire",
+    videoUrl: "",
+  },
+  {
+    id: "cs-8",
+    title: "Luxury Beauty & Brand",
+    client: "Youmi Khoury",
+    year: "2024",
+    categories: [
+      "Short-form",
+      "Beauty & Luxury",
+    ],
+    metrics: [
+      {
+        label: "Views",
+        value: "50M+",
+      },
+      {
+        label: "Followers",
+        value: "2M+",
+      },
+    ],
+    summary: "Scaled Dubai luxury beauty entrepreneur with viral lifestyle & cosmetics video content.",
+    highlight: "50M+ organic views",
+    videoUrl: "",
+  },
 ];

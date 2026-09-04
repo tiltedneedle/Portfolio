@@ -43,8 +43,11 @@ const DEAD_HOST = "d6lso8oygmnu9.cloudfront.net";
 // Which published client each case study's picture comes from.
 const CLIENT_OF: Record<string, string> = {
   "Steve Varsano": "The Jet Business",
+  "Noor Charchafchi": "Noor Charchafchi",
+  "Alexis Gauthier": "Alexis Gauthier",
   EuroEyes: "EuroEyes",
   "Frankie Mardell": "Frankie Mardell",
+  Rastah: "Rastah",
 };
 
 export function slugify(s: string) {

@@ -64,5 +64,44 @@
   "vertical": true,
   "posted": "2026-07-27"
  },
+ "Noor Charchafchi": {
+  "id": "8jVfQ2K5wbs-youtube_shorts",
+  "client": "Noor Charchafchi",
+  "title": "Celine Interior Design",
+  "subject": "",
+  "platform": "youtube_shorts",
+  "handle": "CelineInteriorDesign",
+  "url": "https://www.youtube.com/watch?v=8jVfQ2K5wbs",
+  "videoId": "8jVfQ2K5wbs",
+  "thumb": "https://i.ytimg.com/vi/8jVfQ2K5wbs/oardefault.jpg",
+  "vertical": true,
+  "posted": "2026-08-31"
+ },
+ "Alexis Gauthier": {
+  "id": "5c-3u-aHkH0-youtube_shorts",
+  "client": "Alexis Gauthier",
+  "title": "Gauthier Soho",
+  "subject": "",
+  "platform": "youtube_shorts",
+  "handle": "gauthiersoho",
+  "url": "https://www.youtube.com/watch?v=5c-3u-aHkH0",
+  "videoId": "5c-3u-aHkH0",
+  "thumb": "https://i.ytimg.com/vi/5c-3u-aHkH0/oardefault.jpg",
+  "vertical": true,
+  "posted": "2026-08-31"
+ },
+ "Rastah": {
+  "id": "3i_b7o0-n2s-youtube_shorts",
+  "client": "Rastah",
+  "title": "Rastah Streetwear",
+  "subject": "",
+  "platform": "youtube_shorts",
+  "handle": "rastah3055",
+  "url": "https://www.youtube.com/watch?v=3i_b7o0-n2s",
+  "videoId": "3i_b7o0-n2s",
+  "thumb": "https://i.ytimg.com/vi/3i_b7o0-n2s/oardefault.jpg",
+  "vertical": true,
+  "posted": "2026-08-31"
+ },
  "__count": 499
 }

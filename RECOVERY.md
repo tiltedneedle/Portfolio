@@ -153,9 +153,9 @@ placeholder behind "play reel" until a showreel exists.
 
 ## Route 3b: the studio's own post index (ops database)
 
-The ops app's database (content_items + platform_posts) is the studio's own record of every published clip: **661 clips, every one with a live public URL** (YouTube 135, YouTube Shorts 197, Instagram 185, TikTok 144), by client: The Jet Business 69, Ameerh Naran 72, EuroEyes 225, Tilted Needle 137, Frankie Mardell 6, and others. Exported read-only on 2026-09-04 to [](recovery/published-posts.csv) (client, title, subject, produced date, platform, handle, posted date, URL).
+The ops app's database (content_items + platform_posts) is the studio's own record of every published clip: **661 clips, every one with a live public URL** (YouTube 135, YouTube Shorts 197, Instagram 185, TikTok 144), by client: The Jet Business 69, Ameerh Naran 72, EuroEyes 225, Tilted Needle 137, Frankie Mardell 6, and others. Exported read-only on 2026-09-04 to [`recovery/published-posts.csv`](recovery/published-posts.csv) (client, title, subject, produced date, platform, handle, posted date, URL).
 
-The site names clips by their edit filenames () and the index names them by published caption ("The Truth No One Tells You About Aston Martin"), so automatic matching only pairs 8 of the 135 site titles with confidence. Someone who knows the clips can pair the rest from the CSV in an afternoon. The confident pairs:
+The site names clips by their edit filenames (`being-realistic-v8-captioned`) and the index names them by published caption ("The Truth No One Tells You About Aston Martin"), so automatic matching only pairs 8 of the 135 site titles with confidence. Someone who knows the clips can pair the rest from the CSV in an afternoon. The confident pairs:
 
 | Site title | Database clip | Client | Public posts |
 |---|---|---|---|

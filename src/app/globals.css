@@ -484,6 +484,16 @@ html.has-cursor iframe {
    per letter; the animation swaps which one shows. The figure leans with it.
    ====================================================================== */
 
+/* the whole mark grows under the pointer, from its left edge so it never
+   crowds the rooms on the right */
+.wm {
+  transform-origin: left center;
+  transition: transform var(--dur-base) var(--ease-out-expo);
+}
+a:hover > .wm,
+a:focus-visible > .wm {
+  transform: scale(1.18);
+}
 .wm-text {
   display: inline-flex;
   line-height: 1;

@@ -1,18 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const BASE_URL = "https://tiltedneedle.com";
-
+// A private system for one client. Nothing here is for search engines.
 export default function robots(): MetadataRoute.Robots {
-  return {
-    rules: [
-      {
-        userAgent: "*",
-        allow: "/",
-        // The form handler has nothing to index and shouldn't be crawled.
-        disallow: ["/api/"],
-      },
-    ],
-    sitemap: `${BASE_URL}/sitemap.xml`,
-    host: BASE_URL,
-  };
+  return { rules: { userAgent: "*", disallow: "/" } };
 }

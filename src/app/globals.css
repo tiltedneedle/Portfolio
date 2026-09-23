@@ -604,6 +604,121 @@ a:focus-visible > .wm {
   transform: scale(1.22);
 }
 
+/* ============================================================== the system
+   Furniture for the guide pages: a reading measure, the big faint section
+   numerals, pills, the call-sheet box, on-screen text chips, rails that
+   scroll sideways without a scrollbar, and the nav's dropdown panel.
+   ====================================================================== */
+
+.measure {
+  max-width: 62ch;
+}
+
+.numeral {
+  font-family: var(--font-display-face), "Arial Narrow", Impact, sans-serif;
+  font-weight: 800;
+  line-height: 0.8;
+  letter-spacing: 0.01em;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.tag {
+  display: inline-block;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--r-pill);
+  padding: 7px 14px;
+  font-size: 14px;
+  line-height: 1.3;
+  color: var(--ink-soft);
+}
+
+/* the checklist box: decoration, never a control */
+.box {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  border: 1px solid var(--rule-strong);
+  border-radius: 1px;
+  flex: none;
+  margin-top: 6px;
+}
+
+/* on-screen text, the way it sits on a phone */
+.chip {
+  display: inline-block;
+  font-family: var(--font-display-face), "Arial Narrow", Impact, sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: 22px;
+  line-height: 1;
+  padding: 10px 14px 8px;
+  background: var(--ink);
+  color: var(--stage);
+  border-radius: var(--r-sharp);
+}
+
+/* the opening quote mark on a spoken line */
+.spoken {
+  position: relative;
+  padding-left: 1.1em;
+}
+.spoken::before {
+  content: "\201C";
+  position: absolute;
+  left: 0;
+  top: -0.08em;
+  color: var(--ink-faint);
+}
+
+.rail {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+.rail::-webkit-scrollbar {
+  display: none;
+}
+.rail > * {
+  scroll-snap-align: start;
+  flex: none;
+}
+
+.panel {
+  background: var(--stage-2);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-sharp);
+  box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.8);
+}
+
+/* the loop that runs the "how to use the system" rail */
+@keyframes loop-travel {
+  to {
+    stroke-dashoffset: -48;
+  }
+}
+.loop-dash {
+  stroke-dasharray: 6 6;
+  animation: loop-travel 2.4s linear infinite;
+}
+
+/* the backdrop strip behind the home hero */
+@keyframes drift-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.drift {
+  animation: drift-left 160s linear infinite;
+}
+
 /* ================================================================== reveals */
 
 @keyframes rise-in {
@@ -658,7 +773,9 @@ a:focus-visible > .wm {
   .wm-l,
   .wm-a,
   .wm-b,
-  .wm-mark {
+  .wm-mark,
+  .loop-dash,
+  .drift {
     animation: none;
   }
 }

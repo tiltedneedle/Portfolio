@@ -1,6 +1,6 @@
 // Export the studio's published index from the ops database into
-// src/lib/published.json (the library) and src/lib/published-picks.json (the
-// few entries the home page needs). Read-only against the database.
+// src/lib/published.json: the stills and links the guides use as examples.
+// Read-only against the database.
 //
 //   node scripts/published.mjs
 //
@@ -84,15 +84,4 @@ for (const i of items) {
 out.sort((a, b) => (b.posted || "").localeCompare(a.posted || ""));
 writeFileSync(resolve(site, "published.json"), JSON.stringify(out, null, 1) + "\n");
 
-const pick = (client) => {
-  let mine = out.filter((p) => p.client === client && p.vertical);
-  if (client === "EuroEyes") mine = mine.filter((p) => !/augenlasern|deutschland|_de\b/i.test(p.handle) && !german.test(p.title + " " + p.subject));
-  return mine.find((p) => p.platform === "youtube_shorts") || mine[0] || null;
-};
-const picks = {};
-for (const c of ["The Jet Business", "EuroEyes", "Frankie Mardell", "Tilted Needle"]) picks[c] = pick(c);
-const tn = out.filter((p) => p.client === "Tilted Needle" && p.platform === "youtube_shorts");
-picks.__reel = tn.find((p) => /week in the life/i.test(p.title)) || tn[0] || null;
-picks.__count = out.filter((p) => p.vertical).length;
-writeFileSync(resolve(site, "published-picks.json"), JSON.stringify(picks, null, 1) + "\n");
-console.log("published:", out.length, "| library:", picks.__count, "| picks:", Object.keys(picks).length);
+console.log("published:", out.length, "| vertical:", out.filter((p) => p.vertical).length);

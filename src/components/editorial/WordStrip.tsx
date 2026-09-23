@@ -4,9 +4,9 @@ import { motion, useReducedMotion } from "framer-motion";
 
 // The reference closes on a slow serif-italic crawl over dark. Decorative,
 // hidden from assistive tech, frozen under reduced motion. Our own words.
-const WORDS = "hook. shoot. cut. post. repeat. ";
+const DEFAULT_WORDS = "hook. shoot. cut. post. repeat. ";
 
-export function WordStrip() {
+export function WordStrip({ words = DEFAULT_WORDS }: { words?: string }) {
   const reduced = useReducedMotion();
   const scroll = reduced
     ? {}
@@ -14,7 +14,7 @@ export function WordStrip() {
         animate: { x: ["0%", "-100%"] },
         transition: { duration: 26, ease: "linear" as const, repeat: Infinity },
       };
-  const run = WORDS.repeat(4);
+  const run = words.repeat(4);
 
   return (
     <div

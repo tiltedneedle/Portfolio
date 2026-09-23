@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { timecode } from "@/lib/films";
+import { timecode } from "@/lib/timecode";
 
 /**
  * Small live instruments used around the room: a running timecode and the

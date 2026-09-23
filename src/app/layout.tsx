@@ -4,19 +4,12 @@ import { FilmGrain } from "@/components/FilmGrain";
 import { TopMark } from "@/components/room/TopMark";
 import { Cursor } from "@/components/room/Cursor";
 import { CutOverlay } from "@/components/room/CutOverlay";
-import { organizationSchema, websiteSchema } from "@/lib/structured-data";
+import { client } from "@/content/client/client";
 import "./globals.css";
 
 // Four faces, all vendored as woff2 so the build needs no network, all SIL OFL.
-//
 // Each declares a `--font-*-face` variable; globals.css maps those into the
-// Tailwind theme (`--font-display` etc). The two names are deliberately
-// different so the theme variable never references itself.
-//
-// The reference sites use commercial faces (PP Neue Montreal, PP Migra). These
-// four are chosen for the same roles: condensed display, quiet body, serif
-// italic accent, mono readouts. Swapping a licensed face in later is a
-// one-file change here.
+// Tailwind theme. Swapping a licensed face in later is a one-file change here.
 const sans = localFont({
   src: "./fonts/instrument-sans-var.woff2",
   weight: "400 700",
@@ -53,39 +46,13 @@ const mono = localFont({
   adjustFontFallback: "Arial",
 });
 
-const DESCRIPTION =
-  "A short-form production studio in London and Dubai. Six films, 2B+ views, $250M+ in revenue for the people in them.";
+const NAME = client.name + " × Tilted Needle";
 
+// A private system for one client: nothing here is for search engines.
 export const metadata: Metadata = {
-  metadataBase: new URL("https://tiltedneedle.com"),
-  title: "Tilted Needle | Cut for the scroll",
-  description: DESCRIPTION,
-  authors: [{ name: "Tilted Needle" }],
-  keywords: [
-    "viral content",
-    "short-form video",
-    "video editing studio",
-    "social media marketing",
-    "TikTok agency",
-    "content creation",
-    "brand growth",
-    "video production",
-  ],
-  robots: "index, follow",
-  openGraph: {
-    title: "Tilted Needle | Cut for the scroll",
-    description: DESCRIPTION,
-    url: "https://tiltedneedle.com",
-    siteName: "Tilted Needle",
-    locale: "en_GB",
-    type: "website",
-    // images come from src/app/opengraph-image.tsx
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Tilted Needle | Cut for the scroll",
-    description: DESCRIPTION,
-  },
+  title: { default: NAME, template: "%s · " + NAME },
+  description: "Your complete viral content system.",
+  robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
   icons: {
     icon: [{ url: "/favicon.ico", sizes: "256x256", type: "image/x-icon" }],
   },
@@ -109,13 +76,6 @@ export default function RootLayout({
         <TopMark />
         <Cursor />
         <CutOverlay />
-        <script
-          type="application/ld+json"
-          // Static, developer-authored JSON: no user input reaches this.
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify([organizationSchema, websiteSchema]),
-          }}
-        />
       </body>
     </html>
   );

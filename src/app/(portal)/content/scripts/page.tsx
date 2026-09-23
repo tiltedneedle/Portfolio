@@ -1,0 +1,36 @@
+import type { Metadata } from "next";
+import { ScriptsRail } from "@/components/portal/ScriptsRail";
+import { NextCut } from "@/components/portal/NextCut";
+import { chapter, pageNumber } from "@/content/chapters";
+import { clientShort } from "@/content/client/client";
+
+export const metadata: Metadata = { title: "20 personalised scripts" };
+
+export default function ScriptsPage() {
+  const c = chapter("content");
+  return (
+    <article className="bg-[color:var(--stage)]">
+      <header className="mx-auto max-w-[1600px] px-6 pb-14 pt-28 md:px-14 md:pt-36">
+        <p className="mono flex flex-wrap items-center gap-x-4">
+          <span>
+            {c.n} &mdash; {c.title} <span className="text-[color:var(--ink-faint)]">/</span> {pageNumber("content", "scripts")}
+          </span>
+          <span className="flex items-center gap-2 text-[color:var(--ink)]">
+            <span className="lamp" aria-hidden="true" />
+            Written for {clientShort()}
+          </span>
+        </p>
+        <h1 className="display mt-6 max-w-[10ch] text-[clamp(52px,8.5vw,140px)]">20 personalised scripts</h1>
+        <p className="em-serif mt-6 max-w-[40ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">
+          Twenty complete videos written specifically for your business. Open the script. Film it. Execute.
+        </p>
+      </header>
+
+      <div className="mx-auto max-w-[1600px] px-6 pb-24 pt-8 md:px-14 md:pt-12">
+        <ScriptsRail />
+      </div>
+
+      <NextCut chapter="content" slug="scripts" />
+    </article>
+  );
+}

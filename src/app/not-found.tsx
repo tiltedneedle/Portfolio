@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { CutLink } from "@/components/room/CutLink";
 
 export default function NotFound() {
@@ -12,15 +11,12 @@ export default function NotFound() {
           Nothing on this <span className="em-serif">slate.</span>
         </h1>
         <p className="mt-8 max-w-[44ch] text-[17px] leading-relaxed text-[color:var(--ink-mid)]">
-          The link may be old or mistyped. Here is where to go instead.
+          The link may be old or mistyped. The system starts at home.
         </p>
-        <div className="mt-10 flex items-center gap-8">
+        <div className="mt-10">
           <CutLink href="/" className="pill pill-solid px-7 py-3 text-[15px]">
-            Back to the reel
+            Back to the system
           </CutLink>
-          <Link href="/#contact" className="slate-link text-[13px]">
-            Get in touch &#8599;
-          </Link>
         </div>
       </div>
     </main>

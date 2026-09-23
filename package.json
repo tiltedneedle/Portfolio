@@ -9,7 +9,8 @@
     "lint": "eslint",
     "check": "node scripts/check-content.mjs",
     "smoke": "node scripts/smoke.mjs",
-    "access": "node scripts/access.mjs"
+    "access": "node scripts/access.mjs",
+    "new-client": "node scripts/new-client.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",

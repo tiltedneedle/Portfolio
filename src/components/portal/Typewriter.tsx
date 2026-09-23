@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 
 /**
@@ -14,6 +14,7 @@ export function Typewriter({ title, queries }: { title?: string; queries: string
   const [i, setI] = useState(0);
   const [len, setLen] = useState(0);
   const [live, setLive] = useState(false);
+  const box = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Nothing moves until the page is in front of someone.
@@ -27,8 +28,7 @@ export function Typewriter({ title, queries }: { title?: string; queries: string
       },
       { threshold: 0.4 }
     );
-    const el = document.getElementById("typewriter");
-    if (el) io.observe(el);
+    if (box.current) io.observe(box.current);
     return () => {
       io.disconnect();
       if (start) clearTimeout(start);
@@ -56,7 +56,7 @@ export function Typewriter({ title, queries }: { title?: string; queries: string
   const shown = reduced ? q : q.slice(0, len);
 
   return (
-    <div id="typewriter">
+    <div ref={box} data-typewriter="">
       {title && <p className="mono mb-4">{title}</p>}
       <div className="flex items-center gap-4 border border-[color:var(--rule-strong)] bg-[color:var(--stage-2)] px-5 py-4" aria-hidden="true">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ink-mid)" strokeWidth="2" strokeLinecap="round">

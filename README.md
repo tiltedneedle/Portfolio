@@ -62,21 +62,25 @@ repo: `template` (what an open door shows; example ideas and one example
 script) and `demo` (Horizon Aviation, fictional; the finished state, access
 code `horizon-2026`).
 
-To add a client:
+To add a client, scaffold it:
 
-1. Copy `src/content/clients/demo/` to `src/content/clients/<slug>/` and
-   add it to the `all` list in `registry.ts`. The slug is lower-case
-   letters, digits and hyphens.
-2. In `index.ts` set the identity: `name`, `short` (for the nav), `logo`
-   (a file under `public/client/`; without one the site shows a monogram),
-   `since`, `contact`. Remove `demo: true`.
-3. Make the access code and paste the hash into `accessHash`:
+```bash
+npm run new-client -- horizon-aviation "Horizon Aviation" --short Horizon --code "three words 7" --logo /client/horizon.png
+```
 
-   ```bash
-   npm run access -- <slug> "<the access code>"
-   ```
+That creates `src/content/clients/<slug>/index.ts` with the identity, every
+slot empty, the access hash computed from the code (the code itself is
+never stored; give it to the client directly), and adds the client to
+`registry.ts`. `--short` is the name the nav uses, `--logo` a file under
+`public/` (without one the site shows a monogram); `--since` and
+`--contact` are optional. To change the code later:
 
-   The code itself is never stored; give it to the client directly.
+```bash
+npm run access -- <slug> "<the new code>"
+```
+
+and paste the hash into `accessHash`. Then:
+
 4. Write the two audit reports (paragraphs under each fixed heading; use the
    `report()` helper), 25 ideas per pillar (`pillar()` pads to 25) and 20
    scripts (`scripts()` fills the numbered slots). Anything left empty

@@ -36,6 +36,7 @@ The marketing site this grew out of is on the `marketing-site` branch.
   blocks), `src/content/clients/<slug>/` (identity, audit, ideas, scripts).
   `registry.ts` lists clients; `template` is what an open door shows; `demo`
   (Horizon Aviation, fictional, code `horizon-2026`) shows the finished state.
+  `npm run new-client -- <slug> "<Name>" --code "<code>"` scaffolds a client.
 - Every client's pages are pre-rendered at `/c/<slug>/...`. `src/proxy.ts`
   verifies the signed session cookie (`tn-room`, HMAC under PORTAL_SECRET)
   and rewrites clean URLs into that client's tree; `/c/...` direct hits are
@@ -44,7 +45,8 @@ The marketing site this grew out of is on the `marketing-site` branch.
   (constant-time compare over every client's hash; 12 tries / 10 min per IP).
   A readable `tn-in` cookie lets the static footer show "Leave the room".
 - Scripts: `npm run access -- <slug> <code>` (hash for a client file),
-  `npm run check` (validates every client and guide), `npm run smoke`.
+  `npm run check` (validates every client and guide, warns on clip and
+  poster ids missing from published.json), `npm run smoke`.
 - Diagrams are block kinds (`src/components/portal/diagrams.tsx`, plus
   `Flashcards.tsx` and `Typewriter.tsx` for the two that need a browser).
   Adding one: a type in `src/content/types.ts`, a case in `blocks.tsx`, a
@@ -56,7 +58,7 @@ The marketing site this grew out of is on the `marketing-site` branch.
   lightbox) share `useFocusTrap`.
 - Reveals (`Reveal.tsx`) never hide anything in the HTML: after hydration
   only blocks below the fold get `reveal-wait`, and an observer adds
-  `reveal-in`. Reduced motion skips it entirely.
+  `reveal-in`. Reduced motion skips it; print forces everything visible.
 - **Faint ink (`--ink-faint`) is decorative only**: numerals, rules, the
   off lamp, the quote mark. It fails AA on every stage tone, so text uses
   `--ink-mid` at the quietest. The axe pass is what enforces this.
@@ -73,6 +75,8 @@ The marketing site this grew out of is on the `marketing-site` branch.
   under it). Upgrade by editing the pin, `npm i`, then the full verify
   loop. The two remaining audit items are vitest (dev-only; the "fix" is a
   downgrade) and are ignored on purpose.
+- **Stills not in published.json fall back to YouTube's `oardefault.jpg`**;
+  every id currently used was checked and exists there (2026-09-24).
 
 ## Done
 
@@ -87,28 +91,27 @@ The marketing site this grew out of is on the `marketing-site` branch.
       contents, phone palette entry, spoken lengths, rail read ticks,
       phone fixes for cadence/structure, panel alignment, at-rest reveals,
       focus traps.
-- [x] Wave 4: home strip cards carry live counts ("4 of 13 written", "45
-      of 100 written", "3 of 20 written"); axe pass on nine pages: the
-      only violations were faint-ink contrast (79 text uses moved to mid
-      ink) and the idea rails not being keyboard-scrollable (rails are now
-      focusable and named); Next 16.2.12 → 16.3.6; `npm audit fix` for
-      js-yaml.
+- [x] Wave 4 (`834b70d`): live counts on the home strip; axe pass (faint
+      ink off text, rails keyboard-scrollable); Next 16.3.6; js-yaml fix.
+- [x] Wave 5: print forces reveal-waiting blocks visible (verified: 44
+      blocks at opacity 1 under print media); `npm run new-client`
+      scaffolder (exercised on a throwaway client, then removed); the
+      validator warns on posters missing from published.json; README
+      "To add a client" now starts with the scaffolder; Typewriter uses a
+      ref rather than a page-wide id.
 
 ## In flight
 
-- [ ] Verify wave 4 (smoke, axe re-run, strip counts screenshot), then
-      commit and push.
+- [ ] Nothing mid-change. All verified and committed. Pick from Next.
 
 ## Next
 
 1. Audit report: a "what to do first" summary block type when the client's
    findings are written (needs the first real client to shape it; do not
    invent findings).
-2. Ideas page: a per-card "Write it" that opens the ideation guide with the
-   idea in the palette query (stateless).
-3. A `.numeral` watermark is still flagged by axe as low-contrast text; it
-   is decorative and aria-hidden. Consider rendering numerals as SVG or
-   with `role="presentation"` if a clean axe report is ever required.
-4. Awaiting from the user (do not block): nine training-video ids for the
+2. A `.numeral` watermark is still flagged by axe as low-contrast text; it
+   is decorative and aria-hidden. Consider rendering numerals as SVG if a
+   clean axe report is ever required.
+3. Awaiting from the user (do not block): nine training-video ids for the
    Create guides plus intro/outro, first real client content, images for
-   `figure` blocks.
+   `figure` blocks, a real client logo to test `--logo`.

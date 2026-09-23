@@ -142,6 +142,7 @@ for (const g of guides) {
     walkBlocks(s.blocks, `"${s.title}"`);
   });
   if (g.opener) walkBlocks(g.opener, "opener");
+  if (g.poster && !ids.has(g.poster)) warn.push(`guide ${key}: poster ${g.poster} is not in published.json (will use YouTube's still)`);
 }
 for (const ch of chapters) {
   if (["create", "publish", "analyse"].includes(ch.id)) {

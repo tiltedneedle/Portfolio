@@ -51,7 +51,30 @@ export type Block =
   /** Example clips from the studio's published library, by YouTube id. */
   | { kind: "clips"; title?: string; note?: string; items: { id: string; caption?: string }[] }
   /** The bad-profile / good-profile comparison. */
-  | { kind: "profile" };
+  | { kind: "profile" }
+  /* ---- diagrams. Each draws a principle the writing states. ---- */
+  /** Where attention is lost: a watch-time curve with the two exits marked. */
+  | { kind: "retention"; title?: string; note?: string }
+  /** A month of days, every `every`th one carrying a post. */
+  | { kind: "cadence"; title?: string; note?: string; days?: number; every?: number }
+  /** One to many: a root and its branches (one idea, four angles; one video, five platforms). */
+  | { kind: "fan"; title?: string; from: string; fromLabel?: string; to: { label?: string; text: string }[]; note?: string }
+  /** The shape of a video as a strip with timecodes; `share` is relative. */
+  | { kind: "structure"; title?: string; parts: { label: string; share: number; text?: string }[]; seconds?: number; note?: string }
+  /** Shot sizes as a contact sheet of 9:16 frames. */
+  | { kind: "shots"; title?: string; items: { label: string; size: "wide" | "medium" | "close" | "detail"; text?: string }[]; note?: string }
+  /** Two angles of view from one camera. */
+  | { kind: "lens"; title?: string; wide: string; tight: string; note?: string }
+  /** Flashcards: an opening line on the front, the hook it uses on the back. */
+  | { kind: "flashcards"; title?: string; items: { front: string; back: string }[]; note?: string }
+  /** A ladder of yes/no questions; yes turns to an answer, no drops to the next. */
+  | { kind: "flow"; title?: string; steps: { q: string; yes: string }[]; end: string; note?: string }
+  /** A search box typing the things people search for. */
+  | { kind: "typewriter"; title?: string; queries: string[] }
+  /** A ring of stations, the last leading back to the first. */
+  | { kind: "cycle"; title?: string; items: string[]; note?: string }
+  /** A still, from `public/` or a URL, in a well with a caption. */
+  | { kind: "figure"; src: string; alt: string; caption?: string; ratio?: "16/9" | "9/16" | "4/5" | "1/1" | "3/2" };
 
 export type Section = {
   /** "01", "02"… Unnumbered sections (a call sheet, a test) leave it out. */
@@ -78,6 +101,8 @@ export type Guide = {
   /** Blocks that belong before the first numbered section (a comparison, a list of searches). */
   opener?: Block[];
   film?: TrainingFilm;
+  /** YouTube id of the clip that stands for this guide on its chapter page. */
+  poster?: string;
   sections: Section[];
   /** The rule the page closes on. */
   rule: Block[];

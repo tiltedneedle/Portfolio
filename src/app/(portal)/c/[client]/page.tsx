@@ -5,6 +5,7 @@ import { Backdrop } from "@/components/portal/Backdrop";
 import { ClientMark } from "@/components/portal/ClientMark";
 import { AccessStrip } from "@/components/portal/AccessStrip";
 import { Loop } from "@/components/portal/Loop";
+import { TrainingFilm } from "@/components/portal/TrainingFilm";
 import { home } from "@/content/system/home";
 import { requireClient } from "@/content/clients/registry";
 
@@ -66,6 +67,9 @@ export default async function Home({ params }: { params: Promise<{ client: strin
             ))}
           </div>
         </div>
+        <div className="mx-auto mt-16 max-w-[1600px] px-6 md:mt-24 md:px-14">
+          <TrainingFilm film={home.films.intro} number="Intro" />
+        </div>
       </section>
 
       <AccessStrip />
@@ -78,6 +82,9 @@ export default async function Home({ params }: { params: Promise<{ client: strin
           </h2>
           <div className="mt-16 md:mt-24">
             <Loop />
+          </div>
+          <div className="mt-20 md:mt-28">
+            <TrainingFilm film={home.films.outro} number="Outro" />
           </div>
         </div>
       </section>

@@ -5,6 +5,7 @@ export const ideation: Guide = {
   slug: "ideation",
   title: "Infinite content ideation system",
   kicker: "You should never reach a point where you do not know what to post.",
+  poster: "qj-bCVEaxko",
   intro: [
     "Once you know where to look, your business can continuously generate new content ideas.",
     "The objective of this system is to help you recognise those opportunities and turn them into content.",
@@ -95,14 +96,15 @@ export const ideation: Guide = {
       blocks: [
         { kind: "p", text: "A strong idea should rarely become only one video. Take the core subject and find different ways to approach it." },
         {
-          kind: "keyed",
+          kind: "fan",
           title: "For example",
-          items: [
-            { label: "Original idea", lines: ["The biggest mistake people make when buying a private jet."] },
-            { label: "Angle 01", lines: ["The biggest mistake first time buyers make."] },
-            { label: "Angle 02", lines: ["The most expensive mistake buyers make."] },
-            { label: "Angle 03", lines: ["A mistake even experienced buyers still make."] },
-            { label: "Angle 04", lines: ["A mistake nobody warns buyers about."] },
+          fromLabel: "Original idea",
+          from: "The biggest mistake people make when buying a private jet.",
+          to: [
+            { text: "The biggest mistake first time buyers make." },
+            { text: "The most expensive mistake buyers make." },
+            { text: "A mistake even experienced buyers still make." },
+            { text: "A mistake nobody warns buyers about." },
           ],
         },
         { kind: "p", text: "You can also change the perspective." },

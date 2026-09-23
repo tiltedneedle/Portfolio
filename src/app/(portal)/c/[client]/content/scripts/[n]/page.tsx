@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CutLink } from "@/components/room/CutLink";
 import { CopyScript } from "@/components/portal/CopyScript";
+import { Prompter } from "@/components/portal/Prompter";
+import { PrintButton } from "@/components/portal/PrintButton";
 import { chapter, pageNumber } from "@/content/chapters";
 import { requireClient } from "@/content/clients/registry";
 import { scriptAsText, shortName } from "@/content/clients/types";
@@ -32,7 +34,7 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
   const written = !!s.body?.length;
 
   return (
-    <article className="bg-[color:var(--stage)]">
+    <article className="script-page bg-[color:var(--stage)]">
       <header className="mx-auto max-w-[1600px] px-6 pb-12 pt-28 md:px-14 md:pt-36">
         <p className="mono flex flex-wrap items-center gap-x-4">
           <span>
@@ -43,8 +45,10 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
         </p>
         <div className="mt-6 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <h1 className="display max-w-[14ch] text-[clamp(48px,7.5vw,120px)]">{s.title || "Script " + pad(s.n)}</h1>
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="no-print flex flex-wrap items-center gap-4">
             <CopyScript text={scriptAsText(s)} disabled={!written} />
+            {written && <Prompter title={"Script " + pad(s.n) + " \u2014 " + s.title} hook={s.hook} body={s.body!} cta={s.cta} />}
+            {written && <PrintButton />}
           </div>
         </div>
       </header>
@@ -80,7 +84,7 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
                   <p className="text-[19px] leading-[1.6] text-[color:var(--ink-soft)]">{s.cta}</p>
                 </section>
               )}
-              <div className="border-t border-[color:var(--rule)] pt-8">
+              <div className="no-print border-t border-[color:var(--rule)] pt-8">
                 <CopyScript text={scriptAsText(s)} />
               </div>
             </div>
@@ -98,7 +102,7 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
         )}
       </div>
 
-      <nav className="border-t border-[color:var(--rule)] bg-[color:var(--stage-2)]" aria-label="Scripts">
+      <nav className="no-print border-t border-[color:var(--rule)] bg-[color:var(--stage-2)]" aria-label="Scripts">
         <div className="mono mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-6 px-6 py-8 md:px-14">
           <span>
             {prev ? (

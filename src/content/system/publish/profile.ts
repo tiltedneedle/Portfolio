@@ -10,6 +10,7 @@ export const profile: Guide = {
   slug: "profile",
   title: "Profile optimisation",
   kicker: "The profile is where attention becomes a decision.",
+  poster: "DEuqrU7q9Rc",
   intro: [
     "Someone has just watched a video, liked it, and tapped your name. In the next few seconds they decide whether to follow, message, or leave.",
     "Every element of the profile should make that decision easy. This is the part most businesses ignore, and it is the part that turns views into enquiries.",

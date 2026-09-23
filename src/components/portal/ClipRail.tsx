@@ -1,4 +1,4 @@
-import { published } from "@/lib/published";
+import { published, stillFor } from "@/lib/published";
 import { ClipRailClient } from "@/components/portal/ClipRailClient";
 
 /**
@@ -12,7 +12,7 @@ export function ClipRail({ title, note, items }: { title?: string; note?: string
       id: it.id,
       title: found?.title || it.caption || "Clip",
       caption: it.caption,
-      thumb: found?.thumb || "https://i.ytimg.com/vi/" + it.id + "/oardefault.jpg",
+      thumb: stillFor(it.id),
       handle: found?.handle || "",
     };
   });

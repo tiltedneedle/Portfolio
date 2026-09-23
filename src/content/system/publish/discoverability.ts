@@ -5,16 +5,16 @@ export const discoverability: Guide = {
   slug: "discoverability",
   title: "Discoverability",
   kicker: "Help the platforms understand what your content is about, and who it is for.",
+  poster: "WtFrrO8SvTE",
   intro: [
     "Creating strong content is the first objective. The second is helping the platforms understand what that content is about and who might be interested in it.",
     "This matters because social platforms are increasingly becoming search engines as well as entertainment platforms.",
   ],
   opener: [
     {
-      kind: "lines",
+      kind: "typewriter",
       title: "Someone might search",
-      mode: "screen",
-      items: [
+      queries: [
         "Best private jet for London to Dubai",
         "Gulfstream G700 range",
         "Bombardier Global 7500 interior",

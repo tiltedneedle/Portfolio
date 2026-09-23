@@ -100,4 +100,8 @@ export const home = {
     beats: ["Research.", "Create.", "Publish.", "Analyse.", "Improve.", "Then repeat."],
   },
   access_note: "Permanent access. This system is yours to keep, and it is updated as we learn more.",
+  films: {
+    intro: { title: "Welcome to your system" },
+    outro: { title: "Where to go from here" },
+  },
 };

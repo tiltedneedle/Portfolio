@@ -5,6 +5,7 @@ export const editing: Guide = {
   slug: "editing",
   title: "Retention editing blueprint",
   kicker: "Control what the viewer sees, hears and feels from the first second until the last.",
+  poster: "KGVOiwba6gA",
   intro: [
     "Editing is not about adding as many effects as possible. The editor's job is to control what the viewer sees, hears and feels from the first second until the last.",
   ],

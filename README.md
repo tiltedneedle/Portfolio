@@ -2,11 +2,12 @@
 
 Next.js 16 (App Router) · React 19 · Tailwind v4 · Framer Motion
 
-A private, premium site that delivers one client's complete viral content
-system: their audit, their hundred ideas and twenty scripts, and the
-universal Tilted Needle knowledge (create, publish, analyse). Built once,
-duplicated per client. `PROGRESS.md` is the resume point for anyone picking
-the work up. The marketing site this grew out of lives on the
+A private site that delivers each client's complete viral content system:
+their audit, their hundred ideas and twenty scripts, and the universal
+Tilted Needle knowledge (create, publish, analyse). One deployment serves
+every client; the access code identifies who is in the room, and every page
+under the door is theirs. `PROGRESS.md` is the resume point for anyone
+picking the work up. The marketing site this grew out of lives on the
 `marketing-site` branch.
 
 ## Running
@@ -21,6 +22,13 @@ npm run build
 npx next start -p 3400
 ```
 
+Without `PORTAL_SECRET` the door is open and the site shows the `template`
+client, which is the right thing for previewing. To test the door locally:
+
+```bash
+PORTAL_SECRET=any-long-random-string npx next start -p 3401
+```
+
 If `next start` fails with `EADDRINUSE`, an older instance holds the port
 and you would be looking at a stale build. Kill it first:
 
@@ -32,41 +40,86 @@ Get-NetTCPConnection -LocalPort 3400 -State Listen | ForEach-Object { Stop-Proce
 
 | Route | Personalised | What it is |
 |---|---|---|
-| `/` | name and logo only | Welcome, what you have access to (a pinned strip of seven cards), how to use the system (five steps on a loop), the approach |
-| `/audit` then `/audit/content-diagnostic`, `/audit/competitor-intelligence` | yes | Two reports on fixed headings (13 and 8). Empty headings show a slate until written |
-| `/content` then `/content/ideas`, `/content/scripts`, `/content/scripts/[n]` | yes | Four pillars of 25 idea cards on rails; 20 script cards on a rail; a script page with a copy button |
+| `/` | name and logo | Welcome, an intro film slot, what you have access to (a pinned strip of seven cards), how to use the system (five steps on a loop), an outro film slot, the approach |
+| `/audit` then `/audit/content-diagnostic`, `/audit/competitor-intelligence` | yes | Two reports on fixed headings (13 and 8). Unwritten headings show a slate |
+| `/content` then `/content/ideas`, `/content/scripts`, `/content/scripts/[n]` | yes | Four pillars of 25 idea cards on rails and a "deal me one" card; 20 scripts on a rail; a script page with copy, a full-screen prompter and print |
 | `/create` then 7 guides | no | Study your niche, ideation, video style, hooks, core message, filming, editing |
 | `/publish` then 4 guides | no | Publishing strategy, content packaging, discoverability, profile optimisation |
 | `/analyse` then 2 guides | no | Understanding your analytics, the monthly process |
-| `/login` | | The door (see below) |
+| `/login` | | The door |
 
-The nav is the table of contents: hovering a room opens a panel listing
-its pages; on a phone the whole contents fold into one screen.
+The nav is the table of contents: hovering a room opens a panel listing its
+pages; on a phone the whole contents fold into one screen. `⌘K` (or `/`)
+opens the palette, which jumps to any page or section; `[` and `]` page
+through the system in reading order. Guides carry a reading line along the
+top edge.
 
-## Setting up a new client
+## Clients
 
-Everything personal lives in `src/content/client/`. For a new client:
+Everything personal lives in `src/content/clients/<slug>/`, one folder per
+client, listed in `src/content/clients/registry.ts`. Two ship with the
+repo: `template` (what an open door shows; example ideas and one example
+script) and `demo` (Horizon Aviation, fictional; the finished state, access
+code `horizon-2026`).
 
-1. **Duplicate** the repo (or branch it) so each client has their own URL.
-2. Edit `src/content/client/client.ts`: name, short name, logo path, year,
-   contact. Drop the logo into `public/client/`. Without a logo the site
-   shows a monogram in a hairline square.
-3. Fill `src/content/client/audit.ts` (paragraphs under each fixed heading),
-   `ideas.ts` (25 strings per pillar) and `scripts.ts` (title, hook, body,
-   call to action). Anything left empty renders as a slot that says so.
-4. Set `PORTAL_PASSWORD` on the deployment. Without it the door is open,
-   which is what you want for previewing the template.
-5. Deploy. `robots.txt` disallows everything and every page is `noindex`.
+To add a client:
 
-Everything universal lives in `src/content/system/` and does not change per
-client.
+1. Copy `src/content/clients/demo/` to `src/content/clients/<slug>/` and
+   add it to the `all` list in `registry.ts`. The slug is lower-case
+   letters, digits and hyphens.
+2. In `index.ts` set the identity: `name`, `short` (for the nav), `logo`
+   (a file under `public/client/`; without one the site shows a monogram),
+   `since`, `contact`. Remove `demo: true`.
+3. Make the access code and paste the hash into `accessHash`:
+
+   ```bash
+   npm run access -- <slug> "<the access code>"
+   ```
+
+   The code itself is never stored; give it to the client directly.
+4. Write the two audit reports (paragraphs under each fixed heading; use the
+   `report()` helper), 25 ideas per pillar (`pillar()` pads to 25) and 20
+   scripts (`scripts()` fills the numbered slots). Anything left empty
+   renders as a slot that says it is on its way.
+5. Check and build:
+
+   ```bash
+   npm run check
+   npm run build
+   ```
+
+   `check` compiles the content, then validates every client and guide:
+   slugs, hashes, logos, heading sets, idea counts, script numbering, clip
+   ids. It exits non-zero on problems.
+6. Deploy. The pages for every client are pre-rendered at build time.
+
+## The door
+
+`src/proxy.ts` runs on every request. With `PORTAL_SECRET` set it verifies
+the `tn-room` cookie (`slug.expiry.signature`, HMAC-SHA256 under the
+secret, 30 days) and rewrites the clean URL into that client's pre-rendered
+tree under `/c/<slug>/`. No cookie, or a bad one, redirects to `/login`
+with the wanted page in `?next=`. Direct hits on `/c/...` are bounced to the
+clean path, so no client tree is reachable by name.
+
+The login page is one field. The server action hashes the code against
+every client (`sha256("tn:" + slug + ":" + code)`, constant-time, no early
+exit) and, on a match, sets the session cookie and a readable `tn-in`
+presence cookie that the static footer uses to show "Leave the room".
+Twelve attempts per ten minutes per IP. No accounts, no database.
+
+Set `PORTAL_SECRET` on the deployment to any long random string. Rotating
+it logs everyone out.
 
 ## Writing a guide
 
 A guide is data (`src/content/types.ts`): a title, a kicker, an intro, an
-optional training film, numbered sections made of blocks, and the rule it
-closes on. Each block kind has one designed rendering in
-`src/components/portal/blocks.tsx`:
+optional training film, a `poster` (the YouTube id whose still stands for
+the guide on its chapter page), numbered sections made of blocks, and the
+rule it closes on. Each block kind has one designed rendering in
+`src/components/portal/blocks.tsx`; the diagrams live in `diagrams.tsx`.
+
+Text:
 
 - `p`, `lead`: paragraphs at a reading measure
 - `list`: ruled rows with mono indices (`rule`), pills (`tag`), or one-word beats in the display face (`beat`)
@@ -81,30 +134,39 @@ closes on. Each block kind has one designed rendering in
 - `checklist`: the call sheet
 - `aside`: a pull quote, optionally labelled ("Action point")
 - `sub`: a titled sub-section
+
+Pictures:
+
 - `clips`: example clips from the studio's published library, by YouTube id
 - `profile`: the bad-profile / good-profile comparison
+- `figure`: a still (`/path` under `public/`, or a URL) with alt text and a caption
+- `retention`: where attention is lost, as a watch-time curve
+- `cadence`: a month of days, every other one carrying a post
+- `fan`: one to many (one idea, four angles; one video, five platforms)
+- `structure`: the shape of a video as a strip with timecodes
+- `shots`: shot sizes as a contact sheet
+- `lens`: two angles of view from one camera
+- `flashcards`: an opening line on the front, the hook on the back
+- `flow`: a ladder of yes/no questions
+- `typewriter`: a search box typing what people search for
+- `cycle`: a ring of stations
 
 Inline: `**bold**` and `*emphasis*` (the serif italic).
 
 ### Training films
 
-Each Create guide has a `film` slot. Add `youtubeId` when the film is
-uploaded (unlisted on YouTube is fine); until then the well shows its slate
-and says the film arrives with onboarding.
+Each Create guide has a `film` slot, and home has an intro and an outro.
+Add `youtubeId` when the film is uploaded (unlisted on YouTube is fine);
+until then the well shows its slate and says the film arrives with
+onboarding.
 
 ### Example clips
 
 `src/lib/published.json` is the studio's own index of published work
 (stills and links), exported read-only from the ops database with
-`node scripts/published.mjs`. A `clips` block references entries by YouTube
-id and plays them in a lightbox from the privacy-enhanced host.
-
-## The door
-
-`src/proxy.ts` redirects every request to `/login` unless the `tn-room`
-cookie carries a SHA-256 digest of `PORTAL_PASSWORD`. The login page is a
-server action that sets that cookie for 30 days. One password per client
-system; no accounts, no database.
+`node scripts/published.mjs`. `clips` blocks and guide posters reference
+entries by YouTube id; anything not in the index falls back to YouTube's
+own still, and `npm run check` warns about it.
 
 ## The design system
 
@@ -113,11 +175,22 @@ Display, Instrument Sans, Instrument Serif italic, JetBrains Mono, all
 vendored, all SIL OFL), tally red used only for state. Rules: display type
 is condensed and uppercase with one word dropped to the serif italic; labels
 are mono; corners are square or pill; nothing floats. Route changes are
-black-frame cuts; fine pointers get a playhead cursor.
+black-frame cuts; fine pointers get a playhead cursor. Scripts print black
+on white with the room left out.
+
+Security headers, including a narrow content security policy, are in
+`next.config.ts`. Anything that loads from a new host must be added there.
 
 ## Verifying
 
-Visual checks run through Playwright against `next start` on 3400, with
-screenshots into a scratch directory. Freeze reveals with
-`[style*="opacity"]{opacity:1!important}` for stills. The cut can be timed
-by sampling `document.body.classList.contains("is-cutting")` around a click.
+```bash
+npm run check
+npm run smoke -- http://localhost:3400
+npm run smoke -- http://localhost:3401 --gated
+```
+
+`smoke` fetches every route and checks status codes, redirects, the door,
+and a few strings. Visual checks run through Playwright against
+`next start`, with screenshots into a scratch directory. Freeze reveals
+with `[style*="opacity"]{opacity:1!important;transform:none!important}`
+for stills, and wait for the home slate to finish before shooting home.

@@ -6,6 +6,7 @@ import { GuideRail } from "@/components/portal/GuideRail";
 import { TrainingFilm } from "@/components/portal/TrainingFilm";
 import { NextCut } from "@/components/portal/NextCut";
 import { Rich } from "@/components/portal/Rich";
+import { ReadingProgress } from "@/components/portal/ReadingProgress";
 
 /**
  * A guide page: the slate (chapter, number, title, kicker, intro), the
@@ -22,6 +23,7 @@ export function Guide({ guide }: { guide: GuideT }) {
 
   return (
     <article className="bg-[color:var(--stage)]">
+      <ReadingProgress />
       <header className="mx-auto max-w-[1600px] px-6 pb-14 pt-28 md:px-14 md:pt-36">
         <p className="mono">
           {ch.n} &mdash; {ch.title} <span className="text-[color:var(--ink-faint)]">/</span> {n}

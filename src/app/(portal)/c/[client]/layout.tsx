@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { ClientProvider } from "@/components/portal/ClientContext";
 import { PortalNav } from "@/components/portal/PortalNav";
 import { PortalFooter } from "@/components/portal/PortalFooter";
+import { Palette } from "@/components/portal/Palette";
+import { paletteIndex } from "@/components/portal/palette-index";
 import { clientSlugs, requireClient } from "@/content/clients/registry";
 import { publicIdentity } from "@/content/clients/types";
 
@@ -20,8 +22,10 @@ export async function generateMetadata({ params }: { params: Promise<{ client: s
   const { client } = await params;
   const sys = requireClient(client);
   const name = sys.identity.name + " × Tilted Needle";
-  return { title: { default: name, template: "%s · " + name } };
+  return { title: { absolute: name, template: "%s · " + name } };
 }
+
+const index = paletteIndex();
 
 export default async function ClientLayout({ children, params }: { children: React.ReactNode; params: Promise<{ client: string }> }) {
   const { client } = await params;
@@ -34,6 +38,7 @@ export default async function ClientLayout({ children, params }: { children: Rea
       <PortalNav />
       <main id="main">{children}</main>
       <PortalFooter />
+      <Palette items={index} />
     </ClientProvider>
   );
 }

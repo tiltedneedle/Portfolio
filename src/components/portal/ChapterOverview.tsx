@@ -3,12 +3,15 @@ import { CutLink } from "@/components/room/CutLink";
 import { chapter, pageHref, pageNumber } from "@/content/chapters";
 import type { ChapterId } from "@/content/types";
 import { shortName, type PublicIdentity } from "@/content/clients/types";
+import { stillFor } from "@/lib/published";
 
 export type OverviewRow = {
   slug: string;
   title: string;
   line: string;
   meta?: string;
+  /** YouTube id for a still beside the row. */
+  poster?: string;
 };
 
 /**
@@ -54,9 +57,17 @@ export function ChapterOverview({
               <CutLink
                 href={pageHref(id, r.slug)}
                 data-cursor="Open"
-                className="group grid grid-cols-[6ch_1fr] items-baseline gap-x-6 py-7 md:grid-cols-[6ch_1fr_auto] md:gap-x-12 md:py-9"
+                className="group grid grid-cols-[6ch_1fr] items-baseline gap-x-6 py-7 md:grid-cols-[6ch_auto_1fr_auto] md:items-center md:gap-x-10 md:py-8"
               >
                 <span className="mono">{pageNumber(id, r.slug)}</span>
+                {r.poster ? (
+                  <span className="well hidden w-[64px] border border-[color:var(--rule)] transition-colors group-hover:border-[color:var(--rule-strong)] md:block">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={stillFor(r.poster)} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-80 transition-opacity group-hover:opacity-100" />
+                  </span>
+                ) : (
+                  <span className="hidden md:block" />
+                )}
                 <span>
                   <span className="display block text-[clamp(32px,4.4vw,64px)] leading-[0.95] text-[color:var(--ink)] transition-colors group-hover:text-white">{r.title}</span>
                   <span className="em-serif mt-2 block max-w-[44ch] text-[17px] text-[color:var(--ink-soft)] md:text-[19px]">{r.line}</span>

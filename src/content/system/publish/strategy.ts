@@ -5,6 +5,7 @@ export const strategy: Guide = {
   slug: "strategy",
   title: "Publishing strategy",
   kicker: "Do not make a video, post it once and hope.",
+  poster: "iMqGv-W5DhY",
   intro: [
     "Once your content has been created, you need a consistent publishing system.",
     "You want to build a bank of strong content, publish it consistently across every relevant platform and give yourself enough data to understand what your audience actually responds to.",
@@ -33,6 +34,7 @@ export const strategy: Guide = {
       blocks: [
         { kind: "p", text: "Once your initial content bank is ready, start publishing consistently. A strong starting point is:" },
         { kind: "aside", text: "**One video every other day.**" },
+        { kind: "cadence", title: "A month, at that pace", note: "Fifteen posts. Enough to see a pattern; not so many that quality slips." },
         { kind: "p", text: "That gives you roughly 15 posts across a month. This is enough volume to begin identifying patterns without sacrificing the quality of the content." },
         { kind: "p", text: "Do not publish all 15 videos in one week. You want to create a consistent flow of content and give each video an opportunity to reach its audience." },
         { kind: "p", text: "After the first month, review what performed and use those results to influence the next content bank. Over time, the process becomes:" },
@@ -58,6 +60,20 @@ export const strategy: Guide = {
           title: "For most aviation businesses, short form content should be published across",
           style: "tag",
           items: ["Instagram Reels", "TikTok", "YouTube Shorts", "Facebook Reels", "LinkedIn, where relevant"],
+        },
+        {
+          kind: "fan",
+          title: "One video, five chances",
+          fromLabel: "The finished video",
+          from: "A Gulfstream and a Bombardier, side by side: which one would we buy, and why.",
+          to: [
+            { label: "YouTube Shorts", text: "Where the educational comparison tends to do its best work." },
+            { label: "Instagram Reels", text: "Where the look of the aircraft carries it." },
+            { label: "TikTok", text: "Where the opinion in the first line does the work." },
+            { label: "Facebook Reels", text: "A broader, older audience; the same video, a plainer caption." },
+            { label: "LinkedIn", text: "Where the industry argument becomes a discussion." },
+          ],
+          note: "The same video, packaged five ways. Judge it after all five, not after the first.",
         },
         { kind: "p", text: "The same video may perform completely differently on each platform. An educational video comparing a Gulfstream with a Bombardier may perform exceptionally well on YouTube Shorts. A visually impressive aircraft tour may perform better on Instagram. An industry opinion may generate stronger discussion on LinkedIn." },
         { kind: "p", text: "Do not decide whether an idea worked based on one platform. Give the content multiple opportunities to find the right audience." },

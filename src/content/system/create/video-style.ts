@@ -5,6 +5,7 @@ export const videoStyle: Guide = {
   slug: "video-style",
   title: "Choose your video style",
   kicker: "The idea comes first. Then the format that makes it most interesting to watch.",
+  poster: "93f2iVn6rIc",
   intro: [
     "Once you have the idea, the next step is deciding how that idea should be presented.",
     "In aviation, you often have access to highly visual environments: aircraft, hangars, cabins, airports, clients and experiences that most people never get to see. The format you choose should take advantage of that access.",

@@ -2,6 +2,10 @@ import type { Block } from "@/content/types";
 import { Rich } from "@/components/portal/Rich";
 import { ClipRail } from "@/components/portal/ClipRail";
 import { ProfileCompare } from "@/components/portal/ProfileCompare";
+import { Reveal } from "@/components/portal/Reveal";
+import { Cadence, Cycle, Fan, Figure, Flow, Lens, Retention, Shots, Structure } from "@/components/portal/diagrams";
+import { Flashcards } from "@/components/portal/Flashcards";
+import { Typewriter } from "@/components/portal/Typewriter";
 
 /**
  * One renderer per block kind. Everything here is a server component; the
@@ -362,7 +366,9 @@ export function Blocks({ blocks }: { blocks: Block[] }) {
   return (
     <div className="flex flex-col gap-9">
       {blocks.map((b, i) => (
-        <BlockView key={i} block={b} />
+        <Reveal key={i}>
+          <BlockView block={b} />
+        </Reveal>
       ))}
     </div>
   );
@@ -405,6 +411,28 @@ export function BlockView({ block }: { block: Block }) {
       );
     case "clips":
       return <ClipRail title={block.title} note={block.note} items={block.items} />;
+    case "retention":
+      return <Retention title={block.title} note={block.note} />;
+    case "cadence":
+      return <Cadence title={block.title} note={block.note} days={block.days} every={block.every} />;
+    case "fan":
+      return <Fan title={block.title} from={block.from} fromLabel={block.fromLabel} to={block.to} note={block.note} />;
+    case "structure":
+      return <Structure title={block.title} parts={block.parts} seconds={block.seconds} note={block.note} />;
+    case "shots":
+      return <Shots title={block.title} items={block.items} note={block.note} />;
+    case "lens":
+      return <Lens title={block.title} wide={block.wide} tight={block.tight} note={block.note} />;
+    case "flashcards":
+      return <Flashcards title={block.title} items={block.items} note={block.note} />;
+    case "flow":
+      return <Flow title={block.title} steps={block.steps} end={block.end} note={block.note} />;
+    case "typewriter":
+      return <Typewriter title={block.title} queries={block.queries} />;
+    case "cycle":
+      return <Cycle title={block.title} items={block.items} note={block.note} />;
+    case "figure":
+      return <Figure src={block.src} alt={block.alt} caption={block.caption} ratio={block.ratio} />;
     case "profile":
       return <ProfileCompare />;
   }

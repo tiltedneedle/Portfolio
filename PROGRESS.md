@@ -13,7 +13,9 @@ Verify with `npm run smoke -- http://localhost:3400` and
 `npm run smoke -- http://localhost:3401 --gated`; content with `npm run
 check`. Visual checks go through the Playwright MCP
 (`browser_run_code_unsafe`), screenshots into the session scratchpad,
-never into the repo.
+never into the repo. Shell gotchas on this machine: long heredocs with
+apostrophes have failed to parse in the Bash tool; write files with the
+Write tool (to the scratchpad, then `cp`) or with a small node script.
 
 ## What this is (2026-09-24)
 
@@ -40,6 +42,12 @@ The marketing site this grew out of is on the `marketing-site` branch.
   A readable `tn-in` cookie lets the static footer show "Leave the room".
 - Scripts: `npm run access -- <slug> <code>` (hash for a client file),
   `npm run check` (validates every client and guide), `npm run smoke`.
+- Diagrams are block kinds (`src/components/portal/diagrams.tsx`, plus
+  `Flashcards.tsx` and `Typewriter.tsx` for the two that need a browser).
+  Adding one: a type in `src/content/types.ts`, a case in `blocks.tsx`, a
+  rule in `scripts/check-content.mjs`, a line in README.
+- Security headers with a narrow CSP in `next.config.ts` (no nonces: the
+  pages are static). New hosts must be added there.
 
 ## Done
 
@@ -48,30 +56,44 @@ The marketing site this grew out of is on the `marketing-site` branch.
       nav with panels, guide pages with rail and rule, audit reports, ideas
       rails, scripts rail + script page with copy, login, 404.
 - [x] Multi-client architecture as above, verified end to end in the
-      browser: wrong code, right code, own pages, direct /c/ bounce, leave,
-      open mode. 84 static pages build clean.
-- [x] Demo client with written audit sections, 25 authority ideas and 3
-      scripts, so the finished state is visible.
+      browser. Demo client with written audit sections, ideas and scripts.
+- [x] Creative wave 1 (2026-09-24): reveal motion on blocks; reading line
+      on guides and reports; palette (⌘K, /, arrows, Enter, section
+      anchors) and `[` `]` paging; prompter on script pages (roll, pace,
+      size, mirror, rewind, timecode) and a print stylesheet; "deal me one"
+      on the ideas page; posters on chapter overviews (studio stills);
+      intro and outro film slots on home.
+- [x] Diagram blocks: retention curve and diagnose-a-video ladder
+      (Analyse), cadence strip and one-video-five-platforms fan (Publish
+      strategy), structure strip (Core message), shot sheet and lens wedges
+      (Filming), idea fan (Ideation), hook flashcards (Hooks), search
+      typewriter (Discoverability), cycle ring (Monthly process). `figure`
+      block for the user's images (validated against `public/`).
+- [x] Hardening: `error.tsx` and `global-error.tsx` in the room's voice,
+      clipboard fallback in CopyScript, CSP, home title no longer doubled
+      ("X × Tilted Needle · Tilted Needle"). README rewritten for the
+      multi-client flow.
 
 ## In flight
 
-- [ ] Commit the multi-client architecture, then start the creative wave.
+- [ ] Verify wave 1 + diagrams in the browser (screenshots of every new
+      diagram at 1440 and 390), then commit and push.
 
-## Next (creative wave, in order)
+## Next
 
-1. Reveal motion on guide blocks (rows rise as they enter; reduced motion
-   respected), reading-progress line on guides (tally red, timecode style).
-2. Command palette (⌘K / "/"): every page and section, typeahead, cut on
-   pick. Keyboard `[` `]` for previous/next page.
-3. Teleprompter mode on script pages: full-screen, large type,
-   auto-scroll with speed, mirror toggle. Print stylesheet for scripts.
-4. "Deal me one" on the ideas page: a random idea, stateless.
-5. Diagrams as blocks: retention curve (Analyse), monthly calendar strip
-   and distribution board (Publish strategy), video-structure strip (Core
-   message), shot-size contact sheet and lens diagram (Filming), idea
-   multiplier branch (Ideation), hook flashcards (Hooks), diagnose-a-video
-   decision flow (Analyse), search typewriter (Discoverability).
-6. Chapter overviews with a poster per guide (first clip's still).
-7. Intro and outro film slots on home.
-8. Hardening: error.tsx / global-error.tsx in the room's style, clipboard
-   fallback, CSP header, `figure` block for the user's images.
+1. Second look at the diagrams on a phone: the cadence grid at 10 columns,
+   the flow ladder, the shot sheet at two columns.
+2. Nav: mark the current page in the panel; palette entry in the mobile
+   contents screen (the ⌘K button is desktop-only).
+3. Guide rail: a "read" tick per section once scrolled past (session only).
+4. Script page: estimated speaking time from the word count (150 wpm) in
+   the mono strip, and the same in the prompter HUD.
+5. Audit report: a "what to do first" summary block type when the client's
+   findings are written (needs the first real client).
+6. Research: view-transitions API for the cut (Next 16 supports the
+   `ViewTransition` component behind a flag; check the bundled docs),
+   `next/font` display strategy for the display face, and whether the
+   `Reveal` wrapper should skip blocks above the fold.
+7. Awaiting from the user (do not block): nine training-video ids for the
+   Create guides plus intro/outro, first real client content, images for
+   `figure` blocks.

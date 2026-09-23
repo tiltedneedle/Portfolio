@@ -1,0 +1,254 @@
+"use client";
+
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { beginCut } from "@/lib/cut";
+import { EASE_OUT_EXPO } from "@/lib/design-tokens";
+
+/**
+ * The palette: every page and every section of the system, one keystroke
+ * away. ⌘K or / opens it, typing filters, arrows move, Enter cuts. The
+ * square brackets page through the system in order without opening it.
+ *
+ * The index is built on the server (titles and hrefs only) and handed in,
+ * so the browser never carries the guide text.
+ */
+export type PaletteItem = {
+  href: string;
+  title: string;
+  chapter: string;
+  n: string;
+  sections: { id: string; title: string; n?: string }[];
+};
+
+type Hit = { href: string; title: string; kicker: string; n: string; section?: boolean };
+
+const KEYS = "⌘K";
+
+function isTyping(e: KeyboardEvent) {
+  const t = e.target as HTMLElement | null;
+  if (!t) return false;
+  const tag = t.tagName;
+  return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || t.isContentEditable;
+}
+
+export function Palette({ items }: { items: PaletteItem[] }) {
+  const [open, setOpen] = useState(false);
+  const [q, setQ] = useState("");
+  const [cursor, setCursor] = useState(0);
+  const input = useRef<HTMLInputElement>(null);
+  const list = useRef<HTMLUListElement>(null);
+  // A section anchor to jump to once the next page has committed.
+  const pendingHash = useRef<string | null>(null);
+  const router = useRouter();
+  const pathname = usePathname();
+  const reduced = useReducedMotion();
+
+  // The page order for [ and ]: every distinct path, home first.
+  const order = useMemo(() => {
+    const seen = new Set<string>();
+    const out: string[] = [];
+    for (const it of items) {
+      const p = it.href.split("#")[0];
+      if (!seen.has(p)) {
+        seen.add(p);
+        out.push(p);
+      }
+    }
+    return out;
+  }, [items]);
+
+  const go = useCallback(
+    (href: string) => {
+      setOpen(false);
+      const path = href.split("#")[0];
+      if (path === pathname) {
+        const hash = href.split("#")[1];
+        if (hash) document.getElementById(hash)?.scrollIntoView({ behavior: reduced ? "auto" : "smooth" });
+        else window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+        return;
+      }
+      pendingHash.current = href.split("#")[1] || null;
+      if (!reduced) beginCut();
+      requestAnimationFrame(() => router.push(href));
+    },
+    [pathname, reduced, router]
+  );
+
+  // The router lands new pages at the top; a section pick still has to
+  // arrive at its section. The cut frame is up while this happens, so the
+  // jump is never seen.
+  useEffect(() => {
+    const hash = pendingHash.current;
+    if (!hash) return;
+    pendingHash.current = null;
+    requestAnimationFrame(() => document.getElementById(hash)?.scrollIntoView({ block: "start" }));
+  }, [pathname]);
+
+  const show = useCallback(() => {
+    setQ("");
+    setCursor(0);
+    setOpen(true);
+  }, []);
+
+  useEffect(() => {
+    const key = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        if (open) setOpen(false);
+        else show();
+        return;
+      }
+      if (isTyping(e)) return;
+      if (e.key === "/" && !open) {
+        e.preventDefault();
+        show();
+        return;
+      }
+      if (open) return;
+      if (e.key === "[" || e.key === "]") {
+        const i = order.indexOf(pathname);
+        if (i === -1) return;
+        const next = order[i + (e.key === "]" ? 1 : -1)];
+        if (next) go(next);
+      }
+    };
+    window.addEventListener("keydown", key);
+    return () => window.removeEventListener("keydown", key);
+  }, [open, order, pathname, go, show]);
+
+  useEffect(() => {
+    if (!open) return;
+    document.body.style.overflow = "hidden";
+    const t = setTimeout(() => input.current?.focus(), 30);
+    return () => {
+      document.body.style.overflow = "";
+      clearTimeout(t);
+    };
+  }, [open]);
+
+  const hits = useMemo<Hit[]>(() => {
+    const needle = q.trim().toLowerCase();
+    const pages: Hit[] = items.map((it) => ({ href: it.href, title: it.title, kicker: it.chapter, n: it.n }));
+    if (!needle) return pages;
+    const words = needle.split(/\s+/).filter(Boolean);
+    const matches = (s: string) => words.every((w) => s.toLowerCase().includes(w));
+    const out: Hit[] = [];
+    for (const it of items) {
+      if (matches(it.title + " " + it.chapter + " " + it.n)) out.push({ href: it.href, title: it.title, kicker: it.chapter, n: it.n });
+    }
+    for (const it of items) {
+      for (const s of it.sections) {
+        if (matches(s.title + " " + it.title)) out.push({ href: it.href + "#" + s.id, title: s.title, kicker: it.title, n: s.n ?? it.n, section: true });
+      }
+    }
+    return out.slice(0, 14);
+  }, [items, q]);
+
+  useEffect(() => {
+    const el = list.current?.children[cursor] as HTMLElement | undefined;
+    el?.scrollIntoView({ block: "nearest" });
+  }, [cursor]);
+
+  const onKey = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") setOpen(false);
+    else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setCursor((c) => Math.min(hits.length - 1, c + 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setCursor((c) => Math.max(0, c - 1));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      const h = hits[cursor];
+      if (h) go(h.href);
+    }
+  };
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={show}
+        className="mono fixed bottom-6 left-6 z-40 hidden items-center gap-3 border border-[color:var(--rule-strong)] bg-[rgba(11,11,12,0.7)] px-3 py-2 backdrop-blur-md transition-colors hover:text-[color:var(--ink)] md:flex"
+        aria-label="Open the contents"
+        data-cursor="Open"
+      >
+        Contents <span className="text-[color:var(--ink-faint)]">{KEYS}</span>
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reduced ? 0 : 0.18 }}
+            className="fixed inset-0 z-[90] flex items-start justify-center bg-black/70 px-4 pt-[12vh] backdrop-blur-sm"
+            onClick={() => setOpen(false)}
+          >
+            <motion.div
+              initial={reduced ? false : { opacity: 0, y: 8, scale: 0.99 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 6 }}
+              transition={{ duration: 0.22, ease: EASE_OUT_EXPO }}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Contents"
+              onClick={(e) => e.stopPropagation()}
+              className="panel w-full max-w-[680px] overflow-hidden"
+            >
+              <div className="flex items-center gap-4 border-b border-[color:var(--rule)] px-5 py-4">
+                <span className="mono shrink-0">Go to</span>
+                <input
+                  ref={input}
+                  value={q}
+                  onChange={(e) => {
+                    setQ(e.target.value);
+                    setCursor(0);
+                  }}
+                  onKeyDown={onKey}
+                  placeholder="A page, a section, a word"
+                  className="w-full bg-transparent text-[19px] text-[color:var(--ink)] outline-none placeholder:text-[color:var(--ink-faint)]"
+                  aria-label="Search the system"
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+                <span className="mono shrink-0 text-[color:var(--ink-faint)]">Esc</span>
+              </div>
+              <ul ref={list} className="max-h-[52vh] overflow-y-auto py-2" role="listbox">
+                {hits.length === 0 && (
+                  <li className="mono px-5 py-6 text-[color:var(--ink-mid)]">Nothing on that. Try a room, a page or a subject.</li>
+                )}
+                {hits.map((h, i) => (
+                  <li key={h.href + i} role="option" aria-selected={i === cursor}>
+                    <button
+                      type="button"
+                      onMouseEnter={() => setCursor(i)}
+                      onClick={() => go(h.href)}
+                      className={
+                        "flex w-full items-baseline gap-4 px-5 py-2.5 text-left transition-colors " +
+                        (i === cursor ? "bg-[color:var(--stage-3)] text-[color:var(--ink)]" : "text-[color:var(--ink-soft)]")
+                      }
+                    >
+                      <span className="mono w-[5ch] shrink-0 text-[color:var(--ink-faint)]">{h.n}</span>
+                      <span className={h.section ? "text-[15px]" : "text-[17px]"}>{h.title}</span>
+                      <span className="mono ml-auto shrink-0 text-[color:var(--ink-faint)]">{h.kicker}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <div className="mono flex flex-wrap gap-x-6 gap-y-1 border-t border-[color:var(--rule)] px-5 py-3 text-[color:var(--ink-faint)]">
+                <span>&uarr;&darr; move</span>
+                <span>&crarr; open</span>
+                <span>[ ] previous / next page</span>
+                <span>/ search</span>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}

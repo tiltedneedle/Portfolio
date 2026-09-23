@@ -5,6 +5,7 @@ export const filming: Guide = {
   slug: "filming",
   title: "Viral filming blueprint",
   kicker: "Every shot should give the viewer a reason to keep watching.",
+  poster: "EcAAmQII-9c",
   intro: [
     "Great filming is not simply about making something look cinematic. Every shot should help keep the viewer engaged, communicate the story clearly and give the editor everything they need to create a strong final video.",
     "In aviation, you already have access to visually powerful environments.",
@@ -272,6 +273,17 @@ export const filming: Guide = {
             "Reactive camera movement",
           ],
         },
+        {
+          kind: "shots",
+          title: "Four sizes, same subject",
+          items: [
+            { label: "Wide", size: "wide", text: "The aircraft, the hangar, the person in the space. Establishes where we are." },
+            { label: "Medium", size: "medium", text: "Waist up. The default for someone speaking to camera." },
+            { label: "Close", size: "close", text: "The face. Reactions, emphasis, the important sentence." },
+            { label: "Detail", size: "detail", text: "Hands, controls, materials. The thing you want noticed." },
+          ],
+          note: "Grid on. Eyeline on the upper third. Cut between at least three of these in every video.",
+        },
         { kind: "p", text: "A viewer should continuously receive new visual information." },
       ],
     },
@@ -303,6 +315,12 @@ export const filming: Guide = {
           kind: "split",
           a: { label: "Use wider lenses to show", items: ["The full cabin", "A confined interior", "A large environment", "Someone walking through an aircraft"] },
           b: { label: "Use tighter lenses for", items: ["Details", "Faces", "Aircraft features", "Hands", "Controls", "Materials", "Small elements you want the audience to notice"] },
+        },
+        {
+          kind: "lens",
+          title: "From the same spot",
+          wide: "Takes the whole cabin: every seat, the length of it, the person walking through.",
+          tight: "Takes one control on the panel, and nothing else. The viewer looks where you looked.",
         },
         { kind: "p", text: "Avoid unnecessary extreme zooms. Choose the lens based on what the viewer needs to see." },
       ],

@@ -9,7 +9,7 @@ type GuideChapterId = "create" | "publish" | "analyse";
 
 /** The front page of a universal chapter: its guides as rows. */
 export function GuideChapter({ id }: { id: GuideChapterId }) {
-  const rows = guidesFor(id).map((g) => ({ slug: g.slug, title: g.title, line: g.kicker, meta: readingMinutes(g) + " min" }));
+  const rows = guidesFor(id).map((g) => ({ slug: g.slug, title: g.title, line: g.kicker, meta: readingMinutes(g) + " min", poster: g.poster }));
   return <ChapterOverview id={id} rows={rows} lead={chapter(id).blurb} />;
 }
 

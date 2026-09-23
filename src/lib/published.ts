@@ -40,6 +40,11 @@ export function publishedFor(client?: string): Published | undefined {
   return pool.find((p) => p.platform === "youtube_shorts") ?? pool[0];
 }
 
+/** The durable still for a YouTube id: the studio's cached copy where there is one, else YouTube's own 9:16 frame. */
+export function stillFor(videoId: string) {
+  return published.find((p) => p.videoId === videoId)?.thumb || "https://i.ytimg.com/vi/" + videoId + "/oardefault.jpg";
+}
+
 export function embedUrl(videoId: string) {
   return (
     "https://www.youtube-nocookie.com/embed/" +

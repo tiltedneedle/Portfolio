@@ -127,6 +127,14 @@ for (const g of guides) {
       if (b.kind === "clips") for (const it of b.items) if (!ids.has(it.id)) warn.push(`guide ${key} ${where}: clip ${it.id} is not in published.json (will use YouTube's still)`);
       if (b.kind === "sub") walkBlocks(b.blocks, where + " > " + b.title);
       if (b.kind === "list" && b.items.length === 0) problems.push(`guide ${key} ${where}: empty list`);
+      if ((b.kind === "fan" && b.to.length < 2) || (b.kind === "flow" && b.steps.length < 2) || (b.kind === "cycle" && b.items.length < 3)) problems.push(`guide ${key} ${where}: ${b.kind} needs more entries`);
+      if (b.kind === "structure" && (b.parts.length < 2 || b.parts.some((p) => !(p.share > 0)))) problems.push(`guide ${key} ${where}: structure parts need positive shares`);
+      if ((b.kind === "shots" || b.kind === "flashcards") && b.items.length === 0) problems.push(`guide ${key} ${where}: empty ${b.kind}`);
+      if (b.kind === "typewriter" && b.queries.length === 0) problems.push(`guide ${key} ${where}: empty typewriter`);
+      if (b.kind === "figure") {
+        if (!b.alt) problems.push(`guide ${key} ${where}: figure without alt text`);
+        if (b.src.startsWith("/") && !existsSync(join(root, "public", b.src.slice(1)))) problems.push(`guide ${key} ${where}: figure ${b.src} is not in public/`);
+      }
     }
   };
   g.sections.forEach((s, i) => {

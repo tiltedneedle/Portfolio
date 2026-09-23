@@ -5,6 +5,7 @@ export const studyYourNiche: Guide = {
   slug: "study-your-niche",
   title: "Study your niche",
   kicker: "Stop guessing. Start with evidence.",
+  poster: "kgexit7JaUA",
   intro: [
     "Before you create content, you need to understand what is already capturing attention within your market.",
     "One of the biggest mistakes brands make is creating content based purely on what they think people want to see. We take a different approach. We study what the audience is already responding to and use that information to make smarter creative decisions.",

@@ -5,6 +5,7 @@ export const hooks: Guide = {
   slug: "hooks",
   title: "Hooks",
   kicker: "The first few seconds decide whether someone keeps watching or scrolls past.",
+  poster: "R0YRf0nWEw4",
   intro: [
     "A strong hook creates an immediate reason to pay attention.",
     "It can come from what the viewer sees, what they hear, what you say, or ideally a combination of all three.",
@@ -247,6 +248,30 @@ export const hooks: Guide = {
             { id: "AdBomjIwksA", caption: "Instant value" },
             { id: "kgexit7JaUA", caption: "Curiosity and authority" },
           ],
+        },
+      ],
+    },
+    {
+      title: "Name the hook",
+      blocks: [
+        { kind: "p", text: "Twelve openings from this page. Read the line, name the hook, turn the card." },
+        {
+          kind: "flashcards",
+          items: [
+            { front: "This jet can fly from London to almost anywhere in the world without stopping.", back: "Verbal, and surprise" },
+            { front: "There is one thing most people never notice inside a private jet.", back: "Curiosity" },
+            { front: "Before you charter your next flight, check this first.", back: "Fear of missing out" },
+            { front: "This is one of the questions private jet buyers ask us most.", back: "Social proof" },
+            { front: "This aircraft looks smaller, but it can actually fly further.", back: "Surprise" },
+            { front: "After working in private aviation for 20 years, this is the mistake I see buyers make repeatedly.", back: "Authority" },
+            { front: "We nearly lost this aircraft deal 24 hours before completion.", back: "Story" },
+            { front: "Can you tell which one of these jets costs more to operate?", back: "Challenge" },
+            { front: "I will explain empty legs in 30 seconds.", back: "Instant value" },
+            { front: "A Gulfstream is already taxiing behind you.", back: "Visual" },
+            { front: "The cabin door closes, and the engines start.", back: "Audio" },
+            { front: "This aircraft can fly for more than 14 hours, but range is not the reason I would buy it.", back: "Verbal, curiosity and authority" },
+          ],
+          note: "If you can name it, you can write it. Now write three of your own before you film.",
         },
       ],
     },

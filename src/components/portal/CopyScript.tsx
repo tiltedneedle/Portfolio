@@ -2,7 +2,32 @@
 
 import { useEffect, useState } from "react";
 
-/** Copies the script as plain text. The lamp comes on while the copy is confirmed. */
+/**
+ * Copies the script as plain text. The lamp comes on while the copy is
+ * confirmed. Where the clipboard API is missing (an insecure origin, an
+ * old browser) it falls back to selecting a hidden textarea and copying
+ * that, and only then tells the reader to copy by hand.
+ */
+function legacyCopy(text: string) {
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.setAttribute("readonly", "");
+  ta.style.position = "fixed";
+  ta.style.top = "0";
+  ta.style.left = "0";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  let ok = false;
+  try {
+    ok = document.execCommand("copy");
+  } catch {
+    ok = false;
+  }
+  document.body.removeChild(ta);
+  return ok;
+}
+
 export function CopyScript({ text, disabled }: { text: string; disabled?: boolean }) {
   const [state, setState] = useState<"idle" | "done" | "fail">("idle");
 
@@ -14,11 +39,15 @@ export function CopyScript({ text, disabled }: { text: string; disabled?: boolea
 
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(text);
-      setState("done");
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+        setState("done");
+        return;
+      }
     } catch {
-      setState("fail");
+      // fall through to the legacy path
     }
+    setState(legacyCopy(text) ? "done" : "fail");
   };
 
   return (

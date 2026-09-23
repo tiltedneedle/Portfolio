@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { IdeasPillars } from "@/components/portal/IdeasPillars";
+import { DealOne } from "@/components/portal/DealOne";
 import { NextCut } from "@/components/portal/NextCut";
 import { chapter, pageNumber } from "@/content/chapters";
 import { requireClient } from "@/content/clients/registry";
@@ -13,6 +14,7 @@ export default async function IdeasPage({ params }: { params: Promise<{ client: 
   const sys = requireClient(client);
   const identity = publicIdentity(sys.identity);
   const c = chapter("content");
+  const cards = pillars.flatMap((p) => sys.ideas[p.id].map((idea, i) => ({ pillar: p.title, n: i + 1, text: idea.text || "" })).filter((x) => x.text));
   return (
     <article className="bg-[color:var(--stage)]">
       <header className="mx-auto max-w-[1600px] px-6 pb-14 pt-28 md:px-14 md:pt-36">
@@ -42,6 +44,9 @@ export default async function IdeasPage({ params }: { params: Promise<{ client: 
 
       <div className="mx-auto max-w-[1600px] px-6 pb-24 pt-8 md:px-14 md:pt-12">
         <IdeasPillars ideas={sys.ideas} identity={identity} />
+        <div className="mt-24">
+          <DealOne cards={cards} />
+        </div>
       </div>
 
       <NextCut chapter="content" slug="ideas" />

@@ -799,3 +799,178 @@ a:focus-visible > .wm {
     animation: none;
   }
 }
+
+/* ------------------------------------------------------------------ print
+   A script on paper: black on white, the words only. Everything that
+   belongs to the room (nav, footer, cursor, grain, transport) stays in
+   the room. */
+@media print {
+  :root {
+    --stage: #fff;
+    --stage-2: #fff;
+    --stage-3: #fff;
+    --ink: #000;
+    --ink-soft: #111;
+    --ink-mid: #444;
+    --ink-faint: #888;
+    --rule: #ccc;
+    --rule-strong: #999;
+  }
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  nav,
+  footer,
+  .no-print,
+  .grain,
+  .cursor-ring,
+  .cursor-label,
+  .skip {
+    display: none !important;
+  }
+  .script-page header {
+    padding-top: 0 !important;
+  }
+  .script-page .spoken {
+    color: #000 !important;
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+}
+
+/* ------------------------------------------------------------- diagrams
+   Lines for the fan (one to many) and the flow (a ladder of questions).
+   Pure CSS, so they hold at any row height. */
+.fan-gap {
+  width: 1px;
+  height: 24px;
+  margin-left: 24px;
+  background: var(--rule-strong);
+}
+.fan-branches {
+  display: flex;
+  flex-direction: column;
+}
+.fan-branch {
+  position: relative;
+  padding: 6px 0 6px 48px;
+}
+.fan-branch::before {
+  content: "";
+  position: absolute;
+  left: 24px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--rule-strong);
+}
+.fan-branch:last-child::before {
+  bottom: 50%;
+}
+.fan-branch::after {
+  content: "";
+  position: absolute;
+  left: 24px;
+  top: 50%;
+  width: 24px;
+  height: 1px;
+  background: var(--rule-strong);
+}
+@media (min-width: 768px) {
+  .fan-gap {
+    width: auto;
+    height: auto;
+    margin: 0;
+    background: none;
+  }
+  .fan-root::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: -24px;
+    width: 24px;
+    height: 1px;
+    background: var(--rule-strong);
+  }
+  .fan-branch {
+    padding-left: 0;
+  }
+  .fan-branch::before,
+  .fan-branch::after {
+    left: -24px;
+  }
+  .fan-branch:first-child::before {
+    top: 50%;
+  }
+}
+
+.flow {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--rule);
+}
+.flow-step,
+.flow-end {
+  position: relative;
+  padding: 22px 0 22px 32px;
+  border-top: 1px solid var(--rule);
+}
+.flow-step {
+  display: grid;
+  gap: 16px;
+}
+.flow-step::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--rule-strong);
+}
+.flow-step::after,
+.flow-end::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 34px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+.flow-end::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 0;
+  height: 34px;
+  width: 1px;
+  background: var(--rule-strong);
+}
+.flow-end::after {
+  background: var(--tally);
+  box-shadow: 0 0 10px 2px var(--tally-glow);
+}
+.flow-yes {
+  border-left: 2px solid var(--ink);
+  padding-left: 16px;
+}
+@media (min-width: 768px) {
+  .flow-step {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 40px;
+  }
+}
+
+.tw-caret {
+  animation: tw-blink 1s steps(2, start) infinite;
+}
+@keyframes tw-blink {
+  50% {
+    opacity: 0;
+  }
+}

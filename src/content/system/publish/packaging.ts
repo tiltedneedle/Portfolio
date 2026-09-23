@@ -5,6 +5,7 @@ export const packaging: Guide = {
   slug: "packaging",
   title: "Content packaging",
   kicker: "You can create an excellent video and still lose the viewer before they ever properly watch it.",
+  poster: "1JyE72paX1A",
   intro: [
     "Packaging is everything surrounding the content that influences whether someone decides it is worth their attention.",
   ],

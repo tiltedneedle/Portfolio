@@ -5,6 +5,7 @@ export const coreMessage: Guide = {
   slug: "core-message",
   title: "Deliver your core message",
   kicker: "Once you have captured attention, you need to earn it.",
+  poster: "vvfyWPtViUY",
   intro: [
     "The viewer should quickly understand what the video is about and feel that every sentence is taking them closer to the answer, result or payoff.",
     "Do not make people work to understand your point.",
@@ -51,14 +52,15 @@ export const coreMessage: Guide = {
       blocks: [
         { kind: "p", text: "Think about what the viewer needs to know first. Then what they need to know next. Then what they need to understand the conclusion. Avoid jumping between different points." },
         {
-          kind: "steps",
+          kind: "structure",
           title: "A simple structure",
-          items: [
-            { title: "Hook", text: "Give them a reason to watch." },
-            { title: "Context", text: "Give them only the information required to understand the subject." },
-            { title: "Core message", text: "Deliver the main information, explanation or story." },
-            { title: "Payoff", text: "Answer the question or complete the story." },
-            { title: "Action", text: "Where relevant, tell the viewer what to do next." },
+          seconds: 45,
+          parts: [
+            { label: "Hook", share: 8, text: "Give them a reason to watch." },
+            { label: "Context", share: 14, text: "Only what is needed to understand the subject." },
+            { label: "Core message", share: 52, text: "The main information, explanation or story." },
+            { label: "Payoff", share: 18, text: "Answer the question or complete the story." },
+            { label: "Action", share: 8, text: "Where relevant, what to do next." },
           ],
         },
       ],

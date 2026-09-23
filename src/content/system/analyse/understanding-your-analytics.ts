@@ -5,6 +5,7 @@ export const understandingYourAnalytics: Guide = {
   slug: "understanding-your-analytics",
   title: "Understanding your analytics",
   kicker: "Analytics should answer one question.",
+  poster: "BC_ZaHvv01U",
   intro: ["What should we do differently in the next video?"],
   opener: [
     {
@@ -29,6 +30,7 @@ export const understandingYourAnalytics: Guide = {
             items: ["Slow pacing", "Too much explanation", "Repetition", "Not enough visual change", "The answer becoming obvious too early", "The story drifting away from the original hook"],
           },
         },
+        { kind: "retention", title: "Where attention is lost", note: "Every retention graph has the same two exits. Read yours for which one is open." },
         {
           kind: "aside",
           label: "Action point",
@@ -125,6 +127,18 @@ export const understandingYourAnalytics: Guide = {
             "Did the ending deliver the promised payoff?",
             "Was the title and cover strong enough?",
           ],
+        },
+        {
+          kind: "flow",
+          title: "Diagnose a video",
+          steps: [
+            { q: "Did they leave in the first three seconds?", yes: "The hook and the first visual. Nothing else yet." },
+            { q: "Did they leave before the point was made?", yes: "Get to the point sooner. Cut the introduction." },
+            { q: "Did they drift away through the middle?", yes: "Pacing: more visual change, less repetition, hold the answer back." },
+            { q: "Did they watch to the end and do nothing?", yes: "The payoff, or the call to action." },
+            { q: "Did few people start it at all?", yes: "The title and the cover, not the video." },
+          ],
+          end: "Then, and only then, the idea.",
         },
         {
           kind: "aside",

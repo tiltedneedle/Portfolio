@@ -3,6 +3,7 @@ import { shortName } from "@/content/clients/types";
 import { chapter, pageNumber } from "@/content/chapters";
 import { NextCut } from "@/components/portal/NextCut";
 import { Rich } from "@/components/portal/Rich";
+import { ReadingProgress } from "@/components/portal/ReadingProgress";
 
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
@@ -19,6 +20,7 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
   const written = sections.filter((s) => s.body?.length).length;
   return (
     <article className="bg-[color:var(--stage)]">
+      <ReadingProgress />
       <header className="mx-auto max-w-[1600px] px-6 pb-14 pt-28 md:px-14 md:pt-36">
         <p className="mono flex flex-wrap items-center gap-x-4">
           <span>

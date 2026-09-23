@@ -5,6 +5,7 @@ export const monthlyProcess: Guide = {
   slug: "monthly-process",
   title: "Monthly analytics process",
   kicker: "The same eight steps, at the end of every month.",
+  poster: "UURns7hS2y0",
   intro: [
     "Analytics only becomes useful when it is done the same way, at the same time, every month. Sit down with the numbers from every platform and run the process below in order.",
     "The output is not a report. It is the brief for the next fifteen videos.",
@@ -32,7 +33,7 @@ export const monthlyProcess: Guide = {
       title: "The cycle",
       blocks: [
         { kind: "p", text: "This creates a continuous cycle." },
-        { kind: "list", style: "beat", items: ["Create.", "Publish.", "Analyse.", "Improve.", "Create again."] },
+        { kind: "cycle", items: ["Create", "Publish", "Analyse", "Improve"], note: "Create again. The fourth step leads back to the first." },
         { kind: "p", text: "The first month gives you a baseline. The second gives you a comparison. By the third, the patterns are yours, not ours." },
       ],
     },

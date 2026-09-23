@@ -1,24 +1,49 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { COOKIE, tokenFor } from "@/lib/portal-auth";
+import { COOKIE, PRESENCE, portalSecret, verify } from "@/lib/session";
+import { TEMPLATE_SLUG } from "@/content/clients/slugs";
 
 /**
- * Everything on the site is behind the door when PORTAL_PASSWORD is set.
- * The login page, Next's own assets and the few public files are not.
+ * Every clean URL is served from one client's pre-rendered tree.
+ *
+ *   /audit/hooks  ->  /c/<slug>/audit/hooks
+ *
+ * The slug comes from the signed session cookie, or is the template when
+ * the door is open (no PORTAL_SECRET). A visitor with no valid session is
+ * sent to the door. The internal tree is never addressed directly: a request
+ * to /c/... is bounced back to the clean path, so no one can reach another
+ * client's pages by guessing a slug.
  */
 export async function proxy(request: NextRequest) {
-  const expected = process.env.PORTAL_PASSWORD;
-  if (!expected) return NextResponse.next();
-
-  const token = request.cookies.get(COOKIE)?.value;
-  if (token && token === (await tokenFor(expected))) return NextResponse.next();
-
   const url = request.nextUrl.clone();
-  const wanted = url.pathname + url.search;
-  url.pathname = "/login";
-  url.search = wanted === "/" ? "" : "?next=" + encodeURIComponent(wanted);
-  return NextResponse.redirect(url);
+  const path = url.pathname;
+
+  if (path === "/c" || path.startsWith("/c/")) {
+    url.pathname = path.replace(/^\/c(\/[^/]+)?/, "") || "/";
+    return NextResponse.redirect(url);
+  }
+
+  const secret = portalSecret();
+  let slug: string | null = TEMPLATE_SLUG;
+  if (secret) {
+    slug = await verify(secret, request.cookies.get(COOKIE)?.value);
+    if (!slug) {
+      const wanted = path + url.search;
+      url.pathname = "/login";
+      url.search = wanted === "/" ? "" : "?next=" + encodeURIComponent(wanted);
+      const res = NextResponse.redirect(url);
+      // A stale or forged cookie is cleared so the door does not keep bouncing.
+      if (request.cookies.has(COOKIE)) res.cookies.delete(COOKIE);
+      if (request.cookies.has(PRESENCE)) res.cookies.delete(PRESENCE);
+      return res;
+    }
+  }
+
+  url.pathname = "/c/" + slug + (path === "/" ? "" : path);
+  return NextResponse.rewrite(url);
 }
 
 export const config = {
-  matcher: ["/((?!login|_next/static|_next/image|favicon.ico|white-logo.png|black-logo.png|logos/|client/|manifest.webmanifest|robots.txt).*)"],
+  matcher: [
+    "/((?!login|_next/static|_next/image|favicon.ico|white-logo.png|black-logo.png|logos/|client/|manifest.webmanifest|robots.txt|opengraph-image).*)",
+  ],
 };

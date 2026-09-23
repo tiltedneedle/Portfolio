@@ -1,25 +1,71 @@
 "use server";
 
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { COOKIE, COOKIE_DAYS, safeNext, tokenFor } from "@/lib/portal-auth";
+import { COOKIE, PRESENCE, SESSION_DAYS, accessHash, issue, portalSecret, safeEqual, safeNext } from "@/lib/session";
+import { clientsWithAccess } from "@/content/clients/registry";
 
-export async function enter(formData: FormData) {
-  const password = String(formData.get("password") ?? "");
-  const next = safeNext(formData.get("next"));
-  const expected = process.env.PORTAL_PASSWORD;
+// Attempts per address in a sliding window. In memory, so per server
+// instance; enough to make guessing an access code impractical.
+const WINDOW_MS = 10 * 60 * 1000;
+const MAX_PER_WINDOW = 12;
+const attempts = new Map<string, number[]>();
 
-  if (!expected || password !== expected) {
-    redirect("/login?error=1" + (next === "/" ? "" : "&next=" + encodeURIComponent(next)));
+function limited(ip: string) {
+  const now = Date.now();
+  const recent = (attempts.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
+  recent.push(now);
+  attempts.set(ip, recent);
+  if (attempts.size > 5000) {
+    for (const [k, v] of attempts) if (v.every((t) => now - t >= WINDOW_MS)) attempts.delete(k);
   }
+  return recent.length > MAX_PER_WINDOW;
+}
+
+async function clientIp() {
+  const h = await headers();
+  return h.get("x-forwarded-for")?.split(",")[0].trim() || h.get("x-real-ip") || "unknown";
+}
+
+function back(error: string, next: string): never {
+  redirect("/login?error=" + error + (next === "/" ? "" : "&next=" + encodeURIComponent(next)));
+}
+
+/** The door. Finds the client whose access code was typed, and lets them in. */
+export async function enter(formData: FormData) {
+  const code = String(formData.get("code") ?? "").trim();
+  const next = safeNext(formData.get("next"));
+  const secret = portalSecret();
+
+  if (!secret) redirect(next);
+  if (limited(await clientIp())) back("slow", next);
+  if (!code || code.length > 200) back("code", next);
+
+  // Every client is checked, whether or not one has already matched, so the
+  // time taken says nothing about which code was close.
+  let found: string | null = null;
+  for (const c of clientsWithAccess()) {
+    const got = await accessHash(c.identity.slug, code);
+    if (safeEqual(got, c.identity.accessHash)) found = c.identity.slug;
+  }
+  if (!found) back("code", next);
 
   const store = await cookies();
-  store.set(COOKIE, await tokenFor(expected), {
+  store.set(COOKIE, await issue(secret, found), {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: 60 * 60 * 24 * COOKIE_DAYS,
+    maxAge: 60 * 60 * 24 * SESSION_DAYS,
   });
+  store.set(PRESENCE, "1", { httpOnly: false, secure: process.env.NODE_ENV === "production", sameSite: "lax", path: "/", maxAge: 60 * 60 * 24 * SESSION_DAYS });
   redirect(next);
+}
+
+/** Leaving the room: the cookie goes, the door shows. */
+export async function leave() {
+  const store = await cookies();
+  store.delete(COOKIE);
+  store.delete(PRESENCE);
+  redirect("/login");
 }

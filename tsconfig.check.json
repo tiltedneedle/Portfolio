@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "incremental": false,
+    "declaration": false,
+    "sourceMap": false,
+    "rootDir": "src",
+    "outDir": ".check-out",
+    "module": "es2022",
+    "moduleResolution": "bundler",
+    "target": "es2022",
+    "jsx": "preserve"
+  },
+  "include": ["src/content/**/*.ts"],
+  "exclude": []
+}

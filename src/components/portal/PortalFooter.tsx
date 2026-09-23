@@ -4,8 +4,12 @@ import { useEffect, useState } from "react";
 import { CutLink } from "@/components/room/CutLink";
 import { WordStrip } from "@/components/editorial/WordStrip";
 import { ClientMark } from "@/components/portal/ClientMark";
+import { useClient } from "@/components/portal/ClientContext";
 import { chapters } from "@/content/chapters";
-import { client, clientShort } from "@/content/client/client";
+import { shortName } from "@/content/clients/types";
+import { PRESENCE } from "@/lib/session";
+import { useCookieFlag } from "@/lib/use-cookie-flag";
+import { leave } from "@/app/login/actions";
 
 // Frozen at build time; the effect corrects it if the visitor's year differs.
 const BUILD_YEAR = new Date().getFullYear();
@@ -15,6 +19,10 @@ const link = "underline-draw w-fit text-[15px] text-[color:var(--ink-soft)] tran
 
 /** The tail leader: the approach as a crawl, then the contents once more. */
 export function PortalFooter() {
+  const who = useClient();
+  // The pages are pre-rendered, so whether someone is logged in can only be
+  // known in the browser: the door leaves a presence cookie beside the session.
+  const inRoom = useCookieFlag(PRESENCE);
   const [year, setYear] = useState(BUILD_YEAR);
   useEffect(() => {
     const current = new Date().getFullYear();
@@ -29,10 +37,10 @@ export function PortalFooter() {
           <div className="md:col-span-5">
             <ClientMark size={28} />
             <p className="mt-6 max-w-[36ch] text-[15px] leading-relaxed text-[color:var(--ink-mid)]">
-              Your complete viral content system. Built once, personalised for {clientShort()}, and yours to keep.
+              Your complete viral content system. Built once, personalised for {shortName(who)}, and yours to keep.
             </p>
             <p className="mono mt-6">
-              Permanent access <span className="text-[color:var(--ink-faint)]">/</span> Reel {client.since}
+              Permanent access <span className="text-[color:var(--ink-faint)]">/</span> Reel {who.since}
             </p>
           </div>
 
@@ -51,19 +59,27 @@ export function PortalFooter() {
           <div className="md:col-span-3">
             <p className={heading}>Your team</p>
             <div className="flex flex-col gap-3">
-              <a href={"mailto:" + client.contact} className={link}>
-                {client.contact}
+              <a href={"mailto:" + who.contact} className={link}>
+                {who.contact}
               </a>
               <p className="text-[13px] leading-relaxed text-[color:var(--ink-mid)]">
                 Questions about any part of the system, or a video you want a second pair of eyes on: message your Tilted Needle team.
               </p>
+              {inRoom && (
+                <form action={leave} className="mt-4">
+                  <button type="submit" className="slate-link" data-cursor="Cut">
+                    Leave the room &rarr;
+                  </button>
+                </form>
+              )}
             </div>
           </div>
         </div>
 
         <div className="mono mt-16 flex flex-col justify-between gap-4 border-t border-[color:var(--rule)] pt-6 md:mt-20 md:flex-row md:items-baseline">
           <p>
-            &copy; {year} Tilted Needle <span className="text-[color:var(--ink-faint)]">/</span> Private, for {client.name}
+            &copy; {year} Tilted Needle <span className="text-[color:var(--ink-faint)]">/</span> Private, for {who.name}
+            {who.demo && <span className="text-[color:var(--ink-faint)]"> / Demo</span>}
           </p>
           <p className="text-[color:var(--ink-faint)]">Not for distribution</p>
         </div>

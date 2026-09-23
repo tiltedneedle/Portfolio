@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { CutLink } from "@/components/room/CutLink";
 import { chapter, pageHref, pageNumber } from "@/content/chapters";
 import type { ChapterId } from "@/content/types";
-import { clientShort } from "@/content/client/client";
+import { shortName, type PublicIdentity } from "@/content/clients/types";
 
 export type OverviewRow = {
   slug: string;
@@ -13,9 +13,21 @@ export type OverviewRow = {
 
 /**
  * A chapter's front page: the slate, then its pages as ruled rows, each a
- * cut to the page. Personalised chapters carry the lamp.
+ * cut to the page. Personalised chapters carry the lamp and the name.
  */
-export function ChapterOverview({ id, rows, lead, children }: { id: ChapterId; rows: OverviewRow[]; lead: string; children?: ReactNode }) {
+export function ChapterOverview({
+  id,
+  rows,
+  lead,
+  identity,
+  children,
+}: {
+  id: ChapterId;
+  rows: OverviewRow[];
+  lead: string;
+  identity?: PublicIdentity;
+  children?: ReactNode;
+}) {
   const c = chapter(id);
   return (
     <div className="bg-[color:var(--stage)]">
@@ -24,10 +36,10 @@ export function ChapterOverview({ id, rows, lead, children }: { id: ChapterId; r
           <span>
             {c.n} &mdash; {c.title}
           </span>
-          {c.personalised && (
+          {c.personalised && identity && (
             <span className="flex items-center gap-2 text-[color:var(--ink)]">
               <span className="lamp" aria-hidden="true" />
-              Written for {clientShort()}
+              Written for {shortName(identity)}
             </span>
           )}
         </p>

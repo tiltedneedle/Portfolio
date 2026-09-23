@@ -1,11 +1,12 @@
 import { Rail } from "@/components/portal/Rail";
-import { ideas, pillars } from "@/content/client/ideas";
-import { clientShort } from "@/content/client/client";
+import { pillars } from "@/content/system/pillars";
+import { shortName, type Idea, type Pillar, type PublicIdentity } from "@/content/clients/types";
 
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
 /** Four pillars, each a rail of twenty-five cards. */
-export function IdeasPillars() {
+export function IdeasPillars({ ideas, identity }: { ideas: Record<Pillar, Idea[]>; identity: PublicIdentity }) {
+  const who = shortName(identity);
   return (
     <div className="flex flex-col gap-24">
       {pillars.map((p, pi) => {
@@ -24,7 +25,10 @@ export function IdeasPillars() {
             </div>
             <Rail count={list.length} label={written + " of " + list.length + " written"}>
               {list.map((idea, i) => (
-                <li key={i} className="relative aspect-[4/5] w-[min(248px,78vw)] overflow-hidden border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-5 md:w-[292px] md:p-6">
+                <li
+                  key={i}
+                  className="relative aspect-[4/5] w-[min(248px,78vw)] overflow-hidden border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-5 md:w-[292px] md:p-6"
+                >
                   <span aria-hidden="true" className="numeral pointer-events-none absolute -right-1 bottom-2 text-[120px] opacity-50">
                     {pad(i)}
                   </span>
@@ -38,7 +42,7 @@ export function IdeasPillars() {
                     {idea.text ? (
                       <p className="max-w-[18ch] text-[19px] leading-snug text-[color:var(--ink)] md:text-[21px]">{idea.text}</p>
                     ) : (
-                      <p className="em-serif max-w-[16ch] text-[19px] leading-snug text-[color:var(--ink-faint)]">Written for {clientShort()}.</p>
+                      <p className="em-serif max-w-[16ch] text-[19px] leading-snug text-[color:var(--ink-faint)]">Written for {who}.</p>
                     )}
                   </div>
                 </li>

@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 import { ScriptsRail } from "@/components/portal/ScriptsRail";
 import { NextCut } from "@/components/portal/NextCut";
 import { chapter, pageNumber } from "@/content/chapters";
-import { clientShort } from "@/content/client/client";
+import { requireClient } from "@/content/clients/registry";
+import { shortName } from "@/content/clients/types";
 
 export const metadata: Metadata = { title: "20 personalised scripts" };
 
-export default function ScriptsPage() {
+export default async function ScriptsPage({ params }: { params: Promise<{ client: string }> }) {
+  const { client } = await params;
+  const sys = requireClient(client);
   const c = chapter("content");
   return (
     <article className="bg-[color:var(--stage)]">
@@ -17,7 +20,7 @@ export default function ScriptsPage() {
           </span>
           <span className="flex items-center gap-2 text-[color:var(--ink)]">
             <span className="lamp" aria-hidden="true" />
-            Written for {clientShort()}
+            Written for {shortName(sys.identity)}
           </span>
         </p>
         <h1 className="display mt-6 max-w-[10ch] text-[clamp(52px,8.5vw,140px)]">20 personalised scripts</h1>
@@ -27,7 +30,7 @@ export default function ScriptsPage() {
       </header>
 
       <div className="mx-auto max-w-[1600px] px-6 pb-24 pt-8 md:px-14 md:pt-12">
-        <ScriptsRail />
+        <ScriptsRail scripts={sys.scripts} />
       </div>
 
       <NextCut chapter="content" slug="scripts" />

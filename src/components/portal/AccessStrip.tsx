@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { home } from "@/content/system/home";
-import { clientShort } from "@/content/client/client";
+import { useClient } from "@/components/portal/ClientContext";
+import { shortName } from "@/content/clients/types";
 
 /**
  * What you have access to: the seven parts of the system racked on a strip.
@@ -22,6 +23,7 @@ export function AccessStrip() {
   const [range, setRange] = useState(0);
   const [mobile, setMobile] = useState(false);
   const [active, setActive] = useState(0);
+  const who = shortName(useClient());
 
   useEffect(() => {
     const el = track.current;
@@ -83,7 +85,7 @@ export function AccessStrip() {
               Seven <span className="em-serif">parts.</span>
             </h2>
             <p className="mt-6 max-w-[34ch] text-[17px] leading-relaxed text-[color:var(--ink-soft)]">
-              Four written for {clientShort()}. Three the same for everyone. All of it yours, for as long as you want it.
+              Four written for {who}. Three the same for everyone. All of it yours, for as long as you want it.
             </p>
             <p className="mono mt-8 max-md:hidden">Scroll to shuttle &middot; click to open</p>
           </div>
@@ -107,7 +109,7 @@ export function AccessStrip() {
                   {it.personalised ? (
                     <span className="flex items-center gap-2 text-[color:var(--ink)]">
                       <span className="lamp" aria-hidden="true" />
-                      For {clientShort()}
+                      For {who}
                     </span>
                   ) : (
                     <span className="text-[color:var(--ink-faint)]">Same for everyone</span>

@@ -2,7 +2,8 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { timecode } from "@/lib/timecode";
-import { client, clientShort } from "@/content/client/client";
+import { useClient } from "@/components/portal/ClientContext";
+import { shortName } from "@/content/clients/types";
 
 /**
  * The slate. Once per device the site opens on a clapperboard: production,
@@ -22,6 +23,7 @@ type Phase = "slate" | "black" | "done";
 export function Slate() {
   const [phase, setPhase] = useState<Phase>("slate");
   const tc = useRef<HTMLSpanElement>(null);
+  const who = useClient();
 
   useLayoutEffect(() => {
     let seen = false;
@@ -93,10 +95,10 @@ export function Slate() {
 
             <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3 border-y border-[color:var(--rule-strong)] py-4 mono-lg text-[color:var(--ink-soft)]">
               <div>
-                <span className="text-[color:var(--ink-mid)]">Prod.</span> Tilted Needle <span className="text-[color:var(--ink-mid)]">&times;</span> {clientShort()}
+                <span className="text-[color:var(--ink-mid)]">Prod.</span> Tilted Needle <span className="text-[color:var(--ink-mid)]">&times;</span> {shortName(who)}
               </div>
               <div className="text-right">
-                <span className="text-[color:var(--ink-mid)]">Reel</span> {client.since}
+                <span className="text-[color:var(--ink-mid)]">Reel</span> {who.since}
               </div>
               <div>
                 <span className="text-[color:var(--ink-mid)]">Scene</span> 01

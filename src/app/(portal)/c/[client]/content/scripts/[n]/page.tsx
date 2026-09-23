@@ -3,30 +3,32 @@ import { notFound } from "next/navigation";
 import { CutLink } from "@/components/room/CutLink";
 import { CopyScript } from "@/components/portal/CopyScript";
 import { chapter, pageNumber } from "@/content/chapters";
-import { clientShort } from "@/content/client/client";
-import { scriptAsText, scripts } from "@/content/client/scripts";
+import { requireClient } from "@/content/clients/registry";
+import { scriptAsText, shortName } from "@/content/clients/types";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
 export const dynamicParams = false;
 
+// Every client has twenty script slots, so the numbers are the same for all.
 export function generateStaticParams() {
-  return scripts.map((s) => ({ n: String(s.n) }));
+  return Array.from({ length: 20 }, (_, i) => ({ n: String(i + 1) }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ n: string }> }): Promise<Metadata> {
-  const { n } = await params;
-  const s = scripts.find((x) => String(x.n) === n);
+export async function generateMetadata({ params }: { params: Promise<{ client: string; n: string }> }): Promise<Metadata> {
+  const { client, n } = await params;
+  const s = requireClient(client).scripts.find((x) => String(x.n) === n);
   return { title: s?.title ? "Script " + pad(s.n) + ": " + s.title : "Script " + n };
 }
 
-export default async function ScriptPage({ params }: { params: Promise<{ n: string }> }) {
-  const { n } = await params;
-  const s = scripts.find((x) => String(x.n) === n);
+export default async function ScriptPage({ params }: { params: Promise<{ client: string; n: string }> }) {
+  const { client, n } = await params;
+  const sys = requireClient(client);
+  const s = sys.scripts.find((x) => String(x.n) === n);
   if (!s) notFound();
   const c = chapter("content");
-  const prev = scripts.find((x) => x.n === s.n - 1);
-  const next = scripts.find((x) => x.n === s.n + 1);
+  const prev = sys.scripts.find((x) => x.n === s.n - 1);
+  const next = sys.scripts.find((x) => x.n === s.n + 1);
   const written = !!s.body?.length;
 
   return (
@@ -35,13 +37,15 @@ export default async function ScriptPage({ params }: { params: Promise<{ n: stri
         <p className="mono flex flex-wrap items-center gap-x-4">
           <span>
             {c.n} &mdash; {c.title} <span className="text-[color:var(--ink-faint)]">/</span> {pageNumber("content", "scripts")}{" "}
-            <span className="text-[color:var(--ink-faint)]">/</span> Script {pad(s.n)} of {pad(scripts.length)}
+            <span className="text-[color:var(--ink-faint)]">/</span> Script {pad(s.n)} of {pad(sys.scripts.length)}
           </span>
           {s.example && <span className="text-[color:var(--ink-faint)]">Example</span>}
         </p>
         <div className="mt-6 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <h1 className="display max-w-[14ch] text-[clamp(48px,7.5vw,120px)]">{s.title || "Script " + pad(s.n)}</h1>
-          <CopyScript text={scriptAsText(s)} disabled={!written} />
+          <div className="flex flex-wrap items-center gap-4">
+            <CopyScript text={scriptAsText(s)} disabled={!written} />
+          </div>
         </div>
       </header>
 
@@ -85,7 +89,7 @@ export default async function ScriptPage({ params }: { params: Promise<{ n: stri
           <div className="max-w-[60ch] border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-6 md:p-8">
             <p className="mono flex items-center gap-2">
               <span className="lamp-off" aria-hidden="true" />
-              In production for {clientShort()}
+              In production for {shortName(sys.identity)}
             </p>
             <p className="em-serif mt-4 text-[19px] leading-snug text-[color:var(--ink-mid)] md:text-[21px]">
               A title, a hook, the full script and a call to action, written around your business. It will appear here, ready to copy.

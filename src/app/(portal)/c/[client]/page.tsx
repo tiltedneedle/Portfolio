@@ -6,11 +6,14 @@ import { ClientMark } from "@/components/portal/ClientMark";
 import { AccessStrip } from "@/components/portal/AccessStrip";
 import { Loop } from "@/components/portal/Loop";
 import { home } from "@/content/system/home";
-import { client } from "@/content/client/client";
+import { requireClient } from "@/content/clients/registry";
 
 // The home page, in running order: the slate (once), the welcome, the
 // objective, what you have access to, how to use the system, the approach.
-export default function Home() {
+export default async function Home({ params }: { params: Promise<{ client: string }> }) {
+  const { client } = await params;
+  const { identity } = requireClient(client);
+
   return (
     <>
       <Slate />
@@ -33,11 +36,11 @@ export default function Home() {
             Tilted Needle
             <br />
             <span className="whitespace-nowrap">
-              <span className="em-serif text-[0.7em] text-[color:var(--ink-mid)]">&times;</span> {client.name}
+              <span className="em-serif text-[0.7em] text-[color:var(--ink-mid)]">&times;</span> {identity.name}
             </span>
           </h1>
           <p className="mono mt-8 text-[color:var(--ink)]">{home.kicker}</p>
-          <p className="mt-6 max-w-[46ch] text-[19px] leading-[1.5] text-[color:var(--ink-soft)] md:text-[23px]">{home.lead(client.name)}</p>
+          <p className="mt-6 max-w-[46ch] text-[19px] leading-[1.5] text-[color:var(--ink-soft)] md:text-[23px]">{home.lead(identity.name)}</p>
         </div>
 
         <div className="mono relative flex flex-col gap-3 border-t border-[color:var(--rule)] px-6 py-6 md:flex-row md:items-center md:justify-between md:px-14">
@@ -93,9 +96,7 @@ export default function Home() {
             {home.approach.beats.map((b, i) => (
               <li key={b} className="flex items-baseline gap-6">
                 <span className="display text-[clamp(32px,5vw,88px)] leading-none text-[color:var(--ink)]">{b}</span>
-                {i < home.approach.beats.length - 1 && (
-                  <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[color:var(--ink-faint)]" />
-                )}
+                {i < home.approach.beats.length - 1 && <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[color:var(--ink-faint)]" />}
               </li>
             ))}
           </ul>

@@ -6,7 +6,8 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { Wordmark } from "@/components/room/Wordmark";
 import { chapters, pageHref, pageNumber, type Chapter } from "@/content/chapters";
-import { clientShort } from "@/content/client/client";
+import { useClient } from "@/components/portal/ClientContext";
+import { shortName } from "@/content/clients/types";
 import { cn } from "@/lib/utils";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
@@ -19,7 +20,7 @@ import { EASE_OUT_EXPO } from "@/lib/design-tokens";
  */
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
-function Panel({ chapter: c, onPick }: { chapter: Chapter; onPick: () => void }) {
+function Panel({ chapter: c, onPick, who }: { chapter: Chapter; onPick: () => void; who: string }) {
   return (
     <div className="panel w-[360px] p-2">
       <div className="mono flex items-baseline justify-between px-3 pb-2 pt-3">
@@ -29,7 +30,7 @@ function Panel({ chapter: c, onPick }: { chapter: Chapter; onPick: () => void })
         {c.personalised && (
           <span className="flex items-center gap-2 text-[color:var(--ink)]">
             <span className="lamp" aria-hidden="true" />
-            For {clientShort()}
+            For {who}
           </span>
         )}
       </div>
@@ -60,6 +61,7 @@ export function PortalNav() {
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathname = usePathname();
   const reduced = useReducedMotion();
+  const who = shortName(useClient());
 
   useEffect(() => {
     let ticking = false;
@@ -129,7 +131,7 @@ export function PortalNav() {
           <CutLink href="/" className="inline-flex items-center gap-3" aria-label="Home" onClick={pick}>
             <Wordmark />
             <span className="mono hidden text-[color:var(--ink-mid)] lg:inline">
-              <span className="text-[color:var(--ink-faint)]">&times;</span> {clientShort()}
+              <span className="text-[color:var(--ink-faint)]">&times;</span> {who}
             </span>
           </CutLink>
 
@@ -179,7 +181,7 @@ export function PortalNav() {
                       transition={{ duration: 0.18, ease: EASE_OUT_EXPO }}
                       className={cn("absolute top-full z-50 pt-4", i >= chapters.length - 2 ? "right-0" : "left-0")}
                     >
-                      <Panel chapter={c} onPick={pick} />
+                      <Panel chapter={c} onPick={pick} who={who} />
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -211,7 +213,7 @@ export function PortalNav() {
           >
             <nav className="px-6 pb-16 pt-24" aria-label="Menu">
               <p className="mono mb-6">
-                The system <span className="text-[color:var(--ink-faint)]">/</span> {clientShort()}
+                The system <span className="text-[color:var(--ink-faint)]">/</span> {who}
               </p>
               <ol className="flex flex-col">
                 {chapters.map((c, i) => (

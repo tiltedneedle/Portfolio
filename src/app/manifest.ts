@@ -1,9 +1,8 @@
 import type { MetadataRoute } from "next";
-import { client } from "@/content/client/client";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: client.name + " × Tilted Needle",
+    name: "Tilted Needle",
     short_name: "Tilted Needle",
     description: "Your complete viral content system.",
     start_url: "/",

@@ -1,6 +1,6 @@
-import type { AuditSection } from "@/content/client/audit";
+import type { AuditReport as Report, PublicIdentity } from "@/content/clients/types";
+import { shortName } from "@/content/clients/types";
 import { chapter, pageNumber } from "@/content/chapters";
-import { clientShort } from "@/content/client/client";
 import { NextCut } from "@/components/portal/NextCut";
 import { Rich } from "@/components/portal/Rich";
 
@@ -11,9 +11,11 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
  * under it, or the slate that says they are on their way. The structure is
  * the same for every client; only the findings change.
  */
-export function AuditReport({ slug, title, intro, sections }: { slug: string; title: string; intro: string; sections: AuditSection[] }) {
+export function AuditReport({ slug, title, report, identity }: { slug: string; title: string; report: Report; identity: PublicIdentity }) {
   const c = chapter("audit");
   const n = pageNumber("audit", slug);
+  const who = shortName(identity);
+  const sections = report.sections;
   const written = sections.filter((s) => s.body?.length).length;
   return (
     <article className="bg-[color:var(--stage)]">
@@ -24,11 +26,11 @@ export function AuditReport({ slug, title, intro, sections }: { slug: string; ti
           </span>
           <span className="flex items-center gap-2 text-[color:var(--ink)]">
             <span className="lamp" aria-hidden="true" />
-            Written for {clientShort()}
+            Written for {who}
           </span>
         </p>
         <h1 className="display mt-6 max-w-[10ch] text-[clamp(52px,8.5vw,140px)]">{title}</h1>
-        <p className="em-serif mt-6 max-w-[40ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">{intro}</p>
+        <p className="em-serif mt-6 max-w-[40ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">{report.intro}</p>
         <p className="mono mt-10">
           {sections.length} headings <span className="text-[color:var(--ink-faint)]">/</span> {written} written
         </p>
@@ -38,7 +40,7 @@ export function AuditReport({ slug, title, intro, sections }: { slug: string; ti
         <ol className="grid grid-cols-2 gap-x-6 gap-y-2 border-y border-[color:var(--rule)] py-6 mono sm:grid-cols-3 lg:grid-cols-5">
           {sections.map((s, i) => (
             <li key={s.title}>
-              <a href={"#a-" + pad(i)} className="hover:text-[color:var(--ink)]">
+              <a href={"#a-" + pad(i)} className={"hover:text-[color:var(--ink)] " + (s.body?.length ? "text-[color:var(--ink-soft)]" : "")}>
                 <span className="text-[color:var(--ink-faint)]">{pad(i)}</span> {s.title}
               </a>
             </li>
@@ -53,9 +55,9 @@ export function AuditReport({ slug, title, intro, sections }: { slug: string; ti
             <div>
               <h2 className="display mb-8 max-w-[16ch] text-[clamp(30px,3.6vw,52px)]">{s.title}</h2>
               {s.body?.length ? (
-                <div className="flex flex-col gap-5">
+                <div className="flex max-w-[62ch] flex-col gap-5">
                   {s.body.map((p) => (
-                    <p key={p} className="measure text-[17px] leading-[1.7] text-[color:var(--ink-soft)]">
+                    <p key={p} className="text-[17px] leading-[1.7] text-[color:var(--ink-soft)]">
                       <Rich text={p} />
                     </p>
                   ))}
@@ -64,7 +66,7 @@ export function AuditReport({ slug, title, intro, sections }: { slug: string; ti
                 <div className="max-w-[60ch] border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-6 md:p-8">
                   <p className="mono flex items-center gap-2">
                     <span className="lamp-off" aria-hidden="true" />
-                    To be written for {clientShort()}
+                    To be written for {who}
                   </p>
                   <p className="em-serif mt-4 text-[19px] leading-snug text-[color:var(--ink-mid)] md:text-[21px]">{s.covers}</p>
                 </div>

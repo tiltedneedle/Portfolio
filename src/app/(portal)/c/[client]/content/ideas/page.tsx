@@ -2,12 +2,16 @@ import type { Metadata } from "next";
 import { IdeasPillars } from "@/components/portal/IdeasPillars";
 import { NextCut } from "@/components/portal/NextCut";
 import { chapter, pageNumber } from "@/content/chapters";
-import { clientShort } from "@/content/client/client";
-import { pillars } from "@/content/client/ideas";
+import { requireClient } from "@/content/clients/registry";
+import { publicIdentity, shortName } from "@/content/clients/types";
+import { pillars } from "@/content/system/pillars";
 
 export const metadata: Metadata = { title: "100 viral content ideas" };
 
-export default function IdeasPage() {
+export default async function IdeasPage({ params }: { params: Promise<{ client: string }> }) {
+  const { client } = await params;
+  const sys = requireClient(client);
+  const identity = publicIdentity(sys.identity);
   const c = chapter("content");
   return (
     <article className="bg-[color:var(--stage)]">
@@ -18,7 +22,7 @@ export default function IdeasPage() {
           </span>
           <span className="flex items-center gap-2 text-[color:var(--ink)]">
             <span className="lamp" aria-hidden="true" />
-            Written for {clientShort()}
+            Written for {shortName(identity)}
           </span>
         </p>
         <h1 className="display mt-6 max-w-[10ch] text-[clamp(52px,8.5vw,140px)]">100 viral content ideas</h1>
@@ -37,7 +41,7 @@ export default function IdeasPage() {
       </header>
 
       <div className="mx-auto max-w-[1600px] px-6 pb-24 pt-8 md:px-14 md:pt-12">
-        <IdeasPillars />
+        <IdeasPillars ideas={sys.ideas} identity={identity} />
       </div>
 
       <NextCut chapter="content" slug="ideas" />

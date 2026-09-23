@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check": "node scripts/check-content.mjs",
+    "smoke": "node scripts/smoke.mjs",
+    "access": "node scripts/access.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",

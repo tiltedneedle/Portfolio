@@ -4,7 +4,6 @@ import { FilmGrain } from "@/components/FilmGrain";
 import { TopMark } from "@/components/room/TopMark";
 import { Cursor } from "@/components/room/Cursor";
 import { CutOverlay } from "@/components/room/CutOverlay";
-import { client } from "@/content/client/client";
 import "./globals.css";
 
 // Four faces, all vendored as woff2 so the build needs no network, all SIL OFL.
@@ -46,11 +45,9 @@ const mono = localFont({
   adjustFontFallback: "Arial",
 });
 
-const NAME = client.name + " × Tilted Needle";
-
 // A private system for one client: nothing here is for search engines.
 export const metadata: Metadata = {
-  title: { default: NAME, template: "%s · " + NAME },
+  title: { default: "Tilted Needle", template: "%s · Tilted Needle" },
   description: "Your complete viral content system.",
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
   icons: {

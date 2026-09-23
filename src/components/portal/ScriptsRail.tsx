@@ -1,11 +1,11 @@
 import { CutLink } from "@/components/room/CutLink";
 import { Rail } from "@/components/portal/Rail";
-import { scripts } from "@/content/client/scripts";
+import type { Script } from "@/content/clients/types";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
 /** Twenty scripts on a rail. A title opens the script; a slot says so. */
-export function ScriptsRail() {
+export function ScriptsRail({ scripts }: { scripts: Script[] }) {
   const written = scripts.filter((s) => s.body?.length).length;
   return (
     <Rail count={scripts.length} label={written + " of " + scripts.length + " written"}>

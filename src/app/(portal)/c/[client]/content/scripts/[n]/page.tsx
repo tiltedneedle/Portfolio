@@ -42,10 +42,10 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
       <header className="mx-auto max-w-[1600px] px-6 pb-12 pt-28 md:px-14 md:pt-36">
         <p className="mono flex flex-wrap items-center gap-x-4">
           <span>
-            {c.n} &mdash; {c.title} <span className="text-[color:var(--ink-faint)]">/</span> {pageNumber("content", "scripts")}{" "}
-            <span className="text-[color:var(--ink-faint)]">/</span> Script {pad(s.n)} of {pad(sys.scripts.length)}
+            {c.n} &mdash; {c.title} <span className="text-[color:var(--ink-mid)]">/</span> {pageNumber("content", "scripts")}{" "}
+            <span className="text-[color:var(--ink-mid)]">/</span> Script {pad(s.n)} of {pad(sys.scripts.length)}
           </span>
-          {s.example && <span className="text-[color:var(--ink-faint)]">Example</span>}
+          {s.example && <span className="text-[color:var(--ink-mid)]">Example</span>}
         </p>
         <div className="mt-6 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <h1 className="display max-w-[14ch] text-[clamp(48px,7.5vw,120px)]">{s.title || "Script " + pad(s.n)}</h1>
@@ -64,9 +64,9 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
               <span>Hook</span>
               <span>Script</span>
               {s.cta && <span>Call to action</span>}
-              <span className="mt-4 text-[color:var(--ink-faint)]">{words} words</span>
-              <span className="text-[color:var(--ink-faint)]">
-                &asymp; {mmss(spoken)} <span className="text-[color:var(--ink-faint)]">spoken</span>
+              <span className="mt-4 text-[color:var(--ink-mid)]">{words} words</span>
+              <span className="text-[color:var(--ink-mid)]">
+                &asymp; {mmss(spoken)} <span className="text-[color:var(--ink-mid)]">spoken</span>
               </span>
             </div>
             <div className="flex max-w-[62ch] flex-col gap-14">
@@ -118,7 +118,7 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
                 &larr; Script {pad(prev.n)}
               </CutLink>
             ) : (
-              <span className="text-[color:var(--ink-faint)]">First script</span>
+              <span className="text-[color:var(--ink-mid)]">First script</span>
             )}
           </span>
           <CutLink href="/content/scripts" className="slate-link" data-cursor="Cut">
@@ -130,7 +130,7 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
                 Script {pad(next.n)} &rarr;
               </CutLink>
             ) : (
-              <span className="text-[color:var(--ink-faint)]">Last script</span>
+              <span className="text-[color:var(--ink-mid)]">Last script</span>
             )}
           </span>
         </div>

@@ -74,7 +74,7 @@ export function ChapterOverview({
                 </span>
                 <span className="mono col-start-2 mt-3 md:col-start-3 md:mt-0 md:text-right">
                   {r.meta}
-                  <span aria-hidden="true" className="ml-3 text-[color:var(--ink-faint)] transition-colors group-hover:text-[color:var(--ink)]">
+                  <span aria-hidden="true" className="ml-3 text-[color:var(--ink-mid)] transition-colors group-hover:text-[color:var(--ink)]">
                     &#8599;
                   </span>
                 </span>

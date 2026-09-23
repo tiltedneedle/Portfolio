@@ -53,7 +53,7 @@ export function Flashcards({ title, items, note }: { title?: string; items: { fr
                 <span className="absolute inset-0 flex flex-col justify-between border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-5" style={{ backfaceVisibility: "hidden" }}>
                   <span className="mono flex justify-between">
                     <span>{String(i + 1).padStart(2, "0")}</span>
-                    <span className="text-[color:var(--ink-faint)]">Opening</span>
+                    <span className="text-[color:var(--ink-mid)]">Opening</span>
                   </span>
                   <span className="spoken em-serif text-[19px] leading-snug text-[color:var(--ink)] md:text-[21px]">
                     <Rich text={it.front} />

@@ -39,11 +39,11 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             {error}
           </p>
         )}
-        {open && <p className="mono mt-3 text-[color:var(--ink-faint)]">No secret is set on this deployment, so the door is open and the template is showing.</p>}
+        {open && <p className="mono mt-3 text-[color:var(--ink-mid)]">No secret is set on this deployment, so the door is open and the template is showing.</p>}
         <button type="submit" className="pill pill-solid mt-8 px-8 py-3.5 text-[15px]">
           Enter
         </button>
-        <p className="mono mt-12 max-w-[40ch] leading-relaxed text-[color:var(--ink-faint)]">
+        <p className="mono mt-12 max-w-[40ch] leading-relaxed text-[color:var(--ink-mid)]">
           Your access code is in your onboarding email. Lost it? Message your Tilted Needle team.
         </p>
       </form>

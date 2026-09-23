@@ -26,7 +26,7 @@ export function Guide({ guide }: { guide: GuideT }) {
       <ReadingProgress />
       <header className="mx-auto max-w-[1600px] px-6 pb-14 pt-28 md:px-14 md:pt-36">
         <p className="mono">
-          {ch.n} &mdash; {ch.title} <span className="text-[color:var(--ink-faint)]">/</span> {n}
+          {ch.n} &mdash; {ch.title} <span className="text-[color:var(--ink-mid)]">/</span> {n}
         </p>
         <h1 className="display mt-6 max-w-[12ch] text-[clamp(52px,8.5vw,140px)]">{guide.title}</h1>
         <p className="em-serif mt-6 max-w-[34ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">{guide.kicker}</p>
@@ -74,7 +74,7 @@ export function Guide({ guide }: { guide: GuideT }) {
                 {s.n ? (
                   <span className="numeral text-[56px] md:text-[72px]">{s.n}</span>
                 ) : (
-                  <span aria-hidden="true" className="mono text-[color:var(--ink-faint)]">
+                  <span aria-hidden="true" className="mono text-[color:var(--ink-mid)]">
                     &mdash;
                   </span>
                 )}

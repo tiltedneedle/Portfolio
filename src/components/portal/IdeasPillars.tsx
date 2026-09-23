@@ -17,7 +17,7 @@ export function IdeasPillars({ ideas, identity }: { ideas: Record<Pillar, Idea[]
             <div className="mb-8 grid gap-6 md:grid-cols-[1fr_minmax(0,44ch)] md:items-end">
               <div>
                 <p className="mono">
-                  Pillar {pad(pi)} <span className="text-[color:var(--ink-faint)]">/</span> {list.length} ideas
+                  Pillar {pad(pi)} <span className="text-[color:var(--ink-mid)]">/</span> {list.length} ideas
                 </p>
                 <h2 className="display mt-3 text-[clamp(48px,7vw,120px)]">{p.title}</h2>
               </div>
@@ -37,12 +37,12 @@ export function IdeasPillars({ ideas, identity }: { ideas: Record<Pillar, Idea[]
                       <span>
                         {p.title} {pad(i)}
                       </span>
-                      {idea.example && <span className="text-[color:var(--ink-faint)]">Example</span>}
+                      {idea.example && <span className="text-[color:var(--ink-mid)]">Example</span>}
                     </p>
                     {idea.text ? (
                       <p className="max-w-[18ch] text-[19px] leading-snug text-[color:var(--ink)] md:text-[21px]">{idea.text}</p>
                     ) : (
-                      <p className="em-serif max-w-[16ch] text-[19px] leading-snug text-[color:var(--ink-faint)]">Written for {who}.</p>
+                      <p className="em-serif max-w-[16ch] text-[19px] leading-snug text-[color:var(--ink-mid)]">Written for {who}.</p>
                     )}
                   </div>
                 </li>

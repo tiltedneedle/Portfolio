@@ -182,7 +182,7 @@ export function Palette({ items }: { items: PaletteItem[] }) {
         aria-label="Open the contents"
         data-cursor="Open"
       >
-        Contents <span className="text-[color:var(--ink-faint)]">{KEYS}</span>
+        Contents <span className="text-[color:var(--ink-mid)]">{KEYS}</span>
       </button>
 
       <AnimatePresence>
@@ -218,12 +218,12 @@ export function Palette({ items }: { items: PaletteItem[] }) {
                   }}
                   onKeyDown={onKey}
                   placeholder="A page, a section, a word"
-                  className="w-full bg-transparent text-[19px] text-[color:var(--ink)] outline-none placeholder:text-[color:var(--ink-faint)]"
+                  className="w-full bg-transparent text-[19px] text-[color:var(--ink)] outline-none placeholder:text-[color:var(--ink-mid)]"
                   aria-label="Search the system"
                   autoComplete="off"
                   spellCheck={false}
                 />
-                <span className="mono shrink-0 text-[color:var(--ink-faint)]">Esc</span>
+                <span className="mono shrink-0 text-[color:var(--ink-mid)]">Esc</span>
               </div>
               <ul ref={list} className="max-h-[52vh] overflow-y-auto py-2" role="listbox">
                 {hits.length === 0 && (
@@ -240,14 +240,14 @@ export function Palette({ items }: { items: PaletteItem[] }) {
                         (i === cursor ? "bg-[color:var(--stage-3)] text-[color:var(--ink)]" : "text-[color:var(--ink-soft)]")
                       }
                     >
-                      <span className="mono w-[5ch] shrink-0 text-[color:var(--ink-faint)]">{h.n}</span>
+                      <span className="mono w-[5ch] shrink-0 text-[color:var(--ink-mid)]">{h.n}</span>
                       <span className={h.section ? "text-[15px]" : "text-[17px]"}>{h.title}</span>
-                      <span className="mono ml-auto shrink-0 text-[color:var(--ink-faint)]">{h.kicker}</span>
+                      <span className="mono ml-auto shrink-0 text-[color:var(--ink-mid)]">{h.kicker}</span>
                     </button>
                   </li>
                 ))}
               </ul>
-              <div className="mono flex flex-wrap gap-x-6 gap-y-1 border-t border-[color:var(--rule)] px-5 py-3 text-[color:var(--ink-faint)]">
+              <div className="mono flex flex-wrap gap-x-6 gap-y-1 border-t border-[color:var(--rule)] px-5 py-3 text-[color:var(--ink-mid)]">
                 <span>&uarr;&darr; move</span>
                 <span>&crarr; open</span>
                 <span>[ ] previous / next page</span>

@@ -24,13 +24,13 @@ export function ScriptsRail({ scripts }: { scripts: Script[] }) {
             </span>
             <span className="mono relative flex items-center justify-between">
               <span>Script {pad(s.n)}</span>
-              {s.example ? <span className="text-[color:var(--ink-faint)]">Example</span> : spoken(s) ? <span className="text-[color:var(--ink-faint)]">&asymp; {mmss(spoken(s))}</span> : null}
+              {s.example ? <span className="text-[color:var(--ink-mid)]">Example</span> : spoken(s) ? <span className="text-[color:var(--ink-mid)]">&asymp; {mmss(spoken(s))}</span> : null}
             </span>
             <span className="relative">
               {s.title ? (
                 <span className="display block text-[clamp(26px,2.4vw,32px)] leading-[0.95] text-[color:var(--ink)]">{s.title}</span>
               ) : (
-                <span className="em-serif block text-[19px] text-[color:var(--ink-faint)]">In production.</span>
+                <span className="em-serif block text-[19px] text-[color:var(--ink-mid)]">In production.</span>
               )}
               <span className="mono mt-5 block text-[color:var(--ink-soft)] transition-colors group-hover:text-[color:var(--ink)]">
                 Open <span aria-hidden="true">&#8599;</span>

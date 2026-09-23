@@ -48,7 +48,7 @@ export function Retention({ title, note }: { title?: string; note?: string }) {
             <line key={"h" + t} x1={x0} x2={x1} y1={y0 + (y1 - y0) * t} y2={y0 + (y1 - y0) * t} stroke="var(--rule)" strokeWidth="1" />
           ))}
           {ticks.map((t) => (
-            <text key={"y" + t} x={x0 - 8} y={y0 + (y1 - y0) * t + 4} textAnchor="end" fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-faint)">
+            <text key={"y" + t} x={x0 - 8} y={y0 + (y1 - y0) * t + 4} textAnchor="end" fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)">
               {Math.round((1 - t) * 100)}%
             </text>
           ))}
@@ -61,13 +61,13 @@ export function Retention({ title, note }: { title?: string; note?: string }) {
           <circle cx={x0 + 440} cy={y0 + 150} r="3.5" fill="var(--ink)" />
           {/* x axis */}
           <line x1={x0} x2={x1} y1={y1} y2={y1} stroke="var(--rule-strong)" strokeWidth="1" />
-          <text x={x0} y={y1 + 18} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-faint)">
+          <text x={x0} y={y1 + 18} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)">
             00:00
           </text>
           <text x={x0 + 90} y={y1 + 18} fontSize="10" fontFamily="var(--font-mono)" fill="var(--tally)" textAnchor="middle">
             00:03
           </text>
-          <text x={x1} y={y1 + 18} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-faint)" textAnchor="end">
+          <text x={x1} y={y1 + 18} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)" textAnchor="end">
             END
           </text>
           <text x={x0 + 290} y={y0 + 12} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)" textAnchor="middle" letterSpacing="1">
@@ -118,7 +118,7 @@ export function Cadence({ title, note, days = 30, every = 2 }: { title?: string;
                   (on ? "border-[color:var(--rule-strong)] bg-[color:var(--stage-3)]" : "border-[color:var(--rule)]")
                 }
               >
-                <span className="mono absolute left-1 top-0.5 text-[9px] text-[color:var(--ink-faint)]">{pad(i)}</span>
+                <span className="mono absolute left-1 top-0.5 text-[9px] text-[color:var(--ink-mid)]">{pad(i)}</span>
                 {on && <span aria-hidden="true" className="lamp absolute bottom-1.5 right-1.5" />}
               </li>
             );
@@ -127,7 +127,7 @@ export function Cadence({ title, note, days = 30, every = 2 }: { title?: string;
         <p className="mono mt-4 flex flex-wrap gap-x-6 gap-y-1 border-t border-[color:var(--rule)] pt-4">
           <span className="text-[color:var(--ink)]">{posts} posts</span>
           <span>{days} days</span>
-          <span className="text-[color:var(--ink-faint)]">One every other day</span>
+          <span className="text-[color:var(--ink-mid)]">One every other day</span>
         </p>
       </div>
       {note && (
@@ -161,7 +161,7 @@ export function Fan({ title, from, fromLabel, to, note }: { title?: string; from
           {to.map((b, i) => (
             <li key={b.text} className="fan-branch">
               <div className="border border-[color:var(--rule)] bg-[color:var(--stage-2)] px-4 py-3.5 md:px-5">
-                <p className="mono mb-1 text-[color:var(--ink-faint)]">{b.label ?? "Angle " + pad(i)}</p>
+                <p className="mono mb-1 text-[color:var(--ink-mid)]">{b.label ?? "Angle " + pad(i)}</p>
                 <p className="text-[17px] leading-snug text-[color:var(--ink)]">
                   <Rich text={b.text} />
                 </p>
@@ -201,7 +201,7 @@ export function Structure({ title, parts, seconds = 45, note }: { title?: string
                 style={{ flexGrow: m.share, flexBasis: 0 }}
                 className={"relative flex items-center justify-center border-r border-[color:var(--rule-strong)] last:border-r-0 " + (i === 0 ? "bg-[color:var(--stage-3)]" : i === marks.length - 1 ? "bg-[color:var(--stage-3)]" : "")}
               >
-                <span className="mono text-[color:var(--ink-faint)]">{pad(i)}</span>
+                <span className="mono text-[color:var(--ink-mid)]">{pad(i)}</span>
               </div>
             ))}
           </div>
@@ -223,7 +223,7 @@ export function Structure({ title, parts, seconds = 45, note }: { title?: string
           {marks.map((m, i) => (
             <li key={m.label}>
               <p className="mono mb-1">
-                {pad(i)} <span className="text-[color:var(--ink-faint)]">/ {Math.round((m.share / total) * 100)}%</span>
+                {pad(i)} <span className="text-[color:var(--ink-mid)]">/ {Math.round((m.share / total) * 100)}%</span>
               </p>
               <p className="display text-[26px] leading-[0.95] text-[color:var(--ink)]">{m.label}</p>
               {m.text && (
@@ -234,7 +234,7 @@ export function Structure({ title, parts, seconds = 45, note }: { title?: string
             </li>
           ))}
         </ol>
-        <p className="mono mt-5 text-[color:var(--ink-faint)]">Drawn for a {seconds} second video. The proportions matter more than the seconds.</p>
+        <p className="mono mt-5 text-[color:var(--ink-mid)]">Drawn for a {seconds} second video. The proportions matter more than the seconds.</p>
       </div>
       {note && (
         <figcaption className="em-serif mt-4 text-[17px] text-[color:var(--ink-mid)]">
@@ -368,7 +368,7 @@ export function Lens({ title, wide, tight, note }: { title?: string; wide: strin
           {/* camera */}
           <rect x={cx - 16} y={cy - 9} width="16" height="18" fill="var(--ink)" />
           <rect x={cx - 24} y={cy - 5} width="8" height="10" fill="var(--ink)" />
-          <text x={cx - 12} y={cy + 32} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-faint)" letterSpacing="1">
+          <text x={cx - 12} y={cy + 32} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)" letterSpacing="1">
             CAMERA
           </text>
           <text x="196" y="26" fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)" letterSpacing="1">
@@ -413,7 +413,7 @@ export function Flow({ title, steps, end, note }: { title?: string; steps: { q: 
               <p className="em-serif text-[21px] leading-snug text-[color:var(--ink)] md:text-[23px]">
                 <Rich text={s.q} />
               </p>
-              <p className="mono mt-3 text-[color:var(--ink-faint)]">
+              <p className="mono mt-3 text-[color:var(--ink-mid)]">
                 No <span aria-hidden="true">&darr;</span>
               </p>
             </div>
@@ -490,10 +490,10 @@ export function Cycle({ title, items, note }: { title?: string; items: string[];
               </g>
             );
           })}
-          <text x={cx} y={cy - 6} textAnchor="middle" fontSize="11" fontFamily="var(--font-mono)" fill="var(--ink-faint)" letterSpacing="1.5">
+          <text x={cx} y={cy - 6} textAnchor="middle" fontSize="11" fontFamily="var(--font-mono)" fill="var(--ink-mid)" letterSpacing="1.5">
             EVERY
           </text>
-          <text x={cx} y={cy + 12} textAnchor="middle" fontSize="11" fontFamily="var(--font-mono)" fill="var(--ink-faint)" letterSpacing="1.5">
+          <text x={cx} y={cy + 12} textAnchor="middle" fontSize="11" fontFamily="var(--font-mono)" fill="var(--ink-mid)" letterSpacing="1.5">
             MONTH
           </text>
         </svg>

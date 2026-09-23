@@ -16,7 +16,7 @@ export default async function ScriptsPage({ params }: { params: Promise<{ client
       <header className="mx-auto max-w-[1600px] px-6 pb-14 pt-28 md:px-14 md:pt-36">
         <p className="mono flex flex-wrap items-center gap-x-4">
           <span>
-            {c.n} &mdash; {c.title} <span className="text-[color:var(--ink-faint)]">/</span> {pageNumber("content", "scripts")}
+            {c.n} &mdash; {c.title} <span className="text-[color:var(--ink-mid)]">/</span> {pageNumber("content", "scripts")}
           </span>
           <span className="flex items-center gap-2 text-[color:var(--ink)]">
             <span className="lamp" aria-hidden="true" />

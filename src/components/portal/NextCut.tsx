@@ -17,7 +17,7 @@ export function NextCut({ chapter: id, slug }: { chapter: ChapterId; slug: strin
             <CutLink href={pageHref(prev.chapter.id, prev.page.slug)} className="group block" data-cursor="Cut">
               <p className="mono">&larr; Previous</p>
               <p className="mt-2 text-[17px] text-[color:var(--ink-soft)] transition-colors group-hover:text-[color:var(--ink)]">
-                <span className="mono mr-2 text-[color:var(--ink-faint)]">{pageNumber(prev.chapter.id, prev.page.slug)}</span>
+                <span className="mono mr-2 text-[color:var(--ink-mid)]">{pageNumber(prev.chapter.id, prev.page.slug)}</span>
                 {prev.page.title}
               </p>
             </CutLink>
@@ -31,10 +31,10 @@ export function NextCut({ chapter: id, slug }: { chapter: ChapterId; slug: strin
         {next && (
           <CutLink href={pageHref(next.chapter.id, next.page.slug)} className="group block" data-cursor="Cut">
             <p className="mono">
-              Next <span className="text-[color:var(--ink-faint)]">/</span> {next.chapter.n} &mdash; {next.chapter.title}
+              Next <span className="text-[color:var(--ink-mid)]">/</span> {next.chapter.n} &mdash; {next.chapter.title}
             </p>
             <p className="display mt-3 text-[clamp(36px,5.5vw,88px)] transition-colors duration-300 group-hover:text-white">
-              {next.page.title} <span aria-hidden="true" className="text-[color:var(--ink-faint)] transition-colors group-hover:text-[color:var(--ink)]">&#8599;</span>
+              {next.page.title} <span aria-hidden="true" className="text-[color:var(--ink-mid)] transition-colors group-hover:text-[color:var(--ink)]">&#8599;</span>
             </p>
             <p className="mono mt-2">{pageNumber(next.chapter.id, next.page.slug)}</p>
           </CutLink>

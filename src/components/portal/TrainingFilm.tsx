@@ -32,7 +32,7 @@ export function TrainingFilm({ film, number }: { film: Film; number: string }) {
           <div className="absolute inset-x-0 top-0 flex items-center justify-between p-5 mono md:p-6">
             <span className="flex items-center gap-2">
               <span className={id ? "lamp" : "lamp-off"} aria-hidden="true" />
-              Training film <span className="text-[color:var(--ink-faint)]">/</span> {number}
+              Training film <span className="text-[color:var(--ink-mid)]">/</span> {number}
             </span>
             {film.minutes ? <span className="tc text-[11px]">{String(film.minutes).padStart(2, "0")}:00</span> : null}
           </div>

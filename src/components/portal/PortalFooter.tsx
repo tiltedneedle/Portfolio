@@ -40,7 +40,7 @@ export function PortalFooter() {
               Your complete viral content system. Built once, personalised for {shortName(who)}, and yours to keep.
             </p>
             <p className="mono mt-6">
-              Permanent access <span className="text-[color:var(--ink-faint)]">/</span> Reel {who.since}
+              Permanent access <span className="text-[color:var(--ink-mid)]">/</span> Reel {who.since}
             </p>
           </div>
 
@@ -49,7 +49,7 @@ export function PortalFooter() {
             <nav className="flex flex-col gap-3" aria-label="Footer">
               {chapters.map((c) => (
                 <CutLink key={c.id} href={c.href} className={link}>
-                  <span className="mono mr-3 text-[color:var(--ink-faint)]">{c.n}</span>
+                  <span className="mono mr-3 text-[color:var(--ink-mid)]">{c.n}</span>
                   {c.title}
                 </CutLink>
               ))}
@@ -78,10 +78,10 @@ export function PortalFooter() {
 
         <div className="mono mt-16 flex flex-col justify-between gap-4 border-t border-[color:var(--rule)] pt-6 md:mt-20 md:flex-row md:items-baseline">
           <p>
-            &copy; {year} Tilted Needle <span className="text-[color:var(--ink-faint)]">/</span> Private, for {who.name}
-            {who.demo && <span className="text-[color:var(--ink-faint)]"> / Demo</span>}
+            &copy; {year} Tilted Needle <span className="text-[color:var(--ink-mid)]">/</span> Private, for {who.name}
+            {who.demo && <span className="text-[color:var(--ink-mid)]"> / Demo</span>}
           </p>
-          <p className="text-[color:var(--ink-faint)]">Not for distribution</p>
+          <p className="text-[color:var(--ink-mid)]">Not for distribution</p>
         </div>
       </div>
     </footer>

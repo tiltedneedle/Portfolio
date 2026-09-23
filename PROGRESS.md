@@ -13,10 +13,12 @@ Verify with `npm run smoke -- http://localhost:3400` and
 `npm run smoke -- http://localhost:3401 --gated`; content with `npm run
 check`. Visual checks go through the Playwright MCP
 (`browser_run_code_unsafe`), screenshots into the session scratchpad,
-never into the repo. Shell gotcha on this machine: long file contents
-through the Bash tool (heredocs, node -e) have failed to parse; write
-files with the Write tool (to the scratchpad, then `cp`) or put edit
-logic in a scratch `.cjs` and run it with node.
+never into the repo. Accessibility: axe-core is a dev dependency; inject
+`node_modules/axe-core/axe.min.js` with `page.addScriptTag({ path })`
+(inline scripts pass the CSP) and run `axe.run(document)`. Shell gotcha
+on this machine: long file contents through the Bash tool (heredocs,
+node -e) have failed to parse; write files with the Write tool (to the
+scratchpad, then `cp`) or put edit logic in a scratch `.cjs` and run it.
 
 ## What this is (2026-09-24)
 
@@ -55,60 +57,58 @@ The marketing site this grew out of is on the `marketing-site` branch.
 - Reveals (`Reveal.tsx`) never hide anything in the HTML: after hydration
   only blocks below the fold get `reveal-wait`, and an observer adds
   `reveal-in`. Reduced motion skips it entirely.
+- **Faint ink (`--ink-faint`) is decorative only**: numerals, rules, the
+  off lamp, the quote mark. It fails AA on every stage tone, so text uses
+  `--ink-mid` at the quietest. The axe pass is what enforces this.
 
 ## Decisions
 
 - **Route changes stay black-frame cuts.** Next 16's `experimental.
-  viewTransition` (React `<ViewTransition>`) was read and not adopted: it
-  animates continuity (morphs, slides, crossfades), and the room's grammar
-  is the opposite, a cut. It is also behind an experimental flag. Revisit
-  only if a shared-element morph is ever wanted (e.g. a script card into
-  its page).
-- **Spoken length is 150 words a minute**, stated on the script page, the
-  scripts rail and the prompter HUD. Change `SPOKEN_WPM` in
-  `src/lib/words.ts` if a client's presenter is measurably different.
+  viewTransition` was read and not adopted: it animates continuity, and
+  the room's grammar is a cut. Revisit only for a shared-element morph.
+- **Spoken length is 150 words a minute** (`SPOKEN_WPM` in
+  `src/lib/words.ts`), on the script page, the rail cards and the prompter.
+- **Next is pinned to an exact version** (16.3.6 as of 2026-09-24, taken
+  for the Windows unauthenticated RCE advisory and the sharp/postcss ones
+  under it). Upgrade by editing the pin, `npm i`, then the full verify
+  loop. The two remaining audit items are vitest (dev-only; the "fix" is a
+  downgrade) and are ignored on purpose.
 
 ## Done
 
-- [x] Content model, 13 universal guides, block renderer, home (slate,
-      lockup, drifting backdrop, seven-card pinned strip, five-step loop),
-      nav with panels, guide pages with rail and rule, audit reports, ideas
-      rails, scripts rail + script page with copy, login, 404.
-- [x] Multi-client architecture as above, verified end to end in the
-      browser. Demo client with written audit sections, ideas and scripts.
-- [x] Creative wave 1 (commit `d84bf8c`): reveal motion on blocks; reading
-      line on guides and reports; palette (⌘K, /, arrows, Enter, section
-      anchors) and `[` `]` paging; prompter on script pages (roll, pace,
-      size, mirror, rewind, timecode) and a print stylesheet; "deal me one"
-      on the ideas page; posters on chapter overviews (studio stills);
-      intro and outro film slots on home; eleven diagram block kinds;
-      error pages; clipboard fallback; CSP; README for multi-client.
-- [x] Waves 2 and 3: current page marked in nav panels and the phone
-      contents; "Find anything" in the phone menu opens the palette;
-      spoken length on script pages, rail cards and the prompter HUD; read
-      ticks on the guide rail; cadence grid at six columns and structure
-      strip timecodes thinned on a phone; nav panels for the last three
-      rooms right-aligned (the Create panel used to overflow at 1440);
-      reveals rebuilt so the first screen is served at rest; focus traps
-      on the palette and the prompter, with focus returned on close.
+- [x] Content model, 13 universal guides, block renderer, home, nav with
+      panels, guide pages with rail and rule, audit reports, ideas rails,
+      scripts rail + script page, login, 404.
+- [x] Multi-client architecture, verified end to end. Demo client.
+- [x] Creative wave 1 (`d84bf8c`): reveals, reading line, palette, `[` `]`
+      paging, prompter + print, deal me one, posters, home film slots,
+      eleven diagram kinds, error pages, clipboard fallback, CSP, README.
+- [x] Waves 2 and 3 (`b73bea0`): current page in nav panels and phone
+      contents, phone palette entry, spoken lengths, rail read ticks,
+      phone fixes for cadence/structure, panel alignment, at-rest reveals,
+      focus traps.
+- [x] Wave 4: home strip cards carry live counts ("4 of 13 written", "45
+      of 100 written", "3 of 20 written"); axe pass on nine pages: the
+      only violations were faint-ink contrast (79 text uses moved to mid
+      ink) and the idea rails not being keyboard-scrollable (rails are now
+      focusable and named); Next 16.2.12 → 16.3.6; `npm audit fix` for
+      js-yaml.
 
 ## In flight
 
-- [ ] Nothing mid-change. All verified and committed. Pick from Next.
+- [ ] Verify wave 4 (smoke, axe re-run, strip counts screenshot), then
+      commit and push.
 
 ## Next
 
 1. Audit report: a "what to do first" summary block type when the client's
    findings are written (needs the first real client to shape it; do not
    invent findings).
-2. Ideas page: the pillar sections as the palette's "Your content" entries
-   already exist; consider a per-card "Open as script brief" that jumps to
-   the ideation guide with the idea in the palette query (stateless).
-3. Home strip: each of the seven cards could carry its live count (13
-   headings / 4 written, 45 ideas, 3 scripts) from the client data.
-4. Lighthouse / axe pass on the gated server (needs Chrome available to
-   the CLI; the Playwright MCP browser can run axe-core from a CDN if the
-   CSP is relaxed on a dev server only).
-5. Awaiting from the user (do not block): nine training-video ids for the
+2. Ideas page: a per-card "Write it" that opens the ideation guide with the
+   idea in the palette query (stateless).
+3. A `.numeral` watermark is still flagged by axe as low-contrast text; it
+   is decorative and aria-hidden. Consider rendering numerals as SVG or
+   with `role="presentation"` if a clean axe report is ever required.
+4. Awaiting from the user (do not block): nine training-video ids for the
    Create guides plus intro/outro, first real client content, images for
    `figure` blocks.

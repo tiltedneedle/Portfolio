@@ -17,7 +17,8 @@ import { shortName } from "@/content/clients/types";
 const items = home.access;
 const n = items.length;
 
-export function AccessStrip() {
+/** `counts` is what each personalised card has so far, keyed by href ("4 of 13 written"). */
+export function AccessStrip({ counts = {} }: { counts?: Record<string, string> }) {
   const section = useRef<HTMLElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const [range, setRange] = useState(0);
@@ -112,14 +113,17 @@ export function AccessStrip() {
                       For {who}
                     </span>
                   ) : (
-                    <span className="text-[color:var(--ink-faint)]">Same for everyone</span>
+                    <span className="text-[color:var(--ink-mid)]">Same for everyone</span>
                   )}
                 </span>
                 <span className="relative">
                   <span className="display block max-w-[10ch] text-[clamp(34px,3.4vw,54px)] leading-[0.92] text-[color:var(--ink)]">{it.title}</span>
                   <span className="mt-4 block max-w-[32ch] text-[15px] leading-relaxed text-[color:var(--ink-mid)]">{it.text}</span>
-                  <span className="mono mt-6 block text-[color:var(--ink-soft)] transition-colors group-hover:text-[color:var(--ink)]">
-                    Open <span aria-hidden="true">&#8599;</span>
+                  <span className="mono mt-6 flex items-baseline justify-between gap-4 text-[color:var(--ink-soft)] transition-colors group-hover:text-[color:var(--ink)]">
+                    <span>
+                      Open <span aria-hidden="true">&#8599;</span>
+                    </span>
+                    {counts[it.href] && <span className="text-[color:var(--ink-mid)]">{counts[it.href]}</span>}
                   </span>
                 </span>
               </CutLink>

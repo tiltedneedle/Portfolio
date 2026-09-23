@@ -31,7 +31,7 @@
   --ink: #f2efe9;
   --ink-soft: rgba(242, 239, 233, 0.8);
   --ink-mid: #8e8a82;
-  --ink-faint: #56534e; /* decorative + large text only; fails AA below 24px */
+  --ink-faint: #56534e; /* decorative only (numerals, rules, dots). Never on text: fails AA. Use --ink-mid. */
 
   /* the lamp: state only */
   --tally: #e2422b;

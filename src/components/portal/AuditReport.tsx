@@ -24,7 +24,7 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
       <header className="mx-auto max-w-[1600px] px-6 pb-14 pt-28 md:px-14 md:pt-36">
         <p className="mono flex flex-wrap items-center gap-x-4">
           <span>
-            {c.n} &mdash; {c.title} <span className="text-[color:var(--ink-faint)]">/</span> {n}
+            {c.n} &mdash; {c.title} <span className="text-[color:var(--ink-mid)]">/</span> {n}
           </span>
           <span className="flex items-center gap-2 text-[color:var(--ink)]">
             <span className="lamp" aria-hidden="true" />
@@ -34,7 +34,7 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
         <h1 className="display mt-6 max-w-[10ch] text-[clamp(52px,8.5vw,140px)]">{title}</h1>
         <p className="em-serif mt-6 max-w-[40ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">{report.intro}</p>
         <p className="mono mt-10">
-          {sections.length} headings <span className="text-[color:var(--ink-faint)]">/</span> {written} written
+          {sections.length} headings <span className="text-[color:var(--ink-mid)]">/</span> {written} written
         </p>
       </header>
 
@@ -43,7 +43,7 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
           {sections.map((s, i) => (
             <li key={s.title}>
               <a href={"#a-" + pad(i)} className={"hover:text-[color:var(--ink)] " + (s.body?.length ? "text-[color:var(--ink-soft)]" : "")}>
-                <span className="text-[color:var(--ink-faint)]">{pad(i)}</span> {s.title}
+                <span className="text-[color:var(--ink-mid)]">{pad(i)}</span> {s.title}
               </a>
             </li>
           ))}

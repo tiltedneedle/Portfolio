@@ -125,7 +125,7 @@ function Lines({ title, items, mode = "spoken" }: { title?: string; items: strin
         <ul className="flex flex-col gap-2">
           {items.map((it) => (
             <li key={it} className="flex items-baseline gap-3 text-[17px] text-[color:var(--ink-mid)]">
-              <span aria-hidden="true" className="mono text-[color:var(--ink-faint)]">
+              <span aria-hidden="true" className="mono text-[color:var(--ink-mid)]">
                 &times;
               </span>
               <span className="line-through decoration-[color:var(--ink-faint)]">
@@ -169,12 +169,12 @@ function Swaps({
         {pairs.map((p) => (
           <div key={p.from} className="grid gap-y-3 border-t border-[color:var(--rule)] py-5 md:grid-cols-[1fr_auto_1fr] md:gap-x-8">
             <div>
-              <p className="mono mb-2 text-[color:var(--ink-faint)]">{fromLabel}</p>
+              <p className="mono mb-2 text-[color:var(--ink-mid)]">{fromLabel}</p>
               <p className="text-[17px] leading-snug text-[color:var(--ink-mid)]">
                 <Rich text={p.from} />
               </p>
             </div>
-            <span aria-hidden="true" className="mono hidden self-center text-[color:var(--ink-faint)] md:block">
+            <span aria-hidden="true" className="mono hidden self-center text-[color:var(--ink-mid)] md:block">
               &rarr;
             </span>
             <div>
@@ -214,11 +214,11 @@ function Pairs({
         {items.map((it) => (
           <div key={it.a} className="grid gap-y-1 border-t border-[color:var(--rule)] py-4 md:grid-cols-2 md:gap-x-8">
             <p className="text-[17px] leading-snug text-[color:var(--ink-soft)]">
-              <span className="mono mr-3 text-[color:var(--ink-faint)] md:hidden">{aLabel}</span>
+              <span className="mono mr-3 text-[color:var(--ink-mid)] md:hidden">{aLabel}</span>
               <Rich text={it.a} />
             </p>
             <p className="text-[17px] leading-snug text-[color:var(--ink)]">
-              <span className="mono mr-3 text-[color:var(--ink-faint)] md:hidden">{bLabel}</span>
+              <span className="mono mr-3 text-[color:var(--ink-mid)] md:hidden">{bLabel}</span>
               <Rich text={it.b} />
             </p>
           </div>
@@ -329,13 +329,13 @@ function Checklist({ title, items, note }: { title: string; items: string[]; not
     <div className="border border-[color:var(--rule-strong)] p-6 md:p-8">
       <div className="mb-4 flex items-baseline justify-between gap-6">
         <p className="mono text-[color:var(--ink)]">{title}</p>
-        <p className="mono text-[color:var(--ink-faint)]">Call sheet</p>
+        <p className="mono text-[color:var(--ink-mid)]">Call sheet</p>
       </div>
       <ul>
         {items.map((it, i) => (
           <li key={it} className="flex items-start gap-4 border-t border-[color:var(--rule)] py-3.5">
             <span className="box" aria-hidden="true" />
-            <span className="mono w-[3ch] pt-1 text-[color:var(--ink-faint)]">{pad(i)}</span>
+            <span className="mono w-[3ch] pt-1 text-[color:var(--ink-mid)]">{pad(i)}</span>
             <span className="text-[17px] leading-snug text-[color:var(--ink)]">
               <Rich text={it} />
             </span>

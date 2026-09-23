@@ -75,7 +75,7 @@ export function EmbedModal({
                 className="absolute inset-0 h-full w-full"
               />
             </div>
-            <p className="mono mt-3 text-[color:var(--ink-faint)]">{title}</p>
+            <p className="mono mt-3 text-[color:var(--ink-mid)]">{title}</p>
           </div>
         </motion.div>
       )}

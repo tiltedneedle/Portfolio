@@ -77,9 +77,9 @@ export function GuideRail({ items }: { items: { id: string; n?: string; title: s
               aria-current={on ? "location" : undefined}
             >
               <span className="flex w-[2ch] shrink-0 items-center gap-2" aria-hidden="true">
-                {done ? <span className="mono text-[10px] leading-none text-[color:var(--ink-faint)]">&#10003;</span> : <span className={on ? "lamp" : "lamp-off"} />}
+                {done ? <span className="mono text-[10px] leading-none text-[color:var(--ink-mid)]">&#10003;</span> : <span className={on ? "lamp" : "lamp-off"} />}
               </span>
-              <span className="mono w-[3ch] shrink-0 text-[color:var(--ink-faint)]">{it.n ?? "—"}</span>
+              <span className="mono w-[3ch] shrink-0 text-[color:var(--ink-mid)]">{it.n ?? "—"}</span>
               <span>{it.title}</span>
             </a>
           </li>
@@ -100,7 +100,7 @@ export function GuideRail({ items }: { items: { id: string; n?: string; title: s
       {/* narrow: a cue sheet */}
       <details className="mb-10 border border-[color:var(--rule)] p-4 lg:hidden">
         <summary className="mono cursor-pointer list-none text-[color:var(--ink)]">
-          On this page <span className="text-[color:var(--ink-faint)]">/ {items.length}</span>
+          On this page <span className="text-[color:var(--ink-mid)]">/ {items.length}</span>
         </summary>
         <div className="mt-4">{list}</div>
       </details>

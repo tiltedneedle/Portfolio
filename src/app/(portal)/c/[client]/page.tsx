@@ -13,7 +13,17 @@ import { requireClient } from "@/content/clients/registry";
 // objective, what you have access to, how to use the system, the approach.
 export default async function Home({ params }: { params: Promise<{ client: string }> }) {
   const { client } = await params;
-  const { identity } = requireClient(client);
+  const sys = requireClient(client);
+  const { identity } = sys;
+  // What each personalised room holds so far, for the strip's cards.
+  const writtenIn = (r: { sections: { body?: string[] }[] }) => r.sections.filter((s) => s.body?.length).length + " of " + r.sections.length + " written";
+  const ideas = Object.values(sys.ideas).flat();
+  const counts = {
+    "/audit/content-diagnostic": writtenIn(sys.contentDiagnostic),
+    "/audit/competitor-intelligence": writtenIn(sys.competitorIntelligence),
+    "/content/ideas": ideas.filter((i) => i.text).length + " of " + ideas.length + " written",
+    "/content/scripts": sys.scripts.filter((s) => s.body?.length).length + " of " + sys.scripts.length + " written",
+  };
 
   return (
     <>
@@ -56,7 +66,7 @@ export default async function Home({ params }: { params: Promise<{ client: strin
         <div className="mx-auto grid max-w-[1600px] gap-12 px-6 md:grid-cols-[1fr_minmax(0,60ch)] md:gap-20 md:px-14">
           <div>
             <p className="mono">01 &mdash; Welcome</p>
-            <p className="mono mt-10 text-[color:var(--ink-faint)]">{home.objective.label}</p>
+            <p className="mono mt-10 text-[color:var(--ink-mid)]">{home.objective.label}</p>
             <p className="em-serif mt-4 max-w-[30ch] text-[clamp(24px,3vw,40px)] leading-[1.2] text-[color:var(--ink)]">{home.objective.text}</p>
           </div>
           <div className="flex flex-col gap-6 md:pt-12">
@@ -72,7 +82,7 @@ export default async function Home({ params }: { params: Promise<{ client: strin
         </div>
       </section>
 
-      <AccessStrip />
+      <AccessStrip counts={counts} />
 
       <section id="how" className="scroll-mt-16 border-t border-[color:var(--rule)] bg-[color:var(--stage)] py-24 md:py-36">
         <div className="mx-auto max-w-[1600px] px-6 md:px-14">

@@ -74,7 +74,7 @@ export function DealOne({ cards }: { cards: Card[] }) {
                 backgroundImage: "repeating-linear-gradient(-45deg, transparent 0 14px, rgba(242,239,233,0.05) 14px 15px)",
               }}
             >
-              <span className="mono text-[color:var(--ink-faint)]">Face down</span>
+              <span className="mono text-[color:var(--ink-mid)]">Face down</span>
             </motion.div>
           )}
         </AnimatePresence>

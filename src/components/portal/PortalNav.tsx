@@ -50,7 +50,7 @@ function Panel({ chapter: c, onPick, who, current }: { chapter: Chapter; onPick:
                   here ? "text-[color:var(--ink)]" : "text-[color:var(--ink-soft)]"
                 )}
               >
-                <span className="mono w-[5ch] shrink-0 text-[color:var(--ink-faint)]">{c.id === "home" ? pad(j) : pageNumber(c.id, p.slug)}</span>
+                <span className="mono w-[5ch] shrink-0 text-[color:var(--ink-mid)]">{c.id === "home" ? pad(j) : pageNumber(c.id, p.slug)}</span>
                 {p.title}
                 {here && <span className="lamp ml-auto shrink-0 self-center" aria-hidden="true" />}
               </CutLink>
@@ -140,7 +140,7 @@ export function PortalNav() {
           <CutLink href="/" className="inline-flex items-center gap-3" aria-label="Home" onClick={pick}>
             <Wordmark />
             <span className="mono hidden text-[color:var(--ink-mid)] lg:inline">
-              <span className="text-[color:var(--ink-faint)]">&times;</span> {who}
+              <span className="text-[color:var(--ink-mid)]">&times;</span> {who}
             </span>
           </CutLink>
 
@@ -176,7 +176,7 @@ export function PortalNav() {
                     hot === i && "is-hot"
                   )}
                 >
-                  <span aria-hidden="true" className="mr-1.5 text-[color:var(--ink-faint)]">
+                  <span aria-hidden="true" className="mr-1.5 text-[color:var(--ink-mid)]">
                     {c.n}
                   </span>
                   {c.title}
@@ -223,7 +223,7 @@ export function PortalNav() {
             <nav className="px-6 pb-16 pt-24" aria-label="Menu">
               <div className="mb-6 flex items-baseline justify-between gap-4">
                 <p className="mono">
-                  The system <span className="text-[color:var(--ink-faint)]">/</span> {who}
+                  The system <span className="text-[color:var(--ink-mid)]">/</span> {who}
                 </p>
                 <button
                   type="button"
@@ -263,7 +263,7 @@ export function PortalNav() {
                               aria-current={here ? "page" : undefined}
                               className={cn("flex items-baseline gap-3 text-[15px]", here ? "text-[color:var(--ink)]" : "text-[color:var(--ink-soft)]")}
                             >
-                              <span className="mono text-[color:var(--ink-faint)]">{c.id === "home" ? pad(j) : pageNumber(c.id, p.slug)}</span>
+                              <span className="mono text-[color:var(--ink-mid)]">{c.id === "home" ? pad(j) : pageNumber(c.id, p.slug)}</span>
                               {p.title}
                               {here && <span className="lamp ml-2 shrink-0 self-center" aria-hidden="true" />}
                             </CutLink>

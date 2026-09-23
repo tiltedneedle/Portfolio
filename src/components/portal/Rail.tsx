@@ -50,7 +50,7 @@ export function Rail({ children, count, label }: { children: ReactNode; count: n
         <span>{label}</span>
         <span className="flex items-center gap-5">
           <span>
-            {String(first + 1).padStart(2, "0")} <span className="text-[color:var(--ink-faint)]">/</span> {String(count).padStart(2, "0")}
+            {String(first + 1).padStart(2, "0")} <span className="text-[color:var(--ink-mid)]">/</span> {String(count).padStart(2, "0")}
           </span>
           <button type="button" onClick={() => by(-1)} className="slate-link disabled:opacity-30" aria-label="Scroll back" disabled={first === 0}>
             &larr;
@@ -60,7 +60,8 @@ export function Rail({ children, count, label }: { children: ReactNode; count: n
           </button>
         </span>
       </div>
-      <ul ref={ref} className="rail -mx-6 gap-4 px-6 pb-2 scroll-px-6 md:-mx-14 md:px-14 md:scroll-px-14">
+      {/* A scrollable region has to be reachable from the keyboard; arrow keys then scroll it. */}
+      <ul ref={ref} tabIndex={0} aria-label={label} className="rail -mx-6 gap-4 px-6 pb-2 scroll-px-6 outline-none focus-visible:ring-1 focus-visible:ring-[color:var(--rule-strong)] md:-mx-14 md:px-14 md:scroll-px-14">
         {children}
       </ul>
     </div>

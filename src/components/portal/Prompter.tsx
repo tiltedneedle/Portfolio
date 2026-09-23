@@ -105,16 +105,16 @@ export function Prompter({ title, hook, body, cta, spoken }: Props) {
               <span ref={tc} className="tc ml-3">
                 00:00:00:00
               </span>
-              {spoken ? <span className="ml-3 hidden text-[color:var(--ink-faint)] sm:inline">&asymp; {mmss(spoken)} spoken</span> : null}
+              {spoken ? <span className="ml-3 hidden text-[color:var(--ink-mid)] sm:inline">&asymp; {mmss(spoken)} spoken</span> : null}
             </span>
             <span className="hidden gap-5 md:flex">
               <span>
-                {speed} <span className="text-[color:var(--ink-faint)]">px/s</span>
+                {speed} <span className="text-[color:var(--ink-mid)]">px/s</span>
               </span>
               <span>
-                {size} <span className="text-[color:var(--ink-faint)]">px</span>
+                {size} <span className="text-[color:var(--ink-mid)]">px</span>
               </span>
-              <span className={mirror ? "text-[color:var(--ink)]" : "text-[color:var(--ink-faint)]"}>Mirror</span>
+              <span className={mirror ? "text-[color:var(--ink)]" : "text-[color:var(--ink-mid)]"}>Mirror</span>
             </span>
             <button type="button" onClick={() => setOpen(false)} className="slate-link text-[color:var(--ink)]" data-cursor="Cut">
               Close
@@ -171,7 +171,7 @@ export function Prompter({ title, hook, body, cta, spoken }: Props) {
                 Mirror
               </button>
             </div>
-            <span className="hidden text-[color:var(--ink-faint)] lg:inline">Space roll &middot; &uarr;&darr; pace &middot; + &minus; size &middot; M mirror &middot; R rewind &middot; Esc close</span>
+            <span className="hidden text-[color:var(--ink-mid)] lg:inline">Space roll &middot; &uarr;&darr; pace &middot; + &minus; size &middot; M mirror &middot; R rewind &middot; Esc close</span>
           </div>
         </div>
       )}

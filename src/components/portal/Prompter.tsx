@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { timecode } from "@/lib/timecode";
+import { mmss } from "@/lib/words";
+import { useFocusTrap } from "@/lib/use-focus-trap";
 
 /**
  * The prompter. A script, full screen, in type large enough to read from
@@ -10,9 +12,9 @@ import { timecode } from "@/lib/timecode";
  * the size, M mirrors it for a glass rig, R rewinds, Escape closes.
  * Nothing is stored; every opening starts at the top.
  */
-type Props = { title: string; hook?: string; body: string[]; cta?: string };
+type Props = { title: string; hook?: string; body: string[]; cta?: string; spoken?: number };
 
-export function Prompter({ title, hook, body, cta }: Props) {
+export function Prompter({ title, hook, body, cta, spoken }: Props) {
   const [open, setOpen] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(36); // px per second
@@ -21,6 +23,8 @@ export function Prompter({ title, hook, body, cta }: Props) {
   const scroller = useRef<HTMLDivElement>(null);
   const tc = useRef<HTMLSpanElement>(null);
   const elapsed = useRef(0);
+  const box = useRef<HTMLDivElement>(null);
+  useFocusTrap(open, box);
 
   // The scroll loop: position advances by speed × dt while playing.
   useEffect(() => {
@@ -92,7 +96,7 @@ export function Prompter({ title, hook, body, cta }: Props) {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-[95] flex flex-col bg-black text-[color:var(--ink)]" role="dialog" aria-modal="true" aria-label="Prompter">
+        <div ref={box} className="fixed inset-0 z-[95] flex flex-col bg-black text-[color:var(--ink)]" role="dialog" aria-modal="true" aria-label="Prompter">
           {/* HUD */}
           <div className="mono flex items-center justify-between border-b border-[color:var(--rule)] px-5 py-3 md:px-8">
             <span className="flex items-center gap-2">
@@ -101,6 +105,7 @@ export function Prompter({ title, hook, body, cta }: Props) {
               <span ref={tc} className="tc ml-3">
                 00:00:00:00
               </span>
+              {spoken ? <span className="ml-3 hidden text-[color:var(--ink-faint)] sm:inline">&asymp; {mmss(spoken)} spoken</span> : null}
             </span>
             <span className="hidden gap-5 md:flex">
               <span>

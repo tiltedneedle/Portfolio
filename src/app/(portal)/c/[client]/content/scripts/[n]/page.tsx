@@ -7,6 +7,7 @@ import { PrintButton } from "@/components/portal/PrintButton";
 import { chapter, pageNumber } from "@/content/chapters";
 import { requireClient } from "@/content/clients/registry";
 import { scriptAsText, shortName } from "@/content/clients/types";
+import { mmss, spokenSeconds, wordCount } from "@/lib/words";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -32,6 +33,9 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
   const prev = sys.scripts.find((x) => x.n === s.n - 1);
   const next = sys.scripts.find((x) => x.n === s.n + 1);
   const written = !!s.body?.length;
+  const spokenText = written ? [s.hook, ...s.body!, s.cta].filter(Boolean).join(" ") : "";
+  const words = wordCount(spokenText);
+  const spoken = spokenSeconds(spokenText);
 
   return (
     <article className="script-page bg-[color:var(--stage)]">
@@ -47,7 +51,7 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
           <h1 className="display max-w-[14ch] text-[clamp(48px,7.5vw,120px)]">{s.title || "Script " + pad(s.n)}</h1>
           <div className="no-print flex flex-wrap items-center gap-4">
             <CopyScript text={scriptAsText(s)} disabled={!written} />
-            {written && <Prompter title={"Script " + pad(s.n) + " \u2014 " + s.title} hook={s.hook} body={s.body!} cta={s.cta} />}
+            {written && <Prompter title={"Script " + pad(s.n) + " \u2014 " + s.title} hook={s.hook} body={s.body!} cta={s.cta} spoken={spoken} />}
             {written && <PrintButton />}
           </div>
         </div>
@@ -60,6 +64,10 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
               <span>Hook</span>
               <span>Script</span>
               {s.cta && <span>Call to action</span>}
+              <span className="mt-4 text-[color:var(--ink-faint)]">{words} words</span>
+              <span className="text-[color:var(--ink-faint)]">
+                &asymp; {mmss(spoken)} <span className="text-[color:var(--ink-faint)]">spoken</span>
+              </span>
             </div>
             <div className="flex max-w-[62ch] flex-col gap-14">
               {s.hook && (

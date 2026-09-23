@@ -5,11 +5,14 @@ import { useEffect, useState } from "react";
 /**
  * The rail beside a guide: every section, with the lamp on the one being
  * read. It follows the reader with an IntersectionObserver, and each row is
- * a real anchor so the keyboard can use it too. Below the large breakpoint
- * it folds into a cue sheet at the top of the page.
+ * a real anchor so the keyboard can use it too. Sections the reader has
+ * scrolled past get a tick for the rest of the visit; nothing is stored.
+ * Below the large breakpoint it folds into a cue sheet at the top of the
+ * page.
  */
 export function GuideRail({ items }: { items: { id: string; n?: string; title: string }[] }) {
   const [active, setActive] = useState<string>(items[0]?.id ?? "");
+  const [read, setRead] = useState<string>("");
 
   useEffect(() => {
     const els = items.map((it) => document.getElementById(it.id)).filter((el): el is HTMLElement => !!el);
@@ -20,6 +23,7 @@ export function GuideRail({ items }: { items: { id: string; n?: string; title: s
       const line = window.innerHeight * 0.33;
       let best = els[0];
       let bestDist = Infinity;
+      const passed: string[] = [];
       for (const el of els) {
         const top = el.getBoundingClientRect().top;
         const dist = top <= line ? line - top : (top - line) * 4;
@@ -27,8 +31,17 @@ export function GuideRail({ items }: { items: { id: string; n?: string; title: s
           bestDist = dist;
           best = el;
         }
+        // Read once its whole height has gone past the reading line.
+        if (el.getBoundingClientRect().bottom < line) passed.push(el.id);
       }
       setActive((prev) => (prev === best.id ? prev : best.id));
+      // Kept as a joined string so an unchanged set never re-renders.
+      setRead((prev) => {
+        const seen = new Set(prev ? prev.split(" ") : []);
+        for (const id of passed) seen.add(id);
+        const next = Array.from(seen).join(" ");
+        return next === prev ? prev : next;
+      });
     };
     let ticking = false;
     const onScroll = () => {
@@ -52,6 +65,7 @@ export function GuideRail({ items }: { items: { id: string; n?: string; title: s
     <ol className="flex flex-col">
       {items.map((it) => {
         const on = it.id === active;
+        const done = !on && read.split(" ").includes(it.id);
         return (
           <li key={it.id}>
             <a
@@ -62,8 +76,8 @@ export function GuideRail({ items }: { items: { id: string; n?: string; title: s
               }
               aria-current={on ? "location" : undefined}
             >
-              <span className="flex w-[2ch] shrink-0 items-center gap-2">
-                <span className={on ? "lamp" : "lamp-off"} aria-hidden="true" />
+              <span className="flex w-[2ch] shrink-0 items-center gap-2" aria-hidden="true">
+                {done ? <span className="mono text-[10px] leading-none text-[color:var(--ink-faint)]">&#10003;</span> : <span className={on ? "lamp" : "lamp-off"} />}
               </span>
               <span className="mono w-[3ch] shrink-0 text-[color:var(--ink-faint)]">{it.n ?? "—"}</span>
               <span>{it.title}</span>

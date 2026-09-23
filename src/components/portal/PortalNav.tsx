@@ -20,7 +20,7 @@ import { EASE_OUT_EXPO } from "@/lib/design-tokens";
  */
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
-function Panel({ chapter: c, onPick, who }: { chapter: Chapter; onPick: () => void; who: string }) {
+function Panel({ chapter: c, onPick, who, current }: { chapter: Chapter; onPick: () => void; who: string; current: string }) {
   return (
     <div className="panel w-[360px] p-2">
       <div className="mono flex items-baseline justify-between px-3 pb-2 pt-3">
@@ -36,18 +36,27 @@ function Panel({ chapter: c, onPick, who }: { chapter: Chapter; onPick: () => vo
       </div>
       <p className="px-3 pb-3 text-[13px] leading-snug text-[color:var(--ink-mid)]">{c.blurb}</p>
       <ul className="border-t border-[color:var(--rule)]">
-        {c.pages.map((p, j) => (
-          <li key={p.slug}>
-            <CutLink
-              href={pageHref(c.id, p.slug)}
-              onClick={onPick}
-              className="flex items-baseline gap-3 border-b border-[color:var(--rule)] px-3 py-2.5 text-[15px] text-[color:var(--ink-soft)] transition-colors last:border-b-0 hover:bg-[color:var(--stage-3)] hover:text-[color:var(--ink)]"
-            >
-              <span className="mono w-[5ch] shrink-0 text-[color:var(--ink-faint)]">{c.id === "home" ? pad(j) : pageNumber(c.id, p.slug)}</span>
-              {p.title}
-            </CutLink>
-          </li>
-        ))}
+        {c.pages.map((p, j) => {
+          const href = pageHref(c.id, p.slug);
+          const here = href === current;
+          return (
+            <li key={p.slug}>
+              <CutLink
+                href={href}
+                onClick={onPick}
+                aria-current={here ? "page" : undefined}
+                className={cn(
+                  "flex items-baseline gap-3 border-b border-[color:var(--rule)] px-3 py-2.5 text-[15px] transition-colors last:border-b-0 hover:bg-[color:var(--stage-3)] hover:text-[color:var(--ink)]",
+                  here ? "text-[color:var(--ink)]" : "text-[color:var(--ink-soft)]"
+                )}
+              >
+                <span className="mono w-[5ch] shrink-0 text-[color:var(--ink-faint)]">{c.id === "home" ? pad(j) : pageNumber(c.id, p.slug)}</span>
+                {p.title}
+                {here && <span className="lamp ml-auto shrink-0 self-center" aria-hidden="true" />}
+              </CutLink>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
@@ -179,9 +188,9 @@ export function PortalNav() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 4 }}
                       transition={{ duration: 0.18, ease: EASE_OUT_EXPO }}
-                      className={cn("absolute top-full z-50 pt-4", i >= chapters.length - 2 ? "right-0" : "left-0")}
+                      className={cn("absolute top-full z-50 pt-4", i >= chapters.length - 3 ? "right-0" : "left-0")}
                     >
-                      <Panel chapter={c} onPick={pick} who={who} />
+                      <Panel chapter={c} onPick={pick} who={who} current={pathname} />
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -212,9 +221,22 @@ export function PortalNav() {
             className="fixed inset-0 z-40 overflow-y-auto bg-[color:var(--stage)] md:hidden"
           >
             <nav className="px-6 pb-16 pt-24" aria-label="Menu">
-              <p className="mono mb-6">
-                The system <span className="text-[color:var(--ink-faint)]">/</span> {who}
-              </p>
+              <div className="mb-6 flex items-baseline justify-between gap-4">
+                <p className="mono">
+                  The system <span className="text-[color:var(--ink-faint)]">/</span> {who}
+                </p>
+                <button
+                  type="button"
+                  className="slate-link text-[12px] text-[color:var(--ink)]"
+                  onClick={() => {
+                    pick();
+                    // The palette listens for this; the menu is closed first so the two never stack.
+                    setTimeout(() => window.dispatchEvent(new Event("tn:palette")), 80);
+                  }}
+                >
+                  Find anything &rarr;
+                </button>
+              </div>
               <ol className="flex flex-col">
                 {chapters.map((c, i) => (
                   <motion.li
@@ -230,14 +252,24 @@ export function PortalNav() {
                       {c.personalised && <span className="lamp ml-auto" aria-hidden="true" />}
                     </CutLink>
                     <ul className="mt-3 flex flex-col gap-2 pl-[calc(2ch+16px)]">
-                      {c.pages.map((p, j) => (
-                        <li key={p.slug}>
-                          <CutLink href={pageHref(c.id, p.slug)} onClick={pick} className="flex items-baseline gap-3 text-[15px] text-[color:var(--ink-soft)]">
-                            <span className="mono text-[color:var(--ink-faint)]">{c.id === "home" ? pad(j) : pageNumber(c.id, p.slug)}</span>
-                            {p.title}
-                          </CutLink>
-                        </li>
-                      ))}
+                      {c.pages.map((p, j) => {
+                        const href = pageHref(c.id, p.slug);
+                        const here = href === pathname;
+                        return (
+                          <li key={p.slug}>
+                            <CutLink
+                              href={href}
+                              onClick={pick}
+                              aria-current={here ? "page" : undefined}
+                              className={cn("flex items-baseline gap-3 text-[15px]", here ? "text-[color:var(--ink)]" : "text-[color:var(--ink-soft)]")}
+                            >
+                              <span className="mono text-[color:var(--ink-faint)]">{c.id === "home" ? pad(j) : pageNumber(c.id, p.slug)}</span>
+                              {p.title}
+                              {here && <span className="lamp ml-2 shrink-0 self-center" aria-hidden="true" />}
+                            </CutLink>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </motion.li>
                 ))}

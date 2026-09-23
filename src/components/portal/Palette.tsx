@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { beginCut } from "@/lib/cut";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
+import { useFocusTrap } from "@/lib/use-focus-trap";
 
 /**
  * The palette: every page and every section of the system, one keystroke
@@ -39,6 +40,8 @@ export function Palette({ items }: { items: PaletteItem[] }) {
   const [cursor, setCursor] = useState(0);
   const input = useRef<HTMLInputElement>(null);
   const list = useRef<HTMLUListElement>(null);
+  const box = useRef<HTMLDivElement>(null);
+  useFocusTrap(open, box);
   // A section anchor to jump to once the next page has committed.
   const pendingHash = useRef<string | null>(null);
   const router = useRouter();
@@ -115,7 +118,11 @@ export function Palette({ items }: { items: PaletteItem[] }) {
       }
     };
     window.addEventListener("keydown", key);
-    return () => window.removeEventListener("keydown", key);
+    window.addEventListener("tn:palette", show);
+    return () => {
+      window.removeEventListener("keydown", key);
+      window.removeEventListener("tn:palette", show);
+    };
   }, [open, order, pathname, go, show]);
 
   useEffect(() => {
@@ -193,6 +200,7 @@ export function Palette({ items }: { items: PaletteItem[] }) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 6 }}
               transition={{ duration: 0.22, ease: EASE_OUT_EXPO }}
+              ref={box}
               role="dialog"
               aria-modal="true"
               aria-label="Contents"

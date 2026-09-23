@@ -1,8 +1,11 @@
 import { CutLink } from "@/components/room/CutLink";
 import { Rail } from "@/components/portal/Rail";
 import type { Script } from "@/content/clients/types";
+import { mmss, spokenSeconds } from "@/lib/words";
 
 const pad = (n: number) => String(n).padStart(2, "0");
+
+const spoken = (s: Script) => (s.body?.length ? spokenSeconds([s.hook, ...s.body, s.cta].filter(Boolean).join(" ")) : 0);
 
 /** Twenty scripts on a rail. A title opens the script; a slot says so. */
 export function ScriptsRail({ scripts }: { scripts: Script[] }) {
@@ -21,7 +24,7 @@ export function ScriptsRail({ scripts }: { scripts: Script[] }) {
             </span>
             <span className="mono relative flex items-center justify-between">
               <span>Script {pad(s.n)}</span>
-              {s.example && <span className="text-[color:var(--ink-faint)]">Example</span>}
+              {s.example ? <span className="text-[color:var(--ink-faint)]">Example</span> : spoken(s) ? <span className="text-[color:var(--ink-faint)]">&asymp; {mmss(spoken(s))}</span> : null}
             </span>
             <span className="relative">
               {s.title ? (

@@ -13,9 +13,10 @@ Verify with `npm run smoke -- http://localhost:3400` and
 `npm run smoke -- http://localhost:3401 --gated`; content with `npm run
 check`. Visual checks go through the Playwright MCP
 (`browser_run_code_unsafe`), screenshots into the session scratchpad,
-never into the repo. Shell gotchas on this machine: long heredocs with
-apostrophes have failed to parse in the Bash tool; write files with the
-Write tool (to the scratchpad, then `cp`) or with a small node script.
+never into the repo. Shell gotcha on this machine: long file contents
+through the Bash tool (heredocs, node -e) have failed to parse; write
+files with the Write tool (to the scratchpad, then `cp`) or put edit
+logic in a scratch `.cjs` and run it with node.
 
 ## What this is (2026-09-24)
 
@@ -48,6 +49,24 @@ The marketing site this grew out of is on the `marketing-site` branch.
   rule in `scripts/check-content.mjs`, a line in README.
 - Security headers with a narrow CSP in `next.config.ts` (no nonces: the
   pages are static). New hosts must be added there.
+- The palette opens on ⌘K, `/`, the desktop button, or a `tn:palette`
+  window event (the phone menu sends it). Dialogs (palette, prompter,
+  lightbox) share `useFocusTrap`.
+- Reveals (`Reveal.tsx`) never hide anything in the HTML: after hydration
+  only blocks below the fold get `reveal-wait`, and an observer adds
+  `reveal-in`. Reduced motion skips it entirely.
+
+## Decisions
+
+- **Route changes stay black-frame cuts.** Next 16's `experimental.
+  viewTransition` (React `<ViewTransition>`) was read and not adopted: it
+  animates continuity (morphs, slides, crossfades), and the room's grammar
+  is the opposite, a cut. It is also behind an experimental flag. Revisit
+  only if a shared-element morph is ever wanted (e.g. a script card into
+  its page).
+- **Spoken length is 150 words a minute**, stated on the script page, the
+  scripts rail and the prompter HUD. Change `SPOKEN_WPM` in
+  `src/lib/words.ts` if a client's presenter is measurably different.
 
 ## Done
 
@@ -57,43 +76,39 @@ The marketing site this grew out of is on the `marketing-site` branch.
       rails, scripts rail + script page with copy, login, 404.
 - [x] Multi-client architecture as above, verified end to end in the
       browser. Demo client with written audit sections, ideas and scripts.
-- [x] Creative wave 1 (2026-09-24): reveal motion on blocks; reading line
-      on guides and reports; palette (⌘K, /, arrows, Enter, section
+- [x] Creative wave 1 (commit `d84bf8c`): reveal motion on blocks; reading
+      line on guides and reports; palette (⌘K, /, arrows, Enter, section
       anchors) and `[` `]` paging; prompter on script pages (roll, pace,
       size, mirror, rewind, timecode) and a print stylesheet; "deal me one"
       on the ideas page; posters on chapter overviews (studio stills);
-      intro and outro film slots on home.
-- [x] Diagram blocks: retention curve and diagnose-a-video ladder
-      (Analyse), cadence strip and one-video-five-platforms fan (Publish
-      strategy), structure strip (Core message), shot sheet and lens wedges
-      (Filming), idea fan (Ideation), hook flashcards (Hooks), search
-      typewriter (Discoverability), cycle ring (Monthly process). `figure`
-      block for the user's images (validated against `public/`).
-- [x] Hardening: `error.tsx` and `global-error.tsx` in the room's voice,
-      clipboard fallback in CopyScript, CSP, home title no longer doubled
-      ("X × Tilted Needle · Tilted Needle"). README rewritten for the
-      multi-client flow.
+      intro and outro film slots on home; eleven diagram block kinds;
+      error pages; clipboard fallback; CSP; README for multi-client.
+- [x] Waves 2 and 3: current page marked in nav panels and the phone
+      contents; "Find anything" in the phone menu opens the palette;
+      spoken length on script pages, rail cards and the prompter HUD; read
+      ticks on the guide rail; cadence grid at six columns and structure
+      strip timecodes thinned on a phone; nav panels for the last three
+      rooms right-aligned (the Create panel used to overflow at 1440);
+      reveals rebuilt so the first screen is served at rest; focus traps
+      on the palette and the prompter, with focus returned on close.
 
 ## In flight
 
-- [ ] Verify wave 1 + diagrams in the browser (screenshots of every new
-      diagram at 1440 and 390), then commit and push.
+- [ ] Nothing mid-change. All verified and committed. Pick from Next.
 
 ## Next
 
-1. Second look at the diagrams on a phone: the cadence grid at 10 columns,
-   the flow ladder, the shot sheet at two columns.
-2. Nav: mark the current page in the panel; palette entry in the mobile
-   contents screen (the ⌘K button is desktop-only).
-3. Guide rail: a "read" tick per section once scrolled past (session only).
-4. Script page: estimated speaking time from the word count (150 wpm) in
-   the mono strip, and the same in the prompter HUD.
-5. Audit report: a "what to do first" summary block type when the client's
-   findings are written (needs the first real client).
-6. Research: view-transitions API for the cut (Next 16 supports the
-   `ViewTransition` component behind a flag; check the bundled docs),
-   `next/font` display strategy for the display face, and whether the
-   `Reveal` wrapper should skip blocks above the fold.
-7. Awaiting from the user (do not block): nine training-video ids for the
+1. Audit report: a "what to do first" summary block type when the client's
+   findings are written (needs the first real client to shape it; do not
+   invent findings).
+2. Ideas page: the pillar sections as the palette's "Your content" entries
+   already exist; consider a per-card "Open as script brief" that jumps to
+   the ideation guide with the idea in the palette query (stateless).
+3. Home strip: each of the seven cards could carry its live count (13
+   headings / 4 written, 45 ideas, 3 scripts) from the client data.
+4. Lighthouse / axe pass on the gated server (needs Chrome available to
+   the CLI; the Playwright MCP browser can run axe-core from a CDN if the
+   CSP is relaxed on a dev server only).
+5. Awaiting from the user (do not block): nine training-video ids for the
    Create guides plus intro/outro, first real client content, images for
    `figure` blocks.

@@ -107,7 +107,7 @@ export function Cadence({ title, note, days = 30, every = 2 }: { title?: string;
     <figure>
       <Title text={title} />
       <div className="border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-4 md:p-6">
-        <ol className="grid grid-cols-10 gap-1.5 md:grid-cols-15 md:gap-2" aria-label={posts + " posts across " + days + " days"}>
+        <ol className="grid grid-cols-6 gap-1.5 sm:grid-cols-10 md:grid-cols-15 md:gap-2" aria-label={posts + " posts across " + days + " days"}>
           {cells.map((i) => {
             const on = i % every === 0;
             return (
@@ -206,8 +206,13 @@ export function Structure({ title, parts, seconds = 45, note }: { title?: string
             ))}
           </div>
           <div className="relative mt-1 h-5">
-            {marks.map((m) => (
-              <span key={m.label} className="tc absolute -translate-x-1/2 text-[10px] first:translate-x-0" style={{ left: (m.start * 100).toFixed(2) + "%" }}>
+            {marks.map((m, i) => (
+              // On a phone the strip is too short for every timecode; the first and the total stay.
+              <span
+                key={m.label}
+                className={"tc absolute -translate-x-1/2 text-[10px] first:translate-x-0 " + (i === 0 ? "" : "hidden sm:inline")}
+                style={{ left: (m.start * 100).toFixed(2) + "%" }}
+              >
                 {timecode(m.start * seconds).slice(3, 8)}
               </span>
             ))}

@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useClient } from "@/components/portal/ClientContext";
+import { positionKey } from "@/components/portal/Resume";
 
 /**
  * The rail beside a guide: every section, with the lamp on the one being
@@ -10,7 +12,8 @@ import { useEffect, useState } from "react";
  * Below the large breakpoint it folds into a cue sheet at the top of the
  * page.
  */
-export function GuideRail({ items, minutes = 0 }: { items: { id: string; n?: string; title: string }[]; minutes?: number }) {
+export function GuideRail({ items, minutes = 0, k }: { items: { id: string; n?: string; title: string }[]; minutes?: number; k?: string }) {
+  const me = useClient();
   const [active, setActive] = useState<string>(items[0]?.id ?? "");
   const [read, setRead] = useState<string>("");
   // Whole minutes still to read, from how far down the page the reader is.
@@ -37,6 +40,14 @@ export function GuideRail({ items, minutes = 0 }: { items: { id: string; n?: str
         if (el.getBoundingClientRect().bottom < line) passed.push(el.id);
       }
       setActive((prev) => (prev === best.id ? prev : best.id));
+      // Remember the section for next time, once the reader is past the first.
+      if (k && best !== els[0]) {
+        try {
+          localStorage.setItem(positionKey(me.slug, k), best.id);
+        } catch {
+          // no storage, no memory: fine
+        }
+      }
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const progress = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 1;
       // The last screen counts as read: lazy images can keep the page growing under the reader.
@@ -66,7 +77,7 @@ export function GuideRail({ items, minutes = 0 }: { items: { id: string; n?: str
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, [items, minutes]);
+  }, [items, minutes, k, me.slug]);
 
   const list = (
     <ol className="flex flex-col">

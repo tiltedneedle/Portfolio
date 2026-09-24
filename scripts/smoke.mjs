@@ -35,6 +35,8 @@ if (!gated) {
   await expect("/publish/strategy", 200, { contains: "posts across" });
   await expect("/", 200, { contains: "Training film" });
   await expect("/", 200, { contains: "Call sheet" });
+  await expect("/", 200, { contains: "Recently added" });
+  await expect("/search-index.json", 200, { contains: "Verbal hooks" });
   await expect("/create/hooks", 200, { contains: "Mark as read" });
   await expect("/content/scripts/20", 200);
   await expect("/content/scripts/21", 404, { contains: "Nothing on this" });
@@ -53,6 +55,7 @@ if (!gated) {
 } else {
   await expect("/", 307, { location: "/login" });
   await expect("/create/hooks", 307, { location: "/login?next=%2Fcreate%2Fhooks" });
+  await expect("/search-index.json", 307, { location: "/login?next=%2Fsearch-index.json" });
   await expect("/", 307, { location: "/login", headers: { cookie: "tn-room=demo.9999999999999.deadbeef" } });
   await expect("/c/demo/audit", 307, { location: "/audit" });
   await expect("/login", 200, { contains: "Access code" });

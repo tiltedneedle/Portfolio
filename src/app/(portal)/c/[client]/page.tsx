@@ -7,6 +7,7 @@ import { AccessStrip } from "@/components/portal/AccessStrip";
 import { Loop } from "@/components/portal/Loop";
 import { TrainingFilm } from "@/components/portal/TrainingFilm";
 import { ThisWeek } from "@/components/portal/ThisWeek";
+import { RecentChanges } from "@/components/portal/RecentChanges";
 import { guides } from "@/content/system";
 import { chapter, pageHref } from "@/content/chapters";
 import { pillars } from "@/content/system/pillars";
@@ -121,6 +122,8 @@ export default async function Home({ params }: { params: Promise<{ client: strin
       <AccessStrip counts={counts} readKeys={readKeys} />
 
       <ThisWeek ideas={weekIdeas} scripts={weekScripts} guides={weekGuides} />
+
+      <RecentChanges />
 
       <section id="how" className="scroll-mt-16 border-t border-[color:var(--rule)] bg-[color:var(--stage)] py-24 md:py-36">
         <div className="mx-auto max-w-[1600px] px-6 md:px-14">

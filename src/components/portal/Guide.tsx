@@ -1,6 +1,7 @@
 import type { Guide as GuideT } from "@/content/types";
 import type { GuideNote } from "@/content/clients/types";
 import { ForYou } from "@/components/portal/ForYou";
+import { Resume } from "@/components/portal/Resume";
 import { chapter, pageNumber } from "@/content/chapters";
 import { readingMinutes } from "@/content/system";
 import { Blocks } from "@/components/portal/blocks";
@@ -51,6 +52,8 @@ export function Guide({ guide, notes = [], who = "" }: { guide: GuideT; notes?: 
           </div>
         </div>
 
+        <Resume k={guide.chapter + "/" + guide.slug} items={railItems} />
+
         {introNotes.length > 0 && (
           <div className="mt-12 md:ml-[calc(100%-60ch)] md:max-w-[60ch]">
             <ForYou who={who} notes={introNotes} />
@@ -72,7 +75,7 @@ export function Guide({ guide, notes = [], who = "" }: { guide: GuideT; notes?: 
       )}
 
       <div className="mx-auto max-w-[1600px] px-6 pb-24 pt-16 md:px-14 md:pt-24 lg:grid lg:grid-cols-[220px_1fr] lg:gap-x-16">
-        <GuideRail items={railItems} minutes={minutes} />
+        <GuideRail items={railItems} minutes={minutes} k={guide.chapter + "/" + guide.slug} />
 
         <div>
           {guide.sections.map((s, i) => (
@@ -104,7 +107,7 @@ export function Guide({ guide, notes = [], who = "" }: { guide: GuideT; notes?: 
         </div>
       </div>
 
-      <section className="border-t border-[color:var(--rule)] bg-black py-24 md:py-32">
+      <section id="rule" className="scroll-mt-28 border-t border-[color:var(--rule)] bg-black py-24 md:py-32">
         <div className="mx-auto max-w-[1600px] px-6 md:px-14">
           <p className="mono">The rule</p>
           <div className="mt-8 md:ml-[96px] md:max-w-[52ch]">

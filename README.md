@@ -40,7 +40,7 @@ Get-NetTCPConnection -LocalPort 3400 -State Listen | ForEach-Object { Stop-Proce
 
 | Route | Personalised | What it is |
 |---|---|---|
-| `/` | name and logo | Welcome, an intro film slot, what you have access to (a pinned strip of seven cards), how to use the system (five steps on a loop), an outro film slot, the approach |
+| `/` | name and logo | Welcome and a readout, an intro film slot, what you have access to (a pinned strip of seven cards), the week's call sheet, what was recently added, how to use the system (five steps on a loop), an outro film slot, the approach |
 | `/audit` then `/audit/content-diagnostic`, `/audit/competitor-intelligence` | yes | Two reports on fixed headings (13 and 8). Unwritten headings show a slate |
 | `/content` then `/content/ideas`, `/content/scripts`, `/content/scripts/[n]` | yes | Four pillars of 25 idea cards on rails, the mix, and a "deal me one" card; 20 scripts on a rail, then the first month laid out (scripts first, ideas after, one every other day); a script page with the slate (location, who is on camera), copy, a full-screen prompter with a countdown, print, and the shot list as a storyboard |
 | `/create` then 7 guides | no | Study your niche, ideation, video style, hooks, core message, filming, editing |
@@ -55,9 +55,12 @@ only (localStorage) and shows in the nav, on the room's overview and as
 "3 of 7 read" on the home strip. Home also carries a call sheet for the
 week: one idea, one script, one guide and one thing to do, rotated by the
 week of the year so the whole team sees the same sheet. `⌘K` (or `/`)
-opens the palette, which jumps to any page or section; `[` and `]` page
-through the system in reading order. Guides carry a reading line along the
-top edge.
+opens the palette, which jumps to any page or section and, from three
+letters on, finds any sentence in the guides (the index is built per client
+at `/search-index.json`, behind the door, with the client's notes folded
+in); `[` and `]` page through the system in reading order. Guides carry a
+reading line along the top edge, say how many minutes are left, and offer
+to resume at the last section read on this device.
 
 ## Clients
 

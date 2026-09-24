@@ -139,6 +139,15 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 19: full-text search (from three letters the palette finds any
+      sentence in the guides, with a snippet; the index is built per client
+      at /search-index.json, pre-rendered and served behind the door, the
+      client's notes folded in); resume at the last section read on this
+      device; "Recently added" on home from content/system/changes.ts
+      (validated: dated, newest first). Fixed: a key pressed in the
+      palette's exit beat went into the dying field (the focus trap hands
+      focus back to body, which cannot take it), so a quick Esc then / did
+      nothing; the palette now blurs before it closes. 44 tests.
 - [x] Wave 18: the guide rail says how many minutes are left (from the
       scroll position; the last screen counts as read); the home backdrop
       stills go through Still as well (4 of 33 were placeholders and now

@@ -165,6 +165,17 @@ for (const [slug, c] of Object.entries(clients)) {
   });
 }
 
+// Changes: dated, newest first, each with words and a path
+const { changes } = await import(pathToFileURL(join(out, "content/system/changes.js")).href);
+let lastDate = "9999-99-99";
+for (const c of changes) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(c.date) || Number.isNaN(Date.parse(c.date))) problems.push(`changes: "${c.text.slice(0, 40)}" has a bad date ${c.date}`);
+  if (c.date > lastDate) problems.push(`changes: "${c.text.slice(0, 40)}" is out of order (newest first)`);
+  lastDate = c.date;
+  if (!c.text) problems.push("changes: an entry has no text");
+  if (c.href && !c.href.startsWith("/")) problems.push(`changes: "${c.text.slice(0, 40)}" links off the site`);
+}
+
 // Guides
 const seen = new Set();
 for (const g of guides) {

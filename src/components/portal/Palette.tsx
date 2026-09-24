@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { beginCut } from "@/lib/cut";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 import { useFocusTrap } from "@/lib/use-focus-trap";
+import { snippet, type SearchEntry } from "@/lib/search-index";
 
 /**
  * The palette: every page and every section of the system, one keystroke
@@ -25,7 +26,26 @@ export type PaletteItem = {
   hidden?: boolean;
 };
 
-type Hit = { href: string; title: string; kicker: string; n: string; section?: boolean };
+type Hit = { href: string; title: string; kicker: string; n: string; section?: boolean; snippet?: string };
+
+// The full-text index, fetched once per visit the first time three letters are typed.
+let indexCache: SearchEntry[] | null = null;
+let indexLoading: Promise<void> | null = null;
+function loadIndex() {
+  if (indexCache || indexLoading) return indexLoading ?? Promise.resolve();
+  indexLoading = fetch("/search-index.json", { credentials: "same-origin" })
+    .then((r) => (r.ok ? r.json() : null))
+    .then((data) => {
+      if (Array.isArray(data)) indexCache = data as SearchEntry[];
+    })
+    .catch(() => {
+      // The palette still finds pages and sections by their titles.
+    })
+    .finally(() => {
+      indexLoading = null;
+    });
+  return indexLoading;
+}
 
 const KEYS = "⌘K";
 
@@ -44,6 +64,8 @@ function isTyping(e: KeyboardEvent) {
 export function Palette({ items }: { items: PaletteItem[] }) {
   const [open, setOpen] = useState(false);
   const [help, setHelp] = useState(false);
+  // Bumps once the index has arrived so the hits recompute.
+  const [indexed, setIndexed] = useState(0);
   const [q, setQ] = useState("");
   const [cursor, setCursor] = useState(0);
   const input = useRef<HTMLInputElement>(null);
@@ -52,6 +74,12 @@ export function Palette({ items }: { items: PaletteItem[] }) {
   useFocusTrap(open, box);
   // A section anchor to jump to once the next page has committed.
   const pendingHash = useRef<string | null>(null);
+// The exit animation keeps the field mounted for a beat; a key pressed in
+  // that beat must reach the page, not the dying field, so focus leaves first.
+  const close = useCallback(() => {
+    input.current?.blur();
+    setOpen(false);
+  }, []);
   const router = useRouter();
   const pathname = usePathname();
   const reduced = useReducedMotion();
@@ -73,7 +101,7 @@ export function Palette({ items }: { items: PaletteItem[] }) {
 
   const go = useCallback(
     (href: string) => {
-      setOpen(false);
+      close();
       const path = href.split("#")[0];
       if (path === pathname) {
         const hash = href.split("#")[1];
@@ -94,7 +122,7 @@ export function Palette({ items }: { items: PaletteItem[] }) {
       if (!reduced) beginCut();
       requestAnimationFrame(() => router.push(href));
     },
-    [pathname, reduced, router]
+    [pathname, reduced, router, close]
   );
 
   // The router lands new pages at the top; a section pick still has to
@@ -114,12 +142,13 @@ export function Palette({ items }: { items: PaletteItem[] }) {
     setOpen(true);
   }, []);
 
+
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
       if (otherDialogOpen()) return;
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        if (open) setOpen(false);
+        if (open) close();
         else show();
         return;
       }
@@ -160,7 +189,7 @@ export function Palette({ items }: { items: PaletteItem[] }) {
       window.removeEventListener("keydown", key);
       window.removeEventListener("tn:palette", show);
     };
-  }, [open, help, order, pathname, go, show]);
+  }, [open, help, order, pathname, go, show, close]);
 
   useEffect(() => {
     if (!open) return;
@@ -171,6 +200,17 @@ export function Palette({ items }: { items: PaletteItem[] }) {
       clearTimeout(t);
     };
   }, [open]);
+
+  useEffect(() => {
+    if (!open || indexCache || q.trim().length < 3) return;
+    let live = true;
+    loadIndex().then(() => {
+      if (live && indexCache) setIndexed((n) => n + 1);
+    });
+    return () => {
+      live = false;
+    };
+  }, [open, q]);
 
   const hits = useMemo<Hit[]>(() => {
     const needle = q.trim().toLowerCase();
@@ -187,8 +227,22 @@ export function Palette({ items }: { items: PaletteItem[] }) {
         if (matches(s.title + " " + it.title + " " + it.chapter)) out.push({ href: it.href + "#" + s.id, title: s.title, kicker: it.title, n: s.n ?? it.n, section: true });
       }
     }
+    // Then the words themselves, once the index is here and there is enough typed to mean something.
+    if (needle.length >= 3 && indexCache) {
+      const seen = new Set(out.map((h) => h.href));
+      for (const e of indexCache) {
+        for (const s of e.sections) {
+          const href = e.href + (s.id ? "#" + s.id : "");
+          if (seen.has(href) || !matches(s.text)) continue;
+          seen.add(href);
+          out.push({ href, title: s.title, kicker: e.title, n: s.n ?? e.n, section: true, snippet: snippet(s.text, words[0]) });
+        }
+      }
+    }
     return out.slice(0, 14);
-  }, [items, q]);
+    // indexed is a tick that says the index has arrived; the memo must rerun then.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items, q, indexed]);
 
   useEffect(() => {
     const el = list.current?.children[cursor] as HTMLElement | undefined;
@@ -196,7 +250,7 @@ export function Palette({ items }: { items: PaletteItem[] }) {
   }, [cursor]);
 
   const onKey = (e: React.KeyboardEvent) => {
-    if (e.key === "Escape") setOpen(false);
+    if (e.key === "Escape") close();
     else if (e.key === "ArrowDown") {
       e.preventDefault();
       setCursor((c) => Math.min(hits.length - 1, c + 1));
@@ -263,7 +317,7 @@ export function Palette({ items }: { items: PaletteItem[] }) {
             exit={{ opacity: 0 }}
             transition={{ duration: reduced ? 0 : 0.18 }}
             className="fixed inset-0 z-[90] flex items-start justify-center bg-black/70 px-4 pt-[12vh] backdrop-blur-sm"
-            onClick={() => setOpen(false)}
+            onClick={() => close()}
           >
             <motion.div
               initial={reduced ? false : { opacity: 0, y: 8, scale: 0.99 }}
@@ -287,7 +341,7 @@ export function Palette({ items }: { items: PaletteItem[] }) {
                     setCursor(0);
                   }}
                   onKeyDown={onKey}
-                  placeholder="A page, a section, a word"
+                  placeholder="A page, a section, any words"
                   className="w-full bg-transparent text-[19px] text-[color:var(--ink)] outline-none placeholder:text-[color:var(--ink-mid)]"
                   aria-label="Search the system"
                   autoComplete="off"
@@ -311,7 +365,10 @@ export function Palette({ items }: { items: PaletteItem[] }) {
                       }
                     >
                       <span className="mono w-[5ch] shrink-0 text-[color:var(--ink-mid)]">{h.n}</span>
-                      <span className={h.section ? "text-[15px]" : "text-[17px]"}>{h.title}</span>
+                      <span className="min-w-0 flex-1">
+                        <span className={h.section ? "text-[15px]" : "text-[17px]"}>{h.title}</span>
+                        {h.snippet && <span className="mt-0.5 block truncate text-[12px] text-[color:var(--ink-mid)]">{h.snippet}</span>}
+                      </span>
                       <span className="mono ml-auto shrink-0 text-[color:var(--ink-mid)]">{h.kicker}</span>
                     </button>
                   </li>

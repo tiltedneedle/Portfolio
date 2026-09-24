@@ -130,6 +130,13 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 9, the personalised pages: findings are designed objects
+      (verdict lamp, score dial, keep / holding back / would change
+      columns, labelled lists, evidence stills, a place in the first three
+      moves); the report header scans every heading in a row of lamps and
+      averages the scores; the competitor report carries a board of
+      accounts and a positioning map. Demo written in full (13 + 8); the
+      template still shows slates. Validator knows every new field.
 - [x] Wave 8: each client has their own door, `/login?for=<slug>` (the
       brief's unique URL per client): the slate carries their name and
       mark, errors keep the link, the scaffolder prints it, smoke checks it.

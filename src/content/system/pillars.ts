@@ -1,4 +1,4 @@
-import type { Pillar } from "@/content/clients/types";
+import type { AuditFinding, AuditReport, Competitor, Pillar, PositionMap } from "@/content/clients/types";
 
 /** The four content pillars. Universal; every client's hundred ideas sit in these. */
 export const pillars: { id: Pillar; title: string; definition: string }[] = [
@@ -45,14 +45,23 @@ export const COMPETITOR_INTRO =
 /**
  * Build a report from the fixed headings and a map of written findings, so a
  * client file only ever writes the findings and can never drift from the
- * structure.
+ * structure. A finding is either the paragraphs alone or a full
+ * `AuditFinding` (verdict, score, the keep / limiting / change columns,
+ * evidence, a place in the first three moves). The competitor report can
+ * also carry its board of accounts and a positioning map.
  */
 export function report(
   intro: string,
   headings: { title: string; covers: string }[],
-  written: Record<string, string[]> = {}
-) {
-  return { intro, sections: headings.map((h) => ({ ...h, body: written[h.title] })) };
+  written: Record<string, string[] | AuditFinding> = {},
+  extra: { competitors?: Competitor[]; map?: PositionMap } = {}
+): AuditReport {
+  const sections = headings.map((h) => {
+    const w = written[h.title];
+    if (!w) return { ...h };
+    return Array.isArray(w) ? { ...h, body: w } : { ...h, ...w };
+  });
+  return { intro, sections, ...extra };
 }
 
 /** Twenty-five slots, with any written ideas placed first. */

@@ -105,6 +105,38 @@ for (const [slug, c] of Object.entries(clients)) {
     for (const t of texts) if (t.length > 140) warn.push(`${slug}: ${pillar} idea is long (${t.length} chars): "${t.slice(0, 40)}…"`);
   }
   if (c.scripts.length !== 20) problems.push(`${slug}: ${c.scripts.length} scripts, not 20`);
+  // Findings: verdicts, scores, first moves, evidence, competitors, the map
+  for (const [name, r] of [["content diagnostic", c.contentDiagnostic], ["competitor intelligence", c.competitorIntelligence]]) {
+    const firsts = new Map();
+    for (const sec of r.sections) {
+      const where = `${slug} ${name} "${sec.title}"`;
+      if (sec.verdict && !["strong", "mixed", "weak"].includes(sec.verdict)) problems.push(`${where}: verdict must be strong, mixed or weak`);
+      if (sec.score !== undefined && !(Number.isInteger(sec.score) && sec.score >= 0 && sec.score <= 10)) problems.push(`${where}: score must be a whole number from 0 to 10`);
+      if ((sec.verdict || sec.score !== undefined || sec.first) && !sec.body?.length) problems.push(`${where}: has a verdict, score or move but no body`);
+      if (sec.first !== undefined) {
+        if (![1, 2, 3].includes(sec.first)) problems.push(`${where}: first must be 1, 2 or 3`);
+        if (firsts.has(sec.first)) problems.push(`${where}: move ${sec.first} is also on "${firsts.get(sec.first)}"`);
+        firsts.set(sec.first, sec.title);
+        if (!sec.change?.length) warn.push(`${where}: is a first move but lists nothing to change`);
+      }
+      for (const key of ["working", "limiting", "change"]) if (sec[key] && sec[key].length === 0) problems.push(`${where}: empty ${key} list`);
+      for (const l of sec.lists ?? []) if (!l.label || !l.items?.length) problems.push(`${where}: a list needs a label and items`);
+      for (const e of sec.evidence ?? []) if (!/^[A-Za-z0-9_-]{6,}$/.test(e.id)) problems.push(`${where}: evidence id "${e.id}" does not look like a YouTube id`);
+    }
+    if (r.competitors) {
+      for (const k of r.competitors) {
+        if (!k.name || !k.handle || !k.note) problems.push(`${slug} ${name}: competitor needs name, handle and note`);
+        if (!["instagram", "tiktok", "youtube", "linkedin"].includes(k.platform)) problems.push(`${slug} ${name}: competitor "${k.name}" has an unknown platform`);
+        if (!k.strengths?.length || !k.gaps?.length) problems.push(`${slug} ${name}: competitor "${k.name}" needs strengths and gaps`);
+      }
+    }
+    if (r.map) {
+      if (r.map.x?.length !== 2 || r.map.y?.length !== 2) problems.push(`${slug} ${name}: map axes need two labels each`);
+      for (const p of r.map.points ?? []) if (!(p.x >= 0 && p.x <= 1 && p.y >= 0 && p.y <= 1)) problems.push(`${slug} ${name}: map point "${p.name}" must sit between 0 and 1`);
+      if (!(r.map.points ?? []).some((p) => p.you)) warn.push(`${slug} ${name}: the map does not mark the client (you: true)`);
+    }
+  }
+
   c.scripts.forEach((s, i) => {
     if (s.n !== i + 1) problems.push(`${slug}: script at position ${i + 1} is numbered ${s.n}`);
     if (s.body?.length && !s.title) problems.push(`${slug}: script ${s.n} has a body but no title`);

@@ -31,16 +31,71 @@ export type ClientIdentity = {
 /** The identity without anything the browser has no business holding. */
 export type PublicIdentity = Omit<ClientIdentity, "accessHash">;
 
+/** How an area of the client's presence reads today. */
+export type Verdict = "strong" | "mixed" | "weak";
+
+/**
+ * A written finding under one of the fixed headings. Only `body` is needed;
+ * the rest turns a paragraph into a designed finding: a verdict lamp and a
+ * score on the heading, the keep / limiting / change columns, any labelled
+ * lists, the client's own posts as evidence, and a place in the first three
+ * moves.
+ */
+export type AuditFinding = {
+  body: string[];
+  verdict?: Verdict;
+  /** 0 to 10. */
+  score?: number;
+  /** What to keep and build on. */
+  working?: string[];
+  /** What is holding this area back. */
+  limiting?: string[];
+  /** What we would change. */
+  change?: string[];
+  /** Any other labelled list (the competitor report uses these). */
+  lists?: { label: string; items: string[] }[];
+  /** 1, 2 or 3: this heading's change is one of the first three moves. */
+  first?: 1 | 2 | 3;
+  /** Posts that show the finding, by YouTube id, with a caption. */
+  evidence?: { id: string; caption?: string }[];
+};
+
 export type AuditSection = {
   title: string;
   /** What this heading covers, shown on the slate until it is written. */
   covers: string;
-  body?: string[];
+} & Partial<AuditFinding>;
+
+/** One account studied for the competitor report. */
+export type Competitor = {
+  name: string;
+  handle: string;
+  platform: "instagram" | "tiktok" | "youtube" | "linkedin";
+  followers?: string;
+  /** Posting rate as printed: "4/wk", "daily". */
+  cadence?: string;
+  /** One line on what the account is. */
+  note: string;
+  strengths: string[];
+  gaps: string[];
+};
+
+/** Where everyone stands: two axes, each point between 0 and 1. */
+export type PositionMap = {
+  /** Left and right ends of the horizontal axis. */
+  x: [string, string];
+  /** Bottom and top ends of the vertical axis. */
+  y: [string, string];
+  points: { name: string; x: number; y: number; you?: boolean }[];
 };
 
 export type AuditReport = {
   intro: string;
   sections: AuditSection[];
+  /** The competitor report's board of accounts. */
+  competitors?: Competitor[];
+  /** The competitor report's positioning map. */
+  map?: PositionMap;
 };
 
 export type Pillar = "authority" | "education" | "entertainment" | "personal";
@@ -91,4 +146,16 @@ export function scriptAsText(s: Script) {
   if (s.body?.length) lines.push("SCRIPT", ...s.body.flatMap((p) => [p, ""]));
   if (s.cta) lines.push("CALL TO ACTION", s.cta, "");
   return lines.join("\n").trim();
+}
+
+/** The written sections of a report. */
+export function writtenSections(r: AuditReport) {
+  return r.sections.filter((s) => s.body?.length);
+}
+
+/** The first three moves, in order, from the headings that name one. */
+export function firstMoves(r: AuditReport) {
+  return r.sections
+    .filter((s): s is AuditSection & { first: 1 | 2 | 3 } => !!s.first && !!s.body?.length)
+    .sort((a, b) => a.first - b.first);
 }

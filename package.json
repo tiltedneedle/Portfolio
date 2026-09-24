@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "vitest run",
     "check": "node scripts/check-content.mjs",
     "smoke": "node scripts/smoke.mjs",
     "access": "node scripts/access.mjs",

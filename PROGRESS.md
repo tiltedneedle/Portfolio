@@ -56,6 +56,11 @@ The marketing site this grew out of is on the `marketing-site` branch.
   the scripts page deals a script with an "Open" cut to it.
 - Security headers with a narrow CSP in `next.config.ts` (no nonces: the
   pages are static). New hosts must be added there.
+- Unit tests (`npm test`, vitest) cover the pure parts: the session token
+  and access hash (`src/lib/session.test.ts`), spoken length
+  (`src/lib/words.test.ts`) and the palette index. Components are verified
+  in the browser. Node 23 on this desktop can print a libuv assertion at
+  exit; read the test summary, not the exit code.
 - The palette opens on ⌘K, `/`, the desktop button, or a `tn:palette`
   window event (the phone menu sends it). Dialogs (palette, prompter,
   lightbox) share `useFocusTrap`.
@@ -108,12 +113,32 @@ The marketing site this grew out of is on the `marketing-site` branch.
       in both motion settings. On a script page, `[` and `]` page through
       the scripts themselves.
 
+- [x] Wave 7: unit tests added; the palette-index test found that the
+      index on disk was still the first draft (home split into three hash
+      entries, no room overviews, ideas without pillar sections) because
+      the rewrite had been in a shell command that never ran. Rewritten
+      and verified in the browser. Palette section picks now land: the
+      jump under the black frame is instant (the smooth default was being
+      cancelled by the overlay's reset to the top), Next is told about the
+      page-wide smooth scrolling (data-scroll-behavior), and a same-page
+      pick frees the overflow the open palette had locked. Then two more
+      causes found by logging every scroll call: the overlay's reset to the
+      top raced with the section jump on hash navigations (it now skips
+      when there is a hash), and smooth scrolls started while the palette
+      closes are dropped by the browser (same-page jumps are instant, after
+      the palette has gone). Cuts within a scene, not glides.
+
 ## In flight
 
 - [ ] Nothing mid-change. All verified and committed. Pick from Next.
 
 ## Next
 
+0. A dev-mode console pass (`next dev`) for attribute-level hydration
+   warnings that production hides. The preview tool reads the ops app's
+   tracked `.claude/launch.json`, which has no entry for this repo; add one
+   only if the user is happy to have that file changed, or run it from
+   this repo's own launch config in a session opened on this repo.
 1. Audit report: a "what to do first" summary block type when the client's
    findings are written (needs the first real client to shape it; do not
    invent findings).

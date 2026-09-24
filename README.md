@@ -188,10 +188,14 @@ Security headers, including a narrow content security policy, are in
 ## Verifying
 
 ```bash
+npm test
 npm run check
 npm run smoke -- http://localhost:3400
 npm run smoke -- http://localhost:3401 --gated
 ```
+
+`test` runs the unit tests for the pure parts: the session token and
+access hash, spoken length, and the palette index.
 
 `smoke` fetches every route and checks status codes, redirects, the door,
 and a few strings. Visual checks run through Playwright against

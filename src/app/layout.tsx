@@ -66,7 +66,8 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${sans.variable} ${display.variable} ${serif.variable} ${mono.variable}`}>
+    // data-scroll-behavior lets Next make its own navigation scrolls instant under the page-wide smooth setting (Next 16 no longer does this by default).
+    <html lang="en" data-scroll-behavior="smooth" className={`${sans.variable} ${display.variable} ${serif.variable} ${mono.variable}`}>
       <body className="antialiased">
         <FilmGrain />
         {children}

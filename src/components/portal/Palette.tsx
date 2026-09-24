@@ -68,8 +68,17 @@ export function Palette({ items }: { items: PaletteItem[] }) {
       const path = href.split("#")[0];
       if (path === pathname) {
         const hash = href.split("#")[1];
-        if (hash) document.getElementById(hash)?.scrollIntoView({ behavior: reduced ? "auto" : "smooth" });
-        else window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" });
+        // A jump within the scene is a cut too: instant, and only once the
+        // palette has gone (a smooth scroll started while it closes is
+        // dropped by the browser).
+        document.body.style.overflow = "";
+        const target = hash ? document.getElementById(hash) : null;
+        // Keep the address honest without a navigation.
+        history.replaceState(null, "", hash ? "#" + hash : window.location.pathname);
+        setTimeout(() => {
+          if (hash) target?.scrollIntoView({ block: "start", behavior: "instant" });
+          else window.scrollTo({ top: 0, behavior: "instant" });
+        }, 80);
         return;
       }
       pendingHash.current = href.split("#")[1] || null;
@@ -81,12 +90,13 @@ export function Palette({ items }: { items: PaletteItem[] }) {
 
   // The router lands new pages at the top; a section pick still has to
   // arrive at its section. The cut frame is up while this happens, so the
-  // jump is never seen.
+  // jump is instant and never seen. (Smooth here would be cancelled by the
+  // overlay's own reset to the top, which runs in the same commit.)
   useEffect(() => {
     const hash = pendingHash.current;
     if (!hash) return;
     pendingHash.current = null;
-    requestAnimationFrame(() => document.getElementById(hash)?.scrollIntoView({ block: "start" }));
+    requestAnimationFrame(() => document.getElementById(hash)?.scrollIntoView({ block: "start", behavior: "instant" }));
   }, [pathname]);
 
   const show = useCallback(() => {

@@ -20,7 +20,10 @@ export function CutOverlay() {
     }
     if (!isCutting()) return;
     // The new scene has committed. Hold the black for one beat, then reveal.
-    window.scrollTo({ top: 0, behavior: "auto" });
+    // Instant, not the page's smooth default: this happens under the black
+    // frame and must be over before it lifts. A hash means the router has
+    // already put the section in view; resetting would undo that.
+    if (!window.location.hash) window.scrollTo({ top: 0, behavior: "instant" });
     const t = setTimeout(endCut, HOLD_MS);
     return () => clearTimeout(t);
   }, [pathname]);

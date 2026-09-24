@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { ScriptsRail } from "@/components/portal/ScriptsRail";
 import { NextCut } from "@/components/portal/NextCut";
 import { DealOne } from "@/components/portal/DealOne";
+import { FirstMonth } from "@/components/portal/FirstMonth";
+import { pillars } from "@/content/system/pillars";
 import { chapter, pageNumber } from "@/content/chapters";
 import { requireClient } from "@/content/clients/registry";
 import { shortName } from "@/content/clients/types";
@@ -13,6 +15,7 @@ export default async function ScriptsPage({ params }: { params: Promise<{ client
   const sys = requireClient(client);
   const c = chapter("content");
   const cards = sys.scripts.filter((s) => s.body?.length).map((s) => ({ pillar: "Script", n: s.n, text: s.title, href: "/content/scripts/" + s.n }));
+  const ideas = pillars.flatMap((p) => sys.ideas[p.id].map((idea, i) => ({ pillar: p.title, n: i + 1, text: idea.text })).filter((x) => x.text));
   return (
     <article className="bg-[color:var(--stage)]">
       <header className="mx-auto max-w-[1600px] px-6 pb-14 pt-28 md:px-14 md:pt-36">
@@ -33,6 +36,9 @@ export default async function ScriptsPage({ params }: { params: Promise<{ client
 
       <div className="mx-auto max-w-[1600px] px-6 pb-24 pt-8 md:px-14 md:pt-12">
         <ScriptsRail scripts={sys.scripts} />
+        <div className="mt-24">
+          <FirstMonth scripts={sys.scripts} ideas={ideas} />
+        </div>
         {cards.length > 1 && (
           <div className="mt-24">
             <DealOne

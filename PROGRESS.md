@@ -139,6 +139,12 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 17: "Your first month" on the scripts page: one every other
+      day, the client's scripts first, then ideas from their hundred that
+      have not become scripts, interleaved across the pillars so the bank
+      holds a mixture; posting days link out; even days hidden on a phone.
+      React 19.2.4 → 19.3.0 (in Next's peer range), pinned; console
+      clean across five pages.
 - [x] Wave 16: proxy path maps in lib/room-paths.ts, tested; global keys
       stay quiet while the prompter or the lightbox is open (verified: `]`
       no longer cuts away from under the prompter); GitHub Actions runs

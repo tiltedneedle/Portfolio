@@ -42,7 +42,7 @@ Get-NetTCPConnection -LocalPort 3400 -State Listen | ForEach-Object { Stop-Proce
 |---|---|---|
 | `/` | name and logo | Welcome, an intro film slot, what you have access to (a pinned strip of seven cards), how to use the system (five steps on a loop), an outro film slot, the approach |
 | `/audit` then `/audit/content-diagnostic`, `/audit/competitor-intelligence` | yes | Two reports on fixed headings (13 and 8). Unwritten headings show a slate |
-| `/content` then `/content/ideas`, `/content/scripts`, `/content/scripts/[n]` | yes | Four pillars of 25 idea cards on rails, the mix, and a "deal me one" card; 20 scripts on a rail; a script page with the slate (location, who is on camera), copy, a full-screen prompter with a countdown, print, and the shot list as a storyboard |
+| `/content` then `/content/ideas`, `/content/scripts`, `/content/scripts/[n]` | yes | Four pillars of 25 idea cards on rails, the mix, and a "deal me one" card; 20 scripts on a rail, then the first month laid out (scripts first, ideas after, one every other day); a script page with the slate (location, who is on camera), copy, a full-screen prompter with a countdown, print, and the shot list as a storyboard |
 | `/create` then 7 guides | no | Study your niche, ideation, video style, hooks, core message, filming, editing |
 | `/publish` then 4 guides | no | Publishing strategy, content packaging, discoverability, profile optimisation |
 | `/analyse` then 2 guides | no | Understanding your analytics, the monthly process |

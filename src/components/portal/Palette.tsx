@@ -377,37 +377,46 @@ export function Palette({ items }: { items: PaletteItem[] }) {
                   placeholder="A page, a section, any words"
                   className="w-full bg-transparent text-[19px] text-[color:var(--ink)] outline-none placeholder:text-[color:var(--ink-mid)]"
                   aria-label="Search the system"
+                  role="combobox"
+                  aria-expanded={hits.length > 0}
+                  aria-controls="palette-results"
+                  aria-autocomplete="list"
+                  aria-activedescendant={hits.length ? "palette-opt-" + cursor : undefined}
                   autoComplete="off"
                   spellCheck={false}
                 />
                 <span className="mono shrink-0 text-[color:var(--ink-mid)]">Esc</span>
               </div>
-              <ul ref={list} className="max-h-[52vh] overflow-y-auto py-2" role="listbox">
-                {hits.length === 0 && (
-                  <li className="mono px-5 py-6 text-[color:var(--ink-mid)]">Nothing on that. Try a room, a page or a subject.</li>
-                )}
+              {hits.length === 0 && (
+                <p role="status" className="mono px-5 py-6 text-[color:var(--ink-mid)]">
+                  Nothing on that. Try a room, a page or a subject.
+                </p>
+              )}
+              {/* A combobox's options are not buttons: the field keeps focus and the arrows move aria-activedescendant. */}
+              <ul ref={list} id="palette-results" aria-label="Results" className={"max-h-[52vh] overflow-y-auto " + (hits.length ? "py-2" : "")} role="listbox">
                 {hits.map((h, i) => (
-                  <li key={h.href + i} role="option" aria-selected={i === cursor}>
-                    <button
-                      type="button"
-                      // Only a pointer that actually moves takes the cursor: a list appearing
-                      // under a parked mouse must not steal Enter from the top result.
-                      onMouseMove={() => {
-                        if (cursor !== i) setCursor(i);
-                      }}
-                      onClick={() => go(h.href, h)}
-                      className={
-                        "flex w-full items-baseline gap-4 px-5 py-2.5 text-left transition-colors " +
-                        (i === cursor ? "bg-[color:var(--stage-3)] text-[color:var(--ink)]" : "text-[color:var(--ink-soft)]")
-                      }
-                    >
-                      <span className="mono w-[5ch] shrink-0 text-[color:var(--ink-mid)]">{h.n}</span>
-                      <span className="min-w-0 flex-1">
-                        <span className={h.section ? "text-[15px]" : "text-[17px]"}>{h.title}</span>
-                        {h.snippet && <span className="mt-0.5 block truncate text-[12px] text-[color:var(--ink-mid)]">{h.snippet}</span>}
-                      </span>
-                      <span className="mono ml-auto shrink-0 text-[color:var(--ink-mid)]">{h.kicker}</span>
-                    </button>
+                  <li
+                    key={h.href + i}
+                    id={"palette-opt-" + i}
+                    role="option"
+                    aria-selected={i === cursor}
+                    // Only a pointer that actually moves takes the cursor: a list appearing
+                    // under a parked mouse must not steal Enter from the top result.
+                    onMouseMove={() => {
+                      if (cursor !== i) setCursor(i);
+                    }}
+                    onClick={() => go(h.href, h)}
+                    className={
+                      "flex w-full cursor-pointer items-baseline gap-4 px-5 py-2.5 text-left transition-colors " +
+                      (i === cursor ? "bg-[color:var(--stage-3)] text-[color:var(--ink)]" : "text-[color:var(--ink-soft)]")
+                    }
+                  >
+                    <span className="mono w-[5ch] shrink-0 text-[color:var(--ink-mid)]">{h.n}</span>
+                    <span className="min-w-0 flex-1">
+                      <span className={h.section ? "text-[15px]" : "text-[17px]"}>{h.title}</span>
+                      {h.snippet && <span className="mt-0.5 block truncate text-[12px] text-[color:var(--ink-mid)]">{h.snippet}</span>}
+                    </span>
+                    <span className="mono ml-auto shrink-0 text-[color:var(--ink-mid)]">{h.kicker}</span>
                   </li>
                 ))}
               </ul>

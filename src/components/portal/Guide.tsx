@@ -102,7 +102,7 @@ export function Guide({ guide, notes = [], who = "" }: { guide: GuideT; notes?: 
                 <Blocks blocks={s.blocks} />
                 {notesAt(i).length > 0 && (
                   <div className="mt-9">
-                    <ForYou who={who} notes={notesAt(i)} />
+                    <ForYou who={who} notes={notesAt(i)} under={s.title} />
                   </div>
                 )}
               </div>

@@ -134,6 +134,14 @@ for (const [slug, c] of Object.entries(clients)) {
       if (r.map.x?.length !== 2 || r.map.y?.length !== 2) problems.push(`${slug} ${name}: map axes need two labels each`);
       for (const p of r.map.points ?? []) if (!(p.x >= 0 && p.x <= 1 && p.y >= 0 && p.y <= 1)) problems.push(`${slug} ${name}: map point "${p.name}" must sit between 0 and 1`);
       if (!(r.map.points ?? []).some((p) => p.you)) warn.push(`${slug} ${name}: the map does not mark the client (you: true)`);
+      if ((r.map.points ?? []).filter((p) => p.target).length > 1) problems.push(`${slug} ${name}: the map has more than one target`);
+      if ((r.map.points ?? []).some((p) => p.target) && !(r.map.points ?? []).some((p) => p.you)) problems.push(`${slug} ${name}: a target on the map needs a you`);
+      {
+        const you = (r.map.points ?? []).find((p) => p.you);
+        const target = (r.map.points ?? []).find((p) => p.target);
+        if (you && target && String(target.name).trim().toLowerCase() === String(you.name).trim().toLowerCase())
+          problems.push(`${slug} ${name}: the target needs a name that says when it is ("${you.name}, after the three moves"), not "${you.name}" again`);
+      }
     }
   }
 

@@ -274,6 +274,7 @@ export const demo: ClientSystem = {
           { name: "Captain Ren", x: 0.85, y: 0.9 },
           { name: "Manufacturer", x: 0.15, y: 0.72 },
           { name: "Horizon", x: 0.1, y: 0.12, you: true },
+          { name: "Horizon, after the three moves", x: 0.66, y: 0.78, target: true },
         ],
       },
     }

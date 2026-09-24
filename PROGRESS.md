@@ -146,6 +146,12 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 23: the positioning map draws the journey (a dashed line from
+      you, today, to a `target` ring labelled with what follows the comma
+      in its name, on the open side); CopyIdea collapsed onto CopyText; the palette is a
+      real combobox (the field keeps focus, `aria-activedescendant` moves,
+      options are not buttons); two notes on one guide are two landmarks
+      with distinct names; axe clean on every new piece.
 - [x] Wave 22: anchors sit beside the headings, not inside them (a button
       inside an h2 pollutes the heading's accessible name); "Copy all as a
       list" on the ideas page (the written hundred, by pillar, numbered);

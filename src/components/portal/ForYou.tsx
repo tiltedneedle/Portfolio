@@ -5,10 +5,12 @@ import { Rich } from "@/components/portal/Rich";
  * A note from the studio, for this client, inside a universal guide. The
  * guide says what everyone should do; the note says what that means here.
  */
-export function ForYou({ who, notes }: { who: string; notes: GuideNote[] }) {
+export function ForYou({ who, notes, under }: { who: string; notes: GuideNote[]; under?: string }) {
   if (!notes.length) return null;
+  // A guide can carry several notes; as landmarks they need distinct names.
+  const label = "For " + who + (under ? ", under " + under : "");
   return (
-    <aside className="border border-[color:var(--rule-strong)] bg-[color:var(--stage-2)] p-6 md:p-8" aria-label={"For " + who}>
+    <aside className="border border-[color:var(--rule-strong)] bg-[color:var(--stage-2)] p-6 md:p-8" aria-label={label}>
       <p className="mono flex items-center gap-2 text-[color:var(--ink)]">
         <span className="lamp" aria-hidden="true" />
         For {who}

@@ -96,7 +96,10 @@ and paste the hash into `accessHash`. Then:
    renders as a slot that says it is on its way. A finding can carry a
    verdict, a score, keep / limiting / change lists, evidence and a place
    in the first three moves; the competitor report can carry a board of
-   accounts and a positioning map. A script can carry a location, who is
+   accounts and a positioning map (`you: true` marks the client today,
+   `target: true` where the first moves lead, drawn as a dashed line; name
+   the target "Client, after the three moves" and the map labels the ring
+   with the part after the comma). A script can carry a location, who is
    on camera, a shot list and the idea it came from. `notes` puts a
    studio note inside any universal guide for this client only, keyed
    "create/hooks", after the intro or under a numbered section (`at`).

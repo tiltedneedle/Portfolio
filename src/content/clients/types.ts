@@ -88,7 +88,8 @@ export type PositionMap = {
   x: [string, string];
   /** Bottom and top ends of the vertical axis. */
   y: [string, string];
-  points: { name: string; x: number; y: number; you?: boolean }[];
+  /** `you` marks the client today; `target` marks where the first moves take them. */
+  points: { name: string; x: number; y: number; you?: boolean; target?: boolean }[];
 };
 
 export type AuditReport = {

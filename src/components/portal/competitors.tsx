@@ -95,7 +95,7 @@ export function PositionMap({ map }: { map: PositionMapT }) {
         viewBox={`0 0 ${S} ${S}`}
         className="h-auto w-full max-w-[420px] border border-[color:var(--rule)] bg-[color:var(--stage-2)]"
         role="img"
-        aria-label={"Positioning map: " + map.points.map((p) => p.name).join(", ") + ", on " + map.x.join(" to ") + " and " + map.y.join(" to ") + "."}
+        aria-label={"Positioning map: " + map.points.filter((p) => !p.target).map((p) => p.name).join(", ") + ", on " + map.x.join(" to ") + " and " + map.y.join(" to ") + (map.points.some((p) => p.target) ? "; a dashed line shows where the first moves lead." : ".")}
       >
         {/* quadrants */}
         <line x1={px(0.5)} x2={px(0.5)} y1={py(0)} y2={py(1)} stroke="var(--rule-strong)" strokeWidth="1" strokeDasharray="3 4" />
@@ -114,8 +114,33 @@ export function PositionMap({ map }: { map: PositionMapT }) {
         <text x={10} y={py(1)} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)" letterSpacing="1" transform={`rotate(-90 10 ${py(1)})`} textAnchor="end">
           {map.y[1].toUpperCase()}
         </text>
+        {/* the journey: from today to where the moves lead */}
+        {(() => {
+          const you = map.points.find((p) => p.you);
+          const to = map.points.find((p) => p.target);
+          if (!you || !to) return null;
+          return (
+            <g>
+              <line x1={px(you.x)} y1={py(you.y)} x2={px(to.x)} y2={py(to.y)} stroke="var(--tally)" strokeWidth="1" strokeDasharray="4 5" opacity="0.8" />
+              <circle cx={px(to.x)} cy={py(to.y)} r="7" fill="none" stroke="var(--tally)" strokeWidth="1.25" strokeDasharray="3 3" />
+              {(() => {
+                // The dashed line already says whose, so a target named "Horizon,
+                // after the three moves" reads "AFTER THE THREE MOVES" on the map,
+                // one line, on the open side of the ring.
+                const parts = to.name.split(/,\s*/);
+                const label = (parts.length > 1 ? parts.slice(1).join(", ") : to.name).toUpperCase();
+                const left = to.x > 0.5;
+                return (
+                  <text x={px(to.x) + (left ? -12 : 12)} y={py(to.y) + 4} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink)" textAnchor={left ? "end" : "start"}>
+                    {label}
+                  </text>
+                );
+              })()}
+            </g>
+          );
+        })()}
         {/* points */}
-        {map.points.map((p) => (
+        {map.points.filter((p) => !p.target).map((p) => (
           <g key={p.name}>
             {p.you && <circle cx={px(p.x)} cy={py(p.y)} r="11" fill="none" stroke="var(--tally)" strokeWidth="1" opacity="0.6" />}
             <circle cx={px(p.x)} cy={py(p.y)} r="5" fill={p.you ? "var(--tally)" : "var(--stage-3)"} stroke={p.you ? "var(--tally)" : "var(--ink)"} strokeWidth="1.25" />
@@ -138,13 +163,21 @@ export function PositionMap({ map }: { map: PositionMapT }) {
           {map.x[0]} to {map.x[1]}, {map.y[0].toLowerCase()} to {map.y[1].toLowerCase()}.
         </p>
         <ul className="mono mt-5 flex flex-col gap-1.5">
-          {map.points.map((p) => (
+          {map.points.filter((p) => !p.target).map((p) => (
             <li key={p.name} className="flex items-center gap-3">
               <span aria-hidden="true" className={"inline-block h-2 w-2 rounded-full " + (p.you ? "bg-[color:var(--tally)]" : "border border-[color:var(--ink)]")} />
               <span className={p.you ? "text-[color:var(--ink)]" : ""}>{p.name}</span>
               {p.you && <span className="text-[color:var(--ink-mid)]">you, today</span>}
             </li>
           ))}
+          {map.points
+            .filter((p) => p.target)
+            .map((p) => (
+              <li key={p.name} className="flex items-center gap-3">
+                <span aria-hidden="true" className="inline-block h-2 w-2 rounded-full border border-dashed border-[color:var(--tally)]" />
+                <span className="text-[color:var(--ink)]">{p.name}</span>
+              </li>
+            ))}
         </ul>
       </figcaption>
     </figure>

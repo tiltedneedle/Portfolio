@@ -163,6 +163,15 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 28: the shortlist: ideas pin on this device (`usePinned`, a
+      third mark kind; keys "pillar:n", kept in pin order), Pin sits beside
+      Copy on every idea card, the ideas page opens with the shortlist
+      (unpin, ask for a script), the first month's idea days and the call
+      sheet's Film cell take from it first, the home strip counts pins.
+      The month's slot order is `monthSlots()` in lib/month.ts, tested
+      (62 tests): scripts, then pins in order, then the hundred round-robin,
+      skipping ideas that became scripts. FirstMonth became a client
+      component to read the pins.
 - [x] Wave 27: the phone pass (390px, every room, axe with WCAG 2.2 AA):
       the audit's score strip shares the width instead of pushing the page
       to 668px (a grid item needs min-w-0 or it grows with its contents),

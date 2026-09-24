@@ -1,5 +1,6 @@
 import { Rail } from "@/components/portal/Rail";
 import { CopyIdea } from "@/components/portal/CopyIdea";
+import { PinIdea } from "@/components/portal/PinIdea";
 import { pillars } from "@/content/system/pillars";
 import { shortName, type Idea, type Pillar, type PublicIdentity, type Script } from "@/content/clients/types";
 import { CutLink } from "@/components/room/CutLink";
@@ -40,7 +41,14 @@ export function IdeasPillars({ ideas, identity, scripts = [] }: { ideas: Record<
                       <span>
                         {p.title} {pad(i)}
                       </span>
-                      {idea.example ? <span className="text-[color:var(--ink-mid)]">Example</span> : idea.text ? <CopyIdea text={idea.text} /> : null}
+                      {idea.example ? (
+                        <span className="text-[color:var(--ink-mid)]">Example</span>
+                      ) : idea.text ? (
+                        <span className="flex items-center gap-4">
+                          <PinIdea k={p.id + ":" + (i + 1)} />
+                          <CopyIdea text={idea.text} />
+                        </span>
+                      ) : null}
                     </p>
                     {idea.text ? (
                       <span>

@@ -1,43 +1,33 @@
+"use client";
+
 import { CutLink } from "@/components/room/CutLink";
 import type { Script } from "@/content/clients/types";
 import { FilmedMark } from "@/components/portal/FilmedMark";
 import { PrintButton } from "@/components/portal/PrintButton";
+import { useClient } from "@/components/portal/ClientContext";
+import { usePinned } from "@/lib/read";
+import { monthSlots, type IdeaRef } from "@/lib/month";
 
 /**
  * Your first month. The publishing strategy says one video every other
  * day from a bank of fifteen; this lays the client's own scripts onto
- * those days, in order, and fills the remaining posting days with ideas
- * from their hundred. No dates: day one is whenever the first video goes
- * out, and the sheet is the same whoever opens it.
+ * those days, in order, then the ideas pinned on this device, then the
+ * rest of their hundred. No dates: day one is whenever the first video
+ * goes out. The order lives in lib/month.ts, where it is tested.
  */
-type IdeaRef = { pillar: string; n: number; text: string; example?: boolean };
-
 const DAYS = 30;
 const pad = (n: number) => String(n).padStart(2, "0");
 
 export function FirstMonth({ scripts, ideas }: { scripts: Script[]; ideas: IdeaRef[] }) {
+  const me = useClient();
+  const { pinned } = usePinned(me.slug);
   const written = scripts.filter((s) => s.body?.length);
-  // Ideas that have not already become scripts.
-  const taken = new Set(written.filter((s) => s.from).map((s) => s.from!.pillar + ":" + s.from!.n));
-  // Round-robin across the pillars, so the month holds a mixture rather than
-  // a run of one kind: the first idea of each pillar, then the second of each.
-  const spare = ideas
-    .filter((i) => !taken.has(i.pillar.toLowerCase() + ":" + i.n))
-    .map((i, order) => ({ i, order }))
-    .sort((x, y) => x.i.n - y.i.n || x.order - y.order)
-    .map((x) => x.i);
-  const days = Array.from({ length: DAYS }, (_, i) => i + 1);
-  const postingDays = days.filter((d) => d % 2 === 1);
-  const slots = postingDays.map((day, i) => {
-    const s = written[i];
-    if (s) return { day, kind: "script" as const, n: s.n, title: s.title, href: "/content/scripts/" + s.n };
-    const idea = spare[i - written.length];
-    if (idea) return { day, kind: "idea" as const, n: idea.n, title: idea.text, href: "/content/ideas", pillar: idea.example ? "Example" : idea.pillar };
-    return { day, kind: "open" as const };
-  });
+  const slots = monthSlots(scripts, ideas, pinned, DAYS);
   const byDay = new Map(slots.map((s) => [s.day, s]));
   const filled = slots.filter((s) => s.kind !== "open").length;
+  const fromShortlist = slots.filter((s) => s.kind === "idea" && s.pinned).length;
   if (filled === 0) return null;
+  const days = Array.from({ length: DAYS }, (_, i) => i + 1);
 
   return (
     <section aria-label="Your first month" className="border-t border-[color:var(--rule)] pt-10">
@@ -48,14 +38,15 @@ export function FirstMonth({ scripts, ideas }: { scripts: Script[]; ideas: IdeaR
             One every other day, <span className="em-serif">laid out.</span>
           </h2>
           <p className="mt-4 max-w-[44ch] text-[15px] leading-relaxed text-[color:var(--ink-mid)]">
-            Day one is whenever the first video goes out. The scripts go first, in order; the rest of the posting days take ideas from your hundred. Fifteen
-            posts, the bank the strategy asks for.
+            Day one is whenever the first video goes out. The scripts go first, in order; the rest of the posting days take ideas from your hundred, your
+            shortlist first. Fifteen posts, the bank the strategy asks for.
           </p>
         </div>
         <p className="mono flex flex-wrap items-baseline gap-x-6 gap-y-1">
           <span className="text-[color:var(--ink)]">{written.length} scripts</span>
           <span>{filled - written.length} ideas</span>
-          <span className="text-[color:var(--ink-mid)]">{postingDays.length - filled} open</span>
+          {fromShortlist > 0 && <span className="text-[color:var(--ink)]">{fromShortlist} pinned</span>}
+          <span className="text-[color:var(--ink-mid)]">{slots.length - filled} open</span>
           <span className="no-print">
             <PrintButton label="Print the month" />
           </span>
@@ -82,7 +73,11 @@ export function FirstMonth({ scripts, ideas }: { scripts: Script[]; ideas: IdeaR
                     Script {pad(s.n)}
                   </span>
                 ) : s.kind === "idea" ? (
-                  <span className="text-[color:var(--ink-mid)]">{s.pillar} {pad(s.n)}</span>
+                  <span className={s.pinned ? "flex items-center gap-1.5 text-[color:var(--ink)]" : "text-[color:var(--ink-mid)]"}>
+                    {s.pinned && <span aria-hidden="true" className="inline-block h-1.5 w-1.5 rounded-full bg-[color:var(--ink)]" />}
+                    {s.pillar} {pad(s.n)}
+                    {s.pinned && <span className="sr-only">, pinned</span>}
+                  </span>
                 ) : (
                   <span className="text-[color:var(--ink-mid)]">Open</span>
                 )}

@@ -10,6 +10,7 @@ import { TrainingFilm } from "@/components/portal/TrainingFilm";
 import { ThisWeek } from "@/components/portal/ThisWeek";
 import { RecentChanges } from "@/components/portal/RecentChanges";
 import { FilmedCount } from "@/components/portal/FilmedMark";
+import { PinnedCount } from "@/components/portal/PinIdea";
 import { guides } from "@/content/system";
 import { chapter, pageHref } from "@/content/chapters";
 import { pillars } from "@/content/system/pillars";
@@ -34,7 +35,12 @@ export default async function Home({ params }: { params: Promise<{ client: strin
   const counts = {
     "/audit/content-diagnostic": writtenIn(sys.contentDiagnostic),
     "/audit/competitor-intelligence": writtenIn(sys.competitorIntelligence),
-    "/content/ideas": ideas.filter((i) => i.text).length + " of " + ideas.length + " written",
+    "/content/ideas": (
+      <>
+        {ideas.filter((i) => i.text).length} of {ideas.length} written
+        <PinnedCount keys={pillars.flatMap((p) => sys.ideas[p.id].map((idea, i) => (idea.text && !idea.example ? p.id + ":" + (i + 1) : "")).filter(Boolean))} prefix={" \u00B7 "} className="text-[color:var(--ink-mid)]" />
+      </>
+    ),
     "/content/scripts": (
       <>
         {sys.scripts.filter((s) => s.body?.length).length} of {sys.scripts.length} written
@@ -66,7 +72,7 @@ export default async function Home({ params }: { params: Promise<{ client: strin
   ];
   const readout = entries.filter((x): x is { k: string; v: ReactNode } => !!x);
   // The call sheet draws from what is written.
-  const weekIdeas = pillars.flatMap((p) => sys.ideas[p.id].map((idea, i) => ({ pillar: p.title, n: i + 1, text: idea.text })).filter((x) => x.text));
+  const weekIdeas = pillars.flatMap((p) => sys.ideas[p.id].map((idea, i) => ({ pillar: p.title, n: i + 1, text: idea.text, k: p.id + ":" + (i + 1) })).filter((x) => x.text));
   const weekScripts = sys.scripts.filter((s) => s.body?.length).map((s) => ({ n: s.n, title: s.title }));
   const weekGuides = guides.map((g) => ({ href: pageHref(g.chapter, g.slug), title: g.title, chapter: chapter(g.chapter).title }));
 

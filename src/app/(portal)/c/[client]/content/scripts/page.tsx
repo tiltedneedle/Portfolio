@@ -16,7 +16,7 @@ export default async function ScriptsPage({ params }: { params: Promise<{ client
   const sys = requireClient(client);
   const c = chapter("content");
   const cards = sys.scripts.filter((s) => s.body?.length).map((s) => ({ pillar: "Script", n: s.n, text: s.title, href: "/content/scripts/" + s.n }));
-  const ideas = pillars.flatMap((p) => sys.ideas[p.id].map((idea, i) => ({ pillar: p.title, n: i + 1, text: idea.text, example: idea.example })).filter((x) => x.text));
+  const ideas = pillars.flatMap((p) => sys.ideas[p.id].map((idea, i) => ({ pillar: p.title, n: i + 1, text: idea.text, example: idea.example, k: p.id + ":" + (i + 1) })).filter((x) => x.text));
   return (
     <article className="bg-[color:var(--stage)]">
       <header className="mx-auto max-w-[1600px] px-6 pb-14 pt-28 md:px-14 md:pt-36">

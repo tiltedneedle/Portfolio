@@ -4,7 +4,7 @@ import { useSyncExternalStore } from "react";
 import { CutLink } from "@/components/room/CutLink";
 import { weekOf } from "@/lib/week";
 import { useClient } from "@/components/portal/ClientContext";
-import { useFilmed, useRead } from "@/lib/read";
+import { useFilmed, usePinned, useRead } from "@/lib/read";
 
 /**
  * The call sheet for this week. One idea to film, one script to say, one
@@ -14,7 +14,7 @@ import { useFilmed, useRead } from "@/lib/read";
  * built once), so the server draws the frame and the browser fills it.
  * The week arithmetic lives in lib/week.ts, where it is tested.
  */
-type Idea = { pillar: string; n: number; text: string };
+type Idea = { pillar: string; n: number; text: string; k?: string };
 type ScriptRef = { n: number; title: string };
 type GuideRef = { href: string; title: string; chapter: string };
 
@@ -28,19 +28,23 @@ export function ThisWeek({ ideas, scripts, guides }: { ideas: Idea[]; scripts: S
   const me = useClient();
   const { read } = useRead(me.slug);
   const { filmed } = useFilmed(me.slug);
+  const { pinned } = usePinned(me.slug);
   // The guide to read is the first one not yet read on this device, in the
   // system's order, starting from this week's place in it; once everything
   // is read, the rotation carries on.
   const unread = guides.filter((g) => !read.has(g.href.slice(1)));
   const pick = <T,>(list: T[], salt: number) => (w && list.length ? list[(w.index + salt) % list.length] : null);
-  const idea = pick(ideas, 0);
+  // The idea to film comes from the shortlist while there is one.
+  const shortlist = ideas.filter((i) => i.k && pinned.has(i.k));
+  const idea = shortlist.length ? pick(shortlist, 0) : pick(ideas, 0);
+  const fromShortlist = !!idea && shortlist.includes(idea);
   // The script to say is one not yet filmed on this device; once all are, the rotation carries on.
   const unfilmed = scripts.filter((s) => !filmed.has(String(s.n)));
   const script = unfilmed.length ? pick(unfilmed, 1) : pick(scripts, 1);
   const guide = unread.length ? pick(unread, 2) : pick(guides, 2);
   const cells: { label: string; title: string; line?: string; href: string; cta: string }[] = [
     idea
-      ? { label: "Film", title: idea.text, line: idea.pillar + " " + String(idea.n).padStart(2, "0"), href: "/content/ideas", cta: "All ideas" }
+      ? { label: "Film", title: idea.text, line: (fromShortlist ? "Pinned \u00B7 " : "") + idea.pillar + " " + String(idea.n).padStart(2, "0"), href: "/content/ideas", cta: fromShortlist ? "Your shortlist" : "All ideas" }
       : { label: "Film", title: "An idea from your hundred", line: "Once the ideas are written", href: "/content/ideas", cta: "Ideas" },
     script
       ? { label: "Say", title: script.title, line: "Script " + String(script.n).padStart(2, "0"), href: "/content/scripts/" + script.n, cta: "Open the script" }

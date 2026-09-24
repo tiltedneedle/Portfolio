@@ -9,10 +9,11 @@ import { useCallback, useMemo, useSyncExternalStore } from "react";
  * says "none" and the browser corrects it on hydration.
  *
  * A read key is "chapter/slug": "create/hooks", "audit/content-diagnostic".
- * A filmed key is the script's number: "4".
+ * A filmed key is the script's number: "4". A pinned key is an idea's
+ * pillar and number: "authority:7". Pins keep the order they were made in.
  */
-type Kind = "read" | "filmed";
-const EVENT: Record<Kind, string> = { read: "tn:read", filmed: "tn:filmed" };
+type Kind = "read" | "filmed" | "pinned";
+const EVENT: Record<Kind, string> = { read: "tn:read", filmed: "tn:filmed", pinned: "tn:pinned" };
 const storageKey = (kind: Kind, client: string) => "tn-" + kind + ":" + client;
 
 function raw(kind: Kind, client: string) {
@@ -32,7 +33,7 @@ const subscribe = (kind: Kind) => (cb: () => void) => {
     window.removeEventListener("storage", cb);
   };
 };
-const subscribers: Record<Kind, (cb: () => void) => () => void> = { read: subscribe("read"), filmed: subscribe("filmed") };
+const subscribers: Record<Kind, (cb: () => void) => () => void> = { read: subscribe("read"), filmed: subscribe("filmed"), pinned: subscribe("pinned") };
 
 function useMarks(kind: Kind, client: string) {
   const text = useSyncExternalStore(subscribers[kind], () => raw(kind, client), () => "");
@@ -62,4 +63,9 @@ export function useRead(client: string) {
 export function useFilmed(client: string) {
   const { marks, toggle } = useMarks("filmed", client);
   return { filmed: marks, toggle };
+}
+
+export function usePinned(client: string) {
+  const { marks, toggle } = useMarks("pinned", client);
+  return { pinned: marks, toggle };
 }

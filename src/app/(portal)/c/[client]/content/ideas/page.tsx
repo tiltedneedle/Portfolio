@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { IdeasPillars } from "@/components/portal/IdeasPillars";
+import { Shortlist } from "@/components/portal/Shortlist";
+import { PinnedCount } from "@/components/portal/PinIdea";
 import { DealOne } from "@/components/portal/DealOne";
 import { PillarMix } from "@/components/portal/PillarMix";
 import { PrintButton } from "@/components/portal/PrintButton";
@@ -25,6 +27,8 @@ export default async function IdeasPage({ params }: { params: Promise<{ client: 
     })
     .filter(Boolean)
     .join("\n\n");
+  // Every pinnable idea, keyed pillar:n, for the shortlist and the count.
+  const pinnable = pillars.flatMap((p) => sys.ideas[p.id].map((idea, i) => (idea.text && !idea.example ? { k: p.id + ":" + (i + 1), pillar: p.title, pillarId: p.id, n: i + 1, text: idea.text } : null)).filter((x): x is NonNullable<typeof x> => !!x));
   const cards = pillars.flatMap((p) => sys.ideas[p.id].map((idea, i) => ({ pillar: p.title, n: i + 1, text: idea.text || "" })).filter((x) => x.text));
   return (
     <article className="ideas-page bg-[color:var(--stage)]">
@@ -53,6 +57,7 @@ export default async function IdeasPage({ params }: { params: Promise<{ client: 
             ))}
           </ul>
           <div className="no-print flex items-baseline gap-6">
+            <PinnedCount keys={pinnable.map((x) => x.k)} className="mono text-[color:var(--ink-mid)]" />
             {asText && <CopyText text={asText} label="Copy all as a list" />}
             <PrintButton />
           </div>
@@ -65,6 +70,7 @@ export default async function IdeasPage({ params }: { params: Promise<{ client: 
       </header>
 
       <div className="mx-auto max-w-[1600px] px-6 pb-24 pt-8 md:px-14 md:pt-12">
+        <Shortlist items={pinnable} />
         <IdeasPillars ideas={sys.ideas} identity={identity} scripts={sys.scripts} />
         <div className="mt-24">
           <DealOne cards={cards} />

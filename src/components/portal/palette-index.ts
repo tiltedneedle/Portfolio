@@ -2,6 +2,7 @@ import type { PaletteItem } from "@/components/portal/Palette";
 import { chapters, pageHref, pageNumber } from "@/content/chapters";
 import { guides } from "@/content/system";
 import { competitorHeadings, diagnosticHeadings, pillars } from "@/content/system/pillars";
+import type { ClientSystem } from "@/content/clients/types";
 
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
@@ -11,9 +12,11 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
  *
  * The order is the reading order of the system, which is also the order
  * the [ and ] keys page through: home, then each room's overview followed
- * by its pages.
+ * by its pages. Given a client system, the written ideas and scripts are
+ * added as hidden entries: not listed until something is typed, then
+ * found by their words.
  */
-export function paletteIndex(): PaletteItem[] {
+export function paletteIndex(sys?: ClientSystem): PaletteItem[] {
   const out: PaletteItem[] = [];
   for (const c of chapters) {
     if (c.id === "home") {
@@ -37,6 +40,16 @@ export function paletteIndex(): PaletteItem[] {
       }
       if (c.id === "content" && p.slug === "ideas") sections = pillars.map((x, i) => ({ id: x.id, title: x.title, n: pad(i) }));
       out.push({ href: pageHref(c.id, p.slug), title: p.title, chapter: c.title, n: pageNumber(c.id, p.slug), sections });
+    }
+  }
+  if (sys) {
+    for (const p of pillars) {
+      sys.ideas[p.id].forEach((idea, i) => {
+        if (idea.text) out.push({ href: "/content/ideas#" + p.id, title: idea.text, chapter: "Idea · " + p.title + " " + pad(i), n: pageNumber("content", "ideas"), sections: [], hidden: true });
+      });
+    }
+    for (const s of sys.scripts) {
+      if (s.body?.length) out.push({ href: "/content/scripts/" + s.n, title: s.title, chapter: "Script " + String(s.n).padStart(2, "0"), n: pageNumber("content", "scripts"), sections: [], hidden: true });
     }
   }
   return out;

@@ -71,6 +71,8 @@ export type Competitor = {
   name: string;
   handle: string;
   platform: "instagram" | "tiktok" | "youtube" | "linkedin";
+  /** The account's address; derived from the handle and platform when left out. */
+  url?: string;
   followers?: string;
   /** Posting rate as printed: "4/wk", "daily". */
   cadence?: string;

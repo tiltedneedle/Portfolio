@@ -10,6 +10,7 @@ import { ThisWeek } from "@/components/portal/ThisWeek";
 import { guides } from "@/content/system";
 import { chapter, pageHref } from "@/content/chapters";
 import { pillars } from "@/content/system/pillars";
+import { firstMoves } from "@/content/clients/types";
 import { home } from "@/content/system/home";
 import { requireClient } from "@/content/clients/registry";
 
@@ -37,6 +38,16 @@ export default async function Home({ params }: { params: Promise<{ client: strin
   const readKeys = Object.fromEntries(
     (["create", "publish", "analyse"] as const).map((id) => ["/" + id, guides.filter((g) => g.chapter === id).map((g) => g.chapter + "/" + g.slug)])
   );
+  // The readout under the lead: where this system stands, in one line.
+  const diag = sys.contentDiagnostic.sections.filter((s) => s.body?.length);
+  const scored = diag.filter((s) => typeof s.score === "number");
+  const readout = [
+    scored.length ? { k: "Audit", v: Math.round((scored.reduce((a, s) => a + (s.score ?? 0), 0) / scored.length) * 10) / 10 + " / 10" } : diag.length ? { k: "Audit", v: diag.length + " of " + sys.contentDiagnostic.sections.length } : null,
+    firstMoves(sys.contentDiagnostic)[0] ? { k: "First move", v: firstMoves(sys.contentDiagnostic)[0].title } : null,
+    { k: "Ideas", v: String(ideas.filter((i) => i.text).length) },
+    { k: "Scripts", v: String(sys.scripts.filter((s) => s.body?.length).length) },
+    sys.notes ? { k: "Notes", v: String(Object.values(sys.notes).flat().length) } : null,
+  ].filter((x): x is { k: string; v: string } => !!x);
   // The call sheet draws from what is written.
   const weekIdeas = pillars.flatMap((p) => sys.ideas[p.id].map((idea, i) => ({ pillar: p.title, n: i + 1, text: idea.text })).filter((x) => x.text));
   const weekScripts = sys.scripts.filter((s) => s.body?.length).map((s) => ({ n: s.n, title: s.title }));
@@ -69,6 +80,14 @@ export default async function Home({ params }: { params: Promise<{ client: strin
           </h1>
           <p className="mono mt-8 text-[color:var(--ink)]">{home.kicker}</p>
           <p className="mt-6 max-w-[46ch] text-[19px] leading-[1.5] text-[color:var(--ink-soft)] md:text-[23px]">{home.lead(identity.name)}</p>
+          <dl className="mono mt-8 flex flex-wrap gap-x-8 gap-y-2" aria-label="Where the system stands">
+            {readout.map((r) => (
+              <div key={r.k} className="flex gap-2">
+                <dt className="text-[color:var(--ink-mid)]">{r.k}</dt>
+                <dd className="text-[color:var(--ink)]">{r.v}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
 
         <div className="mono relative flex flex-col gap-3 border-t border-[color:var(--rule)] px-6 py-6 md:flex-row md:items-center md:justify-between md:px-14">

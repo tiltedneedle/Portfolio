@@ -130,6 +130,11 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 13: the palette finds the client's own ideas and scripts by
+      their words (hidden entries, listed only once something is typed);
+      a readout under the home lead (audit score, first move, ideas,
+      scripts, notes); competitor handles link to the accounts; chapter
+      overviews say how many notes there are for this client.
 - [x] Wave 12: notes from the studio inside the universal guides, for
       this client only (`notes` keyed "chapter/slug", after the intro or
       under a numbered section, rendered as "For Horizon" with the lamp);

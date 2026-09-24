@@ -25,11 +25,11 @@ export async function generateMetadata({ params }: { params: Promise<{ client: s
   return { title: { absolute: name, template: "%s · " + name } };
 }
 
-const index = paletteIndex();
-
 export default async function ClientLayout({ children, params }: { children: React.ReactNode; params: Promise<{ client: string }> }) {
   const { client } = await params;
   const sys = requireClient(client);
+  // The palette's index carries this client's written ideas and scripts as hidden, searchable entries.
+  const index = paletteIndex(sys);
   return (
     <ClientProvider identity={publicIdentity(sys.identity)}>
       <a href="#main" className="skip">

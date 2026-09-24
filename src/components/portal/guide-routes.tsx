@@ -10,8 +10,20 @@ import { shortName } from "@/content/clients/types";
 type GuideChapterId = "create" | "publish" | "analyse";
 
 /** The front page of a universal chapter: its guides as rows. */
-export function GuideChapter({ id }: { id: GuideChapterId }) {
-  const rows = guidesFor(id).map((g) => ({ slug: g.slug, title: g.title, line: g.kicker, meta: readingMinutes(g) + " min", poster: g.poster, readKey: g.chapter + "/" + g.slug }));
+export function GuideChapter({ id, client }: { id: GuideChapterId; client?: string }) {
+  const sys = client ? requireClient(client) : null;
+  const who = sys ? shortName(sys.identity) : "";
+  const rows = guidesFor(id).map((g) => {
+    const notes = sys?.notes?.[g.chapter + "/" + g.slug]?.length ?? 0;
+    return {
+      slug: g.slug,
+      title: g.title,
+      line: g.kicker,
+      meta: readingMinutes(g) + " min" + (notes ? " \u00B7 " + notes + (notes === 1 ? " note" : " notes") + " for " + who : ""),
+      poster: g.poster,
+      readKey: g.chapter + "/" + g.slug,
+    };
+  });
   return <ChapterOverview id={id} rows={rows} lead={chapter(id).blurb} />;
 }
 

@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { paletteIndex } from "@/components/portal/palette-index";
 import { chapters } from "@/content/chapters";
 import { guides } from "@/content/system";
+import { demo } from "@/content/clients/demo";
+import { pillars } from "@/content/system/pillars";
 
 describe("the palette index", () => {
   const items = paletteIndex();
@@ -47,6 +49,17 @@ describe("the palette index", () => {
     expect(diag.sections).toHaveLength(13);
     expect(comp.sections).toHaveLength(8);
     expect(diag.sections[0].id).toBe("a-01");
+  });
+
+  it("adds a client's written ideas and scripts as hidden entries", () => {
+    const withClient = paletteIndex(demo);
+    const hidden = withClient.filter((i) => i.hidden);
+    const ideas = pillars.flatMap((p) => demo.ideas[p.id]).filter((i) => i.text).length;
+    const scripts = demo.scripts.filter((s) => s.body?.length).length;
+    expect(hidden).toHaveLength(ideas + scripts);
+    expect(withClient.filter((i) => !i.hidden)).toHaveLength(items.length);
+    expect(hidden.find((h) => h.chapter === "Script 02")?.href).toBe("/content/scripts/2");
+    expect(hidden.every((h) => h.href.startsWith("/content/"))).toBe(true);
   });
 
   it("carries a number and a chapter on every entry", () => {

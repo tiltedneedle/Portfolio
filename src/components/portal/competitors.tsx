@@ -14,6 +14,22 @@ const PLATFORM: Record<Competitor["platform"], string> = {
   linkedin: "LinkedIn",
 };
 
+/** Where the account lives, from its handle, unless the client file says otherwise. */
+function addressOf(c: Competitor) {
+  if (c.url) return c.url;
+  const h = c.handle.replace(/^@/, "");
+  switch (c.platform) {
+    case "instagram":
+      return "https://www.instagram.com/" + h + "/";
+    case "tiktok":
+      return "https://www.tiktok.com/@" + h;
+    case "youtube":
+      return "https://www.youtube.com/@" + h;
+    case "linkedin":
+      return "https://www.linkedin.com/company/" + h + "/";
+  }
+}
+
 export function CompetitorBoard({ items }: { items: Competitor[] }) {
   return (
     <ol className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -30,7 +46,11 @@ export function CompetitorBoard({ items }: { items: Competitor[] }) {
             </span>
           </p>
           <p className="display mt-5 text-[28px] leading-[0.95] text-[color:var(--ink)]">{c.name}</p>
-          <p className="mono mt-1 text-[color:var(--ink-mid)]">{c.handle}</p>
+          <p className="mono mt-1">
+            <a href={addressOf(c)} target="_blank" rel="noreferrer" className="text-[color:var(--ink-mid)] transition-colors hover:text-[color:var(--ink)]" data-cursor="Open">
+              {c.handle} <span aria-hidden="true">&#8599;</span>
+            </a>
+          </p>
           <p className="em-serif mt-4 text-[19px] leading-snug text-[color:var(--ink-soft)]">
             <Rich text={c.note} />
           </p>

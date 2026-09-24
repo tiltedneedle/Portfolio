@@ -21,6 +21,8 @@ export type PaletteItem = {
   chapter: string;
   n: string;
   sections: { id: string; title: string; n?: string }[];
+  /** Not listed until something is typed: the client's ideas and scripts. */
+  hidden?: boolean;
 };
 
 type Hit = { href: string; title: string; kicker: string; n: string; section?: boolean };
@@ -54,6 +56,7 @@ export function Palette({ items }: { items: PaletteItem[] }) {
     const seen = new Set<string>();
     const out: string[] = [];
     for (const it of items) {
+      if (it.hidden) continue;
       const p = it.href.split("#")[0];
       if (!seen.has(p)) {
         seen.add(p);
@@ -165,7 +168,7 @@ export function Palette({ items }: { items: PaletteItem[] }) {
 
   const hits = useMemo<Hit[]>(() => {
     const needle = q.trim().toLowerCase();
-    const pages: Hit[] = items.map((it) => ({ href: it.href, title: it.title, kicker: it.chapter, n: it.n }));
+    const pages: Hit[] = items.filter((it) => !it.hidden).map((it) => ({ href: it.href, title: it.title, kicker: it.chapter, n: it.n }));
     if (!needle) return pages;
     const words = needle.split(/\s+/).filter(Boolean);
     const matches = (s: string) => words.every((w) => s.toLowerCase().includes(w));

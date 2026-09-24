@@ -5,6 +5,7 @@ import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-mot
 import { CutLink } from "@/components/room/CutLink";
 import { home } from "@/content/system/home";
 import { useClient } from "@/components/portal/ClientContext";
+import { ReadCount } from "@/components/portal/ReadMark";
 import { shortName } from "@/content/clients/types";
 
 /**
@@ -18,7 +19,7 @@ const items = home.access;
 const n = items.length;
 
 /** `counts` is what each personalised card has so far, keyed by href ("4 of 13 written"). */
-export function AccessStrip({ counts = {} }: { counts?: Record<string, string> }) {
+export function AccessStrip({ counts = {}, readKeys = {} }: { counts?: Record<string, string>; readKeys?: Record<string, string[]> }) {
   const section = useRef<HTMLElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const [range, setRange] = useState(0);
@@ -123,7 +124,7 @@ export function AccessStrip({ counts = {} }: { counts?: Record<string, string> }
                     <span>
                       Open <span aria-hidden="true">&#8599;</span>
                     </span>
-                    {counts[it.href] && <span className="text-[color:var(--ink-mid)]">{counts[it.href]}</span>}
+                    {readKeys[it.href] ? <ReadCount keys={readKeys[it.href]} /> : counts[it.href] && <span className="text-[color:var(--ink-mid)]">{counts[it.href]}</span>}
                   </span>
                 </span>
               </CutLink>

@@ -33,6 +33,8 @@ if (!gated) {
   await expect("/analyse/understanding-your-analytics", 200, { contains: "retention curve" });
   await expect("/publish/strategy", 200, { contains: "posts across" });
   await expect("/", 200, { contains: "Training film" });
+  await expect("/", 200, { contains: "Call sheet" });
+  await expect("/create/hooks", 200, { contains: "Mark as read" });
   await expect("/content/scripts/20", 200);
   await expect("/content/scripts/21", 404);
   await expect("/create", 200);

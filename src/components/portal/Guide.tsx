@@ -7,6 +7,7 @@ import { TrainingFilm } from "@/components/portal/TrainingFilm";
 import { NextCut } from "@/components/portal/NextCut";
 import { Rich } from "@/components/portal/Rich";
 import { ReadingProgress } from "@/components/portal/ReadingProgress";
+import { ReadToggle } from "@/components/portal/ReadToggle";
 
 /**
  * A guide page: the slate (chapter, number, title, kicker, intro), the
@@ -97,6 +98,7 @@ export function Guide({ guide }: { guide: GuideT }) {
         </div>
       </section>
 
+      <ReadToggle k={guide.chapter + "/" + guide.slug} />
       <NextCut chapter={guide.chapter} slug={guide.slug} />
     </article>
   );

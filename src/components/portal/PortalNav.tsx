@@ -10,6 +10,7 @@ import { useClient } from "@/components/portal/ClientContext";
 import { shortName } from "@/content/clients/types";
 import { cn } from "@/lib/utils";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
+import { useRead } from "@/lib/read";
 
 /**
  * The nav is the system's table of contents: six numbered rooms, each with
@@ -20,7 +21,7 @@ import { EASE_OUT_EXPO } from "@/lib/design-tokens";
  */
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
-function Panel({ chapter: c, onPick, who, current }: { chapter: Chapter; onPick: () => void; who: string; current: string }) {
+function Panel({ chapter: c, onPick, who, current, read }: { chapter: Chapter; onPick: () => void; who: string; current: string; read: Set<string> }) {
   return (
     <div className="panel w-[360px] p-2">
       <div className="mono flex items-baseline justify-between px-3 pb-2 pt-3">
@@ -52,7 +53,11 @@ function Panel({ chapter: c, onPick, who, current }: { chapter: Chapter; onPick:
               >
                 <span className="mono w-[5ch] shrink-0 text-[color:var(--ink-mid)]">{c.id === "home" ? pad(j) : pageNumber(c.id, p.slug)}</span>
                 {p.title}
-                {here && <span className="lamp ml-auto shrink-0 self-center" aria-hidden="true" />}
+                {here ? (
+                  <span className="lamp ml-auto shrink-0 self-center" aria-hidden="true" />
+                ) : read.has(c.id + "/" + p.slug) ? (
+                  <span className="ml-auto inline-block h-1.5 w-1.5 shrink-0 self-center rounded-full bg-[color:var(--ink)]" aria-label="Read" />
+                ) : null}
               </CutLink>
             </li>
           );
@@ -70,7 +75,9 @@ export function PortalNav() {
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pathname = usePathname();
   const reduced = useReducedMotion();
-  const who = shortName(useClient());
+  const me = useClient();
+  const who = shortName(me);
+  const { read } = useRead(me.slug);
 
   useEffect(() => {
     let ticking = false;
@@ -190,7 +197,7 @@ export function PortalNav() {
                       transition={{ duration: 0.18, ease: EASE_OUT_EXPO }}
                       className={cn("absolute top-full z-50 pt-4", i >= chapters.length - 3 ? "right-0" : "left-0")}
                     >
-                      <Panel chapter={c} onPick={pick} who={who} current={pathname} />
+                      <Panel chapter={c} onPick={pick} who={who} current={pathname} read={read} />
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -265,7 +272,11 @@ export function PortalNav() {
                             >
                               <span className="mono text-[color:var(--ink-mid)]">{c.id === "home" ? pad(j) : pageNumber(c.id, p.slug)}</span>
                               {p.title}
-                              {here && <span className="lamp ml-2 shrink-0 self-center" aria-hidden="true" />}
+                              {here ? (
+                                <span className="lamp ml-2 shrink-0 self-center" aria-hidden="true" />
+                              ) : read.has(c.id + "/" + p.slug) ? (
+                                <span className="ml-2 inline-block h-1.5 w-1.5 shrink-0 self-center rounded-full bg-[color:var(--ink)]" aria-label="Read" />
+                              ) : null}
                             </CutLink>
                           </li>
                         );

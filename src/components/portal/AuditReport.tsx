@@ -4,6 +4,7 @@ import { chapter, pageNumber } from "@/content/chapters";
 import { NextCut } from "@/components/portal/NextCut";
 import { Rich } from "@/components/portal/Rich";
 import { ReadingProgress } from "@/components/portal/ReadingProgress";
+import { ReadToggle } from "@/components/portal/ReadToggle";
 import { ClipRail } from "@/components/portal/ClipRail";
 import { CompetitorBoard, PositionMap } from "@/components/portal/competitors";
 
@@ -280,6 +281,7 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
         ))}
       </div>
 
+      <ReadToggle k={"audit/" + slug} />
       <NextCut chapter="audit" slug={slug} />
     </article>
   );

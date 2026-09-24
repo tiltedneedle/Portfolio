@@ -18,12 +18,14 @@ export default async function AuditPage({ params }: { params: Promise<{ client: 
       rows={[
         {
           slug: "content-diagnostic",
+          readKey: "audit/content-diagnostic",
           title: "Content diagnostic",
           line: sys.contentDiagnostic.intro,
           meta: written(sys.contentDiagnostic) + " of " + sys.contentDiagnostic.sections.length + " written",
         },
         {
           slug: "competitor-intelligence",
+          readKey: "audit/competitor-intelligence",
           title: "Competitor intelligence",
           line: sys.competitorIntelligence.intro,
           meta: written(sys.competitorIntelligence) + " of " + sys.competitorIntelligence.sections.length + " written",

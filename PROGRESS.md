@@ -130,6 +130,13 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 10: read marks (per device, localStorage under the client
+      slug; a toggle at the foot of every guide and report; shown in the
+      nav panels, on the room overviews and as "n of 7 read" on the home
+      strip) and the weekly call sheet on home (one idea, one script, one
+      guide, one thing to do, rotated by ISO week in the browser; the
+      month-end week says to run the monthly process). Verified end to
+      end: mark, reload, overview, nav, strip, unmark.
 - [x] Wave 9, the personalised pages: findings are designed objects
       (verdict lamp, score dial, keep / holding back / would change
       columns, labelled lists, evidence stills, a place in the first three

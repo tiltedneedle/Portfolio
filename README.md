@@ -49,7 +49,12 @@ Get-NetTCPConnection -LocalPort 3400 -State Listen | ForEach-Object { Stop-Proce
 | `/login` | | The door |
 
 The nav is the table of contents: hovering a room opens a panel listing its
-pages; on a phone the whole contents fold into one screen. `⌘K` (or `/`)
+pages; on a phone the whole contents fold into one screen. Every guide and
+report can be marked as read at its foot; the mark lives on that device
+only (localStorage) and shows in the nav, on the room's overview and as
+"3 of 7 read" on the home strip. Home also carries a call sheet for the
+week: one idea, one script, one guide and one thing to do, rotated by the
+week of the year so the whole team sees the same sheet. `⌘K` (or `/`)
 opens the palette, which jumps to any page or section; `[` and `]` page
 through the system in reading order. Guides carry a reading line along the
 top edge.

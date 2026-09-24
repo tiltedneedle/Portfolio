@@ -4,6 +4,7 @@ import { chapter, pageHref, pageNumber } from "@/content/chapters";
 import type { ChapterId } from "@/content/types";
 import { shortName, type PublicIdentity } from "@/content/clients/types";
 import { stillFor } from "@/lib/published";
+import { ReadMark } from "@/components/portal/ReadMark";
 
 export type OverviewRow = {
   slug: string;
@@ -12,6 +13,8 @@ export type OverviewRow = {
   meta?: string;
   /** YouTube id for a still beside the row. */
   poster?: string;
+  /** The page's read key ("create/hooks"); shows the mark once read on this device. */
+  readKey?: string;
 };
 
 /**
@@ -73,6 +76,7 @@ export function ChapterOverview({
                   <span className="em-serif mt-2 block max-w-[44ch] text-[17px] text-[color:var(--ink-soft)] md:text-[19px]">{r.line}</span>
                 </span>
                 <span className="mono col-start-2 mt-3 md:col-start-3 md:mt-0 md:text-right">
+                  {r.readKey && <ReadMark k={r.readKey} />}
                   {r.meta}
                   <span aria-hidden="true" className="ml-3 text-[color:var(--ink-mid)] transition-colors group-hover:text-[color:var(--ink)]">
                     &#8599;

@@ -26,6 +26,18 @@ export function Prompter({ title, hook, body, cta, spoken }: Props) {
   const box = useRef<HTMLDivElement>(null);
   useFocusTrap(open, box);
 
+  // The count-in: from the top, Roll counts three beats before the words
+  // move, so the presenter's eyes are on the line when it starts.
+  const countdown = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [count, setCount] = useState<number | null>(null);
+  const stopCount = useCallback(() => {
+    if (countdown.current) {
+      clearInterval(countdown.current);
+      countdown.current = null;
+    }
+    setCount(null);
+  }, []);
+
   // The scroll loop: position advances by speed × dt while playing.
   useEffect(() => {
     if (!open || !playing) return;
@@ -48,11 +60,43 @@ export function Prompter({ title, hook, body, cta, spoken }: Props) {
   }, [open, playing, speed]);
 
   const rewind = useCallback(() => {
+    stopCount();
     if (scroller.current) scroller.current.scrollTop = 0;
     elapsed.current = 0;
     if (tc.current) tc.current.textContent = timecode(0);
     setPlaying(false);
-  }, []);
+  }, [stopCount]);
+
+  /** Roll, pause, or cancel a count. From the top, a count of three comes first. */
+  const roll = useCallback(() => {
+    if (countdown.current) {
+      stopCount();
+      return;
+    }
+    if (playing) {
+      setPlaying(false);
+      return;
+    }
+    const atTop = (scroller.current?.scrollTop ?? 0) < 2;
+    if (!atTop) {
+      setPlaying(true);
+      return;
+    }
+    let n = 3;
+    setCount(n);
+    countdown.current = setInterval(() => {
+      n -= 1;
+      if (n <= 0) {
+        stopCount();
+        setPlaying(true);
+      } else setCount(n);
+    }, 900);
+  }, [playing, stopCount]);
+
+  const close = useCallback(() => {
+    stopCount();
+    setOpen(false);
+  }, [stopCount]);
 
   // Opening always starts from the top, in standby.
   const start = () => {
@@ -67,10 +111,10 @@ export function Prompter({ title, hook, body, cta, spoken }: Props) {
     if (scroller.current) scroller.current.scrollTop = 0;
     if (tc.current) tc.current.textContent = timecode(0);
     const key = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") close();
       else if (e.key === " ") {
         e.preventDefault();
-        setPlaying((p) => !p);
+        roll();
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
         setSpeed((s) => Math.min(160, s + 6));
@@ -87,7 +131,7 @@ export function Prompter({ title, hook, body, cta, spoken }: Props) {
       document.body.style.overflow = "";
       window.removeEventListener("keydown", key);
     };
-  }, [open, rewind]);
+  }, [open, rewind, roll, close]);
 
   return (
     <>
@@ -100,8 +144,8 @@ export function Prompter({ title, hook, body, cta, spoken }: Props) {
           {/* HUD */}
           <div className="mono flex items-center justify-between border-b border-[color:var(--rule)] px-5 py-3 md:px-8">
             <span className="flex items-center gap-2">
-              <span className={playing ? "lamp" : "lamp-off"} aria-hidden="true" />
-              {playing ? "Rolling" : "Standby"}
+              <span className={playing || count !== null ? "lamp" : "lamp-off"} aria-hidden="true" />
+              {playing ? "Rolling" : count !== null ? "Ready" : "Standby"}
               <span ref={tc} className="tc ml-3">
                 00:00:00:00
               </span>
@@ -116,7 +160,7 @@ export function Prompter({ title, hook, body, cta, spoken }: Props) {
               </span>
               <span className={mirror ? "text-[color:var(--ink)]" : "text-[color:var(--ink-mid)]"}>Mirror</span>
             </span>
-            <button type="button" onClick={() => setOpen(false)} className="slate-link text-[color:var(--ink)]" data-cursor="Cut">
+            <button type="button" onClick={close} className="slate-link text-[color:var(--ink)]" data-cursor="Cut">
               Close
             </button>
           </div>
@@ -126,6 +170,11 @@ export function Prompter({ title, hook, body, cta, spoken }: Props) {
             <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-[38%] z-10 h-px bg-[color:var(--tally)] shadow-[0_0_10px_var(--tally-glow)]" />
             <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 z-[5] h-[30%] bg-gradient-to-b from-black to-transparent" />
             <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-[30%] bg-gradient-to-t from-black to-transparent" />
+            {count !== null && (
+              <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center bg-black/70" role="status" aria-live="assertive" aria-label={"Rolling in " + count}>
+                <span key={count} className="display text-[min(40vh,40vw)] leading-none text-[color:var(--ink)]">{count}</span>
+              </div>
+            )}
             <div
               ref={scroller}
               className="h-full overflow-y-auto px-6 md:px-14"
@@ -149,8 +198,8 @@ export function Prompter({ title, hook, body, cta, spoken }: Props) {
           {/* transport */}
           <div className="mono flex flex-wrap items-center justify-between gap-4 border-t border-[color:var(--rule)] px-5 py-3 md:px-8">
             <div className="flex items-center gap-4">
-              <button type="button" onClick={() => setPlaying((p) => !p)} className="pill pill-solid px-5 py-2 text-[13px]">
-                {playing ? "Pause" : "Roll"}
+              <button type="button" onClick={roll} className="pill pill-solid px-5 py-2 text-[13px]">
+                {playing ? "Pause" : count !== null ? "Cancel" : "Roll"}
               </button>
               <button type="button" onClick={rewind} className="slate-link">
                 Rewind
@@ -171,7 +220,7 @@ export function Prompter({ title, hook, body, cta, spoken }: Props) {
                 Mirror
               </button>
             </div>
-            <span className="hidden text-[color:var(--ink-mid)] lg:inline">Space roll &middot; &uarr;&darr; pace &middot; + &minus; size &middot; M mirror &middot; R rewind &middot; Esc close</span>
+            <span className="hidden text-[color:var(--ink-mid)] lg:inline">Space roll (counts in from the top) &middot; &uarr;&darr; pace &middot; + &minus; size &middot; M mirror &middot; R rewind &middot; Esc close</span>
           </div>
         </div>
       )}

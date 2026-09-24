@@ -36,7 +36,8 @@ if (!gated) {
   await expect("/", 200, { contains: "Call sheet" });
   await expect("/create/hooks", 200, { contains: "Mark as read" });
   await expect("/content/scripts/20", 200);
-  await expect("/content/scripts/21", 404);
+  await expect("/content/scripts/21", 404, { contains: "Nothing on this" });
+  await expect("/opengraph-image", 200);
   await expect("/create", 200);
   for (const s of ["study-your-niche", "ideation", "video-style", "hooks", "core-message", "filming", "editing"]) await expect("/create/" + s, 200, { contains: "The rule" });
   for (const s of ["strategy", "packaging", "discoverability", "profile"]) await expect("/publish/" + s, 200, { contains: "The rule" });

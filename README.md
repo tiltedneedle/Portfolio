@@ -42,7 +42,7 @@ Get-NetTCPConnection -LocalPort 3400 -State Listen | ForEach-Object { Stop-Proce
 |---|---|---|
 | `/` | name and logo | Welcome, an intro film slot, what you have access to (a pinned strip of seven cards), how to use the system (five steps on a loop), an outro film slot, the approach |
 | `/audit` then `/audit/content-diagnostic`, `/audit/competitor-intelligence` | yes | Two reports on fixed headings (13 and 8). Unwritten headings show a slate |
-| `/content` then `/content/ideas`, `/content/scripts`, `/content/scripts/[n]` | yes | Four pillars of 25 idea cards on rails and a "deal me one" card; 20 scripts on a rail; a script page with copy, a full-screen prompter and print |
+| `/content` then `/content/ideas`, `/content/scripts`, `/content/scripts/[n]` | yes | Four pillars of 25 idea cards on rails, the mix, and a "deal me one" card; 20 scripts on a rail; a script page with the slate (location, who is on camera), copy, a full-screen prompter with a countdown, print, and the shot list as a storyboard |
 | `/create` then 7 guides | no | Study your niche, ideation, video style, hooks, core message, filming, editing |
 | `/publish` then 4 guides | no | Publishing strategy, content packaging, discoverability, profile optimisation |
 | `/analyse` then 2 guides | no | Understanding your analytics, the monthly process |
@@ -126,6 +126,11 @@ Twelve attempts per ten minutes per IP. No accounts, no database.
 
 Set `PORTAL_SECRET` on the deployment to any long random string. Rotating
 it logs everyone out.
+
+A shared link previews as the slate of a private screening
+(`src/app/opengraph-image.tsx`), whatever the path: no client name ever
+appears in a preview. A missing page (a script number that does not exist, an
+unknown client) is a routed 404 served from the site's own page.
 
 Each client has their own link to the door, `/login?for=<slug>`, which
 puts their name and mark on the slate (the scaffolder prints it). The

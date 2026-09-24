@@ -90,6 +90,13 @@ The marketing site this grew out of is on the `marketing-site` branch.
 - **Stills not in published.json fall back to YouTube's `oardefault.jpg`**;
   every id currently used was checked and exists there (2026-09-24).
 
+- **No segment-level not-found inside the client tree.** Tried in wave
+  15: with dynamicParams on, an unknown script number rendered on demand
+  and threw notFound(), but Next still served the site's 404 (a path
+  outside generateStaticParams is a routed 404 whatever the page throws;
+  the room's boundary only appeared in the RSC payload). The layout keeps
+  dynamicParams = false, which is the same result for free.
+
 ## Done
 
 - [x] Content model, 13 universal guides, block renderer, home, nav with
@@ -132,6 +139,12 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 15: the prompter counts in (3, 2, 1) from the top before it
+      rolls, and only from the top (resume is immediate; Space during the
+      count cancels it); a link-preview image, the slate of a private
+      screening, served for every path so no client name ever appears in
+      a preview; rail cards show shots and the location. The room-level
+      404 was tried and removed (see Decisions).
 - [x] Wave 14 (hardening + one design piece): week arithmetic in
       lib/week.ts on UTC day numbers, tested at the ISO edges and across a
       clock change; remote stills step aside when they fail or when

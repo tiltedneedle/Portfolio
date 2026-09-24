@@ -11,8 +11,6 @@ import { mmss, spokenSeconds, wordCount } from "@/lib/words";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-export const dynamicParams = false;
-
 // Every client has twenty script slots, so the numbers are the same for all.
 export function generateStaticParams() {
   return Array.from({ length: 20 }, (_, i) => ({ n: String(i + 1) }));

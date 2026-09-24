@@ -1,7 +1,5 @@
 import { GuidePage, guideMetadata, guideParams } from "@/components/portal/guide-routes";
 
-export const dynamicParams = false;
-
 export function generateStaticParams() {
   return guideParams("publish");
 }

@@ -32,6 +32,13 @@ export function ScriptsRail({ scripts }: { scripts: Script[] }) {
               ) : (
                 <span className="em-serif block text-[19px] text-[color:var(--ink-mid)]">In production.</span>
               )}
+              {(s.shots?.length || s.location) && (
+                <span className="mono mt-3 block text-[color:var(--ink-mid)]">
+                  {s.shots?.length ? s.shots.length + " shots" : ""}
+                  {s.shots?.length && s.location ? " \u00B7 " : ""}
+                  {s.location ? s.location.split(",")[0] : ""}
+                </span>
+              )}
               <span className="mono mt-5 block text-[color:var(--ink-soft)] transition-colors group-hover:text-[color:var(--ink)]">
                 Open <span aria-hidden="true">&#8599;</span>
               </span>

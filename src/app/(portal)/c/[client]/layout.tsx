@@ -12,6 +12,10 @@ import { publicIdentity } from "@/content/clients/types";
  * into the tree of whoever is logged in, so nothing under here is ever
  * addressed by its /c/ path from outside.
  */
+// Unknown clients, numbers and slugs are routed 404s: nothing renders. (A
+// segment-level not-found.tsx cannot help here: for a path outside
+// generateStaticParams Next serves the site's 404 whatever the page throws, so
+// the room's own 404 would only ever exist as dead code.)
 export const dynamicParams = false;
 
 export function generateStaticParams() {

@@ -1,13 +1,16 @@
 import { Rail } from "@/components/portal/Rail";
 import { CopyIdea } from "@/components/portal/CopyIdea";
 import { pillars } from "@/content/system/pillars";
-import { shortName, type Idea, type Pillar, type PublicIdentity } from "@/content/clients/types";
+import { shortName, type Idea, type Pillar, type PublicIdentity, type Script } from "@/content/clients/types";
+import { CutLink } from "@/components/room/CutLink";
 
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
 /** Four pillars, each a rail of twenty-five cards. */
-export function IdeasPillars({ ideas, identity }: { ideas: Record<Pillar, Idea[]>; identity: PublicIdentity }) {
+export function IdeasPillars({ ideas, identity, scripts = [] }: { ideas: Record<Pillar, Idea[]>; identity: PublicIdentity; scripts?: Script[] }) {
   const who = shortName(identity);
+  // The script an idea became, if a written script names it.
+  const became = new Map(scripts.filter((s) => s.from && s.body?.length).map((s) => [s.from!.pillar + ":" + s.from!.n, s.n]));
   return (
     <div className="flex flex-col gap-24">
       {pillars.map((p, pi) => {
@@ -41,7 +44,15 @@ export function IdeasPillars({ ideas, identity }: { ideas: Record<Pillar, Idea[]
                       {idea.example ? <span className="text-[color:var(--ink-mid)]">Example</span> : idea.text ? <CopyIdea text={idea.text} /> : null}
                     </p>
                     {idea.text ? (
-                      <p className="max-w-[18ch] text-[19px] leading-snug text-[color:var(--ink)] md:text-[21px]">{idea.text}</p>
+                      <span>
+                        <p className="max-w-[18ch] text-[19px] leading-snug text-[color:var(--ink)] md:text-[21px]">{idea.text}</p>
+                        {became.has(p.id + ":" + (i + 1)) && (
+                          <CutLink href={"/content/scripts/" + became.get(p.id + ":" + (i + 1))} className="slate-link mt-4 inline-flex items-center gap-2 text-[color:var(--ink)]" data-cursor="Open">
+                            <span className="lamp" aria-hidden="true" />
+                            Script {String(became.get(p.id + ":" + (i + 1))).padStart(2, "0")} &#8599;
+                          </CutLink>
+                        )}
+                      </span>
                     ) : (
                       <p className="em-serif max-w-[16ch] text-[19px] leading-snug text-[color:var(--ink-mid)]">Written for {who}.</p>
                     )}

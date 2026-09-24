@@ -48,7 +48,25 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
           {s.example && <span className="text-[color:var(--ink-mid)]">Example</span>}
         </p>
         <div className="mt-6 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-          <h1 className="display max-w-[14ch] text-[clamp(48px,7.5vw,120px)]">{s.title || "Script " + pad(s.n)}</h1>
+          <div>
+            <h1 className="display max-w-[14ch] text-[clamp(48px,7.5vw,120px)]">{s.title || "Script " + pad(s.n)}</h1>
+            {(s.location || s.onCamera) && (
+              <dl className="mono mt-6 flex flex-wrap gap-x-10 gap-y-2">
+                {s.location && (
+                  <div className="flex gap-3">
+                    <dt className="text-[color:var(--ink-mid)]">Location</dt>
+                    <dd className="text-[color:var(--ink)]">{s.location}</dd>
+                  </div>
+                )}
+                {s.onCamera && (
+                  <div className="flex gap-3">
+                    <dt className="text-[color:var(--ink-mid)]">On camera</dt>
+                    <dd className="text-[color:var(--ink)]">{s.onCamera}</dd>
+                  </div>
+                )}
+              </dl>
+            )}
+          </div>
           <div className="no-print flex flex-wrap items-center gap-4">
             <CopyScript text={scriptAsText(s)} disabled={!written} />
             {written && <Prompter title={"Script " + pad(s.n) + " \u2014 " + s.title} hook={s.hook} body={s.body!} cta={s.cta} spoken={spoken} />}
@@ -64,6 +82,7 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
               <span>Hook</span>
               <span>Script</span>
               {s.cta && <span>Call to action</span>}
+              {s.shots?.length ? <span>Shot list</span> : null}
               <span className="mt-4 text-[color:var(--ink-mid)]">{words} words</span>
               <span className="text-[color:var(--ink-mid)]">
                 &asymp; {mmss(spoken)} <span className="text-[color:var(--ink-mid)]">spoken</span>
@@ -92,6 +111,22 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
                   <p className="text-[19px] leading-[1.6] text-[color:var(--ink-soft)]">{s.cta}</p>
                 </section>
               )}
+              {s.shots?.length ? (
+                <section className="border-t border-[color:var(--rule-strong)] pt-8">
+                  <p className="mono mb-5 flex items-baseline justify-between">
+                    <span>Shot list</span>
+                    <span className="text-[color:var(--ink-mid)]">{s.shots.length} shots</span>
+                  </p>
+                  <ol className="border-b border-[color:var(--rule)]">
+                    {s.shots.map((shot, i) => (
+                      <li key={shot} className="grid grid-cols-[3ch_1fr] gap-x-5 border-t border-[color:var(--rule)] py-3.5">
+                        <span className="mono pt-1">{pad(i + 1)}</span>
+                        <span className="text-[17px] leading-snug text-[color:var(--ink)]">{shot}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+              ) : null}
               <div className="no-print border-t border-[color:var(--rule)] pt-8">
                 <CopyScript text={scriptAsText(s)} />
               </div>

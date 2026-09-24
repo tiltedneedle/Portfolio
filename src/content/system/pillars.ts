@@ -1,4 +1,4 @@
-import type { AuditFinding, AuditReport, Competitor, Pillar, PositionMap } from "@/content/clients/types";
+import type { AuditFinding, AuditReport, Competitor, Pillar, PositionMap, Script } from "@/content/clients/types";
 
 /** The four content pillars. Universal; every client's hundred ideas sit in these. */
 export const pillars: { id: Pillar; title: string; definition: string }[] = [
@@ -72,6 +72,6 @@ export function pillar(written: (string | { text: string; example?: boolean })[]
 }
 
 /** Twenty script slots, with any written scripts placed by number. */
-export function scripts(written: { n: number; title: string; hook?: string; body?: string[]; cta?: string; example?: boolean }[] = []) {
+export function scripts(written: Script[] = []) {
   return Array.from({ length: 20 }, (_, i) => written.find((s) => s.n === i + 1) ?? { n: i + 1, title: "" });
 }

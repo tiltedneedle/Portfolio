@@ -112,8 +112,23 @@ export type Script = {
   hook?: string;
   body?: string[];
   cta?: string;
+  /** Where to film it, as printed on the slate. */
+  location?: string;
+  /** Who is on camera. */
+  onCamera?: string;
+  /** The shots to get, in order: the call sheet beside the words. */
+  shots?: string[];
+  /** The idea this script came from, so the idea card can point here. */
+  from?: { pillar: Pillar; n: number };
   example?: boolean;
 };
+
+/**
+ * A note from the studio inside a universal guide, for this client only.
+ * `at` is the 1-based section it sits under; without it the note follows
+ * the guide's introduction.
+ */
+export type GuideNote = { text: string; at?: number };
 
 export type ClientSystem = {
   identity: ClientIdentity;
@@ -121,6 +136,8 @@ export type ClientSystem = {
   competitorIntelligence: AuditReport;
   ideas: Record<Pillar, Idea[]>;
   scripts: Script[];
+  /** Notes inside the universal guides, keyed "chapter/slug" ("create/hooks"). */
+  notes?: Record<string, GuideNote[]>;
 };
 
 export function publicIdentity(i: ClientIdentity): PublicIdentity {
@@ -145,6 +162,8 @@ export function scriptAsText(s: Script) {
   if (s.hook) lines.push("HOOK", s.hook, "");
   if (s.body?.length) lines.push("SCRIPT", ...s.body.flatMap((p) => [p, ""]));
   if (s.cta) lines.push("CALL TO ACTION", s.cta, "");
+  if (s.shots?.length) lines.push("SHOT LIST", ...s.shots.map((x, i) => String(i + 1).padStart(2, "0") + "  " + x), "");
+  if (s.location || s.onCamera) lines.push([s.location ? "LOCATION  " + s.location : "", s.onCamera ? "ON CAMERA  " + s.onCamera : ""].filter(Boolean).join("\n"), "");
   return lines.join("\n").trim();
 }
 

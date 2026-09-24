@@ -89,7 +89,14 @@ and paste the hash into `accessHash`. Then:
 4. Write the two audit reports (paragraphs under each fixed heading; use the
    `report()` helper), 25 ideas per pillar (`pillar()` pads to 25) and 20
    scripts (`scripts()` fills the numbered slots). Anything left empty
-   renders as a slot that says it is on its way.
+   renders as a slot that says it is on its way. A finding can carry a
+   verdict, a score, keep / limiting / change lists, evidence and a place
+   in the first three moves; the competitor report can carry a board of
+   accounts and a positioning map. A script can carry a location, who is
+   on camera, a shot list and the idea it came from. `notes` puts a
+   studio note inside any universal guide for this client only, keyed
+   "create/hooks", after the intro or under a numbered section (`at`).
+   The demo client shows every one of these.
 5. Check and build:
 
    ```bash

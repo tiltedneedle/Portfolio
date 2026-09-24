@@ -130,6 +130,13 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 12: notes from the studio inside the universal guides, for
+      this client only (`notes` keyed "chapter/slug", after the intro or
+      under a numbered section, rendered as "For Horizon" with the lamp);
+      scripts carry a location, who is on camera and a shot list (a slate
+      strip under the title, the list after the words, both in the copied
+      text); idea cards point to the script they became (`from`); the
+      audit has a print control. Demo: three scripts and seven notes.
 - [x] Wave 11: the pillar mix ring on the ideas page (four tones of
       ink; says when one pillar carries more than half), Copy on every
       written idea card, a print sheet for the ideas (rails become

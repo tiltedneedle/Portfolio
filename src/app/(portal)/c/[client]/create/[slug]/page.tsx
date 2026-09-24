@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return guideMetadata("create", slug);
 }
 
-export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  return <GuidePage id="create" slug={slug} />;
+export default async function Page({ params }: { params: Promise<{ client: string; slug: string }> }) {
+  const { client, slug } = await params;
+  return <GuidePage id="create" slug={slug} client={client} />;
 }

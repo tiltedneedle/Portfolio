@@ -137,6 +137,27 @@ for (const [slug, c] of Object.entries(clients)) {
     }
   }
 
+  // Notes inside the guides, and where scripts came from
+  for (const [key, notes] of Object.entries(c.notes ?? {})) {
+    const [ch, gs] = key.split("/");
+    const g = guides.find((x) => x.chapter === ch && x.slug === gs);
+    if (!g) {
+      problems.push(`${slug}: notes for "${key}" but there is no such guide`);
+      continue;
+    }
+    for (const n of notes) {
+      if (!n.text) problems.push(`${slug}: an empty note in "${key}"`);
+      if (n.at !== undefined && !(Number.isInteger(n.at) && n.at >= 1 && n.at <= g.sections.length)) problems.push(`${slug}: note in "${key}" points at section ${n.at}; the guide has ${g.sections.length}`);
+    }
+  }
+  for (const s of c.scripts) {
+    if (s.from) {
+      const list = c.ideas[s.from.pillar];
+      if (!list) problems.push(`${slug}: script ${s.n} comes from an unknown pillar "${s.from.pillar}"`);
+      else if (!list[s.from.n - 1]?.text) warn.push(`${slug}: script ${s.n} says it came from ${s.from.pillar} ${s.from.n}, which is not written`);
+    }
+    if (s.shots && s.shots.some((x) => !x)) problems.push(`${slug}: script ${s.n} has an empty shot`);
+  }
   c.scripts.forEach((s, i) => {
     if (s.n !== i + 1) problems.push(`${slug}: script at position ${i + 1} is numbered ${s.n}`);
     if (s.body?.length && !s.title) problems.push(`${slug}: script ${s.n} has a body but no title`);

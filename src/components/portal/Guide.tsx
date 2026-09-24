@@ -1,4 +1,6 @@
 import type { Guide as GuideT } from "@/content/types";
+import type { GuideNote } from "@/content/clients/types";
+import { ForYou } from "@/components/portal/ForYou";
 import { chapter, pageNumber } from "@/content/chapters";
 import { readingMinutes } from "@/content/system";
 import { Blocks } from "@/components/portal/blocks";
@@ -14,7 +16,9 @@ import { ReadToggle } from "@/components/portal/ReadToggle";
  * training film, then the numbered sections beside a rail that follows the
  * reader down the page, and the rule the page closes on.
  */
-export function Guide({ guide }: { guide: GuideT }) {
+export function Guide({ guide, notes = [], who = "" }: { guide: GuideT; notes?: GuideNote[]; who?: string }) {
+  const introNotes = notes.filter((n) => !n.at);
+  const notesAt = (i: number) => notes.filter((n) => n.at === i + 1);
   const ch = chapter(guide.chapter);
   const n = pageNumber(guide.chapter, guide.slug);
   const numbered = guide.sections.filter((s) => s.n).length;
@@ -46,6 +50,12 @@ export function Guide({ guide }: { guide: GuideT }) {
             ))}
           </div>
         </div>
+
+        {introNotes.length > 0 && (
+          <div className="mt-12 md:ml-[calc(100%-60ch)] md:max-w-[60ch]">
+            <ForYou who={who} notes={introNotes} />
+          </div>
+        )}
 
         {guide.opener && (
           // Comparisons and clip rails need the full width; text stays in the reading column.
@@ -83,6 +93,11 @@ export function Guide({ guide }: { guide: GuideT }) {
               <div className="min-w-0">
                 <h2 className="display mb-8 max-w-[16ch] text-[clamp(30px,3.6vw,52px)]">{s.title}</h2>
                 <Blocks blocks={s.blocks} />
+                {notesAt(i).length > 0 && (
+                  <div className="mt-9">
+                    <ForYou who={who} notes={notesAt(i)} />
+                  </div>
+                )}
               </div>
             </section>
           ))}

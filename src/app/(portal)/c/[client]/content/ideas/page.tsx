@@ -55,7 +55,7 @@ export default async function IdeasPage({ params }: { params: Promise<{ client: 
       </header>
 
       <div className="mx-auto max-w-[1600px] px-6 pb-24 pt-8 md:px-14 md:pt-12">
-        <IdeasPillars ideas={sys.ideas} identity={identity} />
+        <IdeasPillars ideas={sys.ideas} identity={identity} scripts={sys.scripts} />
         <div className="mt-24">
           <DealOne cards={cards} />
         </div>

@@ -347,6 +347,16 @@ export const demo: ClientSystem = {
         "And a margin for us, which is smaller than you think, because the next booking depends on this one going perfectly.",
       ],
       cta: "If you want to know how an empty leg can take a third off that number, that is the next video.",
+      location: "Farnborough, on the apron beside the Global",
+      onCamera: "James",
+      from: { pillar: "authority", n: 4 },
+      shots: [
+        "Open on James walking out of the terminal towards the aircraft, mid-sentence",
+        "Cabin door opening, from the inside",
+        "Fuel truck pulling up, wide",
+        "Close on the catering being loaded",
+        "James in the cabin doorway for the last line",
+      ],
     },
     {
       n: 2,
@@ -359,6 +369,15 @@ export const demo: ClientSystem = {
         "So: yes. Tell us early, and we will choose the aircraft and the airport around the dog.",
       ],
       cta: "Ask us the question you think is too small to ask. It is usually the one we get most.",
+      location: "Inside the Global cabin, dog on the seat if one is available",
+      onCamera: "James, or the cabin crew lead",
+      from: { pillar: "education", n: 7 },
+      shots: [
+        "Open on the dog on the leather seat, then pull back to James",
+        "Pet passport in hand, close",
+        "Cabin floor and seat materials, detail",
+        "James at the door: the last line to camera",
+      ],
     },
     {
       n: 3,
@@ -371,6 +390,32 @@ export const demo: ClientSystem = {
         "It was the sensor. The aircraft delivered at noon. The buyer still flies it.",
       ],
       cta: "Every deal has a moment like this. The difference is who is standing next to you when it happens.",
+      location: "The hangar at night, one work light on",
+      onCamera: "James",
+      from: { pillar: "personal", n: 1 },
+      shots: [
+        "James in the dark hangar, work light behind, the first line",
+        "Engine cowling, close, slow",
+        "A phone lighting a face: the midnight call",
+        "Dawn on the apron, wide, for the flight test line",
+        "James walking away from camera towards the aircraft for the ending",
+      ],
     },
   ]),
+
+  notes: {
+    "create/hooks": [
+      { text: "Your first second is the aircraft door, the apron at six in the morning, or James mid-sentence. Never the logo, never a drone shot." },
+      { at: 3, text: "The verbal hook that will work hardest for you is a number: what a flight costs, how far a jet flies, how long a deal took. Start there." },
+    ],
+    "create/filming": [
+      { at: 12, text: "Your four sizes are: the aircraft on the apron, James at the door, James's face in the cabin, and a detail (the throttle, the leather, the passport). Get all four every time you film." },
+      { at: 6, text: "Test the lapel microphone on the apron with an engine running before the first talking video. Wind and turbines will decide where you can speak." },
+    ],
+    "create/editing": [{ at: 1, text: "Cut every one to two seconds in the first ten. Your tours cut every four to six; that is the difference between a showreel and a feed." }],
+    "create/study-your-niche": [{ text: "Your niche is not private aviation. It is people who are about to spend real money on it for the first time: chartering, then owning. Write for them." }],
+    "publish/strategy": [{ at: 1, text: "Your first bank of fifteen: the ten questions from the enquiry inbox, three from the operation, two from James's own stories." }],
+    "publish/profile": [{ at: 2, text: "Horizon Aviation | Private Jet Charter. That is the name field. Then the link goes to the enquiry page, not the home page." }],
+    "analyse/understanding-your-analytics": [{ at: 2, text: "Your first outlier already exists: the dog on the tarmac. A person, a story, eight times the reach. Make more of it before you make anything else." }],
+  },
 };

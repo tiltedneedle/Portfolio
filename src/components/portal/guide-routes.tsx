@@ -4,6 +4,8 @@ import { Guide } from "@/components/portal/Guide";
 import { ChapterOverview } from "@/components/portal/ChapterOverview";
 import { chapter } from "@/content/chapters";
 import { findGuide, guidesFor, readingMinutes } from "@/content/system";
+import { requireClient } from "@/content/clients/registry";
+import { shortName } from "@/content/clients/types";
 
 type GuideChapterId = "create" | "publish" | "analyse";
 
@@ -13,10 +15,11 @@ export function GuideChapter({ id }: { id: GuideChapterId }) {
   return <ChapterOverview id={id} rows={rows} lead={chapter(id).blurb} />;
 }
 
-export function GuidePage({ id, slug }: { id: GuideChapterId; slug: string }) {
+export function GuidePage({ id, slug, client }: { id: GuideChapterId; slug: string; client: string }) {
   const g = findGuide(id, slug);
   if (!g) notFound();
-  return <Guide guide={g} />;
+  const sys = requireClient(client);
+  return <Guide guide={g} notes={sys.notes?.[id + "/" + slug] ?? []} who={shortName(sys.identity)} />;
 }
 
 export function guideParams(id: GuideChapterId) {

@@ -46,7 +46,6 @@ const ytId = (u) => {
   return m ? m[1] : null;
 };
 const durable = (u) => !!u && (u.includes("supabase.co/storage") || u.includes("i.ytimg.com"));
-const german = /\b(jahre|und|augen|dann|endlich|ich|nicht|mit|wir|sie|der|die|das|ohne|brille|sehen)\b|[äöüß]/i;
 
 const res = await fetch(
   url + "/rest/v1/content_items?select=id,title,subject,produced_at,platform_posts(url,posted_at,thumbnail_url,accounts(platform_slug,handle,clients(name)))&limit=2000",

@@ -34,6 +34,11 @@ function Panel({ chapter: c, onPick, who, current, read }: { chapter: Chapter; o
             For {who}
           </span>
         )}
+        {!c.personalised && c.id !== "home" && (
+          <span className="text-[color:var(--ink-mid)]">
+            {c.pages.filter((p) => read.has(c.id + "/" + p.slug)).length} of {c.pages.length} read
+          </span>
+        )}
       </div>
       <p className="px-3 pb-3 text-[13px] leading-snug text-[color:var(--ink-mid)]">{c.blurb}</p>
       <ul className="border-t border-[color:var(--rule)]">

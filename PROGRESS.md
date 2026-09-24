@@ -66,8 +66,11 @@ The marketing site this grew out of is on the `marketing-site` branch.
   in the browser. Node 23 on this desktop can print a libuv assertion at
   exit; read the test summary, not the exit code.
 - The palette opens on ⌘K, `/`, the desktop button, or a `tn:palette`
-  window event (the phone menu sends it). Dialogs (palette, prompter,
-  lightbox) share `useFocusTrap`.
+  window event (the phone menu sends it). From three letters it searches
+  the words: `src/lib/search-index.ts` builds the index, the route handler
+  at `c/[client]/search-index.json` serves it per client, behind the door.
+  Dialogs (palette, prompter, lightbox) share `useFocusTrap`; a dialog
+  must blur its field before an exit animation, or keys land in it.
 - Reveals (`Reveal.tsx`) never hide anything in the HTML: after hydration
   only blocks below the fold get `reveal-wait`, and an observer adds
   `reveal-in`. Reduced motion skips it; print forces everything visible.
@@ -139,6 +142,13 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 20: the palette lists recent picks first (per client, per
+      device, five); nav panels say "n of 7 read"; the rail writes the
+      resume position only when the section changes (it wrote on every
+      scroll frame: 6 writes across a 16-section page now, not hundreds);
+      the palette cursor follows only a pointer that actually moves, so a
+      list appearing under a parked mouse no longer steals Enter from the
+      top result.
 - [x] Wave 19: full-text search (from three letters the palette finds any
       sentence in the guides, with a snippet; the index is built per client
       at /search-index.json, pre-rendered and served behind the door, the

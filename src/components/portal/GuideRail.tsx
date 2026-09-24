@@ -24,6 +24,7 @@ export function GuideRail({ items, minutes = 0, k }: { items: { id: string; n?: 
     if (!els.length) return;
     // The section whose top is nearest the reading line (a third down the
     // viewport) is the one being read.
+    let lastSaved = "";
     const pick = () => {
       const line = window.innerHeight * 0.33;
       let best = els[0];
@@ -41,7 +42,8 @@ export function GuideRail({ items, minutes = 0, k }: { items: { id: string; n?: 
       }
       setActive((prev) => (prev === best.id ? prev : best.id));
       // Remember the section for next time, once the reader is past the first.
-      if (k && best !== els[0]) {
+      if (k && best !== els[0] && best.id !== lastSaved) {
+        lastSaved = best.id;
         try {
           localStorage.setItem(positionKey(me.slug, k), best.id);
         } catch {

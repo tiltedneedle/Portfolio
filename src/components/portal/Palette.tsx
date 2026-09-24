@@ -7,6 +7,7 @@ import { beginCut } from "@/lib/cut";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 import { useFocusTrap } from "@/lib/use-focus-trap";
 import { snippet, type SearchEntry } from "@/lib/search-index";
+import { useClient } from "@/components/portal/ClientContext";
 
 /**
  * The palette: every page and every section of the system, one keystroke
@@ -27,6 +28,26 @@ export type PaletteItem = {
 };
 
 type Hit = { href: string; title: string; kicker: string; n: string; section?: boolean; snippet?: string };
+
+// The last few picks, per client, on this device.
+const RECENT = 5;
+const recentKey = (slug: string) => "tn-recent:" + slug;
+function readRecent(slug: string): Hit[] {
+  try {
+    const list = JSON.parse(localStorage.getItem(recentKey(slug)) ?? "[]");
+    return Array.isArray(list) ? list.filter((h) => h && typeof h.href === "string" && typeof h.title === "string") : [];
+  } catch {
+    return [];
+  }
+}
+function pushRecent(slug: string, hit: Hit) {
+  const next = [hit, ...readRecent(slug).filter((h) => h.href !== hit.href)].slice(0, RECENT);
+  try {
+    localStorage.setItem(recentKey(slug), JSON.stringify(next));
+  } catch {
+    // no storage, no memory: fine
+  }
+}
 
 // The full-text index, fetched once per visit the first time three letters are typed.
 let indexCache: SearchEntry[] | null = null;
@@ -83,6 +104,8 @@ export function Palette({ items }: { items: PaletteItem[] }) {
   const router = useRouter();
   const pathname = usePathname();
   const reduced = useReducedMotion();
+  const me = useClient();
+  const [recentTick, setRecentTick] = useState(0);
 
   // The page order for [ and ]: every distinct path, home first.
   const order = useMemo(() => {
@@ -100,7 +123,11 @@ export function Palette({ items }: { items: PaletteItem[] }) {
   }, [items]);
 
   const go = useCallback(
-    (href: string) => {
+    (href: string, hit?: Hit) => {
+      if (hit) {
+        pushRecent(me.slug, { href: hit.href, title: hit.title, kicker: hit.kicker, n: hit.n, section: hit.section });
+        setRecentTick((t) => t + 1);
+      }
       close();
       const path = href.split("#")[0];
       if (path === pathname) {
@@ -122,7 +149,7 @@ export function Palette({ items }: { items: PaletteItem[] }) {
       if (!reduced) beginCut();
       requestAnimationFrame(() => router.push(href));
     },
-    [pathname, reduced, router, close]
+    [pathname, reduced, router, close, me.slug]
   );
 
   // The router lands new pages at the top; a section pick still has to
@@ -215,7 +242,13 @@ export function Palette({ items }: { items: PaletteItem[] }) {
   const hits = useMemo<Hit[]>(() => {
     const needle = q.trim().toLowerCase();
     const pages: Hit[] = items.filter((it) => !it.hidden).map((it) => ({ href: it.href, title: it.title, kicker: it.chapter, n: it.n }));
-    if (!needle) return pages;
+    if (!needle) {
+      // Recent picks first, then everything in reading order.
+      const recent = open ? readRecent(me.slug) : [];
+      if (recent.length === 0) return pages;
+      const seen = new Set(recent.map((h) => h.href));
+      return [...recent.map((h) => ({ ...h, kicker: "Recent" })), ...pages.filter((p) => !seen.has(p.href))];
+    }
     const words = needle.split(/\s+/).filter(Boolean);
     const matches = (s: string) => words.every((w) => s.toLowerCase().includes(w));
     const out: Hit[] = [];
@@ -242,7 +275,7 @@ export function Palette({ items }: { items: PaletteItem[] }) {
     return out.slice(0, 14);
     // indexed is a tick that says the index has arrived; the memo must rerun then.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items, q, indexed]);
+  }, [items, q, indexed, open, me.slug, recentTick]);
 
   useEffect(() => {
     const el = list.current?.children[cursor] as HTMLElement | undefined;
@@ -260,7 +293,7 @@ export function Palette({ items }: { items: PaletteItem[] }) {
     } else if (e.key === "Enter") {
       e.preventDefault();
       const h = hits[cursor];
-      if (h) go(h.href);
+      if (h) go(h.href, h);
     }
   };
 
@@ -357,8 +390,12 @@ export function Palette({ items }: { items: PaletteItem[] }) {
                   <li key={h.href + i} role="option" aria-selected={i === cursor}>
                     <button
                       type="button"
-                      onMouseEnter={() => setCursor(i)}
-                      onClick={() => go(h.href)}
+                      // Only a pointer that actually moves takes the cursor: a list appearing
+                      // under a parked mouse must not steal Enter from the top result.
+                      onMouseMove={() => {
+                        if (cursor !== i) setCursor(i);
+                      }}
+                      onClick={() => go(h.href, h)}
                       className={
                         "flex w-full items-baseline gap-4 px-5 py-2.5 text-left transition-colors " +
                         (i === cursor ? "bg-[color:var(--stage-3)] text-[color:var(--ink)]" : "text-[color:var(--ink-soft)]")

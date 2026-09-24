@@ -240,9 +240,11 @@ export const hooks: Guide = {
         { kind: "p", text: "You are giving the viewer several reasons to continue watching at the same time." },
         {
           kind: "clips",
-          title: "Four openings, from the library",
+          title: "Six openings, from the library and our clients' feeds",
           note: "Watch only the first three seconds of each. Name the hook.",
           items: [
+            { id: "tjb-19-year-old", caption: "A number and a contradiction: 36 million views" },
+            { id: "gauthier-caviar", caption: "A claim you have to see: 6 million views" },
             { id: "R0YRf0nWEw4", caption: "Challenge and surprise" },
             { id: "1JyE72paX1A", caption: "Surprise and contrast" },
             { id: "AdBomjIwksA", caption: "Instant value" },

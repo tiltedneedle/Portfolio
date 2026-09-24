@@ -1,17 +1,28 @@
 import { published } from "@/lib/published";
+import { reel } from "@/content/system/reel";
 import { Still } from "@/components/portal/Still";
 
 /**
- * Behind the home hero: a row of stills from the studio's published work,
- * drifting slowly, dimmed to a texture. The system is built from that work,
- * so it stands behind the name. Two copies of the row make the drift
- * seamless; reduced motion holds it still.
+ * Behind the home hero: a row of stills from the studio's work, the
+ * showreel's films interleaved with published Shorts, drifting slowly,
+ * dimmed to a texture. The system is built from that work, so it stands
+ * behind the name. Two copies of the row make the drift seamless; reduced
+ * motion holds it still.
  */
 export function Backdrop() {
-  const pool = published.filter((p) => p.platform === "youtube_shorts" && p.vertical);
-  // Step through the pool so neighbouring stills come from different posts.
-  const step = Math.max(1, Math.floor(pool.length / 16));
-  const stills = Array.from({ length: 16 }, (_, i) => pool[(i * step) % pool.length]).filter(Boolean);
+  const own = reel.map((r) => ({ id: r.id, thumb: r.thumb }));
+  const rest = published.filter((p) => p.platform === "youtube_shorts" && p.vertical).map((p) => ({ id: p.id, thumb: p.thumb }));
+  // Step through the Shorts so neighbouring stills come from different posts,
+  // then interleave them with the reel so the row never runs one client.
+  const need = Math.max(0, 16 - own.length);
+  const step = Math.max(1, Math.floor(rest.length / Math.max(1, need)));
+  const fill = Array.from({ length: need }, (_, i) => rest[(i * step) % Math.max(1, rest.length)]).filter(Boolean);
+  const stills: { id: string; thumb: string }[] = [];
+  for (let i = 0; i < Math.max(own.length, fill.length); i++) {
+    if (own[i]) stills.push(own[i]);
+    if (fill[i]) stills.push(fill[i]);
+  }
+  stills.splice(16);
   if (!stills.length) return null;
   const row = (key: string, hidden: boolean) => (
     <div key={key} className="flex shrink-0 gap-3 pr-3" aria-hidden={hidden || undefined}>

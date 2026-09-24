@@ -7,22 +7,29 @@ import { embedUrl } from "@/lib/published";
 
 /**
  * A lightbox for a published cut. The film plays in a 9:16 well from
- * YouTube's privacy-enhanced host; nothing loads until it opens. Escape and
+ * YouTube's privacy-enhanced host, or from TikTok's or Instagram's own
+ * player when `src` names one; nothing loads until it opens. Escape and
  * the backdrop close it; focus is trapped while it is up.
  */
 export function EmbedModal({
-  videoId,
+  videoId = null,
+  src = null,
+  platform = "youtube",
   title,
   open,
   onClose,
 }: {
-  videoId: string | null;
+  videoId?: string | null;
+  /** A player URL of its own; without one, the YouTube id plays. */
+  src?: string | null;
+  platform?: "youtube" | "tiktok" | "instagram";
   title: string;
   open: boolean;
   onClose: () => void;
 }) {
+  const url = src ?? (videoId ? embedUrl(videoId) : null);
   const box = useRef<HTMLDivElement>(null);
-  useFocusTrap(open && !!videoId, box, videoId ?? undefined);
+  useFocusTrap(open && !!url, box, url ?? undefined);
 
   useEffect(() => {
     if (!open) return;
@@ -39,7 +46,7 @@ export function EmbedModal({
 
   return (
     <AnimatePresence>
-      {open && videoId && (
+      {open && url && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -55,7 +62,7 @@ export function EmbedModal({
             aria-label={title}
             tabIndex={-1}
             onClick={(e) => e.stopPropagation()}
-            className="relative flex w-full max-w-[420px] flex-col"
+            className={"relative flex w-full flex-col " + (platform === "instagram" ? "max-w-[360px]" : platform === "tiktok" ? "max-w-[400px]" : "max-w-[420px]")}
           >
             <div className="mb-3 flex items-center justify-between mono">
               <span className="flex items-center gap-2">
@@ -66,11 +73,18 @@ export function EmbedModal({
                 Close
               </button>
             </div>
-            <div className="well w-full border border-[color:var(--rule)]">
+            {/* TikTok's and Instagram's players carry their own chrome around the reel, so they get taller boxes that scroll inside. */}
+            <div
+              className={
+                platform === "youtube"
+                  ? "well w-full border border-[color:var(--rule)]"
+                  : "relative " + (platform === "instagram" ? "aspect-[9/19]" : "aspect-[9/17]") + " max-h-[82vh] w-full overflow-hidden border border-[color:var(--rule)] bg-[color:var(--stage-2)]"
+              }
+            >
               <iframe
-                src={embedUrl(videoId)}
+                src={url}
                 title={title}
-                allow="autoplay; encrypted-media; picture-in-picture"
+                allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
                 allowFullScreen
                 className="absolute inset-0 h-full w-full"
               />

@@ -4,7 +4,7 @@ import { Still } from "@/components/portal/Still";
 import { useState } from "react";
 import { EmbedModal } from "@/components/room/EmbedModal";
 
-type Clip = { id: string; title: string; caption?: string; thumb: string; handle: string };
+type Clip = { id: string; title: string; caption?: string; thumb: string; handle: string; src?: string; platform?: "youtube" | "tiktok" | "instagram" };
 
 export function ClipRailClient({ title, note, clips }: { title?: string; note?: string; clips: Clip[] }) {
   const [open, setOpen] = useState<Clip | null>(null);
@@ -39,7 +39,7 @@ export function ClipRailClient({ title, note, clips }: { title?: string; note?: 
           </li>
         ))}
       </ul>
-      <EmbedModal videoId={open?.id ?? null} title={open?.title ?? ""} open={!!open} onClose={() => setOpen(null)} />
+      <EmbedModal videoId={open?.id ?? null} src={open?.src ?? null} platform={open?.platform ?? "youtube"} title={open?.title ?? ""} open={!!open} onClose={() => setOpen(null)} />
     </div>
   );
 }

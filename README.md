@@ -205,6 +205,19 @@ onboarding.
 entries by YouTube id; anything not in the index falls back to YouTube's
 own still, and `npm run check` warns about it.
 
+`src/content/system/reel.ts` is the showreel: the studio's clients' own
+TikTok and Instagram films with the views they took. Their stills are
+cached under `public/clips/` because signed CDN stills expire (TikTok's
+oEmbed gives a 1080-wide cover; Instagram's Open Graph still is 360×640
+and that is all it gives). Home shows the reel after the welcome, the
+hero's backdrop drifts through its stills first, and a `clips` block may
+name a reel id. The films play in the platforms' own embedded players
+(`tiktok.com/embed/v2/<id>`, since TikTok's newer player answers
+"unavailable" for these films, and `instagram.com/reel/<code>/embed/`),
+both allowed by the CSP; the stills are served from `public/clips/`,
+which the proxy leaves alone. `npm run check` refuses a reel entry
+without a still.
+
 ## The design system
 
 `src/app/globals.css` holds it: one dark world, four faces (Big Shoulders

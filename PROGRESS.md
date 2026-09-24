@@ -201,6 +201,21 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 34: the showreel. The user sent nine client videos with their
+      views; eight are in `src/content/system/reel.ts` (TikTok x5,
+      Instagram x3, 118 million views), stills cached under public/clips
+      (TikTok's oEmbed gives a 1080-wide cover; Instagram's Open Graph
+      still, fetched with a facebookexternalhit user agent, is 360x640).
+      Home shows the reel after the welcome with the views as numerals;
+      the hero backdrop drifts through the stills first; two openings join
+      the hooks guide's clip rail; the lightbox plays TikTok's embed/v2
+      and Instagram's /embed/ in boxes sized for their chrome (CSP
+      frame-src widened; the proxy leaves /clips/ alone, which it did not
+      at first, so every still was a 404 behind the door). The validator
+      refuses a reel entry without a still; the smoke asserts the reel and
+      a still. Laser Eye Clinic London (16M) is left out: TikTok answers
+      "video currently unavailable" for it here, its oEmbed is empty and
+      its page is a login wall.
 - [x] Wave 33: belt and braces: the validator refuses a "recently added"
       link (system or client) that does not land on a page; the smoke
       suite asserts the security headers next.config.ts promises (CSP,
@@ -398,8 +413,10 @@ The marketing site this grew out of is on the `marketing-site` branch.
    client chunk; the site is private and static, so it was left. Take it
    only if a real client reports slow first loads.
 1. Awaiting from the user (do not block): nine training-video ids for the
-   Create guides plus intro/outro, first real client content, images for
-   `figure` blocks, a real client logo to test `--logo`.
+   Create guides plus intro/outro (the nine client videos that arrived are
+   the showreel, not these), a working link or a still for the Laser Eye
+   Clinic film, first real client content, images for `figure` blocks, a
+   real client logo to test `--logo`.
 2. Majors available and not taken (`npm outdated`, 2026-09-24): typescript
    7.0 and @types/node 26. Each is its own wave with the full loop.
    framer-motion 13 was taken in wave 29. vitest 4/5 stays blocked by the

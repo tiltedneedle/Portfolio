@@ -86,6 +86,22 @@ const ids = new Set(published.map((p) => p.videoId).filter(Boolean));
 const problems = [];
 const warn = [];
 
+// The showreel: our clients' films with cached stills; a clip block may use its ids too.
+const { reel } = await import(pathToFileURL(join(out, "content/system/reel.js")).href);
+{
+  const seen = new Set();
+  for (const r of reel) {
+    if (seen.has(r.id)) problems.push(`reel ${r.id}: duplicate id`);
+    seen.add(r.id);
+    ids.add(r.id);
+    if (!["tiktok", "instagram"].includes(r.platform)) problems.push(`reel ${r.id}: platform ${r.platform} is not tiktok or instagram`);
+    if (!/^https:\/\/(www\.)?(tiktok|instagram)\.com\//.test(r.url)) problems.push(`reel ${r.id}: url ${r.url} is not on the platform`);
+    if (!(r.views > 0)) problems.push(`reel ${r.id}: views must be a positive count`);
+    if (!String(r.thumb).startsWith("/") || !existsSync(join(root, "public", r.thumb))) problems.push(`reel ${r.id}: still ${r.thumb} is not under public/`);
+    if (!r.title || !r.client || !r.handle) problems.push(`reel ${r.id}: needs client, handle and title`);
+  }
+}
+
 // Clients
 for (const [slug, c] of Object.entries(clients)) {
   const id = c.identity;

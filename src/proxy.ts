@@ -45,6 +45,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!login|_next/static|_next/image|favicon.ico|white-logo.png|black-logo.png|logos/|client/|manifest.webmanifest|robots.txt|opengraph-image).*)",
+    "/((?!login|_next/static|_next/image|favicon.ico|white-logo.png|black-logo.png|logos/|clips/|client/|manifest.webmanifest|robots.txt|opengraph-image).*)",
   ],
 };

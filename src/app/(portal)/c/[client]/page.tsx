@@ -7,6 +7,7 @@ import { ClientMark } from "@/components/portal/ClientMark";
 import { AccessStrip } from "@/components/portal/AccessStrip";
 import { Loop } from "@/components/portal/Loop";
 import { TrainingFilm } from "@/components/portal/TrainingFilm";
+import { Showreel } from "@/components/portal/Showreel";
 import { ThisWeek } from "@/components/portal/ThisWeek";
 import { RecentChanges } from "@/components/portal/RecentChanges";
 import { FilmedCount } from "@/components/portal/FilmedMark";
@@ -145,6 +146,8 @@ export default async function Home({ params }: { params: Promise<{ client: strin
           <TrainingFilm film={home.films.intro} number="Intro" />
         </div>
       </section>
+
+      <Showreel />
 
       <AccessStrip counts={counts} readKeys={readKeys} />
 

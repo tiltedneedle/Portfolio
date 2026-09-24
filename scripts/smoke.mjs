@@ -36,6 +36,8 @@ if (!gated) {
   await expect("/analyse/understanding-your-analytics", 200, { contains: "retention curve" });
   await expect("/publish/strategy", 200, { contains: "posts across" });
   await expect("/", 200, { contains: "Training film" });
+  await expect("/", 200, { contains: "From our clients" });
+  await expect("/clips/tiktok-7283257299626511649.jpg", 200);
   await expect("/", 200, { contains: "Call sheet" });
   await expect("/", 200, { contains: "Recently added" });
   await expect("/search-index.json", 200, { contains: "Verbal hooks" });

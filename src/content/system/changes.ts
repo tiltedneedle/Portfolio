@@ -6,6 +6,7 @@ import type { Change } from "@/content/clients/types";
  * Dates are ISO (YYYY-MM-DD); `npm run check` keeps them in order.
  */
 export const changes: Change[] = [
+  { date: "2026-09-24", text: "Eight of our clients' videos, 118 million views between them, now play from your home page.", href: "/" },
   { date: "2026-09-24", text: "Leave a guide mid-way and the call sheet offers to pick it up where you left off.", href: "/" },
   { date: "2026-09-24", text: "Pin the ideas you like: your shortlist leads the first month and the call sheet.", href: "/content/ideas" },
   { date: "2026-09-24", text: "Mark a script as filmed and the rail, the first month and the call sheet follow.", href: "/content/scripts" },

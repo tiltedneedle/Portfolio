@@ -10,8 +10,9 @@ const dev = process.env.NODE_ENV === "development";
  * Security headers, applied to every response.
  *
  * The content security policy is deliberately narrow: the site is static
- * pages, the studio's own fonts, YouTube's privacy-enhanced player, and two
- * image hosts (YouTube's stills and the studio's own cache). Inline scripts
+ * pages, the studio's own fonts, YouTube's privacy-enhanced player, the
+ * TikTok and Instagram players for the showreel, and two image hosts
+ * (YouTube's stills and the studio's own cache; the reel's stills are local). Inline scripts
  * and styles are allowed because Next emits both for static pages and the
  * motion library writes style attributes; nonces would force every page to
  * render dynamically for no gain on a site with no user-generated content.
@@ -27,7 +28,7 @@ const csp = [
   "font-src 'self'",
   "connect-src 'self'",
   "media-src 'self'",
-  "frame-src https://www.youtube-nocookie.com",
+  "frame-src https://www.youtube-nocookie.com https://www.tiktok.com https://www.instagram.com",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

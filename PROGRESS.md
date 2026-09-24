@@ -46,11 +46,14 @@ The marketing site this grew out of is on the `marketing-site` branch.
   A readable `tn-in` cookie lets the static footer show "Leave the room".
 - Scripts: `npm run access -- <slug> <code>` (hash for a client file),
   `npm run check` (validates every client and guide, warns on clip and
-  poster ids missing from published.json), `npm run smoke`.
+  poster ids missing from published.json), `npm run smoke` (every route,
+  the door, and a string from each new feature).
 - Diagrams are block kinds (`src/components/portal/diagrams.tsx`, plus
   `Flashcards.tsx` and `Typewriter.tsx` for the two that need a browser).
   Adding one: a type in `src/content/types.ts`, a case in `blocks.tsx`, a
   rule in `scripts/check-content.mjs`, a line in README.
+- `DealOne` deals a random written card; the ideas page deals an idea,
+  the scripts page deals a script with an "Open" cut to it.
 - Security headers with a narrow CSP in `next.config.ts` (no nonces: the
   pages are static). New hosts must be added there.
 - The palette opens on ⌘K, `/`, the desktop button, or a `tn:palette`
@@ -93,12 +96,12 @@ The marketing site this grew out of is on the `marketing-site` branch.
       focus traps.
 - [x] Wave 4 (`834b70d`): live counts on the home strip; axe pass (faint
       ink off text, rails keyboard-scrollable); Next 16.3.6; js-yaml fix.
-- [x] Wave 5: print forces reveal-waiting blocks visible (verified: 44
-      blocks at opacity 1 under print media); `npm run new-client`
-      scaffolder (exercised on a throwaway client, then removed); the
-      validator warns on posters missing from published.json; README
-      "To add a client" now starts with the scaffolder; Typewriter uses a
-      ref rather than a page-wide id.
+- [x] Wave 5 (`04fa64d`): print keeps reveal-waiting blocks visible;
+      `npm run new-client`; poster warning in the validator; README.
+- [x] Wave 6: "Film one today" on the scripts page (DealOne generalised
+      with an `href` per card, verified: the dealt card's Open cuts to
+      the script); smoke covers the prompter, the deal, the flashcards,
+      the retention curve, the cadence strip and the home film slots.
 
 ## In flight
 

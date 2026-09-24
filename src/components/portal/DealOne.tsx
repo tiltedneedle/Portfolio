@@ -1,17 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { CutLink } from "@/components/room/CutLink";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
 /**
  * Deal me one. When a filming day needs a start and a hundred ideas is too
  * many, one card, face up, chosen at random from the ones that are written.
- * Nothing is remembered; every deal is fresh.
+ * Nothing is remembered; every deal is fresh. A card with an `href` also
+ * opens the thing it names (a script, say).
  */
-type Card = { pillar: string; n: number; text: string };
+type Card = { pillar: string; n: number; text: string; href?: string };
 
-export function DealOne({ cards }: { cards: Card[] }) {
+export function DealOne({
+  cards,
+  kicker = "Deal me one",
+  heading = (
+    <>
+      Too many? <span className="em-serif">Take one.</span>
+    </>
+  ),
+  lead,
+  noun = "idea",
+  after = "Film it this week.",
+}: {
+  cards: Card[];
+  kicker?: string;
+  heading?: ReactNode;
+  lead?: string;
+  noun?: string;
+  after?: string;
+}) {
   const [dealt, setDealt] = useState<Card | null>(null);
   const [count, setCount] = useState(0);
   const reduced = useReducedMotion();
@@ -27,12 +47,10 @@ export function DealOne({ cards }: { cards: Card[] }) {
   return (
     <div className="grid gap-8 border-y border-[color:var(--rule)] py-10 md:grid-cols-[1fr_minmax(0,520px)] md:items-center md:gap-16">
       <div>
-        <p className="mono">Deal me one</p>
-        <h2 className="display mt-3 text-[clamp(36px,4.6vw,72px)]">
-          Too many? <span className="em-serif">Take one.</span>
-        </h2>
+        <p className="mono">{kicker}</p>
+        <h2 className="display mt-3 text-[clamp(36px,4.6vw,72px)]">{heading}</h2>
         <p className="mt-4 max-w-[38ch] text-[15px] leading-relaxed text-[color:var(--ink-mid)]">
-          One idea from the {cards.length} that are written, chosen at random. Film it this week.
+          {lead ?? "One " + noun + " from the " + cards.length + " that are written, chosen at random. " + after}
         </p>
         <button type="button" onClick={deal} className="pill pill-solid mt-6 px-6 py-3 text-[15px]" data-cursor="Play">
           {dealt ? "Deal again" : "Deal"}
@@ -62,7 +80,14 @@ export function DealOne({ cards }: { cards: Card[] }) {
                   Dealt
                 </span>
               </p>
-              <p className="relative max-w-[18ch] text-[21px] leading-snug text-[color:var(--ink)] md:text-[23px]">{dealt.text}</p>
+              <span className="relative">
+                <p className="max-w-[18ch] text-[21px] leading-snug text-[color:var(--ink)] md:text-[23px]">{dealt.text}</p>
+                {dealt.href && (
+                  <CutLink href={dealt.href} className="slate-link mt-5 inline-block text-[color:var(--ink)]" data-cursor="Open">
+                    Open <span aria-hidden="true">&#8599;</span>
+                  </CutLink>
+                )}
+              </span>
             </motion.div>
           ) : (
             <motion.div

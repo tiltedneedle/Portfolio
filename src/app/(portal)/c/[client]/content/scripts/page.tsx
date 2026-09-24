@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ScriptsRail } from "@/components/portal/ScriptsRail";
 import { NextCut } from "@/components/portal/NextCut";
+import { DealOne } from "@/components/portal/DealOne";
 import { chapter, pageNumber } from "@/content/chapters";
 import { requireClient } from "@/content/clients/registry";
 import { shortName } from "@/content/clients/types";
@@ -11,6 +12,7 @@ export default async function ScriptsPage({ params }: { params: Promise<{ client
   const { client } = await params;
   const sys = requireClient(client);
   const c = chapter("content");
+  const cards = sys.scripts.filter((s) => s.body?.length).map((s) => ({ pillar: "Script", n: s.n, text: s.title, href: "/content/scripts/" + s.n }));
   return (
     <article className="bg-[color:var(--stage)]">
       <header className="mx-auto max-w-[1600px] px-6 pb-14 pt-28 md:px-14 md:pt-36">
@@ -31,6 +33,21 @@ export default async function ScriptsPage({ params }: { params: Promise<{ client
 
       <div className="mx-auto max-w-[1600px] px-6 pb-24 pt-8 md:px-14 md:pt-12">
         <ScriptsRail scripts={sys.scripts} />
+        {cards.length > 1 && (
+          <div className="mt-24">
+            <DealOne
+              cards={cards}
+              kicker="Film one today"
+              heading={
+                <>
+                  Not sure which? <span className="em-serif">Deal.</span>
+                </>
+              }
+              noun="script"
+              after="Open it, read it once, and roll."
+            />
+          </div>
+        )}
       </div>
 
       <NextCut chapter="content" slug="scripts" />

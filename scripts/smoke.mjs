@@ -27,6 +27,12 @@ if (!gated) {
   await expect("/content/ideas", 200, { contains: "Authority" });
   await expect("/content/scripts", 200);
   await expect("/content/scripts/1", 200, { contains: "Copy script" });
+  await expect("/content/scripts/1", 200, { contains: "Prompter" });
+  await expect("/content/ideas", 200, { contains: "Deal me one" });
+  await expect("/create/hooks", 200, { contains: "Name the hook" });
+  await expect("/analyse/understanding-your-analytics", 200, { contains: "retention curve" });
+  await expect("/publish/strategy", 200, { contains: "posts across" });
+  await expect("/", 200, { contains: "Training film" });
   await expect("/content/scripts/20", 200);
   await expect("/content/scripts/21", 404);
   await expect("/create", 200);

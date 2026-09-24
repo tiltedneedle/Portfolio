@@ -104,6 +104,18 @@ The marketing site this grew out of is on the `marketing-site` branch.
   the room's boundary only appeared in the RSC payload). The layout keeps
   dynamicParams = false, which is the same result for free.
 
+- Dev-mode pass (2026-09-24, `next dev` on every room, the palette and
+  the prompter): no hydration warnings. Two dev-only findings fixed: the
+  CSP now allows `'unsafe-eval'` in development only (React's dev tooling
+  evals), and the wordmark says its height is `auto` so next/image stops
+  warning. Run it again after any change to a component that reads the
+  browser (`PORTAL_SECRET=x npx next dev -p 3402`, then log in).
+- The palette's index URL carries `NEXT_PUBLIC_BUILD` (stamped in
+  `next.config.ts`): the route answers with an hour's private cache, and
+  without the stamp a browser kept serving the previous deploy's index for
+  that hour, so a client's new audit or script could not be found by its
+  words until the cache lapsed.
+
 ## Done
 
 - [x] Content model, 13 universal guides, block renderer, home, nav with
@@ -146,6 +158,12 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 24: search reaches the client's own words (the two reports by
+      heading, plus the board and the map, and every written script, with
+      the palette's index URL stamped by build so a deploy is never read
+      from an old cache); home marks what was added since this device's
+      last visit; unit tests for the content helpers (53 tests); the
+      dev-mode console pass (clean; dev-only CSP eval and wordmark fixes).
 - [x] Wave 23: the positioning map draws the journey (a dashed line from
       you, today, to a `target` ring labelled with what follows the comma
       in its name, on the open side); CopyIdea collapsed onto CopyText; the palette is a
@@ -259,11 +277,6 @@ The marketing site this grew out of is on the `marketing-site` branch.
    `LazyMotion` + `m` (nine files import `motion`) to cut the largest
    client chunk; the site is private and static, so it was left. Take it
    only if a real client reports slow first loads.
-0. A dev-mode console pass (`next dev`) for attribute-level hydration
-   warnings that production hides. The preview tool reads the ops app's
-   tracked `.claude/launch.json`, which has no entry for this repo; add one
-   only if the user is happy to have that file changed, or run it from
-   this repo's own launch config in a session opened on this repo.
 1. Audit report: a "what to do first" summary block type when the client's
    findings are written (needs the first real client to shape it; do not
    invent findings).

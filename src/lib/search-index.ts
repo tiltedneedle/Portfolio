@@ -1,5 +1,5 @@
 import type { Block } from "@/content/types";
-import type { GuideNote } from "@/content/clients/types";
+import type { AuditReport, ClientSystem, GuideNote } from "@/content/clients/types";
 import { chapter, pageHref, pageNumber } from "@/content/chapters";
 import { guides } from "@/content/system";
 
@@ -9,6 +9,8 @@ import { guides } from "@/content/system";
  * (the route handler beside the pages serves it behind the door) and
  * fetched by the palette the first time someone types three letters.
  * Notes written for the client are folded into the sections they sit under.
+ * Given the client's system, their own words follow the guides: the two
+ * reports by heading (plus the board and the map), and every written script.
  */
 export type SearchSection = { id: string; title: string; n?: string; text: string };
 export type SearchEntry = { href: string; title: string; chapter: string; n: string; sections: SearchSection[] };
@@ -73,8 +75,11 @@ function blockText(b: Block): string[] {
 
 const join = (parts: string[]) => plain(parts.filter(Boolean).join(" ")).replace(/\s+/g, " ").trim();
 
-export function searchIndex(notes: Record<string, GuideNote[]> = {}): SearchEntry[] {
-  return guides.map((g) => {
+export type Searchable = Partial<Pick<ClientSystem, "notes" | "contentDiagnostic" | "competitorIntelligence" | "scripts">>;
+
+export function searchIndex(sys: Searchable = {}): SearchEntry[] {
+  const notes: Record<string, GuideNote[]> = sys.notes ?? {};
+  const out: SearchEntry[] = guides.map((g) => {
     const key = g.chapter + "/" + g.slug;
     const mine = notes[key] ?? [];
     const noteText = (at?: number) => mine.filter((n) => (at === undefined ? !n.at : n.at === at)).map((n) => n.text);
@@ -85,6 +90,56 @@ export function searchIndex(notes: Record<string, GuideNote[]> = {}): SearchEntr
     ];
     return { href: pageHref(g.chapter, g.slug), title: g.title, chapter: chapter(g.chapter).title, n: pageNumber(g.chapter, g.slug), sections };
   });
+
+  // The reports, heading by heading; only what is written can be found.
+  const reports: [AuditReport | undefined, string][] = [
+    [sys.contentDiagnostic, "content-diagnostic"],
+    [sys.competitorIntelligence, "competitor-intelligence"],
+  ];
+  for (const [r, slug] of reports) {
+    if (!r) continue;
+    const page = chapter("audit").pages.find((p) => p.slug === slug);
+    const sections: SearchSection[] = [{ id: "", title: "Introduction", text: join([r.intro]) }];
+    r.sections.forEach((s, i) => {
+      if (!s.body?.length) return;
+      sections.push({
+        id: "a-" + pad(i),
+        title: s.title,
+        n: pad(i),
+        text: join([
+          s.covers,
+          ...s.body,
+          ...(s.working ?? []),
+          ...(s.limiting ?? []),
+          ...(s.change ?? []),
+          ...(s.lists ?? []).flatMap((l) => [l.label, ...l.items]),
+          ...(s.evidence ?? []).map((e) => e.caption ?? ""),
+        ]),
+      });
+    });
+    if (r.competitors?.length) {
+      sections.push({
+        id: "board",
+        title: "The accounts studied",
+        text: join(r.competitors.flatMap((c) => [c.name, c.handle, c.platform, c.followers ?? "", c.cadence ?? "", c.note, ...c.strengths, ...c.gaps])),
+      });
+    }
+    if (r.map) sections.push({ id: "map", title: "Where everyone stands", text: join([...r.map.x, ...r.map.y, ...r.map.points.map((p) => p.name)]) });
+    out.push({ href: pageHref("audit", slug), title: page?.title ?? slug, chapter: chapter("audit").title, n: pageNumber("audit", slug), sections });
+  }
+
+  // Every written script, as one section: the hook, the words, the call, the shots, the slate.
+  for (const s of sys.scripts ?? []) {
+    if (!s.body?.length) continue;
+    out.push({
+      href: "/content/scripts/" + s.n,
+      title: "Script " + String(s.n).padStart(2, "0"),
+      chapter: chapter("content").title,
+      n: pageNumber("content", "scripts"),
+      sections: [{ id: "", title: s.title, text: join([s.hook ?? "", ...s.body, s.cta ?? "", ...(s.shots ?? []), s.location ?? "", s.onCamera ?? ""]) }],
+    });
+  }
+  return out;
 }
 
 /** A short run of the text around the first hit, for the palette row. */

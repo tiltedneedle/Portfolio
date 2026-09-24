@@ -288,7 +288,7 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
       )}
 
       {report.competitors?.length ? (
-        <section className="mx-auto max-w-[1600px] px-6 pt-14 md:px-14 md:pt-20" aria-label="The accounts studied">
+        <section id="board" className="mx-auto max-w-[1600px] scroll-mt-28 px-6 pt-14 md:px-14 md:pt-20" aria-label="The accounts studied">
           <p className="mono">The field</p>
           <h2 className="display mt-3 text-[clamp(36px,4.6vw,72px)]">
             {report.competitors.length} accounts, <span className="em-serif">studied.</span>
@@ -300,7 +300,7 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
       ) : null}
 
       {report.map ? (
-        <section className="mx-auto max-w-[1600px] px-6 pt-14 md:px-14 md:pt-20" aria-label="Where everyone stands">
+        <section id="map" className="mx-auto max-w-[1600px] scroll-mt-28 px-6 pt-14 md:px-14 md:pt-20" aria-label="Where everyone stands">
           <PositionMap map={report.map} />
         </section>
       ) : null}

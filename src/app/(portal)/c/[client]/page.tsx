@@ -123,7 +123,7 @@ export default async function Home({ params }: { params: Promise<{ client: strin
 
       <ThisWeek ideas={weekIdeas} scripts={weekScripts} guides={weekGuides} />
 
-      <RecentChanges />
+      <RecentChanges slug={identity.slug} />
 
       <section id="how" className="scroll-mt-16 border-t border-[color:var(--rule)] bg-[color:var(--stage)] py-24 md:py-36">
         <div className="mx-auto max-w-[1600px] px-6 md:px-14">

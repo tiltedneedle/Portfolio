@@ -54,7 +54,8 @@ let indexCache: SearchEntry[] | null = null;
 let indexLoading: Promise<void> | null = null;
 function loadIndex() {
   if (indexCache || indexLoading) return indexLoading ?? Promise.resolve();
-  indexLoading = fetch("/search-index.json", { credentials: "same-origin" })
+  // The build id on the URL: the browser may keep the index for an hour, but never across a deploy.
+  indexLoading = fetch("/search-index.json?v=" + (process.env.NEXT_PUBLIC_BUILD ?? "dev"), { credentials: "same-origin" })
     .then((r) => (r.ok ? r.json() : null))
     .then((data) => {
       if (Array.isArray(data)) indexCache = data as SearchEntry[];

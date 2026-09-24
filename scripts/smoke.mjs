@@ -37,6 +37,8 @@ if (!gated) {
   await expect("/", 200, { contains: "Call sheet" });
   await expect("/", 200, { contains: "Recently added" });
   await expect("/search-index.json", 200, { contains: "Verbal hooks" });
+  // The palette versions the URL by build; the door must pass the query through.
+  await expect("/search-index.json?v=smoke", 200, { contains: "Verbal hooks" });
   await expect("/create/hooks", 200, { contains: "Mark as read" });
   await expect("/content/scripts/20", 200);
   await expect("/content/scripts/21", 404, { contains: "Nothing on this" });

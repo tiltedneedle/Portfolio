@@ -1,5 +1,11 @@
 import type { NextConfig } from "next";
 
+// Stamped once per build and inlined into the browser bundle: the palette's
+// index URL carries it, so an hour of caching never answers a new deploy
+// with the previous one's words.
+const build = Date.now().toString(36);
+const dev = process.env.NODE_ENV === "development";
+
 /**
  * Security headers, applied to every response.
  *
@@ -14,7 +20,8 @@ import type { NextConfig } from "next";
  */
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  // React's development tooling evals; production stays strict.
+  "script-src 'self' 'unsafe-inline'" + (dev ? " 'unsafe-eval'" : ""),
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://i.ytimg.com https://tkmvuxjnfzbdpditvdbo.supabase.co",
   "font-src 'self'",
@@ -43,6 +50,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  env: { NEXT_PUBLIC_BUILD: build },
   images: {
     remotePatterns: [
       // stills for the published work: YouTube's, and the studio's own cache

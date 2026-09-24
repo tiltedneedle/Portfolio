@@ -56,9 +56,12 @@ only (localStorage) and shows in the nav, on the room's overview and as
 week: one idea, one script, one guide and one thing to do, rotated by the
 week of the year so the whole team sees the same sheet. `⌘K` (or `/`)
 opens the palette, which lists recent picks first, jumps to any page or
-section and, from three letters on, finds any sentence in the guides (the index is built per client
-at `/search-index.json`, behind the door, with the client's notes folded
-in); `[` and `]` page through the system in reading order. Guides carry a
+section and, from three letters on, finds any sentence in the guides, in
+the client's audit (by heading, plus the board and the map) and in their
+scripts (the index is built per client at `/search-index.json`, behind
+the door, with the client's notes folded in); `[` and `]` page through
+the system in reading order. Home lists what was recently added and marks
+what arrived since the device's last visit. Guides carry a
 reading line along the top edge, say how many minutes are left, offer
 to resume at the last section read on this device, and every section
 heading carries a copy-link anchor on hover.

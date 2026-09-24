@@ -15,7 +15,8 @@ export function Wordmark({ size = 15, mark = 22 }: { size?: number; mark?: numbe
   const letters = NAME.split("");
   return (
     <span className="wm inline-flex items-center gap-3" role="img" aria-label="Tilted Needle">
-      <Image src="/white-logo.png" alt="" width={mark} height={mark} className="wm-mark object-contain" />
+      {/* The stylesheet lets the height follow the width; saying so keeps next/image quiet. */}
+      <Image src="/white-logo.png" alt="" width={mark} height={mark} className="wm-mark object-contain" style={{ height: "auto" }} />
       <span aria-hidden="true" className="wm-text display font-bold tracking-[0.08em] text-[color:var(--ink)]" style={{ fontSize: size }}>
         {letters.map((ch, i) => (
           <span key={i} className="wm-l" style={{ ["--i" as string]: i }}>

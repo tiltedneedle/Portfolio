@@ -37,6 +37,8 @@ The marketing site this grew out of is on the `marketing-site` branch.
   `registry.ts` lists clients; `template` is what an open door shows; `demo`
   (Horizon Aviation, fictional, code `horizon-2026`) shows the finished state.
   `npm run new-client -- <slug> "<Name>" --code "<code>"` scaffolds a client.
+- Each client's own door is `/login?for=<slug>` (name and mark on the
+  slate; the code still opens it).
 - Every client's pages are pre-rendered at `/c/<slug>/...`. `src/proxy.ts`
   verifies the signed session cookie (`tn-room`, HMAC under PORTAL_SECRET)
   and rewrites clean URLs into that client's tree; `/c/...` direct hits are
@@ -127,6 +129,12 @@ The marketing site this grew out of is on the `marketing-site` branch.
       when there is a hash), and smooth scrolls started while the palette
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
+
+- [x] Wave 8: each client has their own door, `/login?for=<slug>` (the
+      brief's unique URL per client): the slate carries their name and
+      mark, errors keep the link, the scaffolder prints it, smoke checks it.
+      The code is still the credential. Palette section searches also match
+      on the room name.
 
 ## In flight
 

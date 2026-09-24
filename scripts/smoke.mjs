@@ -43,6 +43,8 @@ if (!gated) {
   await expect("/c/template", 307, { location: "/" });
   await expect("/nope", 404);
   await expect("/login", 200, { contains: "door is open" });
+  await expect("/login?for=demo", 200, { contains: /prepared for (<!-- -->)?Horizon Aviation/ });
+  await expect("/login?for=nope", 200, { contains: "Private screening" });
   await expect("/robots.txt", 200, { contains: "Disallow: /" });
 } else {
   await expect("/", 307, { location: "/login" });

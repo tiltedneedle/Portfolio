@@ -165,7 +165,7 @@ export function Palette({ items }: { items: PaletteItem[] }) {
     }
     for (const it of items) {
       for (const s of it.sections) {
-        if (matches(s.title + " " + it.title)) out.push({ href: it.href + "#" + s.id, title: s.title, kicker: it.title, n: s.n ?? it.n, section: true });
+        if (matches(s.title + " " + it.title + " " + it.chapter)) out.push({ href: it.href + "#" + s.id, title: s.title, kicker: it.title, n: s.n ?? it.n, section: true });
       }
     }
     return out.slice(0, 14);

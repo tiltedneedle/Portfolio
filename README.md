@@ -115,6 +115,10 @@ Twelve attempts per ten minutes per IP. No accounts, no database.
 Set `PORTAL_SECRET` on the deployment to any long random string. Rotating
 it logs everyone out.
 
+Each client has their own link to the door, `/login?for=<slug>`, which
+puts their name and mark on the slate (the scaffolder prints it). The
+code is still what opens it; the link on its own grants nothing.
+
 ## Writing a guide
 
 A guide is data (`src/content/types.ts`): a title, a kicker, an intro, an

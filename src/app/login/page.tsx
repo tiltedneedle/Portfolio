@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { ClientMark } from "@/components/portal/ClientMark";
+import { getClient } from "@/content/clients/registry";
+import { publicIdentity } from "@/content/clients/types";
 import { doorOpen } from "@/lib/session";
 import { enter } from "./actions";
 
@@ -13,18 +15,25 @@ const messages: Record<string, string> = {
   slow: "Too many tries. Wait ten minutes, then try again.",
 };
 
-/** The door: a slate, one field, one button. */
-export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string; next?: string }> }) {
+/**
+ * The door: a slate, one field, one button. A client's own link
+ * (`/login?for=<slug>`) puts their name on the slate; the code is still
+ * what opens it.
+ */
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string; next?: string; for?: string }> }) {
   const sp = await searchParams;
   const open = doorOpen();
   const error = sp.error ? messages[sp.error] : null;
+  const named = sp.for && /^[a-z0-9-]{1,64}$/.test(sp.for) ? getClient(sp.for) : undefined;
+  const who = named?.identity.accessHash ? publicIdentity(named.identity) : null;
   return (
     <main className="flex min-h-screen items-center bg-[color:var(--stage)] px-6 py-24 md:px-14">
       <form action={enter} className="w-full max-w-[560px]">
         <input type="hidden" name="next" value={sp.next ?? "/"} />
-        <p className="mono">Private screening</p>
+        {who && <input type="hidden" name="for" value={who.slug} />}
+        <p className="mono">Private screening{who && <span className="text-[color:var(--ink-mid)]"> / prepared for {who.name}</span>}</p>
         <div className="mt-8">
-          <ClientMark size={44} identity={null} />
+          <ClientMark size={44} identity={who} />
         </div>
         <h1 className="display mt-8 text-[clamp(56px,9vw,128px)]">
           Enter the <span className="em-serif">room.</span>

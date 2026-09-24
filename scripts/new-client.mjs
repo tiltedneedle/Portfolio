@@ -122,4 +122,5 @@ writeFileSync(regPath, reg);
 console.log("created  src/content/clients/" + slug + "/index.ts");
 console.log("updated  src/content/clients/registry.ts");
 console.log(accessHash ? "access   hash set from the code you gave (the code itself is not stored)" : "access   no code given: the client cannot log in until accessHash is set");
+console.log("link     /login?for=" + slug + "   (their own door; the code still opens it)");
 console.log("next     write the reports, ideas and scripts, then: npm run check && npm run build");

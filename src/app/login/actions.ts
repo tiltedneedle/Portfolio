@@ -27,19 +27,21 @@ async function clientIp() {
   return h.get("x-forwarded-for")?.split(",")[0].trim() || h.get("x-real-ip") || "unknown";
 }
 
-function back(error: string, next: string): never {
-  redirect("/login?error=" + error + (next === "/" ? "" : "&next=" + encodeURIComponent(next)));
+function back(error: string, next: string, who = ""): never {
+  redirect("/login?error=" + error + (next === "/" ? "" : "&next=" + encodeURIComponent(next)) + (who ? "&for=" + who : ""));
 }
 
 /** The door. Finds the client whose access code was typed, and lets them in. */
 export async function enter(formData: FormData) {
   const code = String(formData.get("code") ?? "").trim();
   const next = safeNext(formData.get("next"));
+  const forRaw = formData.get("for");
+  const who = typeof forRaw === "string" && /^[a-z0-9-]{1,64}$/.test(forRaw) ? forRaw : "";
   const secret = portalSecret();
 
   if (!secret) redirect(next);
-  if (limited(await clientIp())) back("slow", next);
-  if (!code || code.length > 200) back("code", next);
+  if (limited(await clientIp())) back("slow", next, who);
+  if (!code || code.length > 200) back("code", next, who);
 
   // Every client is checked, whether or not one has already matched, so the
   // time taken says nothing about which code was close.
@@ -48,7 +50,7 @@ export async function enter(formData: FormData) {
     const got = await accessHash(c.identity.slug, code);
     if (safeEqual(got, c.identity.accessHash)) found = c.identity.slug;
   }
-  if (!found) back("code", next);
+  if (!found) back("code", next, who);
 
   const store = await cookies();
   store.set(COOKIE, await issue(secret, found), {

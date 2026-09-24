@@ -8,7 +8,7 @@ import type { Script } from "@/content/clients/types";
  * from their hundred. No dates: day one is whenever the first video goes
  * out, and the sheet is the same whoever opens it.
  */
-type IdeaRef = { pillar: string; n: number; text: string };
+type IdeaRef = { pillar: string; n: number; text: string; example?: boolean };
 
 const DAYS = 30;
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -30,7 +30,7 @@ export function FirstMonth({ scripts, ideas }: { scripts: Script[]; ideas: IdeaR
     const s = written[i];
     if (s) return { day, kind: "script" as const, n: s.n, title: s.title, href: "/content/scripts/" + s.n };
     const idea = spare[i - written.length];
-    if (idea) return { day, kind: "idea" as const, n: idea.n, title: idea.text, href: "/content/ideas", pillar: idea.pillar };
+    if (idea) return { day, kind: "idea" as const, n: idea.n, title: idea.text, href: "/content/ideas", pillar: idea.example ? "Example" : idea.pillar };
     return { day, kind: "open" as const };
   });
   const byDay = new Map(slots.map((s) => [s.day, s]));

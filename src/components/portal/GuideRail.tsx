@@ -10,9 +10,11 @@ import { useEffect, useState } from "react";
  * Below the large breakpoint it folds into a cue sheet at the top of the
  * page.
  */
-export function GuideRail({ items }: { items: { id: string; n?: string; title: string }[] }) {
+export function GuideRail({ items, minutes = 0 }: { items: { id: string; n?: string; title: string }[]; minutes?: number }) {
   const [active, setActive] = useState<string>(items[0]?.id ?? "");
   const [read, setRead] = useState<string>("");
+  // Whole minutes still to read, from how far down the page the reader is.
+  const [left, setLeft] = useState<number>(minutes);
 
   useEffect(() => {
     const els = items.map((it) => document.getElementById(it.id)).filter((el): el is HTMLElement => !!el);
@@ -35,6 +37,11 @@ export function GuideRail({ items }: { items: { id: string; n?: string; title: s
         if (el.getBoundingClientRect().bottom < line) passed.push(el.id);
       }
       setActive((prev) => (prev === best.id ? prev : best.id));
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 1;
+      // The last screen counts as read: lazy images can keep the page growing under the reader.
+      const remaining = progress >= 0.96 ? 0 : Math.ceil(minutes * (1 - progress));
+      setLeft((prev) => (prev === remaining ? prev : remaining));
       // Kept as a joined string so an unchanged set never re-renders.
       setRead((prev) => {
         const seen = new Set(prev ? prev.split(" ") : []);
@@ -59,7 +66,7 @@ export function GuideRail({ items }: { items: { id: string; n?: string; title: s
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, [items]);
+  }, [items, minutes]);
 
   const list = (
     <ol className="flex flex-col">
@@ -93,7 +100,10 @@ export function GuideRail({ items }: { items: { id: string; n?: string; title: s
       {/* wide: a sticky rail */}
       <aside className="hidden lg:block">
         <div className="sticky top-28">
-          <p className="mono mb-3">On this page</p>
+          <p className="mono mb-3 flex items-baseline justify-between gap-4">
+            <span>On this page</span>
+            {minutes > 0 && <span className="text-[color:var(--ink-mid)]">{left > 0 ? "≈ " + left + " min left" : "Read through"}</span>}
+          </p>
           {list}
         </div>
       </aside>

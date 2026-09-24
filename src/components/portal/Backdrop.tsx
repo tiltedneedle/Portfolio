@@ -1,4 +1,5 @@
 import { published } from "@/lib/published";
+import { Still } from "@/components/portal/Still";
 
 /**
  * Behind the home hero: a row of stills from the studio's published work,
@@ -16,8 +17,7 @@ export function Backdrop() {
     <div key={key} className="flex shrink-0 gap-3 pr-3" aria-hidden={hidden || undefined}>
       {stills.map((s, i) => (
         <span key={s.id + i} className="well w-[120px] border border-[color:var(--rule)] md:w-[150px]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={s.thumb} alt="" loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
+          <Still src={s.thumb} className="absolute inset-0 h-full w-full object-cover" />
         </span>
       ))}
     </div>

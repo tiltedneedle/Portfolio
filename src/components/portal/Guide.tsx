@@ -72,7 +72,7 @@ export function Guide({ guide, notes = [], who = "" }: { guide: GuideT; notes?: 
       )}
 
       <div className="mx-auto max-w-[1600px] px-6 pb-24 pt-16 md:px-14 md:pt-24 lg:grid lg:grid-cols-[220px_1fr] lg:gap-x-16">
-        <GuideRail items={railItems} />
+        <GuideRail items={railItems} minutes={minutes} />
 
         <div>
           {guide.sections.map((s, i) => (

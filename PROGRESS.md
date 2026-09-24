@@ -139,6 +139,12 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 18: the guide rail says how many minutes are left (from the
+      scroll position; the last screen counts as read); the home backdrop
+      stills go through Still as well (4 of 33 were placeholders and now
+      step aside); the template's example ideas are marked in the month
+      grid. GitHub Actions confirmed green on the last three pushes (about
+      55 seconds a run).
 - [x] Wave 17: "Your first month" on the scripts page: one every other
       day, the client's scripts first, then ideas from their hundred that
       have not become scripts, interleaved across the pillars so the bank

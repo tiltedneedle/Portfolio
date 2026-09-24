@@ -51,7 +51,9 @@ The marketing site this grew out of is on the `marketing-site` branch.
 - Scripts: `npm run access -- <slug> <code>` (hash for a client file),
   `npm run check` (validates every client and guide, warns on clip and
   poster ids missing from published.json), `npm run smoke` (every route,
-  the door, and a string from each new feature).
+  the door, and a string from each new feature), `npm run a11y -- <base>
+  --code <code>` (Playwright + axe over every route at two widths, with
+  overflow and console checks; also a CI step after the gated smoke).
 - Diagrams are block kinds (`src/components/portal/diagrams.tsx`, plus
   `Flashcards.tsx` and `Typewriter.tsx` for the two that need a browser).
   Adding one: a type in `src/content/types.ts`, a case in `blocks.tsx`, a
@@ -60,23 +62,52 @@ The marketing site this grew out of is on the `marketing-site` branch.
   the scripts page deals a script with an "Open" cut to it.
 - Security headers with a narrow CSP in `next.config.ts` (no nonces: the
   pages are static). New hosts must be added there.
-- Unit tests (`npm test`, vitest) cover the pure parts: the session token
-  and access hash (`src/lib/session.test.ts`), spoken length
-  (`src/lib/words.test.ts`) and the palette index. Components are verified
-  in the browser. Node 23 on this desktop can print a libuv assertion at
-  exit; read the test summary, not the exit code.
+- Unit tests (`npm test`, vitest; 62 across 11 files) cover the pure
+  parts: the session token and access hash, the proxy's path maps, spoken
+  length, the week, inline marks, the palette index, the search index
+  (guides and the client's own words), the content helpers, merged
+  changes, the ask link and the month's slot order (`lib/month.ts`).
+  Components are verified in the browser. Node 23 on this desktop can
+  print a libuv assertion at exit; read the test summary, not the exit
+  code.
 - The palette opens on ⌘K, `/`, the desktop button, or a `tn:palette`
   window event (the phone menu sends it). From three letters it searches
   the words: `src/lib/search-index.ts` builds the index, the route handler
   at `c/[client]/search-index.json` serves it per client, behind the door.
-  Dialogs (palette, prompter, lightbox) share `useFocusTrap`; a dialog
-  must blur its field before an exit animation, or keys land in it.
+  The index covers the guides (with the client's notes folded in), the two
+  reports by heading plus the board and the map, and every written
+  script; its URL carries `NEXT_PUBLIC_BUILD` so a deploy is never read
+  from the hour-long private cache. Dialogs (palette, prompter, lightbox)
+  share `useFocusTrap`; a dialog must blur its field before an exit
+  animation, or keys land in it.
+- Marks a reader leaves on a device live in `src/lib/read.ts`, one
+  localStorage key per kind and client, read through useSyncExternalStore:
+  `read` (pages, "chapter/slug"), `filmed` (script numbers) and `pinned`
+  (ideas, "pillar:n", in pin order). They drive the nav's read dots, the
+  scripts rail, the first month (`lib/month.ts`: scripts, then pins, then
+  the hundred round-robin), the call sheet, the shortlist and the home
+  strip. Beside them: `tn-pos:<slug>:<key>` (last section read, from
+  `GuideRail`), `tn-last:<slug>` (the guide left mid-way, for the call
+  sheet's pick-up), `tn-seen:<slug>` (the day home's list was last seen,
+  stamped on leaving home; the list marks additions since it and the nav
+  lamp lights for anything strictly newer) and `tn-recent:<slug>` (the
+  palette's recent picks).
+- After a cut, `CutOverlay` focuses `main` (tabIndex -1) once the frame
+  lifts, never for a hash target.
 - Reveals (`Reveal.tsx`) never hide anything in the HTML: after hydration
   only blocks below the fold get `reveal-wait`, and an observer adds
   `reveal-in`. Reduced motion skips it; print forces everything visible.
 - **Faint ink (`--ink-faint`) is decorative only**: numerals, rules, the
   off lamp, the quote mark. It fails AA on every stage tone, so text uses
-  `--ink-mid` at the quietest. The axe pass is what enforces this.
+  `--ink-mid` at the quietest. Numerals are drawn by CSS from `data-n`
+  (`.numeral::before`) so they are never text an audit weighs; where a
+  section's number matters it is also there as sr-only text. Tally red is
+  for state (lamps, bars, the road), never small text. The axe pass is
+  what enforces this.
+- Motion with meaning, all CSS: the audit desk powers up on load
+  (`.desk-*`), the map's road draws itself and the three moves land in
+  beats once in view (`.journey-*`, `.beat`, keyed off `Reveal`), a mark
+  set by hand pops. All of it is off under reduced motion and in print.
 
 ## Decisions
 

@@ -2,6 +2,7 @@ import type { Guide as GuideT } from "@/content/types";
 import type { GuideNote } from "@/content/clients/types";
 import { ForYou } from "@/components/portal/ForYou";
 import { Resume } from "@/components/portal/Resume";
+import { Anchor } from "@/components/portal/Anchor";
 import { chapter, pageNumber } from "@/content/chapters";
 import { readingMinutes } from "@/content/system";
 import { Blocks } from "@/components/portal/blocks";
@@ -82,7 +83,7 @@ export function Guide({ guide, notes = [], who = "" }: { guide: GuideT; notes?: 
             <section
               key={s.title}
               id={sectionId(i)}
-              className="grid scroll-mt-28 gap-x-8 border-t border-[color:var(--rule)] py-12 md:grid-cols-[96px_1fr] md:py-16"
+              className="group/section grid scroll-mt-28 gap-x-8 border-t border-[color:var(--rule)] py-12 md:grid-cols-[96px_1fr] md:py-16"
             >
               <div className="mb-4 md:mb-0">
                 {s.n ? (
@@ -94,7 +95,10 @@ export function Guide({ guide, notes = [], who = "" }: { guide: GuideT; notes?: 
                 )}
               </div>
               <div className="min-w-0">
-                <h2 className="display mb-8 max-w-[16ch] text-[clamp(30px,3.6vw,52px)]">{s.title}</h2>
+                <h2 className="display mb-8 max-w-[16ch] text-[clamp(30px,3.6vw,52px)]">
+                  {s.title}
+                  <Anchor id={sectionId(i)} label={s.title} />
+                </h2>
                 <Blocks blocks={s.blocks} />
                 {notesAt(i).length > 0 && (
                   <div className="mt-9">

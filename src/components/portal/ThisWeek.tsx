@@ -3,6 +3,8 @@
 import { useSyncExternalStore } from "react";
 import { CutLink } from "@/components/room/CutLink";
 import { weekOf } from "@/lib/week";
+import { useClient } from "@/components/portal/ClientContext";
+import { useRead } from "@/lib/read";
 
 /**
  * The call sheet for this week. One idea to film, one script to say, one
@@ -23,10 +25,16 @@ const currentKey = () => weekOf(new Date()).key;
 export function ThisWeek({ ideas, scripts, guides }: { ideas: Idea[]; scripts: ScriptRef[]; guides: GuideRef[] }) {
   const key = useSyncExternalStore(noop, currentKey, () => "");
   const w = key ? weekOf(new Date()) : null;
+  const me = useClient();
+  const { read } = useRead(me.slug);
+  // The guide to read is the first one not yet read on this device, in the
+  // system's order, starting from this week's place in it; once everything
+  // is read, the rotation carries on.
+  const unread = guides.filter((g) => !read.has(g.href.slice(1)));
   const pick = <T,>(list: T[], salt: number) => (w && list.length ? list[(w.index + salt) % list.length] : null);
   const idea = pick(ideas, 0);
   const script = pick(scripts, 1);
-  const guide = pick(guides, 2);
+  const guide = unread.length ? pick(unread, 2) : pick(guides, 2);
   const cells: { label: string; title: string; line?: string; href: string; cta: string }[] = [
     idea
       ? { label: "Film", title: idea.text, line: idea.pillar + " " + String(idea.n).padStart(2, "0"), href: "/content/ideas", cta: "All ideas" }

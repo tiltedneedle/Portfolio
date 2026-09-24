@@ -90,6 +90,10 @@ The marketing site this grew out of is on the `marketing-site` branch.
   under it). Upgrade by editing the pin, `npm i`, then the full verify
   loop. The two remaining audit items are vitest (dev-only; the "fix" is a
   downgrade) and are ignored on purpose.
+- **vitest stays on 3.x.** npm 10.9.2 crashes ("Cannot read properties of
+  null (reading 'edgesOut')") building the ideal tree for vitest 4 or 5,
+  even from a clean `npm ci`; the remaining audit item is dev-only and
+  moderate. Retry after an npm upgrade, not before.
 - **Stills not in published.json fall back to YouTube's `oardefault.jpg`**;
   every id currently used was checked and exists there (2026-09-24).
 
@@ -142,6 +146,11 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 21: the audit header draws the shape of the account (one bar
+      per scored heading under the lamp scan, tally where weak); every
+      section heading in guides and reports carries a copy-link anchor on
+      hover ("Link copied"); the call sheet's Read cell is drawn from the
+      guides not yet read on this device, and moves on once one is marked.
 - [x] Wave 20: the palette lists recent picks first (per client, per
       device, five); nav panels say "n of 7 read"; the rail writes the
       resume position only when the section changes (it wrote on every

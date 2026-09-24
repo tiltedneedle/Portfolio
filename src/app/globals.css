@@ -989,6 +989,30 @@ a:focus-visible > .wm {
     transform 0.6s var(--ease-out-expo);
 }
 
+/* On paper a rail is a sheet: every card, in a grid, nothing scrolled. */
+@media print {
+  .rail {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .rail > li {
+    width: auto !important;
+    aspect-ratio: auto !important;
+    min-height: 0 !important;
+    break-inside: avoid;
+  }
+  .rail > li .numeral {
+    display: none;
+  }
+  .ideas-page .display {
+    font-size: 28px !important;
+  }
+}
+
 /* Paper has no fold: nothing waits for the reader. */
 @media print {
   .reveal-wait {

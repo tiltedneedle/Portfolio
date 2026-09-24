@@ -1,4 +1,5 @@
 import { Rail } from "@/components/portal/Rail";
+import { CopyIdea } from "@/components/portal/CopyIdea";
 import { pillars } from "@/content/system/pillars";
 import { shortName, type Idea, type Pillar, type PublicIdentity } from "@/content/clients/types";
 
@@ -37,7 +38,7 @@ export function IdeasPillars({ ideas, identity }: { ideas: Record<Pillar, Idea[]
                       <span>
                         {p.title} {pad(i)}
                       </span>
-                      {idea.example && <span className="text-[color:var(--ink-mid)]">Example</span>}
+                      {idea.example ? <span className="text-[color:var(--ink-mid)]">Example</span> : idea.text ? <CopyIdea text={idea.text} /> : null}
                     </p>
                     {idea.text ? (
                       <p className="max-w-[18ch] text-[19px] leading-snug text-[color:var(--ink)] md:text-[21px]">{idea.text}</p>

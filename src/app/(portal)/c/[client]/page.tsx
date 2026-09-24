@@ -20,7 +20,12 @@ export default async function Home({ params }: { params: Promise<{ client: strin
   const sys = requireClient(client);
   const { identity } = sys;
   // What each personalised room holds so far, for the strip's cards.
-  const writtenIn = (r: { sections: { body?: string[] }[] }) => r.sections.filter((s) => s.body?.length).length + " of " + r.sections.length + " written";
+  const writtenIn = (r: { sections: { body?: string[]; score?: number }[] }) => {
+    const written = r.sections.filter((s) => s.body?.length);
+    const scored = written.filter((s) => typeof s.score === "number");
+    const avg = scored.length ? Math.round((scored.reduce((a, s) => a + (s.score ?? 0), 0) / scored.length) * 10) / 10 : null;
+    return written.length + " of " + r.sections.length + " written" + (avg !== null ? " \u00B7 " + avg + "/10" : "");
+  };
   const ideas = Object.values(sys.ideas).flat();
   const counts = {
     "/audit/content-diagnostic": writtenIn(sys.contentDiagnostic),

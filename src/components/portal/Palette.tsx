@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { beginCut } from "@/lib/cut";
@@ -36,6 +36,7 @@ function isTyping(e: KeyboardEvent) {
 
 export function Palette({ items }: { items: PaletteItem[] }) {
   const [open, setOpen] = useState(false);
+  const [help, setHelp] = useState(false);
   const [q, setQ] = useState("");
   const [cursor, setCursor] = useState(0);
   const input = useRef<HTMLInputElement>(null);
@@ -114,6 +115,15 @@ export function Palette({ items }: { items: PaletteItem[] }) {
         return;
       }
       if (isTyping(e)) return;
+      if (e.key === "?" && !open) {
+        e.preventDefault();
+        setHelp((h) => !h);
+        return;
+      }
+      if (help && e.key === "Escape") {
+        setHelp(false);
+        return;
+      }
       if (e.key === "/" && !open) {
         e.preventDefault();
         show();
@@ -141,7 +151,7 @@ export function Palette({ items }: { items: PaletteItem[] }) {
       window.removeEventListener("keydown", key);
       window.removeEventListener("tn:palette", show);
     };
-  }, [open, order, pathname, go, show]);
+  }, [open, help, order, pathname, go, show]);
 
   useEffect(() => {
     if (!open) return;
@@ -196,7 +206,7 @@ export function Palette({ items }: { items: PaletteItem[] }) {
       <button
         type="button"
         onClick={show}
-        className="mono fixed bottom-6 left-6 z-40 hidden items-center gap-3 border border-[color:var(--rule-strong)] bg-[rgba(11,11,12,0.7)] px-3 py-2 backdrop-blur-md transition-colors hover:text-[color:var(--ink)] md:flex"
+        className="mono no-print fixed bottom-6 left-6 z-40 hidden items-center gap-3 border border-[color:var(--rule-strong)] bg-[rgba(11,11,12,0.7)] px-3 py-2 backdrop-blur-md transition-colors hover:text-[color:var(--ink)] md:flex"
         aria-label="Open the contents"
         data-cursor="Open"
       >
@@ -204,6 +214,39 @@ export function Palette({ items }: { items: PaletteItem[] }) {
       </button>
 
       <AnimatePresence>
+        {help && !open && (
+          <motion.div
+            key="help"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reduced ? 0 : 0.18 }}
+            className="fixed inset-0 z-[90] flex items-end justify-start bg-black/60 p-6 backdrop-blur-sm md:p-14"
+            onClick={() => setHelp(false)}
+          >
+            <div role="dialog" aria-modal="true" aria-label="Keys" onClick={(e) => e.stopPropagation()} className="panel w-full max-w-[420px] p-6">
+              <p className="mono flex items-center justify-between">
+                <span>Keys</span>
+                <span className="text-[color:var(--ink-mid)]">? or Esc to close</span>
+              </p>
+              <dl className="mt-5 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2.5 text-[15px] text-[color:var(--ink-soft)]">
+                {[
+                  ["\u2318K  or  /", "Contents: any page, any section"],
+                  ["[  ]", "Previous and next page; on a script, the scripts"],
+                  ["\u2191 \u2193  \u21B5", "Move and open, inside the contents"],
+                  ["Space", "Roll and pause the prompter"],
+                  ["\u2191 \u2193  +  \u2212  M  R", "Prompter pace, size, mirror, rewind"],
+                  ["Esc", "Close anything"],
+                ].map(([k, v]) => (
+                  <Fragment key={k}>
+                    <dt className="mono whitespace-nowrap text-[color:var(--ink)]">{k}</dt>
+                    <dd>{v}</dd>
+                  </Fragment>
+                ))}
+              </dl>
+            </div>
+          </motion.div>
+        )}
         {open && (
           <motion.div
             initial={{ opacity: 0 }}

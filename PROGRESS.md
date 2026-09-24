@@ -130,6 +130,12 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 11: the pillar mix ring on the ideas page (four tones of
+      ink; says when one pillar carries more than half), Copy on every
+      written idea card, a print sheet for the ideas (rails become
+      three-column grids on paper; the fixed buttons stay off the page),
+      the audit score on the home strip card ("13 of 13 written · 4.7/10"),
+      and a "?" sheet of keys.
 - [x] Wave 10: read marks (per device, localStorage under the client
       slug; a toggle at the foot of every guide and report; shown in the
       nav panels, on the room overviews and as "n of 7 read" on the home

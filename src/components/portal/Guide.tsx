@@ -95,10 +95,10 @@ export function Guide({ guide, notes = [], who = "" }: { guide: GuideT; notes?: 
                 )}
               </div>
               <div className="min-w-0">
-                <h2 className="display mb-8 max-w-[16ch] text-[clamp(30px,3.6vw,52px)]">
-                  {s.title}
+                <div className="mb-8 flex flex-wrap items-baseline gap-x-3">
+                  <h2 className="display max-w-[16ch] text-[clamp(30px,3.6vw,52px)]">{s.title}</h2>
                   <Anchor id={sectionId(i)} label={s.title} />
-                </h2>
+                </div>
                 <Blocks blocks={s.blocks} />
                 {notesAt(i).length > 0 && (
                   <div className="mt-9">

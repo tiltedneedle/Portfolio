@@ -33,7 +33,7 @@ export function Anchor({ id, label }: { id: string; label: string }) {
       type="button"
       onClick={copy}
       aria-label={"Copy a link to " + label}
-      className="no-print mono ml-3 inline-flex items-baseline gap-1.5 align-middle text-[11px] text-[color:var(--ink-mid)] opacity-0 transition-opacity hover:text-[color:var(--ink)] focus-visible:opacity-100 group-hover/section:opacity-100"
+      className="no-print mono inline-flex items-baseline gap-1.5 text-[11px] text-[color:var(--ink-mid)] opacity-0 transition-opacity hover:text-[color:var(--ink)] focus-visible:opacity-100 group-hover/section:opacity-100"
       data-cursor={done ? "Copied" : "Link"}
     >
       {done ? "Link copied" : "#"}

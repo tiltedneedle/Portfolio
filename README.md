@@ -41,8 +41,8 @@ Get-NetTCPConnection -LocalPort 3400 -State Listen | ForEach-Object { Stop-Proce
 | Route | Personalised | What it is |
 |---|---|---|
 | `/` | name and logo | Welcome and a readout, an intro film slot, what you have access to (a pinned strip of seven cards), the week's call sheet, what was recently added, how to use the system (five steps on a loop), an outro film slot, the approach |
-| `/audit` then `/audit/content-diagnostic`, `/audit/competitor-intelligence` | yes | Two reports on fixed headings (13 and 8). Unwritten headings show a slate |
-| `/content` then `/content/ideas`, `/content/scripts`, `/content/scripts/[n]` | yes | Four pillars of 25 idea cards on rails, the mix, and a "deal me one" card; 20 scripts on a rail, then the first month laid out (scripts first, ideas after, one every other day); a script page with the slate (location, who is on camera), copy, a full-screen prompter with a countdown, print, and the shot list as a storyboard |
+| `/audit` then `/audit/content-diagnostic`, `/audit/competitor-intelligence` | yes | Two reports on fixed headings (13 and 8): a lamp scan and a score strip in the header, the three moves first, a verdict and a dial on every finding, the competitor board and the positioning map. Unwritten headings show a slate |
+| `/content` then `/content/ideas`, `/content/scripts`, `/content/scripts/[n]` | yes | Four pillars of 25 idea cards on rails, the mix, copy-all and a "deal me one" card; 20 scripts on a rail, then the first month laid out (scripts first, ideas after, one every other day); a script page with the slate (location, who is on camera), copy, a full-screen prompter with a countdown, print, and the shot list as a storyboard |
 | `/create` then 7 guides | no | Study your niche, ideation, video style, hooks, core message, filming, editing |
 | `/publish` then 4 guides | no | Publishing strategy, content packaging, discoverability, profile optimisation |
 | `/analyse` then 2 guides | no | Understanding your analytics, the monthly process |
@@ -59,8 +59,9 @@ opens the palette, which lists recent picks first, jumps to any page or
 section and, from three letters on, finds any sentence in the guides (the index is built per client
 at `/search-index.json`, behind the door, with the client's notes folded
 in); `[` and `]` page through the system in reading order. Guides carry a
-reading line along the top edge, say how many minutes are left, and offer
-to resume at the last section read on this device.
+reading line along the top edge, say how many minutes are left, offer
+to resume at the last section read on this device, and every section
+heading carries a copy-link anchor on hover.
 
 ## Clients
 

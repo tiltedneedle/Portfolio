@@ -84,10 +84,10 @@ function Finding({ s, i, who }: { s: AuditSection; i: number; who: string }) {
       <span className="numeral mb-4 text-[56px] md:mb-0 md:text-[72px]">{pad(i)}</span>
       <div className="min-w-0">
         <div className="mb-8 flex flex-wrap items-start justify-between gap-x-8 gap-y-4">
-          <h2 className="display max-w-[16ch] text-[clamp(30px,3.6vw,52px)]">
-            {s.title}
+          <div className="flex flex-wrap items-baseline gap-x-3">
+            <h2 className="display max-w-[16ch] text-[clamp(30px,3.6vw,52px)]">{s.title}</h2>
             <Anchor id={"a-" + pad(i)} label={s.title} />
-          </h2>
+          </div>
           {written && (s.verdict || typeof s.score === "number") && (
             <p className="mono flex items-center gap-3 pt-2">
               {typeof s.score === "number" && <Dial score={s.score} verdict={s.verdict} />}

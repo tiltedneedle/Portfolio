@@ -146,6 +146,10 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 22: anchors sit beside the headings, not inside them (a button
+      inside an h2 pollutes the heading's accessible name); "Copy all as a
+      list" on the ideas page (the written hundred, by pillar, numbered);
+      README rows brought up to date.
 - [x] Wave 21: the audit header draws the shape of the account (one bar
       per scored heading under the lamp scan, tally where weak); every
       section heading in guides and reports carries a copy-link anchor on

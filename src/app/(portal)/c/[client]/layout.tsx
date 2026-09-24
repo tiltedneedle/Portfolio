@@ -6,6 +6,7 @@ import { Palette } from "@/components/portal/Palette";
 import { paletteIndex } from "@/components/portal/palette-index";
 import { clientSlugs, requireClient } from "@/content/clients/registry";
 import { publicIdentity } from "@/content/clients/types";
+import { changes } from "@/content/system/changes";
 
 /**
  * One tree per client, pre-rendered. The proxy rewrites every clean URL
@@ -34,12 +35,14 @@ export default async function ClientLayout({ children, params }: { children: Rea
   const sys = requireClient(client);
   // The palette's index carries this client's written ideas and scripts as hidden, searchable entries.
   const index = paletteIndex(sys);
+  // The newest addition, the system's or this client's own, for the nav's lamp.
+  const latest = [changes[0]?.date, sys.changes?.[0]?.date].filter((d): d is string => !!d).sort().pop();
   return (
     <ClientProvider identity={publicIdentity(sys.identity)}>
       <a href="#main" className="skip">
         Skip to content
       </a>
-      <PortalNav />
+      <PortalNav latest={latest} />
       <main id="main" tabIndex={-1} className="outline-none">
         {children}
       </main>

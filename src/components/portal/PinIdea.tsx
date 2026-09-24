@@ -25,12 +25,12 @@ export function PinIdea({ k }: { k: string }) {
   );
 }
 
-/** "3 pinned", for a set of idea keys; nothing until one is. */
-export function PinnedCount({ keys, prefix = "", className = "" }: { keys: string[]; prefix?: string; className?: string }) {
+/** "3 pinned", for a set of idea keys; `empty` is said instead while there are none. */
+export function PinnedCount({ keys, prefix = "", empty, className = "" }: { keys: string[]; prefix?: string; empty?: string; className?: string }) {
   const me = useClient();
   const { pinned } = usePinned(me.slug);
   const n = keys.filter((k) => pinned.has(k)).length;
-  if (n === 0) return null;
+  if (n === 0) return empty ? <span className={className}>{empty}</span> : null;
   return (
     <span className={className}>
       {prefix}

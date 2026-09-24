@@ -13,7 +13,8 @@ import type { Change } from "@/content/clients/types";
 type Item = Change & { own?: boolean };
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const key = (slug: string) => "tn-seen:" + slug;
+/** The date this device last saw the home list; the nav lights a lamp when the system has grown since. */
+export const seenKey = (slug: string) => "tn-seen:" + slug;
 const noop = () => () => {};
 const two = (n: number) => String(n).padStart(2, "0");
 
@@ -30,7 +31,7 @@ function today() {
 
 function lastSeen(slug: string) {
   try {
-    return localStorage.getItem(key(slug)) ?? "";
+    return localStorage.getItem(seenKey(slug)) ?? "";
   } catch {
     return "";
   }
@@ -42,7 +43,7 @@ export function RecentList({ slug, items }: { slug: string; items: Item[] }) {
   useEffect(() => {
     const stamp = () => {
       try {
-        localStorage.setItem(key(slug), today());
+        localStorage.setItem(seenKey(slug), today());
       } catch {
         // A browser that keeps nothing simply never marks anything as new.
       }

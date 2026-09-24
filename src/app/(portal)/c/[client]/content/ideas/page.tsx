@@ -57,7 +57,7 @@ export default async function IdeasPage({ params }: { params: Promise<{ client: 
             ))}
           </ul>
           <div className="no-print flex items-baseline gap-6">
-            <PinnedCount keys={pinnable.map((x) => x.k)} className="mono text-[color:var(--ink-mid)]" />
+            <PinnedCount keys={pinnable.map((x) => x.k)} empty="Pin the ones you like" className="mono text-[color:var(--ink-mid)]" />
             {asText && <CopyText text={asText} label="Copy all as a list" />}
             <PrintButton />
           </div>

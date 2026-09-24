@@ -170,6 +170,11 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 32: a lamp beside the mark in the nav when something has been
+      added since this device last saw the home list (strictly newer than
+      the seen day, so it goes dark once home has been seen); "Pin the
+      ones you like" on the ideas page until something is pinned;
+      X-Robots-Tag noindex on every response; the Next list tidied.
 - [x] Wave 31: the prompter draws a progress line along the foot of its
       HUD (painted by the roll loop and a native scroll listener, since
       the scroller only exists while it is open); the guide rail remembers
@@ -355,13 +360,10 @@ The marketing site this grew out of is on the `marketing-site` branch.
    `LazyMotion` + `m` (nine files import `motion`) to cut the largest
    client chunk; the site is private and static, so it was left. Take it
    only if a real client reports slow first loads.
-1. Audit report: a "what to do first" summary block type when the client's
-   findings are written (needs the first real client to shape it; do not
-   invent findings).
-3. Awaiting from the user (do not block): nine training-video ids for the
+1. Awaiting from the user (do not block): nine training-video ids for the
    Create guides plus intro/outro, first real client content, images for
    `figure` blocks, a real client logo to test `--logo`.
-4. Majors available and not taken (`npm outdated`, 2026-09-24): typescript
+2. Majors available and not taken (`npm outdated`, 2026-09-24): typescript
    7.0 and @types/node 26. Each is its own wave with the full loop.
    framer-motion 13 was taken in wave 29. vitest 4/5 stays blocked by the
    npm 10.9.2 crash; its two moderate dev-only audit findings

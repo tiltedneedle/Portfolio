@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
@@ -11,6 +11,7 @@ import { shortName } from "@/content/clients/types";
 import { cn } from "@/lib/utils";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 import { useRead } from "@/lib/read";
+import { seenKey } from "@/components/portal/RecentList";
 
 /**
  * The nav is the system's table of contents: six numbered rooms, each with
@@ -72,7 +73,36 @@ function Panel({ chapter: c, onPick, who, current, read }: { chapter: Chapter; o
   );
 }
 
-export function PortalNav() {
+const noop = () => () => {};
+
+/**
+ * A lamp beside the mark when something has been added since this device
+ * last saw the home list. Strictly newer than that day: once home has been
+ * seen today, today's additions are known, and the lamp goes dark.
+ */
+function NewLamp({ latest }: { latest?: string }) {
+  const me = useClient();
+  const seen = useSyncExternalStore(
+    noop,
+    () => {
+      try {
+        return localStorage.getItem(seenKey(me.slug)) ?? "";
+      } catch {
+        return "";
+      }
+    },
+    () => ""
+  );
+  if (!latest || !seen || latest <= seen) return null;
+  return (
+    <span className="inline-flex items-center">
+      <span className="lamp" aria-hidden="true" />
+      <span className="sr-only">New additions since your last visit</span>
+    </span>
+  );
+}
+
+export function PortalNav({ latest }: { latest?: string }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [panel, setPanel] = useState<string | null>(null);
@@ -151,6 +181,7 @@ export function PortalNav() {
         <nav className="flex h-14 items-center justify-between px-6 md:h-16 md:px-14" aria-label="Primary">
           <CutLink href="/" className="inline-flex items-center gap-3" aria-label="Home" onClick={pick}>
             <Wordmark />
+            <NewLamp latest={latest} />
             <span className="mono hidden text-[color:var(--ink-mid)] lg:inline">
               <span className="text-[color:var(--ink-mid)]">&times;</span> {who}
             </span>

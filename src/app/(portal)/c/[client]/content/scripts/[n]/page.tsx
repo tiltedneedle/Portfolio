@@ -111,22 +111,6 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
                   <p className="text-[19px] leading-[1.6] text-[color:var(--ink-soft)]">{s.cta}</p>
                 </section>
               )}
-              {s.shots?.length ? (
-                <section className="border-t border-[color:var(--rule-strong)] pt-8">
-                  <p className="mono mb-5 flex items-baseline justify-between">
-                    <span>Shot list</span>
-                    <span className="text-[color:var(--ink-mid)]">{s.shots.length} shots</span>
-                  </p>
-                  <ol className="border-b border-[color:var(--rule)]">
-                    {s.shots.map((shot, i) => (
-                      <li key={shot} className="grid grid-cols-[3ch_1fr] gap-x-5 border-t border-[color:var(--rule)] py-3.5">
-                        <span className="mono pt-1">{pad(i + 1)}</span>
-                        <span className="text-[17px] leading-snug text-[color:var(--ink)]">{shot}</span>
-                      </li>
-                    ))}
-                  </ol>
-                </section>
-              ) : null}
               <div className="no-print border-t border-[color:var(--rule)] pt-8">
                 <CopyScript text={scriptAsText(s)} />
               </div>
@@ -144,6 +128,35 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
           </div>
         )}
       </div>
+
+      {written && s.shots?.length ? (
+        <section className="mx-auto max-w-[1600px] px-6 pb-24 md:px-14" aria-label="Storyboard">
+          <div className="border-t border-[color:var(--rule-strong)] pt-8">
+            <div className="flex flex-wrap items-baseline justify-between gap-4">
+              <p className="mono">Storyboard</p>
+              <p className="mono text-[color:var(--ink-mid)]">
+                {s.shots.length} shots <span className="text-[color:var(--ink-mid)]">/</span> in order
+              </p>
+            </div>
+            <ol className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4">
+              {s.shots.map((shot, i) => (
+                <li key={shot} className="relative flex aspect-[9/16] flex-col justify-between overflow-hidden border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-4">
+                  <span aria-hidden="true" className="numeral pointer-events-none absolute -right-1 top-6 text-[112px] opacity-40">
+                    {pad(i + 1)}
+                  </span>
+                  <span className="mono relative flex items-center justify-between">
+                    <span>{pad(i + 1)}</span>
+                    <span className="text-[color:var(--ink-mid)]">{i === 0 ? "Open" : i === s.shots!.length - 1 ? "Close" : "Shot"}</span>
+                  </span>
+                  <span className="relative text-[15px] leading-snug text-[color:var(--ink)] md:text-[16px]">{shot}</span>
+                  {/* frame corners */}
+                  <span aria-hidden="true" className="pointer-events-none absolute inset-2 border border-[color:var(--rule)] opacity-60" />
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+      ) : null}
 
       <nav className="no-print border-t border-[color:var(--rule)] bg-[color:var(--stage-2)]" aria-label="Scripts">
         <div className="mono mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-6 px-6 py-8 md:px-14">

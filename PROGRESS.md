@@ -46,6 +46,8 @@ The marketing site this grew out of is on the `marketing-site` branch.
   the template. Login is one field: the code identifies the client
   (constant-time compare over every client's hash; 12 tries / 10 min per IP).
   A readable `tn-in` cookie lets the static footer show "Leave the room".
+- Remote stills go through `Still.tsx`, which hides itself on error or
+  on YouTube's tiny placeholder, so the slate underneath shows.
 - Scripts: `npm run access -- <slug> <code>` (hash for a client file),
   `npm run check` (validates every client and guide, warns on clip and
   poster ids missing from published.json), `npm run smoke` (every route,
@@ -130,6 +132,15 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 14 (hardening + one design piece): week arithmetic in
+      lib/week.ts on UTC day numbers, tested at the ISO edges and across a
+      clock change; remote stills step aside when they fail or when
+      YouTube answers with its 120-pixel grey placeholder (a 404 that
+      still decodes, so onLoad checks the size); a wrong access code costs
+      400ms on every instance; the footer year reads through
+      useSyncExternalStore (lint is clean); the inline-mark scanner is
+      tested by rendering to static markup; a script's shot list is a
+      storyboard of 9:16 frames. 34 tests.
 - [x] Wave 13: the palette finds the client's own ideas and scripts by
       their words (hidden entries, listed only once something is typed);
       a readout under the home lead (audit score, first move, ideas,

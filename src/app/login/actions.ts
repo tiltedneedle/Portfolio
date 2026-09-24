@@ -50,7 +50,12 @@ export async function enter(formData: FormData) {
     const got = await accessHash(c.identity.slug, code);
     if (safeEqual(got, c.identity.accessHash)) found = c.identity.slug;
   }
-  if (!found) back("code", next, who);
+  // A wrong code costs a moment on every instance, so guessing stays slow
+  // even where the in-memory limiter does not persist between requests.
+  if (!found) {
+    await new Promise((r) => setTimeout(r, 400));
+    back("code", next, who);
+  }
 
   const store = await cookies();
   store.set(COOKIE, await issue(secret, found), {

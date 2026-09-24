@@ -5,6 +5,7 @@ import type { ChapterId } from "@/content/types";
 import { shortName, type PublicIdentity } from "@/content/clients/types";
 import { stillFor } from "@/lib/published";
 import { ReadMark } from "@/components/portal/ReadMark";
+import { Still } from "@/components/portal/Still";
 
 export type OverviewRow = {
   slug: string;
@@ -65,8 +66,7 @@ export function ChapterOverview({
                 <span className="mono">{pageNumber(id, r.slug)}</span>
                 {r.poster ? (
                   <span className="well hidden w-[64px] border border-[color:var(--rule)] transition-colors group-hover:border-[color:var(--rule-strong)] md:block">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={stillFor(r.poster)} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover opacity-80 transition-opacity group-hover:opacity-100" />
+                    <Still src={stillFor(r.poster)} className="absolute inset-0 h-full w-full object-cover opacity-80 transition-opacity group-hover:opacity-100" />
                   </span>
                 ) : (
                   <span className="hidden md:block" />

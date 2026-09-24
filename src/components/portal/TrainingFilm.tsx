@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { TrainingFilm as Film } from "@/content/types";
+import { Still } from "@/components/portal/Still";
 
 /**
  * The training film for a guide, in a 16:9 well. With a YouTube id it shows
@@ -25,10 +26,7 @@ export function TrainingFilm({ film, number }: { film: Film; number: string }) {
         />
       ) : (
         <>
-          {id && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={"https://i.ytimg.com/vi/" + id + "/maxresdefault.jpg"} alt="" className="absolute inset-0 h-full w-full object-cover opacity-70" />
-          )}
+          {id && <Still src={"https://i.ytimg.com/vi/" + id + "/maxresdefault.jpg"} eager className="absolute inset-0 h-full w-full object-cover opacity-70" />}
           <div className="absolute inset-x-0 top-0 flex items-center justify-between p-5 mono md:p-6">
             <span className="flex items-center gap-2">
               <span className={id ? "lamp" : "lamp-off"} aria-hidden="true" />

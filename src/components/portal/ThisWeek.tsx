@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { CutLink } from "@/components/room/CutLink";
+import { weekOf } from "@/lib/week";
 
 /**
  * The call sheet for this week. One idea to film, one script to say, one
@@ -9,33 +10,13 @@ import { CutLink } from "@/components/room/CutLink";
  * by the week of the year, so the whole team sees the same sheet and it
  * changes on Monday. The date is only known in the browser (the page is
  * built once), so the server draws the frame and the browser fills it.
+ * The week arithmetic lives in lib/week.ts, where it is tested.
  */
 type Idea = { pillar: string; n: number; text: string };
 type ScriptRef = { n: number; title: string };
 type GuideRef = { href: string; title: string; chapter: string };
 
 const noop = () => () => {};
-
-/** ISO week: "2026-W39", Monday to Sunday, and the date range as printed. */
-function weekOf(d: Date) {
-  const day = (d.getDay() + 6) % 7; // Monday = 0
-  const monday = new Date(d);
-  monday.setDate(d.getDate() - day);
-  const sunday = new Date(monday);
-  sunday.setDate(monday.getDate() + 6);
-  const thursday = new Date(monday);
-  thursday.setDate(monday.getDate() + 3);
-  const jan1 = new Date(thursday.getFullYear(), 0, 1);
-  const week = Math.ceil(((thursday.getTime() - jan1.getTime()) / 86400000 + 1) / 7);
-  const month = (x: Date) => x.toLocaleDateString("en-GB", { month: "short" });
-  const range =
-    monday.getMonth() === sunday.getMonth()
-      ? monday.getDate() + "–" + sunday.getDate() + " " + month(sunday)
-      : monday.getDate() + " " + month(monday) + " – " + sunday.getDate() + " " + month(sunday);
-  const daysInMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
-  const monthEnd = daysInMonth - d.getDate() < 7;
-  return { key: thursday.getFullYear() + "-W" + String(week).padStart(2, "0"), week, range, index: thursday.getFullYear() * 53 + week, monthEnd };
-}
 
 const currentKey = () => weekOf(new Date()).key;
 

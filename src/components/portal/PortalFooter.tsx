@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { CutLink } from "@/components/room/CutLink";
 import { WordStrip } from "@/components/editorial/WordStrip";
 import { ClientMark } from "@/components/portal/ClientMark";
@@ -11,8 +11,11 @@ import { PRESENCE } from "@/lib/session";
 import { useCookieFlag } from "@/lib/use-cookie-flag";
 import { leave } from "@/app/login/actions";
 
-// Frozen at build time; the effect corrects it if the visitor's year differs.
+// Frozen at build time for the server render; the browser reads its own clock on hydration.
 const BUILD_YEAR = new Date().getFullYear();
+const noop = () => () => {};
+const liveYear = () => new Date().getFullYear();
+const builtYear = () => BUILD_YEAR;
 
 const heading = "mono mb-5 block";
 const link = "underline-draw w-fit text-[15px] text-[color:var(--ink-soft)] transition-colors duration-300 hover:text-[color:var(--ink)]";
@@ -23,11 +26,7 @@ export function PortalFooter() {
   // The pages are pre-rendered, so whether someone is logged in can only be
   // known in the browser: the door leaves a presence cookie beside the session.
   const inRoom = useCookieFlag(PRESENCE);
-  const [year, setYear] = useState(BUILD_YEAR);
-  useEffect(() => {
-    const current = new Date().getFullYear();
-    if (current !== BUILD_YEAR) setYear(current);
-  }, []);
+  const year = useSyncExternalStore(noop, liveYear, builtYear);
 
   return (
     <footer className="border-t border-[color:var(--rule)] bg-[color:var(--stage)] text-[color:var(--ink-soft)]">

@@ -1,5 +1,6 @@
 "use client";
 
+import { Still } from "@/components/portal/Still";
 import { useState } from "react";
 import { EmbedModal } from "@/components/room/EmbedModal";
 
@@ -25,8 +26,7 @@ export function ClipRailClient({ title, note, clips }: { title?: string; note?: 
               data-cursor="Play"
             >
               <span className="well block border border-[color:var(--rule)] transition-colors duration-300 group-hover:border-[color:var(--rule-strong)]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={c.thumb} alt="" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+                <Still src={c.thumb} className="absolute inset-0 h-full w-full object-cover" />
                 <span className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[rgba(0,0,0,0.7)] to-transparent" />
                 <span className="mono absolute bottom-3 left-3 flex items-center gap-2 text-[color:var(--ink)]">
                   <span className="lamp-off" aria-hidden="true" />

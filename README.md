@@ -218,6 +218,10 @@ positioning map's road draws itself once in view, a mark set by hand pops;
 all of it is CSS, off under reduced motion. Scripts and the first month
 print black on white with the room left out.
 
+Every class in `globals.css` sits in Tailwind's `components` layer, so a
+utility on the same element wins (`mono text-[color:var(--ink)]` is ink);
+new rules go inside that block.
+
 Security headers, including a narrow content security policy, are in
 `next.config.ts`. Anything that loads from a new host must be added there.
 
@@ -228,6 +232,7 @@ npm test
 npm run check
 npm run smoke -- http://localhost:3400
 npm run smoke -- http://localhost:3401 --gated
+npm run a11y -- http://localhost:3401 --code horizon-2026
 ```
 
 `test` runs the unit tests for the pure parts: the session token and
@@ -236,7 +241,12 @@ marks and the palette index. The same loop runs on every push in GitHub
 Actions (`.github/workflows/verify.yml`), on Node 22 (`.nvmrc`).
 
 `smoke` fetches every route and checks status codes, redirects, the door,
-and a few strings. Visual checks run through Playwright against
+and a few strings. `a11y` opens a real browser (`npx playwright install
+chromium` once), logs in, and takes every route the palette's index knows
+plus the fixed pages through axe at desktop and phone width (WCAG 2.2 AA
+and best practice, no filter), failing on any violation, any horizontal
+overflow or any console error; then the palette, open. CI runs it after
+the gated smoke. Visual checks run through Playwright against
 `next start`, with screenshots into a scratch directory. Freeze reveals
 with `[style*="opacity"]{opacity:1!important;transform:none!important}`
 for stills, and wait for the home slate to finish before shooting home.

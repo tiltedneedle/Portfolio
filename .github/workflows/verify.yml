@@ -1,7 +1,10 @@
 # Every push and pull request runs the same verification loop that runs on
 # the desktop: unit tests, the content validator, lint, a production build,
-# and the smoke suite against `next start` in both modes (open door, and
-# gated with a throwaway secret).
+# the smoke suite against `next start` in both modes (open door, and
+# gated with a throwaway secret), and the accessibility pass in a real
+# browser against the gated server: every room at desktop and phone width
+# through axe (WCAG 2.2 AA), with no horizontal overflow and no console
+# errors.
 name: Verify
 
 on:
@@ -16,7 +19,7 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -39,6 +42,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Browser for the accessibility pass
+        run: npx playwright install --with-deps chromium
+
       - name: Smoke, open door
         run: |
           npx next start -p 3400 > open.log 2>&1 &
@@ -53,6 +59,7 @@ jobs:
           npx next start -p 3401 > gated.log 2>&1 &
           for i in $(seq 1 30); do curl -sf -o /dev/null http://localhost:3401/login && break; sleep 1; done
           npm run smoke -- http://localhost:3401 --gated
+          npm run a11y -- http://localhost:3401 --code horizon-2026
           kill %1 || true
 
       - name: Server logs on failure

@@ -121,6 +121,13 @@ The marketing site this grew out of is on the `marketing-site` branch.
   They are kept committed; `agentRules: false` in next.config would stop
   them, but the pointer is useful to any agent opening this repo.
 
+- **The design system lives in `@layer components`.** Tailwind v4 puts
+  utilities in a cascade layer, and unlayered CSS beats any layer
+  regardless of specificity or order. A class defined outside a layer
+  therefore silently overrides every utility on the same element. New
+  rules go inside the layer block in globals.css; only print and
+  reduced-motion overrides may use `!important`.
+
 ## Done
 
 - [x] Content model, 13 universal guides, block renderer, home, nav with
@@ -163,6 +170,23 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 29: framer-motion 12 to 13.4 (the 13.0 breaks are gesture
+      callback arguments, exitBeforeEnter, AnimateSharedLayout and the
+      is-prop-valid dependency; none in use; cuts, palette, scroll strip
+      and prompter checked). The accessibility pass is now a script and a
+      CI step: `npm run a11y -- <base> --code <code>` opens Playwright's
+      Chromium with motion reduced, logs in, takes every route the index
+      knows plus the fixed pages through axe (WCAG 2.2 AA + best practice,
+      no filter) at desktop and phone width, fails on any violation,
+      horizontal overflow or console error, then checks the palette open.
+      Its first run found the cascade bug below (a mock profile's Follow
+      button read grey on cream).
+- [x] Wave 29, the cascade: every design-system class in globals.css now
+      sits in `@layer components`. Unlayered author CSS beats every
+      Tailwind utility whatever the order, so `mono text-[color:var(--ink)]`
+      had rendered ink-mid and `slate-link text-[13px]` 11px, silently, in
+      thirty places. Before/after screenshots of every room compared;
+      only the intended colours and sizes changed.
 - [x] Wave 28: the shortlist: ideas pin on this device (`usePinned`, a
       third mark kind; keys "pillar:n", kept in pin order), Pin sits beside
       Copy on every idea card, the ideas page opens with the shortlist
@@ -324,6 +348,7 @@ The marketing site this grew out of is on the `marketing-site` branch.
    Create guides plus intro/outro, first real client content, images for
    `figure` blocks, a real client logo to test `--logo`.
 4. Majors available and not taken (`npm outdated`, 2026-09-24): typescript
-   7.0, @types/node 26, framer-motion 13.4. Each is its own wave with the
-   full loop; framer-motion first, since the surface used here is small
-   (motion, AnimatePresence, useReducedMotion).
+   7.0 and @types/node 26. Each is its own wave with the full loop.
+   framer-motion 13 was taken in wave 29. vitest 4/5 stays blocked by the
+   npm 10.9.2 crash; its two moderate dev-only audit findings
+   (@vitest/mocker) go with it.

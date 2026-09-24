@@ -79,7 +79,11 @@ export function Retention({ title, note }: { title?: string; note?: string }) {
         </svg>
         <div className="mt-4 grid gap-4 border-t border-[color:var(--rule)] pt-4 md:grid-cols-2 md:gap-8">
           <p className="text-[15px] leading-snug text-[color:var(--ink-soft)]">
-            <span className="mono mr-2 text-[color:var(--tally)]">00:03</span>
+            {/* Tally marks state, never small text: the lamp carries the red, the timecode stays ink. */}
+            <span className="mono mr-2 inline-flex items-center gap-1.5 text-[color:var(--ink)]">
+              <span className="lamp" aria-hidden="true" />
+              00:03
+            </span>
             Leave here: the hook, the first visual, how fast you get to the point.
           </p>
           <p className="text-[15px] leading-snug text-[color:var(--ink-soft)]">
@@ -384,7 +388,10 @@ export function Lens({ title, wide, tight, note }: { title?: string; wide: strin
             <Rich text={wide} />
           </p>
           <p className="text-[15px] leading-snug text-[color:var(--ink-soft)]">
-            <span className="mono mr-2 text-[color:var(--tally)]">TIGHT</span>
+            <span className="mono mr-2 inline-flex items-center gap-1.5 text-[color:var(--ink)]">
+              <span className="lamp" aria-hidden="true" />
+              TIGHT
+            </span>
             <Rich text={tight} />
           </p>
         </div>

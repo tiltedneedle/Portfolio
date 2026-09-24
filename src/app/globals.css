@@ -8,6 +8,13 @@
   --font-mono: var(--font-mono-face), "SFMono-Regular", Consolas, monospace;
 }
 
+/* ------------------------------------------------------------ the cascade
+   Everything below lives in Tailwind's `components` layer so that a
+   utility on the same element wins: `mono text-[color:var(--ink)]` is
+   ink, `slate-link text-[13px]` is 13px. Unlayered author CSS would beat
+   every utility regardless of order or specificity, and did, silently. */
+@layer components {
+
 /* ============================================================== design system
    THE EDITING ROOM. A single dark visual world: the site behaves like the suite
    where a reel is assembled. Four faces, three greys, one lamp.
@@ -1147,4 +1154,5 @@ a:focus-visible > .wm {
   .tw-caret {
     animation: none;
   }
+}
 }

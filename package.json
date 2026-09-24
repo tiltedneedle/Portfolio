@@ -10,12 +10,13 @@
     "test": "vitest run",
     "check": "node scripts/check-content.mjs",
     "smoke": "node scripts/smoke.mjs",
+    "a11y": "node scripts/a11y.mjs",
     "access": "node scripts/access.mjs",
     "new-client": "node scripts/new-client.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",
-    "framer-motion": "^12.23.12",
+    "framer-motion": "^13.4.2",
     "next": "16.3.6",
     "react": "19.3.0",
     "react-dom": "19.3.0",
@@ -30,6 +31,7 @@
     "axe-core": "^4.13.0",
     "eslint": "^9",
     "eslint-config-next": "^16.3.6",
+    "playwright": "^1.63.0",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^3.2.7"

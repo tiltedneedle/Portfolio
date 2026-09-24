@@ -217,6 +217,10 @@ The marketing site this grew out of is on the `marketing-site` branch.
 
 ## Next
 
+0. Performance option, not taken: framer-motion could load through
+   `LazyMotion` + `m` (nine files import `motion`) to cut the largest
+   client chunk; the site is private and static, so it was left. Take it
+   only if a real client reports slow first loads.
 0. A dev-mode console pass (`next dev`) for attribute-level hydration
    warnings that production hides. The preview tool reads the ops app's
    tracked `.claude/launch.json`, which has no entry for this repo; add one

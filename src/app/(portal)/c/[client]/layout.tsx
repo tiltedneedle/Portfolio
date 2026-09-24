@@ -40,7 +40,9 @@ export default async function ClientLayout({ children, params }: { children: Rea
         Skip to content
       </a>
       <PortalNav />
-      <main id="main">{children}</main>
+      <main id="main" tabIndex={-1} className="outline-none">
+        {children}
+      </main>
       <PortalFooter />
       <Palette items={index} />
     </ClientProvider>

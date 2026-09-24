@@ -170,6 +170,12 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 30: after a cut, focus starts at the top of the new scene:
+      `main` is focusable (tabIndex -1, no outline) and CutOverlay focuses
+      it once the frame lifts, never for a hash target, so a keyboard or
+      screen-reader user is never left where focus was on the old page. A
+      script's slate names the idea it came from ("From Personal 01"),
+      linking to the pillar.
 - [x] Wave 29: framer-motion 12 to 13.4 (the 13.0 breaks are gesture
       callback arguments, exitBeforeEnter, AnimateSharedLayout and the
       is-prop-valid dependency; none in use; cuts, palette, scroll strip

@@ -24,7 +24,13 @@ export function CutOverlay() {
     // frame and must be over before it lifts. A hash means the router has
     // already put the section in view; resetting would undo that.
     if (!window.location.hash) window.scrollTo({ top: 0, behavior: "instant" });
-    const t = setTimeout(endCut, HOLD_MS);
+    const t = setTimeout(() => {
+      endCut();
+      // A keyboard or screen-reader user arrives at the top of the new scene,
+      // not wherever focus was left on the old one. A hash means a section
+      // was the target, and the router has already put it in view.
+      if (!window.location.hash) document.getElementById("main")?.focus({ preventScroll: true });
+    }, HOLD_MS);
     return () => clearTimeout(t);
   }, [pathname]);
 

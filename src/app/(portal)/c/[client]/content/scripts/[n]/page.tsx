@@ -9,6 +9,7 @@ import { chapter, pageNumber } from "@/content/chapters";
 import { requireClient } from "@/content/clients/registry";
 import { scriptAsText, shortName } from "@/content/clients/types";
 import { mmss, spokenSeconds, wordCount } from "@/lib/words";
+import { pillars } from "@/content/system/pillars";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -32,6 +33,8 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
   const prev = sys.scripts.find((x) => x.n === s.n - 1);
   const next = sys.scripts.find((x) => x.n === s.n + 1);
   const written = !!s.body?.length;
+  // The idea this script came from, as the card on the ideas page names it.
+  const origin = s.from ? { title: pillars.find((p) => p.id === s.from?.pillar)?.title ?? s.from.pillar, n: s.from.n, href: "/content/ideas#" + s.from.pillar } : null;
   const spokenText = written ? [s.hook, ...s.body!, s.cta].filter(Boolean).join(" ") : "";
   const words = wordCount(spokenText);
   const spoken = spokenSeconds(spokenText);
@@ -49,7 +52,7 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
         <div className="mt-6 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <div>
             <h1 className="display max-w-[14ch] text-[clamp(48px,7.5vw,120px)]">{s.title || "Script " + pad(s.n)}</h1>
-            {(s.location || s.onCamera) && (
+            {(s.location || s.onCamera || origin) && (
               <dl className="mono mt-6 flex flex-wrap gap-x-10 gap-y-2">
                 {s.location && (
                   <div className="flex gap-3">
@@ -61,6 +64,16 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
                   <div className="flex gap-3">
                     <dt className="text-[color:var(--ink-mid)]">On camera</dt>
                     <dd className="text-[color:var(--ink)]">{s.onCamera}</dd>
+                  </div>
+                )}
+                {origin && (
+                  <div className="flex gap-3">
+                    <dt className="text-[color:var(--ink-mid)]">From</dt>
+                    <dd className="text-[color:var(--ink)]">
+                      <CutLink href={origin.href} className="transition-colors hover:text-[color:var(--ink-mid)]" data-cursor="Open">
+                        {origin.title} {pad(origin.n)} &#8599;
+                      </CutLink>
+                    </dd>
                   </div>
                 )}
               </dl>

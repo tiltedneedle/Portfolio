@@ -201,6 +201,12 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 33: belt and braces: the validator refuses a "recently added"
+      link (system or client) that does not land on a page; the smoke
+      suite asserts the security headers next.config.ts promises (CSP,
+      noindex, HSTS, nosniff, frame options) on a page and a route handler;
+      the a11y pass also covers the door, the named door and the 404
+      (ignoring the browser's log of a not-found page's own status).
 - [x] Wave 32: a lamp beside the mark in the nav when something has been
       added since this device last saw the home list (strictly newer than
       the seen day, so it goes dark once home has been seen); "Pin the

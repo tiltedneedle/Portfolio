@@ -13,9 +13,11 @@ async function expect(path, want, opts = {}) {
   const okStatus = res.status === want;
   const okBody = !opts.contains || (opts.contains instanceof RegExp ? opts.contains.test(body) : body.includes(opts.contains));
   const okLoc = !opts.location || (res.headers.get("location") || "").includes(opts.location);
-  const ok = okStatus && okBody && okLoc;
+  // opts.header: [name, fragment] that the response header must carry.
+  const okHeader = !opts.header || (res.headers.get(opts.header[0]) || "").includes(opts.header[1]);
+  const ok = okStatus && okBody && okLoc && okHeader;
   if (!ok) failed++;
-  console.log((ok ? "ok    " : "FAIL  ") + path.padEnd(40) + " " + res.status + (opts.location ? " -> " + res.headers.get("location") : "") + (opts.contains && !okBody ? '  (missing "' + opts.contains + '")' : ""));
+  console.log((ok ? "ok    " : "FAIL  ") + path.padEnd(40) + " " + res.status + (opts.location ? " -> " + res.headers.get("location") : "") + (opts.contains && !okBody ? '  (missing "' + opts.contains + '")' : "") + (opts.header && !okHeader ? "  (header " + opts.header[0] + " lacks " + opts.header[1] + ")" : ""));
 }
 
 if (!gated) {
@@ -54,7 +56,14 @@ if (!gated) {
   await expect("/login?for=demo", 200, { contains: /prepared for (<!-- -->)?Horizon Aviation/ });
   await expect("/login?for=nope", 200, { contains: "Private screening" });
   await expect("/robots.txt", 200, { contains: "Disallow: /" });
+  // The headers next.config.ts promises, on a page and on a route handler.
+  await expect("/", 200, { header: ["content-security-policy", "default-src 'self'"] });
+  await expect("/", 200, { header: ["x-robots-tag", "noindex"] });
+  await expect("/", 200, { header: ["strict-transport-security", "max-age="] });
+  await expect("/search-index.json", 200, { header: ["x-content-type-options", "nosniff"] });
 } else {
+  await expect("/login", 200, { header: ["x-robots-tag", "noindex"] });
+  await expect("/login", 200, { header: ["x-frame-options", "SAMEORIGIN"] });
   await expect("/", 307, { location: "/login" });
   await expect("/create/hooks", 307, { location: "/login?next=%2Fcreate%2Fhooks" });
   await expect("/search-index.json", 307, { location: "/login?next=%2Fsearch-index.json" });

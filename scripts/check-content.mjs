@@ -75,6 +75,11 @@ copyFileSync(join(root, "src/lib/published.json"), join(out, "lib/published.json
 const { clients } = await import(pathToFileURL(join(out, "content/clients/registry.js")).href);
 const { guides } = await import(pathToFileURL(join(out, "content/system/index.js")).href);
 const { chapters } = await import(pathToFileURL(join(out, "content/chapters.js")).href);
+
+// Every clean path the rooms answer to: home, each chapter, each page, each script slot.
+const knownPaths = new Set(["/", ...chapters.flatMap((ch) => [ch.href, ...ch.pages.map((p) => ch.href + "/" + p.slug)])]);
+for (let n = 1; n <= 20; n++) knownPaths.add("/content/scripts/" + n);
+const knownHref = (href) => knownPaths.has(String(href).split("#")[0]);
 const published = JSON.parse(readFileSync(join(root, "src/lib/published.json"), "utf8"));
 const ids = new Set(published.map((p) => p.videoId).filter(Boolean));
 
@@ -120,6 +125,7 @@ for (const [slug, c] of Object.entries(clients)) {
         last = ch.date;
         if (!ch.text) problems.push(`${slug} changes: an entry has no text`);
         if (ch.href && !ch.href.startsWith("/")) problems.push(`${head} links off the site`);
+        else if (ch.href && !knownHref(ch.href)) problems.push(`${head} links to ${ch.href}, which is not a page`);
       }
     }
   }
@@ -200,6 +206,7 @@ for (const c of changes) {
   lastDate = c.date;
   if (!c.text) problems.push("changes: an entry has no text");
   if (c.href && !c.href.startsWith("/")) problems.push(`changes: "${c.text.slice(0, 40)}" links off the site`);
+  else if (c.href && !knownHref(c.href)) problems.push(`changes: "${c.text.slice(0, 40)}" links to ${c.href}, which is not a page`);
 }
 
 // Guides

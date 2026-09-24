@@ -51,7 +51,8 @@ try {
   const indexRes = await page.request.get(base + "/search-index.json");
   const index = indexRes.ok() ? await indexRes.json() : [];
   say(Array.isArray(index) && index.length > 0, "search index answers with " + (Array.isArray(index) ? index.length : 0) + " entries");
-  const routes = [...new Set(["/", "/audit", "/content", "/create", "/publish", "/analyse", "/content/ideas", "/content/scripts", ...index.map((e) => e.href)])];
+  // The rooms, the door (with and without a client named) and the 404, then every page the index knows.
+  const routes = [...new Set(["/", "/audit", "/content", "/create", "/publish", "/analyse", "/content/ideas", "/content/scripts", "/login", "/login?for=demo", "/nothing-on-this-slate", ...index.map((e) => e.href)])];
 
   const audit = () =>
     page.evaluate(async (tags) => {
@@ -67,15 +68,18 @@ try {
     await page.setViewportSize({ width: w.width, height: w.height });
     for (const route of routes) {
       errors.length = 0;
-      await page.goto(base + route, { waitUntil: "networkidle" });
+      const resp = await page.goto(base + route, { waitUntil: "networkidle" });
       await page.waitForTimeout(route === "/" ? 3000 : 400);
       await page.addScriptTag({ content: axeSource });
       const r = await audit();
       const wide = r.scrollW > r.innerW;
+      // A not-found page is meant to answer 404; the browser logging that is not a fault of the page.
+      const own404 = resp?.status() === 404;
+      const consoleErrors = errors.filter((e) => !(own404 && /status of 404/.test(e)));
       const problems = [
         r.violations.length ? "axe: " + r.violations.join("; ") : "",
         wide ? "overflow " + r.scrollW + " > " + r.innerW : "",
-        errors.length ? "console: " + errors[0].slice(0, 140) : "",
+        consoleErrors.length ? "console: " + consoleErrors[0].slice(0, 140) : "",
       ].filter(Boolean);
       say(problems.length === 0, w.name.padEnd(8) + route.padEnd(44) + problems.join("  "));
     }

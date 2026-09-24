@@ -121,8 +121,16 @@ export function PositionMap({ map }: { map: PositionMapT }) {
           if (!you || !to) return null;
           return (
             <g>
-              <line x1={px(you.x)} y1={py(you.y)} x2={px(to.x)} y2={py(to.y)} stroke="var(--tally)" strokeWidth="1" strokeDasharray="4 5" opacity="0.8" />
-              <circle cx={px(to.x)} cy={py(to.y)} r="7" fill="none" stroke="var(--tally)" strokeWidth="1.25" strokeDasharray="3 3" />
+              {/* Once the map is in view the road draws itself from today to the
+                  target: a mask sweeps along the line, then the ring and its label
+                  appear (see .journey-* in globals.css). */}
+              <defs>
+                <mask id="journey-mask">
+                  <line x1={px(you.x)} y1={py(you.y)} x2={px(to.x)} y2={py(to.y)} stroke="#fff" strokeWidth="16" pathLength={1} className="journey-draw" />
+                </mask>
+              </defs>
+              <line x1={px(you.x)} y1={py(you.y)} x2={px(to.x)} y2={py(to.y)} stroke="var(--tally)" strokeWidth="1" strokeDasharray="4 5" opacity="0.8" mask="url(#journey-mask)" />
+              <circle className="journey-ring" cx={px(to.x)} cy={py(to.y)} r="7" fill="none" stroke="var(--tally)" strokeWidth="1.25" strokeDasharray="3 3" />
               {(() => {
                 // The dashed line already says whose, so a target named "Horizon,
                 // after the three moves" reads "AFTER THE THREE MOVES" on the map,
@@ -131,7 +139,7 @@ export function PositionMap({ map }: { map: PositionMapT }) {
                 const label = (parts.length > 1 ? parts.slice(1).join(", ") : to.name).toUpperCase();
                 const left = to.x > 0.5;
                 return (
-                  <text x={px(to.x) + (left ? -12 : 12)} y={py(to.y) + 4} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink)" textAnchor={left ? "end" : "start"}>
+                  <text className="journey-label" x={px(to.x) + (left ? -12 : 12)} y={py(to.y) + 4} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink)" textAnchor={left ? "end" : "start"}>
                     {label}
                   </text>
                 );

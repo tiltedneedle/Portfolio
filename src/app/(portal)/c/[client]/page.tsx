@@ -35,7 +35,12 @@ export default async function Home({ params }: { params: Promise<{ client: strin
     "/audit/content-diagnostic": writtenIn(sys.contentDiagnostic),
     "/audit/competitor-intelligence": writtenIn(sys.competitorIntelligence),
     "/content/ideas": ideas.filter((i) => i.text).length + " of " + ideas.length + " written",
-    "/content/scripts": sys.scripts.filter((s) => s.body?.length).length + " of " + sys.scripts.length + " written",
+    "/content/scripts": (
+      <>
+        {sys.scripts.filter((s) => s.body?.length).length} of {sys.scripts.length} written
+        <FilmedCount ns={sys.scripts.filter((s) => s.body?.length).map((s) => s.n)} prefix={" \u00B7 "} className="text-[color:var(--ink-mid)]" />
+      </>
+    ),
   };
   // The universal rooms count what has been read on this device instead.
   const readKeys = Object.fromEntries(

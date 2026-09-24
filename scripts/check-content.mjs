@@ -90,6 +90,9 @@ for (const [slug, c] of Object.entries(clients)) {
   if (id.accessHash && !/^[0-9a-f]{64}$/.test(id.accessHash)) problems.push(`${slug}: accessHash is not a sha256 hex`);
   if (!id.accessHash && slug !== "template") warn.push(`${slug}: no access code, so nobody can log in to it`);
   if (id.logo && !existsSync(join(root, "public", id.logo))) problems.push(`${slug}: logo ${id.logo} not found under public/`);
+  // The contact is where every "ask the studio" goes: an address, or a link.
+  if (!(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(id.contact ?? "") || /^https?:\/\//.test(id.contact ?? "")))
+    problems.push(`${slug}: contact "${id.contact}" is neither an email address nor a link`);
   for (const [name, report] of [["contentDiagnostic", c.contentDiagnostic], ["competitorIntelligence", c.competitorIntelligence]]) {
     const titles = new Set();
     for (const s of report.sections) {

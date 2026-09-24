@@ -7,6 +7,7 @@ import { ReadingProgress } from "@/components/portal/ReadingProgress";
 import { ReadToggle } from "@/components/portal/ReadToggle";
 import { ClipRail } from "@/components/portal/ClipRail";
 import { CompetitorBoard, PositionMap } from "@/components/portal/competitors";
+import { Reveal } from "@/components/portal/Reveal";
 import { PrintButton } from "@/components/portal/PrintButton";
 import { Anchor } from "@/components/portal/Anchor";
 
@@ -203,7 +204,7 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
               {sections.map((s, i) => {
                 const isWritten = !!s.body?.length;
                 return (
-                  <li key={s.title}>
+                  <li key={s.title} className="desk-tile" style={{ ["--i" as string]: i }}>
                     <a
                       href={"#a-" + pad(i)}
                       title={s.title + (isWritten && s.verdict ? ": " + VERDICT[s.verdict] : isWritten ? "" : ": to be written")}
@@ -228,8 +229,8 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
                     <li key={s.title} className="flex h-full w-11 items-end" title={s.title + (v === null ? ": not scored" : ": " + v + " of 10")}>
                       <span
                         aria-hidden="true"
-                        className={"block w-full " + (v === null ? "border-t border-dashed border-[color:var(--rule-strong)]" : s.verdict === "weak" ? "bg-[color:var(--tally)]" : s.verdict === "strong" ? "bg-[color:var(--ink)]" : "bg-[color:var(--ink-mid)]")}
-                        style={{ height: v === null ? 1 : Math.max(2, (v / 10) * 40) }}
+                        className={"desk-bar block w-full " + (v === null ? "border-t border-dashed border-[color:var(--rule-strong)]" : s.verdict === "weak" ? "bg-[color:var(--tally)]" : s.verdict === "strong" ? "bg-[color:var(--ink)]" : "bg-[color:var(--ink-mid)]")}
+                        style={{ height: v === null ? 1 : Math.max(2, (v / 10) * 40), ["--i" as string]: i }}
                       />
                       <span className="sr-only">
                         {pad(i)} {s.title}: {v === null ? "not scored" : v + " of 10"}
@@ -241,7 +242,7 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
             )}
           </div>
           {average !== null && (
-            <div className="flex items-end gap-4">
+            <div className="desk-avg flex items-end gap-4">
               <span className="display text-[clamp(56px,7vw,96px)] leading-none text-[color:var(--ink)]">{average}</span>
               <span className="mono pb-2 leading-relaxed">
                 out of 10 today
@@ -301,7 +302,9 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
 
       {report.map ? (
         <section id="map" className="mx-auto max-w-[1600px] scroll-mt-28 px-6 pt-14 md:px-14 md:pt-20" aria-label="Where everyone stands">
-          <PositionMap map={report.map} />
+          <Reveal>
+            <PositionMap map={report.map} />
+          </Reveal>
         </section>
       ) : null}
 

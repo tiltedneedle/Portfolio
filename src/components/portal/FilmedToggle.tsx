@@ -19,7 +19,7 @@ export function FilmedToggle({ n }: { n: number }) {
         <p className="mono flex items-center gap-2">
           {done ? (
             <>
-              <span aria-hidden="true" className="inline-block h-2 w-2 rounded-full bg-[color:var(--ink)]" />
+              <span aria-hidden="true" className="pop inline-block h-2 w-2 rounded-full bg-[color:var(--ink)]" />
               <span className="text-[color:var(--ink)]">Filmed</span>
               <span className="text-[color:var(--ink-mid)]">on this device</span>
             </>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { home } from "@/content/system/home";
@@ -19,7 +19,7 @@ const items = home.access;
 const n = items.length;
 
 /** `counts` is what each personalised card has so far, keyed by href ("4 of 13 written"). */
-export function AccessStrip({ counts = {}, readKeys = {} }: { counts?: Record<string, string>; readKeys?: Record<string, string[]> }) {
+export function AccessStrip({ counts = {}, readKeys = {} }: { counts?: Record<string, ReactNode>; readKeys?: Record<string, string[]> }) {
   const section = useRef<HTMLElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const [range, setRange] = useState(0);

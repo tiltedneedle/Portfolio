@@ -163,6 +163,15 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 26: motion with meaning: the map's road draws itself once the
+      map is in view (an SVG mask sweeps the dashed line, then the ring
+      and its label), the audit desk powers up on the cut (lamps in
+      sequence, bars rising, then the average), a mark set by hand pops;
+      all three are CSS keyed off Reveal or page load, off under reduced
+      motion and in print. The typed word stands out in search snippets;
+      the home strip counts filmed scripts; the validator checks the
+      contact is an address or a link; mergeChanges and askHref live in
+      lib with tests (58 tests).
 - [x] Wave 25: the scripts room is a production board: a script can be
       marked filmed on this device (`useFilmed` beside `useRead` in
       lib/read.ts), and the rail, the first month, the call sheet (which

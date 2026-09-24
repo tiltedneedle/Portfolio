@@ -71,6 +71,20 @@ function loadIndex() {
 
 const KEYS = "⌘K";
 
+/** The first typed word, where it sits in the snippet, in ink. */
+function Highlight({ text, word }: { text: string; word: string }) {
+  if (!word) return <>{text}</>;
+  const at = text.toLowerCase().indexOf(word.toLowerCase());
+  if (at === -1) return <>{text}</>;
+  return (
+    <>
+      {text.slice(0, at)}
+      <span className="text-[color:var(--ink)]">{text.slice(at, at + word.length)}</span>
+      {text.slice(at + word.length)}
+    </>
+  );
+}
+
 /** The prompter or the lightbox is up: their keys are theirs. */
 function otherDialogOpen() {
   return !!document.querySelector('[role="dialog"][aria-modal="true"]:not([aria-label="Contents"]):not([aria-label="Keys"])');
@@ -298,6 +312,8 @@ export function Palette({ items }: { items: PaletteItem[] }) {
     }
   };
 
+  const firstWord = q.trim().toLowerCase().split(/\s+/)[0] ?? "";
+
   return (
     <>
       <button
@@ -415,7 +431,11 @@ export function Palette({ items }: { items: PaletteItem[] }) {
                     <span className="mono w-[5ch] shrink-0 text-[color:var(--ink-mid)]">{h.n}</span>
                     <span className="min-w-0 flex-1">
                       <span className={h.section ? "text-[15px]" : "text-[17px]"}>{h.title}</span>
-                      {h.snippet && <span className="mt-0.5 block truncate text-[12px] text-[color:var(--ink-mid)]">{h.snippet}</span>}
+                      {h.snippet && (
+                        <span className="mt-0.5 block truncate text-[12px] text-[color:var(--ink-mid)]">
+                          <Highlight text={h.snippet} word={firstWord} />
+                        </span>
+                      )}
                     </span>
                     <span className="mono ml-auto shrink-0 text-[color:var(--ink-mid)]">{h.kicker}</span>
                   </li>

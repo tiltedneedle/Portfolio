@@ -234,6 +234,80 @@ body {
   background: var(--ink-faint);
 }
 
+/* ------------------------------------------------------- the road
+   The positioning map's dashed line from today to the target is drawn
+   through a mask that sweeps along it once the map has been revealed
+   (Reveal adds reveal-wait below the fold, then reveal-in). Without the
+   reveal, or under reduced motion, the road is simply there. */
+.journey-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+.reveal-wait .journey-draw {
+  stroke-dashoffset: 1;
+}
+.reveal-wait .journey-ring,
+.reveal-wait .journey-label {
+  opacity: 0;
+}
+.reveal-in .journey-draw {
+  animation: journey-draw 1.2s var(--ease-out-expo) 0.25s forwards;
+}
+.reveal-in .journey-ring {
+  animation: journey-show 0.5s ease-out 1.15s forwards;
+}
+.reveal-in .journey-label {
+  animation: journey-show 0.5s ease-out 1.35s forwards;
+}
+@keyframes journey-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes journey-show {
+  to {
+    opacity: 1;
+  }
+}
+
+/* ------------------------------------------------------- the desk
+   The audit header powers up on the cut: one lamp after another, then
+   the bars rise, then the average. --i is the heading's index. */
+.desk-tile {
+  animation: desk-on 0.5s var(--ease-out-expo) both;
+  animation-delay: calc(0.05s + var(--i, 0) * 45ms);
+}
+.desk-bar {
+  transform-origin: bottom;
+  animation: desk-rise 0.7s var(--ease-out-expo) both;
+  animation-delay: calc(0.35s + var(--i, 0) * 45ms);
+}
+.desk-avg {
+  animation: desk-on 0.6s var(--ease-out-expo) 0.9s both;
+}
+@keyframes desk-on {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+@keyframes desk-rise {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+/* A mark set by hand pops in. */
+.pop {
+  animation: pop 0.35s var(--ease-out-expo) both;
+}
+@keyframes pop {
+  from {
+    transform: scale(0.2);
+    opacity: 0;
+  }
+}
+
 /* ================================================================= controls */
 
 .pill {
@@ -795,7 +869,14 @@ a:focus-visible > .wm {
   .wm-b,
   .wm-mark,
   .loop-dash,
-  .drift {
+  .drift,
+  .journey-draw,
+  .journey-ring,
+  .journey-label,
+  .desk-tile,
+  .desk-bar,
+  .desk-avg,
+  .pop {
     animation: none;
   }
 }
@@ -834,6 +915,19 @@ a:focus-visible > .wm {
   }
   .script-page .spoken {
     color: #000 !important;
+  }
+  .journey-draw {
+    stroke-dashoffset: 0 !important;
+    animation: none !important;
+  }
+  .journey-ring,
+  .journey-label,
+  .desk-tile,
+  .desk-bar,
+  .desk-avg {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
   }
   a {
     text-decoration: none;

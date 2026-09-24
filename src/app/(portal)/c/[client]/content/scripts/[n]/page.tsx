@@ -4,6 +4,7 @@ import { CutLink } from "@/components/room/CutLink";
 import { CopyScript } from "@/components/portal/CopyScript";
 import { Prompter } from "@/components/portal/Prompter";
 import { PrintButton } from "@/components/portal/PrintButton";
+import { FilmedToggle } from "@/components/portal/FilmedToggle";
 import { chapter, pageNumber } from "@/content/chapters";
 import { requireClient } from "@/content/clients/registry";
 import { scriptAsText, shortName } from "@/content/clients/types";
@@ -156,6 +157,7 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
         </section>
       ) : null}
 
+      {written && <FilmedToggle n={s.n} />}
       <nav className="no-print border-t border-[color:var(--rule)] bg-[color:var(--stage-2)]" aria-label="Scripts">
         <div className="mono mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-6 px-6 py-8 md:px-14">
           <span>

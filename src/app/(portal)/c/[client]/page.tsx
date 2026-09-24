@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Slate } from "@/components/room/Slate";
 import { RunningTimecode, StudioClocks } from "@/components/room/Readouts";
 import { CutLink } from "@/components/room/CutLink";
@@ -8,6 +9,7 @@ import { Loop } from "@/components/portal/Loop";
 import { TrainingFilm } from "@/components/portal/TrainingFilm";
 import { ThisWeek } from "@/components/portal/ThisWeek";
 import { RecentChanges } from "@/components/portal/RecentChanges";
+import { FilmedCount } from "@/components/portal/FilmedMark";
 import { guides } from "@/content/system";
 import { chapter, pageHref } from "@/content/chapters";
 import { pillars } from "@/content/system/pillars";
@@ -42,13 +44,22 @@ export default async function Home({ params }: { params: Promise<{ client: strin
   // The readout under the lead: where this system stands, in one line.
   const diag = sys.contentDiagnostic.sections.filter((s) => s.body?.length);
   const scored = diag.filter((s) => typeof s.score === "number");
-  const readout = [
+  const entries: ({ k: string; v: ReactNode } | null)[] = [
     scored.length ? { k: "Audit", v: Math.round((scored.reduce((a, s) => a + (s.score ?? 0), 0) / scored.length) * 10) / 10 + " / 10" } : diag.length ? { k: "Audit", v: diag.length + " of " + sys.contentDiagnostic.sections.length } : null,
     firstMoves(sys.contentDiagnostic)[0] ? { k: "First move", v: firstMoves(sys.contentDiagnostic)[0].title } : null,
     { k: "Ideas", v: String(ideas.filter((i) => i.text).length) },
-    { k: "Scripts", v: String(sys.scripts.filter((s) => s.body?.length).length) },
+    {
+      k: "Scripts",
+      v: (
+        <>
+          {sys.scripts.filter((s) => s.body?.length).length}
+          <FilmedCount ns={sys.scripts.filter((s) => s.body?.length).map((s) => s.n)} prefix={" · "} className="text-[color:var(--ink-mid)]" />
+        </>
+      ),
+    },
     sys.notes ? { k: "Notes", v: String(Object.values(sys.notes).flat().length) } : null,
-  ].filter((x): x is { k: string; v: string } => !!x);
+  ];
+  const readout = entries.filter((x): x is { k: string; v: ReactNode } => !!x);
   // The call sheet draws from what is written.
   const weekIdeas = pillars.flatMap((p) => sys.ideas[p.id].map((idea, i) => ({ pillar: p.title, n: i + 1, text: idea.text })).filter((x) => x.text));
   const weekScripts = sys.scripts.filter((s) => s.body?.length).map((s) => ({ n: s.n, title: s.title }));
@@ -123,7 +134,7 @@ export default async function Home({ params }: { params: Promise<{ client: strin
 
       <ThisWeek ideas={weekIdeas} scripts={weekScripts} guides={weekGuides} />
 
-      <RecentChanges slug={identity.slug} />
+      <RecentChanges slug={identity.slug} mine={sys.changes} />
 
       <section id="how" className="scroll-mt-16 border-t border-[color:var(--rule)] bg-[color:var(--stage)] py-24 md:py-36">
         <div className="mx-auto max-w-[1600px] px-6 md:px-14">

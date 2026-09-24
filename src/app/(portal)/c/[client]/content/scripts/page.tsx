@@ -3,6 +3,7 @@ import { ScriptsRail } from "@/components/portal/ScriptsRail";
 import { NextCut } from "@/components/portal/NextCut";
 import { DealOne } from "@/components/portal/DealOne";
 import { FirstMonth } from "@/components/portal/FirstMonth";
+import { FilmedCount } from "@/components/portal/FilmedMark";
 import { pillars } from "@/content/system/pillars";
 import { chapter, pageNumber } from "@/content/chapters";
 import { requireClient } from "@/content/clients/registry";
@@ -27,6 +28,7 @@ export default async function ScriptsPage({ params }: { params: Promise<{ client
             <span className="lamp" aria-hidden="true" />
             Written for {shortName(sys.identity)}
           </span>
+          <FilmedCount ns={sys.scripts.filter((s) => s.body?.length).map((s) => s.n)} className="text-[color:var(--ink-mid)]" />
         </p>
         <h1 className="display mt-6 max-w-[10ch] text-[clamp(52px,8.5vw,140px)]">20 personalised scripts</h1>
         <p className="em-serif mt-6 max-w-[40ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">

@@ -105,6 +105,21 @@ for (const [slug, c] of Object.entries(clients)) {
     for (const t of texts) if (t.length > 140) warn.push(`${slug}: ${pillar} idea is long (${t.length} chars): "${t.slice(0, 40)}…"`);
   }
   if (c.scripts.length !== 20) problems.push(`${slug}: ${c.scripts.length} scripts, not 20`);
+  // What the studio has added for this client: dated, newest first, linking within the site.
+  if (c.changes !== undefined) {
+    if (!Array.isArray(c.changes)) problems.push(`${slug}: changes must be a list`);
+    else {
+      let last = "9999-99-99";
+      for (const ch of c.changes) {
+        const head = `${slug} changes: "${String(ch.text ?? "").slice(0, 40)}"`;
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(ch.date ?? "") || Number.isNaN(Date.parse(ch.date))) problems.push(`${head} has a bad date ${ch.date}`);
+        if (ch.date > last) problems.push(`${head} is out of order (newest first)`);
+        last = ch.date;
+        if (!ch.text) problems.push(`${slug} changes: an entry has no text`);
+        if (ch.href && !ch.href.startsWith("/")) problems.push(`${head} links off the site`);
+      }
+    }
+  }
   // Findings: verdicts, scores, first moves, evidence, competitors, the map
   for (const [name, r] of [["content diagnostic", c.contentDiagnostic], ["competitor intelligence", c.competitorIntelligence]]) {
     const firsts = new Map();

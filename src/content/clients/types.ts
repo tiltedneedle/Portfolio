@@ -133,6 +133,9 @@ export type Script = {
  */
 export type GuideNote = { text: string; at?: number };
 
+/** One dated addition, newest first in its list; `href` links within the site. */
+export type Change = { date: string; text: string; href?: string };
+
 export type ClientSystem = {
   identity: ClientIdentity;
   contentDiagnostic: AuditReport;
@@ -141,6 +144,8 @@ export type ClientSystem = {
   scripts: Script[];
   /** Notes inside the universal guides, keyed "chapter/slug" ("create/hooks"). */
   notes?: Record<string, GuideNote[]>;
+  /** What the studio has added for this client, newest first; home folds it into Recently added, marked "For you". */
+  changes?: Change[];
 };
 
 export function publicIdentity(i: ClientIdentity): PublicIdentity {

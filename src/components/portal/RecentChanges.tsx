@@ -1,11 +1,14 @@
 import { changes } from "@/content/system/changes";
 import { RecentList } from "@/components/portal/RecentList";
+import type { Change } from "@/content/clients/types";
 
 const show = 5;
 
 /** The latest additions to the system, so a return visit sees it growing. */
-export function RecentChanges({ slug }: { slug: string }) {
-  const latest = changes.slice(0, show);
+export function RecentChanges({ slug, mine = [] }: { slug: string; mine?: Change[] }) {
+  // The client's own additions sit with the system's, newest first; on the same day, theirs come first.
+  const merged = [...mine.map((c) => ({ ...c, own: true })), ...changes].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+  const latest = merged.slice(0, show);
   if (latest.length === 0) return null;
   return (
     <section className="border-t border-[color:var(--rule)] bg-[color:var(--stage)] py-20 md:py-28" aria-label="Recently added">

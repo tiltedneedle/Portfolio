@@ -1,9 +1,13 @@
+import type { Change } from "@/content/clients/types";
+
 /**
  * What has been added to the system, newest first. Home shows the latest
  * few, so a client who comes back sees that the system keeps growing.
  * Dates are ISO (YYYY-MM-DD); `npm run check` keeps them in order.
  */
-export const changes: { date: string; text: string; href?: string }[] = [
+export const changes: Change[] = [
+  { date: "2026-09-24", text: "Mark a script as filmed and the rail, the first month and the call sheet follow.", href: "/content/scripts" },
+  { date: "2026-09-24", text: "Every idea card can ask the studio to write it up as a script.", href: "/content/ideas" },
   { date: "2026-09-24", text: "The positioning map draws the road from where you are to where the three moves lead.", href: "/audit/competitor-intelligence" },
   { date: "2026-09-24", text: "Your first month, laid out: your scripts on every other day, then ideas from your hundred.", href: "/content/scripts" },
   { date: "2026-09-24", text: "Every script carries a storyboard, a location and who is on camera; the prompter counts you in.", href: "/content/scripts" },

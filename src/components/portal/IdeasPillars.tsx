@@ -11,6 +11,11 @@ export function IdeasPillars({ ideas, identity, scripts = [] }: { ideas: Record<
   const who = shortName(identity);
   // The script an idea became, if a written script names it.
   const became = new Map(scripts.filter((s) => s.from && s.body?.length).map((s) => [s.from!.pillar + ":" + s.from!.n, s.n]));
+  // Any idea can be asked for as a script: a mail to the studio with the idea in it.
+  const ask = (ref: string, text: string) =>
+    identity.contact.includes("@")
+      ? "mailto:" + identity.contact + "?subject=" + encodeURIComponent("Script request from " + identity.name) + "&body=" + encodeURIComponent(ref + ": " + text + "\n\nCould you write this one up as a script?")
+      : identity.contact;
   return (
     <div className="flex flex-col gap-24">
       {pillars.map((p, pi) => {
@@ -46,11 +51,15 @@ export function IdeasPillars({ ideas, identity, scripts = [] }: { ideas: Record<
                     {idea.text ? (
                       <span>
                         <p className="max-w-[18ch] text-[19px] leading-snug text-[color:var(--ink)] md:text-[21px]">{idea.text}</p>
-                        {became.has(p.id + ":" + (i + 1)) && (
+                        {became.has(p.id + ":" + (i + 1)) ? (
                           <CutLink href={"/content/scripts/" + became.get(p.id + ":" + (i + 1))} className="slate-link mt-4 inline-flex items-center gap-2 text-[color:var(--ink)]" data-cursor="Open">
                             <span className="lamp" aria-hidden="true" />
                             Script {String(became.get(p.id + ":" + (i + 1))).padStart(2, "0")} &#8599;
                           </CutLink>
+                        ) : (
+                          <a href={ask(p.title + " " + pad(i), idea.text)} className="slate-link mt-4 inline-flex text-[11px]" data-cursor="Ask">
+                            Ask for this as a script &#8599;
+                          </a>
                         )}
                       </span>
                     ) : (

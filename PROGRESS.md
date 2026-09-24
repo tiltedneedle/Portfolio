@@ -116,6 +116,11 @@ The marketing site this grew out of is on the `marketing-site` branch.
   that hour, so a client's new audit or script could not be found by its
   words until the cache lapsed.
 
+- `AGENTS.md` and `CLAUDE.md` at the repo root are written by `next dev`
+  (Next 16's agent rules block, pointing at `node_modules/next/dist/docs`).
+  They are kept committed; `agentRules: false` in next.config would stop
+  them, but the pointer is useful to any agent opening this repo.
+
 ## Done
 
 - [x] Content model, 13 universal guides, block renderer, home, nav with
@@ -158,6 +163,13 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 25: the scripts room is a production board: a script can be
+      marked filmed on this device (`useFilmed` beside `useRead` in
+      lib/read.ts), and the rail, the first month, the call sheet (which
+      now prefers an unfilmed script) and the home readout follow; a
+      client's own `changes` fold into Recently added as "For you"; every
+      idea card can ask the studio for it as a script (a mailto carrying
+      the idea, or the contact link when the contact is not an address).
 - [x] Wave 24: search reaches the client's own words (the two reports by
       heading, plus the board and the map, and every written script, with
       the palette's index URL stamped by build so a deploy is never read
@@ -286,3 +298,7 @@ The marketing site this grew out of is on the `marketing-site` branch.
 3. Awaiting from the user (do not block): nine training-video ids for the
    Create guides plus intro/outro, first real client content, images for
    `figure` blocks, a real client logo to test `--logo`.
+4. Majors available and not taken (`npm outdated`, 2026-09-24): typescript
+   7.0, @types/node 26, framer-motion 13.4. Each is its own wave with the
+   full loop; framer-motion first, since the surface used here is small
+   (motion, AnimatePresence, useReducedMotion).

@@ -1,5 +1,6 @@
 import { CutLink } from "@/components/room/CutLink";
 import type { Script } from "@/content/clients/types";
+import { FilmedMark } from "@/components/portal/FilmedMark";
 
 /**
  * Your first month. The publishing strategy says one video every other
@@ -83,7 +84,10 @@ export function FirstMonth({ scripts, ideas }: { scripts: Script[]; ideas: IdeaR
                 )}
               </span>
               {s.kind !== "open" ? (
-                <span className={"mt-3 block leading-snug " + (s.kind === "script" ? "text-[15px] text-[color:var(--ink)]" : "text-[14px] text-[color:var(--ink-soft)]")}>{s.title}</span>
+                <>
+                  <span className={"mt-3 block leading-snug " + (s.kind === "script" ? "text-[15px] text-[color:var(--ink)]" : "text-[14px] text-[color:var(--ink-soft)]")}>{s.title}</span>
+                  {s.kind === "script" && <FilmedMark n={s.n} className="mt-2" />}
+                </>
               ) : (
                 <span className="em-serif mt-3 block text-[15px] text-[color:var(--ink-mid)]">Something from the bank.</span>
               )}

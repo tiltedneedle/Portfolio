@@ -404,6 +404,10 @@ export const demo: ClientSystem = {
     },
   ]),
 
+  changes: [
+    { date: "2026-09-24", text: "Script 03 is written: open it, read it once, and roll.", href: "/content/scripts/3" },
+    { date: "2026-09-24", text: "Competitor intelligence: all eight headings written, with the board and the map.", href: "/audit/competitor-intelligence" },
+  ],
   notes: {
     "create/hooks": [
       { text: "Your first second is the aircraft door, the apron at six in the morning, or James mid-sentence. Never the logo, never a drone shot." },

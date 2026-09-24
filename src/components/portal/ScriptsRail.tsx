@@ -1,5 +1,6 @@
 import { CutLink } from "@/components/room/CutLink";
 import { Rail } from "@/components/portal/Rail";
+import { FilmedMark } from "@/components/portal/FilmedMark";
 import type { Script } from "@/content/clients/types";
 import { mmss, spokenSeconds } from "@/lib/words";
 
@@ -23,7 +24,10 @@ export function ScriptsRail({ scripts }: { scripts: Script[] }) {
               {pad(s.n)}
             </span>
             <span className="mono relative flex items-center justify-between">
-              <span>Script {pad(s.n)}</span>
+              <span className="flex items-center gap-3">
+                Script {pad(s.n)}
+                <FilmedMark n={s.n} />
+              </span>
               {s.example ? <span className="text-[color:var(--ink-mid)]">Example</span> : spoken(s) ? <span className="text-[color:var(--ink-mid)]">&asymp; {mmss(spoken(s))}</span> : null}
             </span>
             <span className="relative">

@@ -2,6 +2,7 @@
 
 import { useEffect, useSyncExternalStore } from "react";
 import { CutLink } from "@/components/room/CutLink";
+import type { Change } from "@/content/clients/types";
 
 /**
  * The recent additions, with the ones since this device's last visit
@@ -9,7 +10,7 @@ import { CutLink } from "@/components/room/CutLink";
  * marks last the whole visit and are gone on the next. A first visit marks
  * nothing: everything is new, and the section already says so.
  */
-export type Change = { date: string; text: string; href?: string };
+type Item = Change & { own?: boolean };
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const key = (slug: string) => "tn-seen:" + slug;
@@ -35,7 +36,7 @@ function lastSeen(slug: string) {
   }
 }
 
-export function RecentList({ slug, items }: { slug: string; items: Change[] }) {
+export function RecentList({ slug, items }: { slug: string; items: Item[] }) {
   const seen = useSyncExternalStore(noop, () => lastSeen(slug), () => "");
 
   useEffect(() => {
@@ -54,7 +55,7 @@ export function RecentList({ slug, items }: { slug: string; items: Change[] }) {
   }, [slug]);
 
   // Dates are days: something added on the day of the last visit may have come after it.
-  const isNew = (c: Change) => !!seen && c.date >= seen;
+  const isNew = (c: Item) => !!seen && c.date >= seen;
   const fresh = items.filter(isNew).length;
 
   return (
@@ -75,7 +76,10 @@ export function RecentList({ slug, items }: { slug: string; items: Change[] }) {
                 {printed(c.date)}
                 {mark && <span className="sr-only">, new since your last visit</span>}
               </span>
-              <span className="text-[17px] leading-snug text-[color:var(--ink)]">{c.text}</span>
+              <span className="text-[17px] leading-snug text-[color:var(--ink)]">
+                {c.own && <span className="mono mr-3 inline-block border border-[color:var(--rule-strong)] px-2 py-0.5 align-middle text-[11px] text-[color:var(--ink)]">For you</span>}
+                {c.text}
+              </span>
               {c.href ? (
                 <CutLink href={c.href} className="slate-link" data-cursor="Cut">
                   Open &#8599;

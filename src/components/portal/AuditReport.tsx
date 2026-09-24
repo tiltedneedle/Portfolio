@@ -264,9 +264,10 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
             <h2 className="display mt-3 text-[clamp(36px,4.6vw,72px)]">
               {moves.length === 1 ? "One move" : moves.length === 2 ? "Two moves" : "Three moves"}, <span className="em-serif">in order.</span>
             </h2>
-            <ol className="mt-10 grid gap-8 md:grid-cols-3 md:gap-10">
-              {moves.map((m, i) => (
-                <li key={m.title} className="border-t border-[color:var(--rule-strong)] pt-5">
+            <Reveal>
+              <ol className="mt-10 grid gap-8 md:grid-cols-3 md:gap-10">
+                {moves.map((m, i) => (
+                  <li key={m.title} className="beat border-t border-[color:var(--rule-strong)] pt-5" style={{ ["--i" as string]: i }}>
                   <p className="mono flex items-center justify-between">
                     <span>Move {m.first}</span>
                     <a href={"#a-" + pad(sections.indexOf(m))} className="slate-link text-[12px]">
@@ -284,7 +285,8 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
                   {i === moves.length - 1 && <p className="mono mt-5 text-[color:var(--ink-mid)]">Everything else can wait.</p>}
                 </li>
               ))}
-            </ol>
+              </ol>
+            </Reveal>
           </div>
         </section>
       )}

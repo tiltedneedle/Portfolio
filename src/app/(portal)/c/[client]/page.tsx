@@ -74,7 +74,12 @@ export default async function Home({ params }: { params: Promise<{ client: strin
   // The call sheet draws from what is written.
   const weekIdeas = pillars.flatMap((p) => sys.ideas[p.id].map((idea, i) => ({ pillar: p.title, n: i + 1, text: idea.text, k: p.id + ":" + (i + 1) })).filter((x) => x.text));
   const weekScripts = sys.scripts.filter((s) => s.body?.length).map((s) => ({ n: s.n, title: s.title }));
-  const weekGuides = guides.map((g) => ({ href: pageHref(g.chapter, g.slug), title: g.title, chapter: chapter(g.chapter).title }));
+  const weekGuides = guides.map((g) => ({
+    href: pageHref(g.chapter, g.slug),
+    title: g.title,
+    chapter: chapter(g.chapter).title,
+    sections: g.sections.map((s, i) => ({ id: "s-" + String(i + 1).padStart(2, "0"), n: s.n, title: s.title })),
+  }));
 
   return (
     <>

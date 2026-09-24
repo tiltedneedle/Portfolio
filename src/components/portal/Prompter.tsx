@@ -21,6 +21,7 @@ export function Prompter({ title, hook, body, cta, spoken }: Props) {
   const [size, setSize] = useState(44);
   const [mirror, setMirror] = useState(false);
   const scroller = useRef<HTMLDivElement>(null);
+  const bar = useRef<HTMLDivElement>(null);
   const tc = useRef<HTMLSpanElement>(null);
   const elapsed = useRef(0);
   const box = useRef<HTMLDivElement>(null);
@@ -38,6 +39,25 @@ export function Prompter({ title, hook, body, cta, spoken }: Props) {
     setCount(null);
   }, []);
 
+  // The progress line along the foot of the HUD: how far through the words.
+  const paint = useCallback(() => {
+    const el = scroller.current;
+    if (!el || !bar.current) return;
+    const max = el.scrollHeight - el.clientHeight;
+    bar.current.style.transform = "scaleX(" + (max > 0 ? Math.min(1, el.scrollTop / max) : 0) + ")";
+  }, []);
+
+  // A hand on the wheel, or a rewind, moves the line too: a native listener,
+  // since the scroller only exists while the prompter is open.
+  useEffect(() => {
+    if (!open) return;
+    const el = scroller.current;
+    if (!el) return;
+    el.addEventListener("scroll", paint, { passive: true });
+    paint();
+    return () => el.removeEventListener("scroll", paint);
+  }, [open, paint]);
+
   // The scroll loop: position advances by speed × dt while playing.
   useEffect(() => {
     if (!open || !playing) return;
@@ -49,6 +69,7 @@ export function Prompter({ title, hook, body, cta, spoken }: Props) {
       const el = scroller.current;
       if (el) {
         el.scrollTop += speed * dt;
+        paint();
         elapsed.current += dt;
         if (tc.current) tc.current.textContent = timecode(elapsed.current);
         if (el.scrollTop + el.clientHeight >= el.scrollHeight - 1) setPlaying(false);
@@ -57,7 +78,7 @@ export function Prompter({ title, hook, body, cta, spoken }: Props) {
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [open, playing, speed]);
+  }, [open, playing, speed, paint]);
 
   const rewind = useCallback(() => {
     stopCount();
@@ -142,7 +163,8 @@ export function Prompter({ title, hook, body, cta, spoken }: Props) {
       {open && (
         <div ref={box} className="fixed inset-0 z-[95] flex flex-col bg-black text-[color:var(--ink)]" role="dialog" aria-modal="true" aria-label="Prompter">
           {/* HUD */}
-          <div className="mono flex items-center justify-between border-b border-[color:var(--rule)] px-5 py-3 md:px-8">
+          <div className="mono relative flex items-center justify-between border-b border-[color:var(--rule)] px-5 py-3 md:px-8">
+            <div ref={bar} aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[2px] origin-left bg-[color:var(--ink)]" style={{ transform: "scaleX(0)" }} />
             <span className="flex items-center gap-2">
               <span className={playing || count !== null ? "lamp" : "lamp-off"} aria-hidden="true" />
               {playing ? "Rolling" : count !== null ? "Ready" : "Standby"}

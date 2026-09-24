@@ -170,6 +170,14 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 31: the prompter draws a progress line along the foot of its
+      HUD (painted by the roll loop and a native scroll listener, since
+      the scroller only exists while it is open); the guide rail remembers
+      the guide left mid-way (`tn-last:<slug>` = "chapter/slug\nsection")
+      and the call sheet's Read cell offers to pick it up at that section
+      until the guide is marked read; the three first moves land in beats
+      once their section is in view (Reveal + `.beat`, off under reduced
+      motion and in print).
 - [x] Wave 30: after a cut, focus starts at the top of the new scene:
       `main` is focusable (tabIndex -1, no outline) and CutOverlay focuses
       it once the frame lifts, never for a hash target, so a keyboard or

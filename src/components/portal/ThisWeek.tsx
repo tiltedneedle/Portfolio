@@ -5,6 +5,7 @@ import { CutLink } from "@/components/room/CutLink";
 import { weekOf } from "@/lib/week";
 import { useClient } from "@/components/portal/ClientContext";
 import { useFilmed, usePinned, useRead } from "@/lib/read";
+import { lastKey } from "@/components/portal/Resume";
 
 /**
  * The call sheet for this week. One idea to film, one script to say, one
@@ -16,7 +17,7 @@ import { useFilmed, usePinned, useRead } from "@/lib/read";
  */
 type Idea = { pillar: string; n: number; text: string; k?: string };
 type ScriptRef = { n: number; title: string };
-type GuideRef = { href: string; title: string; chapter: string };
+type GuideRef = { href: string; title: string; chapter: string; sections?: { id: string; n?: string; title: string }[] };
 
 const noop = () => () => {};
 
@@ -29,6 +30,21 @@ export function ThisWeek({ ideas, scripts, guides }: { ideas: Idea[]; scripts: S
   const { read } = useRead(me.slug);
   const { filmed } = useFilmed(me.slug);
   const { pinned } = usePinned(me.slug);
+  // A guide left mid-way on this device comes first: pick up where you left off.
+  const lastRaw = useSyncExternalStore(
+    noop,
+    () => {
+      try {
+        return localStorage.getItem(lastKey(me.slug)) ?? "";
+      } catch {
+        return "";
+      }
+    },
+    () => ""
+  );
+  const [lastK, lastId] = lastRaw.split("\n");
+  const left = lastK && !read.has(lastK) ? guides.find((g) => g.href.slice(1) === lastK) : undefined;
+  const leftAt = left?.sections?.find((s) => s.id === lastId);
   // The guide to read is the first one not yet read on this device, in the
   // system's order, starting from this week's place in it; once everything
   // is read, the rotation carries on.
@@ -49,7 +65,9 @@ export function ThisWeek({ ideas, scripts, guides }: { ideas: Idea[]; scripts: S
     script
       ? { label: "Say", title: script.title, line: "Script " + String(script.n).padStart(2, "0"), href: "/content/scripts/" + script.n, cta: "Open the script" }
       : { label: "Say", title: "A script from your twenty", line: "Once the scripts are written", href: "/content/scripts", cta: "Scripts" },
-    guide
+    left && leftAt
+      ? { label: "Read", title: left.title, line: "Pick up at " + (leftAt.n ? leftAt.n + " " : "") + leftAt.title, href: left.href + "#" + leftAt.id, cta: "Where you left off" }
+      : guide
       ? { label: "Read", title: guide.title, line: guide.chapter, href: guide.href, cta: "Open the guide" }
       : { label: "Read", title: "One guide", line: "Create, publish, analyse", href: "/create", cta: "Create" },
     w?.monthEnd

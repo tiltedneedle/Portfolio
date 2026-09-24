@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useClient } from "@/components/portal/ClientContext";
-import { positionKey } from "@/components/portal/Resume";
+import { lastKey, positionKey } from "@/components/portal/Resume";
 
 /**
  * The rail beside a guide: every section, with the lamp on the one being
@@ -46,6 +46,7 @@ export function GuideRail({ items, minutes = 0, k }: { items: { id: string; n?: 
         lastSaved = best.id;
         try {
           localStorage.setItem(positionKey(me.slug, k), best.id);
+          localStorage.setItem(lastKey(me.slug), k + "\n" + best.id);
         } catch {
           // no storage, no memory: fine
         }

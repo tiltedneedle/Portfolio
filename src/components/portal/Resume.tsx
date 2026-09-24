@@ -12,6 +12,8 @@ import { useRead } from "@/lib/read";
  */
 const noop = () => () => {};
 export const positionKey = (client: string, k: string) => "tn-pos:" + client + ":" + k;
+/** The guide last left mid-way on this device, as "chapter/slug\nsection-id"; the call sheet offers to pick it up. */
+export const lastKey = (client: string) => "tn-last:" + client;
 
 export function Resume({ k, items }: { k: string; items: { id: string; n?: string; title: string }[] }) {
   const me = useClient();

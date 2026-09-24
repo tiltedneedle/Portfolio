@@ -82,7 +82,8 @@ function Finding({ s, i, who }: { s: AuditSection; i: number; who: string }) {
   ].filter((c): c is NonNullable<typeof c> => !!c);
   return (
     <section id={"a-" + pad(i)} className="group/section grid scroll-mt-28 gap-x-8 border-t border-[color:var(--rule)] py-12 md:grid-cols-[96px_1fr] md:py-16">
-      <span className="numeral mb-4 text-[56px] md:mb-0 md:text-[72px]">{pad(i)}</span>
+      <span className="numeral mb-4 text-[56px] md:mb-0 md:text-[72px]" data-n={pad(i)} aria-hidden="true" />
+      <span className="sr-only">Heading {pad(i)}</span>
       <div className="min-w-0">
         <div className="mb-8 flex flex-wrap items-start justify-between gap-x-8 gap-y-4">
           <div className="flex flex-wrap items-baseline gap-x-3">
@@ -195,7 +196,7 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
         <p className="em-serif mt-6 max-w-[40ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">{report.intro}</p>
 
         <div className="mt-12 grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
-          <div>
+          <div className="min-w-0">
             <p className="mono">
               {sections.length} headings <span className="text-[color:var(--ink-mid)]">/</span> {written.length} written
             </p>
@@ -222,11 +223,11 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
             </ol>
             {scored.length > 1 && (
               // The shape of the account: one bar per scored heading, in order.
-              <ol className="mt-4 flex h-10 items-end gap-1.5" aria-label="Scores by heading">
+              <ol className="mt-4 flex h-10 max-w-full items-end gap-1.5" aria-label="Scores by heading">
                 {sections.map((s, i) => {
                   const v = typeof s.score === "number" && s.body?.length ? s.score : null;
                   return (
-                    <li key={s.title} className="flex h-full w-11 items-end" title={s.title + (v === null ? ": not scored" : ": " + v + " of 10")}>
+                    <li key={s.title} className="flex h-full min-w-0 flex-1 items-end md:flex-none md:w-11" title={s.title + (v === null ? ": not scored" : ": " + v + " of 10")}>
                       <span
                         aria-hidden="true"
                         className={"desk-bar block w-full " + (v === null ? "border-t border-dashed border-[color:var(--rule-strong)]" : s.verdict === "weak" ? "bg-[color:var(--tally)]" : s.verdict === "strong" ? "bg-[color:var(--ink)]" : "bg-[color:var(--ink-mid)]")}

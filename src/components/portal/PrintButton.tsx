@@ -1,10 +1,10 @@
 "use client";
 
-/** Prints the page. The print stylesheet keeps only the script itself. */
-export function PrintButton() {
+/** Prints the page. The print stylesheet keeps only what belongs on paper. */
+export function PrintButton({ label = "Print" }: { label?: string }) {
   return (
     <button type="button" onClick={() => window.print()} className="slate-link text-[13px]" data-cursor="Print">
-      Print
+      {label}
     </button>
   );
 }

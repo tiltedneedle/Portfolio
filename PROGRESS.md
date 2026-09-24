@@ -163,6 +163,16 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 27: the phone pass (390px, every room, axe with WCAG 2.2 AA):
+      the audit's score strip shares the width instead of pushing the page
+      to 668px (a grid item needs min-w-0 or it grows with its contents),
+      a long client name wraps in the welcome, the script card's header
+      holds on a narrow card, slate links get a taller hit area on coarse
+      pointers; numerals are drawn by CSS from `data-n` (`.numeral::before`)
+      so a faint watermark is never text an audit weighs, with sr-only
+      numbers where a section's number matters; axe is clean everywhere
+      with no filter. The first month prints ("Print the month"; the deal
+      card stays off paper).
 - [x] Wave 26: motion with meaning: the map's road draws itself once the
       map is in view (an SVG mask sweeps the dashed line, then the ring
       and its label), the audit desk powers up on the cut (lamps in
@@ -301,9 +311,6 @@ The marketing site this grew out of is on the `marketing-site` branch.
 1. Audit report: a "what to do first" summary block type when the client's
    findings are written (needs the first real client to shape it; do not
    invent findings).
-2. A `.numeral` watermark is still flagged by axe as low-contrast text; it
-   is decorative and aria-hidden. Consider rendering numerals as SVG if a
-   clean axe report is ever required.
 3. Awaiting from the user (do not block): nine training-video ids for the
    Create guides plus intro/outro, first real client content, images for
    `figure` blocks, a real client logo to test `--logo`.

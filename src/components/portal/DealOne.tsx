@@ -45,7 +45,7 @@ export function DealOne({
   };
 
   return (
-    <div className="grid gap-8 border-y border-[color:var(--rule)] py-10 md:grid-cols-[1fr_minmax(0,520px)] md:items-center md:gap-16">
+    <div className="no-print grid gap-8 border-y border-[color:var(--rule)] py-10 md:grid-cols-[1fr_minmax(0,520px)] md:items-center md:gap-16">
       <div>
         <p className="mono">{kicker}</p>
         <h2 className="display mt-3 text-[clamp(36px,4.6vw,72px)]">{heading}</h2>
@@ -68,9 +68,7 @@ export function DealOne({
               className="absolute inset-0 flex flex-col justify-between overflow-hidden border border-[color:var(--rule-strong)] bg-[color:var(--stage-2)] p-6"
               style={{ transformPerspective: 900 }}
             >
-              <span aria-hidden="true" className="numeral pointer-events-none absolute -right-1 bottom-2 text-[120px] opacity-50">
-                {String(dealt.n).padStart(2, "0")}
-              </span>
+              <span aria-hidden="true" className="numeral pointer-events-none absolute -right-1 bottom-2 text-[120px] opacity-50" data-n={String(dealt.n).padStart(2, "0")} />
               <p className="mono relative flex items-center justify-between">
                 <span>
                   {dealt.pillar} {String(dealt.n).padStart(2, "0")}

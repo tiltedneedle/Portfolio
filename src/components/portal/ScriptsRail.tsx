@@ -14,21 +14,23 @@ export function ScriptsRail({ scripts }: { scripts: Script[] }) {
   return (
     <Rail count={scripts.length} label={written + " of " + scripts.length + " written"}>
       {scripts.map((s) => (
-        <li key={s.n} className="w-[min(224px,72vw)] md:w-[256px]">
+        <li key={s.n} className={"w-[min(224px,72vw)] md:w-[256px]" + (s.body?.length ? "" : " slot-empty")}>
           <CutLink
             href={"/content/scripts/" + s.n}
             data-cursor="Open"
             className="group relative flex aspect-[3/4] w-full flex-col justify-between overflow-hidden border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-5 transition-colors duration-300 hover:border-[color:var(--rule-strong)] md:p-6"
           >
-            <span aria-hidden="true" className="numeral pointer-events-none absolute -right-1 top-8 text-[120px] opacity-50">
-              {pad(s.n)}
-            </span>
-            <span className="mono relative flex items-center justify-between">
-              <span className="flex items-center gap-3">
-                Script {pad(s.n)}
-                <FilmedMark n={s.n} />
+            <span aria-hidden="true" className="numeral pointer-events-none absolute -right-1 top-8 text-[120px] opacity-50" data-n={pad(s.n)} />
+            <span className="relative flex flex-col gap-2">
+              <span className="mono flex items-center justify-between gap-3">
+                <span className="whitespace-nowrap">Script {pad(s.n)}</span>
+                {s.example ? (
+                  <span className="shrink-0 text-[color:var(--ink-mid)]">Example</span>
+                ) : spoken(s) ? (
+                  <span className="shrink-0 whitespace-nowrap text-[color:var(--ink-mid)]">&asymp; {mmss(spoken(s))}</span>
+                ) : null}
               </span>
-              {s.example ? <span className="text-[color:var(--ink-mid)]">Example</span> : spoken(s) ? <span className="text-[color:var(--ink-mid)]">&asymp; {mmss(spoken(s))}</span> : null}
+              <FilmedMark n={s.n} />
             </span>
             <span className="relative">
               {s.title ? (

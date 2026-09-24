@@ -103,9 +103,7 @@ export function AccessStrip({ counts = {}, readKeys = {} }: { counts?: Record<st
                   (active === i && !mobile ? "border-[color:var(--rule-strong)]" : "border-[color:var(--rule)] hover:border-[color:var(--rule-strong)]")
                 }
               >
-                <span aria-hidden="true" className="numeral pointer-events-none absolute -right-2 top-1/2 -translate-y-1/2 text-[200px] opacity-50 md:text-[240px]">
-                  {it.n}
-                </span>
+                <span aria-hidden="true" className="numeral pointer-events-none absolute -right-2 top-1/2 -translate-y-1/2 text-[200px] opacity-50 md:text-[240px]" data-n={it.n} />
                 <span className="mono relative flex items-center justify-between">
                   <span>{it.n}</span>
                   {it.personalised ? (

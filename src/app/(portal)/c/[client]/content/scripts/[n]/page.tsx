@@ -140,9 +140,7 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
             <ol className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4">
               {s.shots.map((shot, i) => (
                 <li key={shot} className="relative flex aspect-[9/16] flex-col justify-between overflow-hidden border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-4">
-                  <span aria-hidden="true" className="numeral pointer-events-none absolute -right-1 top-6 text-[112px] opacity-40">
-                    {pad(i + 1)}
-                  </span>
+                  <span aria-hidden="true" className="numeral pointer-events-none absolute -right-1 top-6 text-[112px] opacity-40" data-n={pad(i + 1)} />
                   <span className="mono relative flex items-center justify-between">
                     <span>{pad(i + 1)}</span>
                     <span className="text-[color:var(--ink-mid)]">{i === 0 ? "Open" : i === s.shots!.length - 1 ? "Close" : "Shot"}</span>

@@ -1,6 +1,7 @@
 import { CutLink } from "@/components/room/CutLink";
 import type { Script } from "@/content/clients/types";
 import { FilmedMark } from "@/components/portal/FilmedMark";
+import { PrintButton } from "@/components/portal/PrintButton";
 
 /**
  * Your first month. The publishing strategy says one video every other
@@ -51,10 +52,13 @@ export function FirstMonth({ scripts, ideas }: { scripts: Script[]; ideas: IdeaR
             posts, the bank the strategy asks for.
           </p>
         </div>
-        <p className="mono flex flex-wrap gap-x-6 gap-y-1">
+        <p className="mono flex flex-wrap items-baseline gap-x-6 gap-y-1">
           <span className="text-[color:var(--ink)]">{written.length} scripts</span>
           <span>{filled - written.length} ideas</span>
           <span className="text-[color:var(--ink-mid)]">{postingDays.length - filled} open</span>
+          <span className="no-print">
+            <PrintButton label="Print the month" />
+          </span>
         </p>
       </div>
 

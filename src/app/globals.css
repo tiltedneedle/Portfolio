@@ -372,6 +372,12 @@ body {
 .slate-link:hover {
   color: var(--ink);
 }
+/* On a touch screen the hit area grows without moving the line. */
+@media (pointer: coarse) {
+  .slate-link {
+    padding-block: 7px;
+  }
+}
 
 /* ============================================================== media wells */
 
@@ -688,6 +694,9 @@ a:focus-visible > .wm {
   max-width: 62ch;
 }
 
+/* A numeral is a watermark: faint by design, drawn by CSS from data-n so
+   it is never text an accessibility audit has to weigh. The one place a
+   number matters (a section's) also carries it as sr-only text. */
 .numeral {
   font-family: var(--font-display-face), "Arial Narrow", Impact, sans-serif;
   font-weight: 800;
@@ -695,6 +704,10 @@ a:focus-visible > .wm {
   letter-spacing: 0.01em;
   color: var(--ink-faint);
   font-variant-numeric: tabular-nums;
+  user-select: none;
+}
+.numeral::before {
+  content: attr(data-n);
 }
 
 .tag {
@@ -1101,6 +1114,14 @@ a:focus-visible > .wm {
   }
   .rail > li .numeral {
     display: none;
+  }
+  /* A slot with nothing in it yet has no place on paper, and a card need not keep its screen proportions. */
+  .rail > li.slot-empty {
+    display: none;
+  }
+  .rail > li > a {
+    aspect-ratio: auto !important;
+    min-height: 0 !important;
   }
   .ideas-page .display {
     font-size: 28px !important;

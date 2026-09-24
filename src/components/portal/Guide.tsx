@@ -87,7 +87,10 @@ export function Guide({ guide, notes = [], who = "" }: { guide: GuideT; notes?: 
             >
               <div className="mb-4 md:mb-0">
                 {s.n ? (
-                  <span className="numeral text-[56px] md:text-[72px]">{s.n}</span>
+                  <>
+                    <span className="numeral text-[56px] md:text-[72px]" data-n={s.n} aria-hidden="true" />
+                    <span className="sr-only">Section {s.n}</span>
+                  </>
                 ) : (
                   <span aria-hidden="true" className="mono text-[color:var(--ink-mid)]">
                     &mdash;

@@ -34,9 +34,7 @@ export function IdeasPillars({ ideas, identity, scripts = [] }: { ideas: Record<
                   key={i}
                   className="relative aspect-[4/5] w-[min(248px,78vw)] overflow-hidden border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-5 md:w-[292px] md:p-6"
                 >
-                  <span aria-hidden="true" className="numeral pointer-events-none absolute -right-1 bottom-2 text-[120px] opacity-50">
-                    {pad(i)}
-                  </span>
+                  <span aria-hidden="true" className="numeral pointer-events-none absolute -right-1 bottom-2 text-[120px] opacity-50" data-n={pad(i)} />
                   <div className="relative flex h-full flex-col justify-between">
                     <p className="mono flex items-center justify-between">
                       <span>

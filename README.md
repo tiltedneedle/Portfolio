@@ -212,8 +212,11 @@ Display, Instrument Sans, Instrument Serif italic, JetBrains Mono, all
 vendored, all SIL OFL), tally red used only for state. Rules: display type
 is condensed and uppercase with one word dropped to the serif italic; labels
 are mono; corners are square or pill; nothing floats. Route changes are
-black-frame cuts; fine pointers get a playhead cursor. Scripts print black
-on white with the room left out.
+black-frame cuts; fine pointers get a playhead cursor. Motion carries
+meaning or it is not there: the audit desk powers up on the cut, the
+positioning map's road draws itself once in view, a mark set by hand pops;
+all of it is CSS, off under reduced motion. Scripts and the first month
+print black on white with the room left out.
 
 Security headers, including a narrow content security policy, are in
 `next.config.ts`. Anything that loads from a new host must be added there.

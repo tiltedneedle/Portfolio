@@ -91,7 +91,7 @@ export default async function Home({ params }: { params: Promise<{ client: strin
           <h1 className="display mt-10 max-w-[15ch] text-[clamp(56px,10vw,168px)] leading-[0.86]">
             Tilted Needle
             <br />
-            <span className="whitespace-nowrap">
+            <span className="md:whitespace-nowrap">
               <span className="em-serif text-[0.7em] text-[color:var(--ink-mid)]">&times;</span> {identity.name}
             </span>
           </h1>

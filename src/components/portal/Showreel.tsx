@@ -32,14 +32,19 @@ export function Showreel() {
         </div>
         <div className="mt-10">
           <Rail count={reel.length} label={viewsLabel(total) + " views"}>
-            {reel.map((r) => (
+            {reel.map((r) => {
+              // A restricted film opens on the platform; the rest play here.
+              const Card = r.restricted ? "a" : "button";
+              const cardProps = r.restricted
+                ? { href: r.url, target: "_blank", rel: "noopener noreferrer" }
+                : { type: "button" as const, onClick: () => setOpen(r) };
+              return (
               <li key={r.id} className="w-[min(220px,68vw)] md:w-[248px]">
-                <button
-                  type="button"
-                  onClick={() => setOpen(r)}
+                <Card
+                  {...cardProps}
                   className="group block w-full text-left"
-                  aria-label={"Play " + r.client + ": " + r.title + ", " + viewsLabel(r.views) + " views on " + PLATFORM[r.platform]}
-                  data-cursor="Play"
+                  aria-label={(r.restricted ? "Watch on " + PLATFORM[r.platform] + ": " : "Play ") + r.client + ": " + r.title + ", " + viewsLabel(r.views) + " views on " + PLATFORM[r.platform]}
+                  data-cursor={r.restricted ? "Open" : "Play"}
                 >
                   <span className="well block border border-[color:var(--rule)] transition-colors duration-300 group-hover:border-[color:var(--rule-strong)]">
                     <Still src={r.thumb} className="absolute inset-0 h-full w-full object-cover" />
@@ -48,17 +53,19 @@ export function Showreel() {
                       <span className="display text-[36px] leading-none text-[color:var(--ink)]">{viewsLabel(r.views)}</span>
                       <span className="mono flex items-center gap-2 pb-1 text-[color:var(--ink)]">
                         <span className="lamp-off" aria-hidden="true" />
-                        Play
+                        {r.restricted ? "Watch on " + PLATFORM[r.platform] : "Play"}
                       </span>
                     </span>
                   </span>
                   <span className="mt-3 block text-[15px] leading-snug text-[color:var(--ink)]">{r.client}</span>
                   <span className="mono mt-1 block text-[10px]">
                     {PLATFORM[r.platform]} &middot; @{r.handle}
+                    {r.restricted && <span className="text-[color:var(--ink-mid)]"> &middot; opens on {PLATFORM[r.platform]}</span>}
                   </span>
-                </button>
+                </Card>
               </li>
-            ))}
+              );
+            })}
           </Rail>
         </div>
       </div>

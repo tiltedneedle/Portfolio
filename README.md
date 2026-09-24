@@ -215,8 +215,11 @@ name a reel id. The films play in the platforms' own embedded players
 (`tiktok.com/embed/v2/<id>`, since TikTok's newer player answers
 "unavailable" for these films, and `instagram.com/reel/<code>/embed/`),
 both allowed by the CSP; the stills are served from `public/clips/`,
-which the proxy leaves alone. `npm run check` refuses a reel entry
-without a still.
+which the proxy leaves alone. A film TikTok restricts by content
+classification (no embed, no oEmbed, a login wall) is carried with
+`restricted: true`: its card shows the still and the count and opens on
+TikTok, and it may not be used as a clip. `npm run check` refuses a reel
+entry without a still.
 
 ## The design system
 

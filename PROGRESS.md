@@ -201,6 +201,18 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 35: the ninth film found. TikTok's own status for Laser Eye
+      Clinic London's 7276573223955729696 is 10249 "content classification
+      unavailable": the film exists (posted 2023-09-08, 116s, 16,505,902
+      plays, 1.21M likes) but a surgery close-up is kept from logged-out
+      viewers and from every embed, oEmbed and the profile's first page
+      alike, and no search engine indexes it. A public metadata API
+      (tikwm.com) still answers with its stats and an HD copy; the still is
+      a 1080x1920 frame taken in the browser at one second (Playwright's
+      bundled ffmpeg has no mp4 demuxer or h264 decoder). The reel gains
+      `restricted: true`: such a card shows the still and the count and
+      opens on TikTok in a new tab instead of the lightbox, and the
+      validator refuses it as a clip. Nine films, 134.6 million views.
 - [x] Wave 34: the showreel. The user sent nine client videos with their
       views; eight are in `src/content/system/reel.ts` (TikTok x5,
       Instagram x3, 118 million views), stills cached under public/clips
@@ -414,9 +426,8 @@ The marketing site this grew out of is on the `marketing-site` branch.
    only if a real client reports slow first loads.
 1. Awaiting from the user (do not block): nine training-video ids for the
    Create guides plus intro/outro (the nine client videos that arrived are
-   the showreel, not these), a working link or a still for the Laser Eye
-   Clinic film, first real client content, images for `figure` blocks, a
-   real client logo to test `--logo`.
+   the showreel, not these), first real client content, images for
+   `figure` blocks, a real client logo to test `--logo`.
 2. Majors available and not taken (`npm outdated`, 2026-09-24): typescript
    7.0 and @types/node 26. Each is its own wave with the full loop.
    framer-motion 13 was taken in wave 29. vitest 4/5 stays blocked by the

@@ -10,7 +10,8 @@ import { ClipRailClient } from "@/components/portal/ClipRailClient";
 export function ClipRail({ title, note, items }: { title?: string; note?: string; items: { id: string; caption?: string }[] }) {
   const clips = items.map((it) => {
     const r = reelById(it.id);
-    if (r) return { id: it.id, title: r.client + ": " + r.title, caption: it.caption, thumb: r.thumb, handle: r.handle, src: embedFor(r), platform: r.platform };
+    // A restricted film cannot play in the lightbox; it is not offered as a clip.
+    if (r && !r.restricted) return { id: it.id, title: r.client + ": " + r.title, caption: it.caption, thumb: r.thumb, handle: r.handle, src: embedFor(r), platform: r.platform };
     const found = published.find((p) => p.videoId === it.id);
     return {
       id: it.id,

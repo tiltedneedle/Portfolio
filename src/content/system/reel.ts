@@ -19,6 +19,12 @@ export type Reel = {
   /** A still under public/. */
   thumb: string;
   views: number;
+  /**
+   * TikTok's "content classification" keeps some films from logged-out
+   * viewers and from every embed (a surgery close-up, say). Such a film is
+   * shown with its still and count and opens on TikTok itself.
+   */
+  restricted?: boolean;
 };
 
 export const PLATFORM: Record<Reel["platform"], string> = { tiktok: "TikTok", instagram: "Instagram" };
@@ -57,10 +63,21 @@ export const reel: Reel[] = [
     thumb: "/clips/tiktok-7258611035152616731.jpg",
     views: 21_400_000,
   },
-  // Laser Eye Clinic London (16M, tiktok 7276573223955729696) is not here:
-  // TikTok answers "video currently unavailable" for it, from this side of
-  // the world at least, and its oEmbed comes back empty. Add it once a link
-  // that plays, or a still, arrives.
+  {
+    id: "lec-close-up",
+    client: "Laser Eye Clinic London",
+    handle: "lasereyeclinicldn1",
+    platform: "tiktok",
+    videoId: "7276573223955729696",
+    url: "https://www.tiktok.com/@lasereyeclinicldn1/video/7276573223955729696",
+    title: "Laser eye surgery, close up",
+    thumb: "/clips/tiktok-7276573223955729696.jpg",
+    // 16,505,902 plays on 2026-09-24. TikTok classifies the film as restricted
+    // (statusCode 10249, "content classification unavailable"): no embed, no
+    // oEmbed, a login wall for logged-out viewers. It opens on TikTok.
+    views: 16_505_902,
+    restricted: true,
+  },
   {
     id: "rastah-bieber",
     client: "Rastah",

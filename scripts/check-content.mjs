@@ -238,6 +238,7 @@ for (const g of guides) {
   const walkBlocks = (blocks, where) => {
     for (const b of blocks) {
       if (b.kind === "clips") for (const it of b.items) if (!ids.has(it.id)) warn.push(`guide ${key} ${where}: clip ${it.id} is not in published.json (will use YouTube's still)`);
+      if (b.kind === "clips") for (const it of b.items) if (reel.some((r) => r.id === it.id && r.restricted)) problems.push(`guide ${key} ${where}: clip ${it.id} is a restricted film and cannot play in the lightbox`);
       if (b.kind === "sub") walkBlocks(b.blocks, where + " > " + b.title);
       if (b.kind === "list" && b.items.length === 0) problems.push(`guide ${key} ${where}: empty list`);
       if ((b.kind === "fan" && b.to.length < 2) || (b.kind === "flow" && b.steps.length < 2) || (b.kind === "cycle" && b.items.length < 3)) problems.push(`guide ${key} ${where}: ${b.kind} needs more entries`);

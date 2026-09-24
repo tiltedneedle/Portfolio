@@ -139,6 +139,13 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 16: proxy path maps in lib/room-paths.ts, tested; global keys
+      stay quiet while the prompter or the lightbox is open (verified: `]`
+      no longer cuts away from under the prompter); GitHub Actions runs
+      tests, check, lint, build and both smoke suites on every push (Node
+      22, .nvmrc); lucide-react (unused) removed, eslint-config-next
+      matched to Next, type packages updated; the whole repo lints clean.
+      38 tests.
 - [x] Wave 15: the prompter counts in (3, 2, 1) from the top before it
       rolls, and only from the top (resume is immediate; Space during the
       count cancels it); a link-preview image, the slate of a private

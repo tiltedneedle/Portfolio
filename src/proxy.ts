@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { COOKIE, PRESENCE, portalSecret, verify } from "@/lib/session";
 import { TEMPLATE_SLUG } from "@/content/clients/slugs";
+import { cleanPath, isRoomPath, roomPath } from "@/lib/room-paths";
 
 /**
  * Every clean URL is served from one client's pre-rendered tree.
@@ -17,8 +18,8 @@ export async function proxy(request: NextRequest) {
   const url = request.nextUrl.clone();
   const path = url.pathname;
 
-  if (path === "/c" || path.startsWith("/c/")) {
-    url.pathname = path.replace(/^\/c(\/[^/]+)?/, "") || "/";
+  if (isRoomPath(path)) {
+    url.pathname = cleanPath(path);
     return NextResponse.redirect(url);
   }
 
@@ -38,7 +39,7 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  url.pathname = "/c/" + slug + (path === "/" ? "" : path);
+  url.pathname = roomPath(path, slug);
   return NextResponse.rewrite(url);
 }
 

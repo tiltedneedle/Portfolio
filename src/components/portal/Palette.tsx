@@ -29,6 +29,11 @@ type Hit = { href: string; title: string; kicker: string; n: string; section?: b
 
 const KEYS = "⌘K";
 
+/** The prompter or the lightbox is up: their keys are theirs. */
+function otherDialogOpen() {
+  return !!document.querySelector('[role="dialog"][aria-modal="true"]:not([aria-label="Contents"]):not([aria-label="Keys"])');
+}
+
 function isTyping(e: KeyboardEvent) {
   const t = e.target as HTMLElement | null;
   if (!t) return false;
@@ -111,6 +116,7 @@ export function Palette({ items }: { items: PaletteItem[] }) {
 
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
+      if (otherDialogOpen()) return;
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
         if (open) setOpen(false);

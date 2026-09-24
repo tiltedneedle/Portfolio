@@ -1,0 +1,62 @@
+# Every push and pull request runs the same verification loop that runs on
+# the desktop: unit tests, the content validator, lint, a production build,
+# and the smoke suite against `next start` in both modes (open door, and
+# gated with a throwaway secret).
+name: Verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Content
+        run: npm run check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Smoke, open door
+        run: |
+          npx next start -p 3400 > open.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf -o /dev/null http://localhost:3400/ && break; sleep 1; done
+          npm run smoke -- http://localhost:3400
+          kill %1 || true
+
+      - name: Smoke, gated
+        env:
+          PORTAL_SECRET: ci-only-secret-not-for-production
+        run: |
+          npx next start -p 3401 > gated.log 2>&1 &
+          for i in $(seq 1 30); do curl -sf -o /dev/null http://localhost:3401/login && break; sleep 1; done
+          npm run smoke -- http://localhost:3401 --gated
+          kill %1 || true
+
+      - name: Server logs on failure
+        if: failure()
+        run: |
+          echo "--- open"; cat open.log 2>/dev/null || true
+          echo "--- gated"; cat gated.log 2>/dev/null || true

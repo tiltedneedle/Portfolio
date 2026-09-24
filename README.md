@@ -216,7 +216,9 @@ npm run smoke -- http://localhost:3401 --gated
 ```
 
 `test` runs the unit tests for the pure parts: the session token and
-access hash, spoken length, and the palette index.
+access hash, the proxy's path maps, spoken length, the week, the inline
+marks and the palette index. The same loop runs on every push in GitHub
+Actions (`.github/workflows/verify.yml`), on Node 22 (`.nvmrc`).
 
 `smoke` fetches every route and checks status codes, redirects, the door,
 and a few strings. Visual checks run through Playwright against

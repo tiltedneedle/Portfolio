@@ -996,3 +996,16 @@ a:focus-visible > .wm {
     transform: none !important;
   }
 }
+
+/* Flashcards turn in CSS time, so the setting can switch the turn off. */
+.flashcard-face {
+  transition: transform 0.55s var(--ease-out-expo);
+}
+@media (prefers-reduced-motion: reduce) {
+  .flashcard-face {
+    transition: none;
+  }
+  .tw-caret {
+    animation: none;
+  }
+}

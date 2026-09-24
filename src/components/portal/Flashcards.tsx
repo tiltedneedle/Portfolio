@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useReducedMotion } from "framer-motion";
 import { Rich } from "@/components/portal/Rich";
 
 /**
@@ -11,7 +10,6 @@ import { Rich } from "@/components/portal/Rich";
  */
 export function Flashcards({ title, items, note }: { title?: string; items: { front: string; back: string }[]; note?: string }) {
   const [turned, setTurned] = useState<Set<number>>(() => new Set());
-  const reduced = useReducedMotion();
   const turn = (i: number) =>
     setTurned((s) => {
       const next = new Set(s);
@@ -43,10 +41,11 @@ export function Flashcards({ title, items, note }: { title?: string; items: { fr
                 aria-pressed={on}
                 aria-label={on ? "Turn back to the opening line" : "Turn over to see the hook"}
                 data-cursor={on ? "Back" : "Turn"}
-                className="relative block aspect-[5/4] w-full text-left"
+                className="flashcard-face relative block aspect-[5/4] w-full text-left"
+                // The turn's duration lives in CSS (.flashcard-face), where reduced motion can switch it off
+                // without the first render depending on the setting.
                 style={{
                   transformStyle: "preserve-3d",
-                  transition: reduced ? "none" : "transform 0.55s cubic-bezier(0.16,1,0.3,1)",
                   transform: on ? "rotateY(180deg)" : "rotateY(0deg)",
                 }}
               >

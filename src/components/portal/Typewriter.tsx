@@ -6,8 +6,12 @@ import { useReducedMotion } from "framer-motion";
 /**
  * A search box that types what people search for, one query after another.
  * The queries are also printed beneath as chips, so the list is complete
- * before hydration and under reduced motion, where the box shows them in
- * turn without the typing.
+ * before hydration. Under reduced motion each query appears whole and the
+ * caret holds still (the CSS handles the caret).
+ *
+ * Nothing about the first render depends on the reduced-motion setting:
+ * the server and the client must paint the same box, or React throws the
+ * tree away and starts again.
  */
 export function Typewriter({ title, queries }: { title?: string; queries: string[] }) {
   const reduced = useReducedMotion();
@@ -38,22 +42,21 @@ export function Typewriter({ title, queries }: { title?: string; queries: string
   useEffect(() => {
     if (!live || queries.length === 0) return;
     const q = queries[i % queries.length];
-    if (reduced) {
-      const t = setTimeout(() => setI((x) => x + 1), 2400);
-      return () => clearTimeout(t);
-    }
     let t: ReturnType<typeof setTimeout>;
-    if (len < q.length) t = setTimeout(() => setLen(len + 1), 38 + Math.random() * 40);
+    if (len < q.length) t = setTimeout(() => setLen(reduced ? q.length : len + 1), reduced ? 0 : 38 + Math.random() * 40);
     else
-      t = setTimeout(() => {
-        setLen(0);
-        setI((x) => x + 1);
-      }, 1700);
+      t = setTimeout(
+        () => {
+          setLen(0);
+          setI((x) => x + 1);
+        },
+        reduced ? 2400 : 1700
+      );
     return () => clearTimeout(t);
   }, [live, i, len, queries, reduced]);
 
   const q = queries[i % queries.length] ?? "";
-  const shown = reduced ? q : q.slice(0, len);
+  const shown = q.slice(0, len);
 
   return (
     <div ref={box} data-typewriter="">
@@ -65,7 +68,7 @@ export function Typewriter({ title, queries }: { title?: string; queries: string
         </svg>
         <span className="min-h-[1.5em] text-[19px] text-[color:var(--ink)] md:text-[23px]">
           {shown}
-          <span className={"ml-0.5 inline-block h-[1.1em] w-[2px] translate-y-[0.2em] bg-[color:var(--ink)] " + (reduced ? "" : "tw-caret")} />
+          <span className="tw-caret ml-0.5 inline-block h-[1.1em] w-[2px] translate-y-[0.2em] bg-[color:var(--ink)]" />
         </span>
       </div>
       <ul className="mt-4 flex flex-wrap gap-2">

@@ -102,6 +102,10 @@ The marketing site this grew out of is on the `marketing-site` branch.
       with an `href` per card, verified: the dealt card's Open cuts to
       the script); smoke covers the prompter, the deal, the flashcards,
       the retention curve, the cadence strip and the home film slots.
+      Hydration under reduced motion fixed: the typewriter and the
+      flashcards no longer paint differently on the client (React #418
+      on the discoverability page); console verified clean on six pages
+      in both motion settings.
 
 ## In flight
 

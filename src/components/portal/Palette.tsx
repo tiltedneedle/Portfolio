@@ -111,9 +111,17 @@ export function Palette({ items }: { items: PaletteItem[] }) {
       }
       if (open) return;
       if (e.key === "[" || e.key === "]") {
+        const step = e.key === "]" ? 1 : -1;
+        // On a script, the brackets page through the scripts themselves.
+        const script = pathname.match(/^\/content\/scripts\/(\d+)$/);
+        if (script) {
+          const n = Number(script[1]) + step;
+          if (n >= 1 && n <= 20) go("/content/scripts/" + n);
+          return;
+        }
         const i = order.indexOf(pathname);
         if (i === -1) return;
-        const next = order[i + (e.key === "]" ? 1 : -1)];
+        const next = order[i + step];
         if (next) go(next);
       }
     };

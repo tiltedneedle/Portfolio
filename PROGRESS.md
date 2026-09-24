@@ -105,7 +105,8 @@ The marketing site this grew out of is on the `marketing-site` branch.
       Hydration under reduced motion fixed: the typewriter and the
       flashcards no longer paint differently on the client (React #418
       on the discoverability page); console verified clean on six pages
-      in both motion settings.
+      in both motion settings. On a script page, `[` and `]` page through
+      the scripts themselves.
 
 ## In flight
 

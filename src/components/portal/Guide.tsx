@@ -18,7 +18,7 @@ import { ReadToggle } from "@/components/portal/ReadToggle";
  * training film, then the numbered sections beside a rail that follows the
  * reader down the page, and the rule the page closes on.
  */
-export function Guide({ guide, notes = [], who = "" }: { guide: GuideT; notes?: GuideNote[]; who?: string }) {
+export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; notes?: GuideNote[]; who?: string; client?: string }) {
   const introNotes = notes.filter((n) => !n.at);
   const notesAt = (i: number) => notes.filter((n) => n.at === i + 1);
   const ch = chapter(guide.chapter);
@@ -124,7 +124,7 @@ export function Guide({ guide, notes = [], who = "" }: { guide: GuideT; notes?: 
       </section>
 
       <ReadToggle k={guide.chapter + "/" + guide.slug} />
-      <NextCut chapter={guide.chapter} slug={guide.slug} />
+      <NextCut chapter={guide.chapter} slug={guide.slug} client={client} />
     </article>
   );
 }

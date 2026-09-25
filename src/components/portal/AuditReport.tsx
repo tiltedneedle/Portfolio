@@ -318,7 +318,7 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
       </div>
 
       <ReadToggle k={"audit/" + slug} />
-      <NextCut chapter="audit" slug={slug} />
+      <NextCut chapter="audit" slug={slug} client={identity.slug} />
     </article>
   );
 }

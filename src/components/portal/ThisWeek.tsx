@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { CutLink } from "@/components/room/CutLink";
 import { weekOf } from "@/lib/week";
+import { numberWord } from "@/lib/words";
 import { useClient } from "@/components/portal/ClientContext";
 import { useFilmed, usePinned, useRead } from "@/lib/read";
 import { lastKey } from "@/components/portal/Resume";
@@ -58,22 +59,36 @@ export function ThisWeek({ ideas, scripts, guides }: { ideas: Idea[]; scripts: S
   const unfilmed = scripts.filter((s) => !filmed.has(String(s.n)));
   const script = unfilmed.length ? pick(unfilmed, 1) : pick(scripts, 1);
   const guide = unread.length ? pick(unread, 2) : pick(guides, 2);
-  const cells: { label: string; title: string; line?: string; href: string; cta: string }[] = [
-    idea
-      ? { label: "Film", title: idea.text, line: (fromShortlist ? "Pinned \u00B7 " : "") + idea.pillar + " " + String(idea.n).padStart(2, "0"), href: "/content/ideas", cta: fromShortlist ? "Your shortlist" : "All ideas" }
-      : { label: "Film", title: "An idea from your hundred", line: "Once the ideas are written", href: "/content/ideas", cta: "Ideas" },
-    script
-      ? { label: "Say", title: script.title, line: "Script " + String(script.n).padStart(2, "0"), href: "/content/scripts/" + script.n, cta: "Open the script" }
-      : { label: "Say", title: "A script from your twenty", line: "Once the scripts are written", href: "/content/scripts", cta: "Scripts" },
+  // Film and Say belong to the client's own ideas and scripts. A client who
+  // does not have them yet gets a shorter sheet rather than a cell pointing
+  // at a room that is not there. The count comes from the lists, not from
+  // this week's pick, so the sheet does not change size on hydration.
+  type Cell = { label: string; title: string; line?: string; href: string; cta: string };
+  const cells: Cell[] = [];
+  if (ideas.length)
+    cells.push(
+      idea
+        ? { label: "Film", title: idea.text, line: (fromShortlist ? "Pinned \u00B7 " : "") + idea.pillar + " " + String(idea.n).padStart(2, "0"), href: "/content/ideas", cta: fromShortlist ? "Your shortlist" : "All ideas" }
+        : { label: "Film", title: "An idea from your hundred", line: "Once the ideas are written", href: "/content/ideas", cta: "Ideas" }
+    );
+  if (scripts.length)
+    cells.push(
+      script
+        ? { label: "Say", title: script.title, line: "Script " + String(script.n).padStart(2, "0"), href: "/content/scripts/" + script.n, cta: "Open the script" }
+        : { label: "Say", title: "A script from your twenty", line: "Once the scripts are written", href: "/content/scripts", cta: "Scripts" }
+    );
+  cells.push(
     left && leftAt
       ? { label: "Read", title: left.title, line: "Pick up at " + (leftAt.n ? leftAt.n + " " : "") + leftAt.title, href: left.href + "#" + leftAt.id, cta: "Where you left off" }
       : guide
-      ? { label: "Read", title: guide.title, line: guide.chapter, href: guide.href, cta: "Open the guide" }
-      : { label: "Read", title: "One guide", line: "Create, publish, analyse", href: "/create", cta: "Create" },
+        ? { label: "Read", title: guide.title, line: guide.chapter, href: guide.href, cta: "Open the guide" }
+        : { label: "Read", title: "One guide", line: "Create, publish, analyse", href: "/create", cta: "Create" }
+  );
+  cells.push(
     w?.monthEnd
       ? { label: "Do", title: "Run the monthly analytics process", line: "The month is nearly over", href: "/analyse/monthly-process", cta: "The process" }
-      : { label: "Do", title: "Publish one every other day", line: "Four this week, across every platform", href: "/publish/strategy", cta: "The strategy" },
-  ];
+      : { label: "Do", title: "Publish one every other day", line: "Four this week, across every platform", href: "/publish/strategy", cta: "The strategy" }
+  );
 
   return (
     <section className="border-t border-[color:var(--rule)] bg-[color:var(--stage-2)] py-20 md:py-28" aria-label="This week">
@@ -91,7 +106,7 @@ export function ThisWeek({ ideas, scripts, guides }: { ideas: Idea[]; scripts: S
           <p className="mono text-[color:var(--ink-mid)]">Changes on Monday. Same sheet for the whole team.</p>
         </div>
         <h2 className="display mt-4 text-[clamp(40px,5.5vw,88px)]">
-          This week, <span className="em-serif">four things.</span>
+          This week, <span className="em-serif">{numberWord(cells.length)} {cells.length === 1 ? "thing." : "things."}</span>
         </h2>
         <ol className="mt-10 grid border-t border-[color:var(--rule-strong)] md:grid-cols-4">
           {cells.map((c, i) => (

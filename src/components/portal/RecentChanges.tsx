@@ -6,8 +6,10 @@ import { mergeChanges } from "@/lib/changes";
 const show = 5;
 
 /** The latest additions to the system, so a return visit sees it growing. */
-export function RecentChanges({ slug, mine = [] }: { slug: string; mine?: Change[] }) {
-  const latest = mergeChanges(mine, changes, show);
+export function RecentChanges({ slug, mine = [], paths }: { slug: string; mine?: Change[]; paths?: Set<string> }) {
+  // An addition to a room this client does not have yet is still news; it
+  // just has nowhere to send them, so the link comes off.
+  const latest = mergeChanges(mine, changes, show).map((c) => (c.href && paths && !paths.has(c.href.split("#")[0]) ? { ...c, href: undefined } : c));
   if (latest.length === 0) return null;
   return (
     <section className="border-t border-[color:var(--rule)] bg-[color:var(--stage)] py-20 md:py-28" aria-label="Recently added">

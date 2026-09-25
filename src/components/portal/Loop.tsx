@@ -5,8 +5,11 @@ import { home } from "@/content/system/home";
  * How to use the system: five stations on one rail, and a dashed return
  * from the last back to the first that keeps travelling, because the last
  * step is to go round again. Frozen under reduced motion.
+ *
+ * A step whose room this client does not have yet keeps its words and loses
+ * its link: the method is the same for everyone, the rooms are not.
  */
-export function Loop() {
+export function Loop({ paths }: { paths?: Set<string> }) {
   const steps = home.how;
   const n = steps.length;
   return (
@@ -23,7 +26,7 @@ export function Loop() {
               <p className="mono mb-3">{String(i + 1).padStart(2, "0")}</p>
               <h3 className="display text-[clamp(28px,3vw,44px)] leading-[0.95] text-[color:var(--ink)]">{s.title}</h3>
               <p className="mt-4 text-[15px] leading-relaxed text-[color:var(--ink-mid)]">{s.text}</p>
-              {i < n - 1 && (
+              {i < n - 1 && (!paths || paths.has(s.href)) && (
                 <CutLink href={s.href} className="slate-link mt-5 inline-block" data-cursor="Cut">
                   Open &#8599;
                 </CutLink>

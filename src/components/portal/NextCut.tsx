@@ -1,13 +1,16 @@
 import { CutLink } from "@/components/room/CutLink";
 import { chapter, neighbours, pageHref, pageNumber } from "@/content/chapters";
 import type { ChapterId } from "@/content/types";
+import { requireClient } from "@/content/clients/registry";
+import { liveChapters } from "@/lib/rooms";
 
 /**
  * The foot of every page: the page before, quietly, and the page after as a
- * match cut, across chapter boundaries.
+ * match cut, across chapter boundaries. Given the client, it steps over the
+ * personalised rooms they do not have yet.
  */
-export function NextCut({ chapter: id, slug }: { chapter: ChapterId; slug: string }) {
-  const { prev, next } = neighbours(id, slug);
+export function NextCut({ chapter: id, slug, client }: { chapter: ChapterId; slug: string; client?: string }) {
+  const { prev, next } = neighbours(id, slug, client ? liveChapters(requireClient(client)) : undefined);
   const ch = chapter(id);
   return (
     <nav className="border-t border-[color:var(--rule)] bg-[color:var(--stage-2)]" aria-label="Next and previous">

@@ -1,4 +1,11 @@
 /** Words in a run of text, counted the way a script reader would. */
+const WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];
+
+/** "seven" for 7; a numeral above twelve, the way a newspaper sets it. */
+export function numberWord(n: number) {
+  return WORDS[n] ?? String(n);
+}
+
 export function wordCount(text: string) {
   return text.split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w)).length;
 }

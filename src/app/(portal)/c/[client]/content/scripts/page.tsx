@@ -58,7 +58,7 @@ export default async function ScriptsPage({ params }: { params: Promise<{ client
         )}
       </div>
 
-      <NextCut chapter="content" slug="scripts" />
+      <NextCut chapter="content" slug="scripts" client={client} />
     </article>
   );
 }

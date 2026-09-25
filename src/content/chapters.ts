@@ -122,8 +122,8 @@ export function pageHref(id: ChapterId, slug: string): string {
 }
 
 /** The page before and after, across chapter boundaries, for the match cut at the foot of a guide. */
-export function neighbours(id: ChapterId, slug: string) {
-  const flat = chapters
+export function neighbours(id: ChapterId, slug: string, live: Chapter[] = chapters) {
+  const flat = live
     .filter((c) => c.id !== "home")
     .flatMap((c) => c.pages.map((p) => ({ chapter: c, page: p })));
   const i = flat.findIndex((x) => x.chapter.id === id && x.page.slug === slug);

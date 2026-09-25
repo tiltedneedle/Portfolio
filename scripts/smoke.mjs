@@ -9,15 +9,17 @@ let failed = 0;
 
 async function expect(path, want, opts = {}) {
   const res = await fetch(base + path, { redirect: "manual", headers: { connection: "close", ...(opts.headers || {}) } });
-  const body = opts.contains ? await res.text() : "";
+  const body = opts.contains || opts.lacks ? await res.text() : "";
   const okStatus = res.status === want;
   const okBody = !opts.contains || (opts.contains instanceof RegExp ? opts.contains.test(body) : body.includes(opts.contains));
+  // opts.lacks: a string the page must not carry.
+  const okLacks = !opts.lacks || !body.includes(opts.lacks);
   const okLoc = !opts.location || (res.headers.get("location") || "").includes(opts.location);
   // opts.header: [name, fragment] that the response header must carry.
   const okHeader = !opts.header || (res.headers.get(opts.header[0]) || "").includes(opts.header[1]);
-  const ok = okStatus && okBody && okLoc && okHeader;
+  const ok = okStatus && okBody && okLacks && okLoc && okHeader;
   if (!ok) failed++;
-  console.log((ok ? "ok    " : "FAIL  ") + path.padEnd(40) + " " + res.status + (opts.location ? " -> " + res.headers.get("location") : "") + (opts.contains && !okBody ? '  (missing "' + opts.contains + '")' : "") + (opts.header && !okHeader ? "  (header " + opts.header[0] + " lacks " + opts.header[1] + ")" : ""));
+  console.log((ok ? "ok    " : "FAIL  ") + path.padEnd(40) + " " + res.status + (opts.location ? " -> " + res.headers.get("location") : "") + (opts.contains && !okBody ? '  (missing "' + opts.contains + '")' : "") + (opts.lacks && !okLacks ? '  (carries "' + opts.lacks + '")' : "") + (opts.header && !okHeader ? "  (header " + opts.header[0] + " lacks " + opts.header[1] + ")" : ""));
 }
 
 if (!gated) {
@@ -29,9 +31,14 @@ if (!gated) {
   await expect("/content/ideas", 200, { contains: "Authority" });
   await expect("/content/scripts", 200);
   await expect("/content/scripts/1", 200, { contains: "Copy script" });
-  await expect("/content/scripts/1", 200, { contains: "Prompter" });
-  await expect("/content/ideas", 200, { contains: "Deal me one" });
-  await expect("/content/scripts", 200, { contains: "Your first month" });
+  // The template has nothing written, so the personalised rooms are routed
+  // but nowhere on the site: not on the strip, not in the nav, not linked
+  // from what was recently added.
+  await expect("/", 200, { contains: "Everything in your system" });
+  await expect("/", 200, { lacks: "Your audit" });
+  await expect("/", 200, { lacks: "Your content" });
+  await expect("/", 200, { lacks: "Same for everyone" });
+  await expect("/create/hooks", 200, { lacks: "Your audit" });
   await expect("/create/hooks", 200, { contains: "Name the hook" });
   await expect("/analyse/understanding-your-analytics", 200, { contains: "retention curve" });
   await expect("/publish/strategy", 200, { contains: "posts across" });

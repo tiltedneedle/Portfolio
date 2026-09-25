@@ -3,6 +3,7 @@ import { chapters, pageHref, pageNumber } from "@/content/chapters";
 import { guides } from "@/content/system";
 import { competitorHeadings, diagnosticHeadings, pillars } from "@/content/system/pillars";
 import type { ClientSystem } from "@/content/clients/types";
+import { liveChapters, writtenPages } from "@/lib/rooms";
 
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
@@ -18,7 +19,10 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
  */
 export function paletteIndex(sys?: ClientSystem): PaletteItem[] {
   const out: PaletteItem[] = [];
-  for (const c of chapters) {
+  // A personalised page the studio has not written is not in the palette either.
+  const rooms = sys ? liveChapters(sys) : chapters;
+  const written = sys ? writtenPages(sys) : null;
+  for (const c of rooms) {
     if (c.id === "home") {
       out.push({
         href: "/",
@@ -42,13 +46,13 @@ export function paletteIndex(sys?: ClientSystem): PaletteItem[] {
       out.push({ href: pageHref(c.id, p.slug), title: p.title, chapter: c.title, n: pageNumber(c.id, p.slug), sections });
     }
   }
-  if (sys) {
+  if (sys && written?.has("/content/ideas")) {
     for (const p of pillars) {
       sys.ideas[p.id].forEach((idea, i) => {
         if (idea.text) out.push({ href: "/content/ideas#" + p.id, title: idea.text, chapter: "Idea · " + p.title + " " + pad(i), n: pageNumber("content", "ideas"), sections: [], hidden: true });
       });
     }
-    for (const s of sys.scripts) {
+    for (const s of written?.has("/content/scripts") ? sys.scripts : []) {
       if (s.body?.length) out.push({ href: "/content/scripts/" + s.n, title: s.title, chapter: "Script " + String(s.n).padStart(2, "0"), n: pageNumber("content", "scripts"), sections: [], hidden: true });
     }
   }

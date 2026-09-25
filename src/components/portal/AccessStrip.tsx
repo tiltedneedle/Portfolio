@@ -3,29 +3,33 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
-import { home } from "@/content/system/home";
-import { useClient } from "@/components/portal/ClientContext";
 import { ReadCount } from "@/components/portal/ReadMark";
-import { shortName } from "@/content/clients/types";
+import { numberWord } from "@/lib/words";
 
 /**
- * What you have access to: the seven parts of the system racked on a strip.
+ * What you have access to: the parts of the system racked on a strip.
  * On desktop the section pins and vertical scroll shuttles the strip
  * sideways, with a ruler underneath reading where you are. On a phone the
  * cards stack. Lifted from the studio site's film sequence, which is the
  * move the client liked most.
+ *
+ * The cards are whatever this client has, numbered in the order they are
+ * shown. Nothing on them says which parts were written for this client and
+ * which are the same for everyone: that is how the studio divides the work,
+ * not something the client came here to read.
  */
-const items = home.access;
-const n = items.length;
+export type AccessItem = { n: string; title: string; href: string; text: string };
 
 /** `counts` is what each personalised card has so far, keyed by href ("4 of 13 written"). */
-export function AccessStrip({ counts = {}, readKeys = {} }: { counts?: Record<string, ReactNode>; readKeys?: Record<string, string[]> }) {
+export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: AccessItem[]; counts?: Record<string, ReactNode>; readKeys?: Record<string, string[]> }) {
   const section = useRef<HTMLElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const [range, setRange] = useState(0);
   const [mobile, setMobile] = useState(false);
   const [active, setActive] = useState(0);
-  const who = shortName(useClient());
+  const n = items.length;
+  // One card is not a scale: the ruler and the shuttle divide by at least one.
+  const span = Math.max(1, n - 1);
 
   useEffect(() => {
     const el = track.current;
@@ -55,7 +59,7 @@ export function AccessStrip({ counts = {}, readKeys = {} }: { counts?: Record<st
   const playhead = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   useMotionValueEvent(scrollYProgress, "change", (p) => {
-    const i = Math.min(n - 1, Math.max(0, Math.round(p * (n - 1))));
+    const i = Math.min(span, Math.max(0, Math.round(p * span)));
     setActive((prev) => (prev === i ? prev : i));
   });
 
@@ -64,9 +68,12 @@ export function AccessStrip({ counts = {}, readKeys = {} }: { counts?: Record<st
     if (!el || mobile || range === 0) return;
     requestAnimationFrame(() => {
       const top = el.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({ top: top + (range * i) / (n - 1), behavior: "auto" });
+      window.scrollTo({ top: top + (range * i) / span, behavior: "auto" });
     });
   };
+
+  if (n === 0) return null;
+  const here = items[Math.min(active, n - 1)];
 
   return (
     <section
@@ -84,10 +91,10 @@ export function AccessStrip({ counts = {}, readKeys = {} }: { counts?: Record<st
           <div className="w-full shrink-0 px-6 py-20 md:flex md:w-[34vw] md:flex-col md:justify-center md:py-0 md:pr-14">
             <p className="mono">02 &mdash; What you have access to</p>
             <h2 className="display mt-4 text-[clamp(52px,6.5vw,110px)]">
-              Seven <span className="em-serif">parts.</span>
+              {numberWord(n)} <span className="em-serif">{n === 1 ? "part." : "parts."}</span>
             </h2>
             <p className="mt-6 max-w-[34ch] text-[17px] leading-relaxed text-[color:var(--ink-soft)]">
-              Four written for {who}. Three the same for everyone. All of it yours, for as long as you want it.
+              Everything in your system, in the order you will use it. All of it yours, for as long as you want it.
             </p>
             <p className="mono mt-8 max-md:hidden">Scroll to shuttle &middot; click to open</p>
           </div>
@@ -104,17 +111,7 @@ export function AccessStrip({ counts = {}, readKeys = {} }: { counts?: Record<st
                 }
               >
                 <span aria-hidden="true" className="numeral pointer-events-none absolute -right-2 top-1/2 -translate-y-1/2 text-[200px] opacity-50 md:text-[240px]" data-n={it.n} />
-                <span className="mono relative flex items-center justify-between">
-                  <span>{it.n}</span>
-                  {it.personalised ? (
-                    <span className="flex items-center gap-2 text-[color:var(--ink)]">
-                      <span className="lamp" aria-hidden="true" />
-                      For {who}
-                    </span>
-                  ) : (
-                    <span className="text-[color:var(--ink-mid)]">Same for everyone</span>
-                  )}
-                </span>
+                <span className="mono relative">{it.n}</span>
                 <span className="relative">
                   <span className="display block max-w-[10ch] text-[clamp(34px,3.4vw,54px)] leading-[0.92] text-[color:var(--ink)]">{it.title}</span>
                   <span className="mt-4 block max-w-[32ch] text-[15px] leading-relaxed text-[color:var(--ink-mid)]">{it.text}</span>
@@ -137,7 +134,7 @@ export function AccessStrip({ counts = {}, readKeys = {} }: { counts?: Record<st
                 key={it.n}
                 aria-hidden="true"
                 className="absolute top-0 mono text-[10px]"
-                style={{ left: (i / (n - 1)) * 100 + "%", transform: "translateX(-50%)" }}
+                style={{ left: (i / span) * 100 + "%", transform: "translateX(-50%)" }}
               >
                 <span className="mx-auto block h-2 w-px bg-[color:var(--rule-strong)]" />
                 <span className="mt-1 block">{it.n}</span>
@@ -151,9 +148,9 @@ export function AccessStrip({ counts = {}, readKeys = {} }: { counts?: Record<st
           </div>
           <div className="mono mt-3 flex items-center justify-between">
             <span>
-              Part {items[active].n} / {String(n).padStart(2, "0")}
+              Part {here.n} / {String(n).padStart(2, "0")}
             </span>
-            <span className="text-[color:var(--ink-soft)]">{items[active].title}</span>
+            <span className="text-[color:var(--ink-soft)]">{here.title}</span>
           </div>
         </div>
       </div>

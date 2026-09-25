@@ -7,6 +7,7 @@ import { paletteIndex } from "@/components/portal/palette-index";
 import { clientSlugs, requireClient } from "@/content/clients/registry";
 import { publicIdentity } from "@/content/clients/types";
 import { changes } from "@/content/system/changes";
+import { liveChapters } from "@/lib/rooms";
 
 /**
  * One tree per client, pre-rendered. The proxy rewrites every clean URL
@@ -33,6 +34,9 @@ export async function generateMetadata({ params }: { params: Promise<{ client: s
 export default async function ClientLayout({ children, params }: { children: React.ReactNode; params: Promise<{ client: string }> }) {
   const { client } = await params;
   const sys = requireClient(client);
+  // The rooms this client has: a personalised room appears when the studio
+  // has written a page in it, and until then it is nowhere on the website.
+  const rooms = liveChapters(sys);
   // The palette's index carries this client's written ideas and scripts as hidden, searchable entries.
   const index = paletteIndex(sys);
   // The newest addition, the system's or this client's own, for the nav's lamp.
@@ -42,11 +46,11 @@ export default async function ClientLayout({ children, params }: { children: Rea
       <a href="#main" className="skip">
         Skip to content
       </a>
-      <PortalNav latest={latest} />
+      <PortalNav latest={latest} rooms={rooms} />
       <main id="main" tabIndex={-1} className="outline-none">
         {children}
       </main>
-      <PortalFooter />
+      <PortalFooter rooms={rooms} />
       <Palette items={index} />
     </ClientProvider>
   );

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { mmss, spokenSeconds, wordCount, SPOKEN_WPM } from "@/lib/words";
+import { mmss, spokenSeconds, wordCount, SPOKEN_WPM, numberWord } from "@/lib/words";
 
 describe("wordCount", () => {
   it("counts words, not punctuation or spacing", () => {
@@ -34,5 +34,16 @@ describe("mmss", () => {
     expect(mmss(80)).toBe("1:20");
     expect(mmss(600)).toBe("10:00");
     expect(mmss(-5)).toBe("0:00");
+  });
+});
+
+describe("numberWord", () => {
+  it("writes the small numbers out and leaves the big ones as numerals", () => {
+    expect(numberWord(0)).toBe("zero");
+    expect(numberWord(3)).toBe("three");
+    expect(numberWord(7)).toBe("seven");
+    expect(numberWord(12)).toBe("twelve");
+    expect(numberWord(13)).toBe("13");
+    expect(numberWord(100)).toBe("100");
   });
 });

@@ -22,20 +22,14 @@ import { seenKey } from "@/components/portal/RecentList";
  */
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
-function Panel({ chapter: c, onPick, who, current, read }: { chapter: Chapter; onPick: () => void; who: string; current: string; read: Set<string> }) {
+function Panel({ chapter: c, onPick, current, read }: { chapter: Chapter; onPick: () => void; current: string; read: Set<string> }) {
   return (
     <div className="panel w-[360px] p-2">
       <div className="mono flex items-baseline justify-between px-3 pb-2 pt-3">
         <span>
           {c.n} &mdash; {c.title}
         </span>
-        {c.personalised && (
-          <span className="flex items-center gap-2 text-[color:var(--ink)]">
-            <span className="lamp" aria-hidden="true" />
-            For {who}
-          </span>
-        )}
-        {!c.personalised && c.id !== "home" && (
+        {c.id !== "home" && (
           <span className="text-[color:var(--ink-mid)]">
             {c.pages.filter((p) => read.has(c.id + "/" + p.slug)).length} of {c.pages.length} read
           </span>
@@ -102,7 +96,7 @@ function NewLamp({ latest }: { latest?: string }) {
   );
 }
 
-export function PortalNav({ latest }: { latest?: string }) {
+export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms?: Chapter[] }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [panel, setPanel] = useState<string | null>(null);
@@ -194,7 +188,7 @@ export function PortalNav({ latest }: { latest?: string }) {
               hide();
             }}
           >
-            {chapters.map((c, i) => (
+            {rooms.map((c, i) => (
               <div
                 key={c.id}
                 className="relative"
@@ -231,9 +225,9 @@ export function PortalNav({ latest }: { latest?: string }) {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 4 }}
                       transition={{ duration: 0.18, ease: EASE_OUT_EXPO }}
-                      className={cn("absolute top-full z-50 pt-4", i >= chapters.length - 3 ? "right-0" : "left-0")}
+                      className={cn("absolute top-full z-50 pt-4", i >= rooms.length - 3 ? "right-0" : "left-0")}
                     >
-                      <Panel chapter={c} onPick={pick} who={who} current={pathname} read={read} />
+                      <Panel chapter={c} onPick={pick} current={pathname} read={read} />
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -281,7 +275,7 @@ export function PortalNav({ latest }: { latest?: string }) {
                 </button>
               </div>
               <ol className="flex flex-col">
-                {chapters.map((c, i) => (
+                {rooms.map((c, i) => (
                   <motion.li
                     key={c.id}
                     initial={reduced ? false : { opacity: 0, y: 14 }}

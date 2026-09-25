@@ -95,8 +95,13 @@ and paste the hash into `accessHash`. Then:
 
 4. Write the two audit reports (paragraphs under each fixed heading; use the
    `report()` helper), 25 ideas per pillar (`pillar()` pads to 25) and 20
-   scripts (`scripts()` fills the numbered slots). Anything left empty
-   renders as a slot that says it is on its way. A finding can carry a
+   scripts (`scripts()` fills the numbered slots). A page with nothing
+   written is not on the website at all: `src/lib/rooms.ts` decides which
+   personalised pages a client has, and the nav, the home strip, the
+   palette, the footer, the call sheet, the five steps and the foot of
+   every guide all follow it. Within a written page, an empty slot renders
+   as one that says it is on its way. Example content does not count as
+   written; it is there to show the shape of a finished page. A finding can carry a
    verdict, a score, keep / limiting / change lists, evidence and a place
    in the first three moves; the competitor report can carry a board of
    accounts and a positioning map (`you: true` marks the client today,

@@ -31,7 +31,7 @@ export function GuidePage({ id, slug, client }: { id: GuideChapterId; slug: stri
   const g = findGuide(id, slug);
   if (!g) notFound();
   const sys = requireClient(client);
-  return <Guide guide={g} notes={sys.notes?.[id + "/" + slug] ?? []} who={shortName(sys.identity)} />;
+  return <Guide guide={g} notes={sys.notes?.[id + "/" + slug] ?? []} who={shortName(sys.identity)} client={client} />;
 }
 
 export function guideParams(id: GuideChapterId) {

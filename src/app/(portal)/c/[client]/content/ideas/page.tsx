@@ -77,7 +77,7 @@ export default async function IdeasPage({ params }: { params: Promise<{ client: 
         </div>
       </div>
 
-      <NextCut chapter="content" slug="ideas" />
+      <NextCut chapter="content" slug="ideas" client={client} />
     </article>
   );
 }

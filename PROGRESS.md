@@ -39,6 +39,18 @@ The marketing site this grew out of is on the `marketing-site` branch.
   `npm run new-client -- <slug> "<Name>" --code "<code>"` scaffolds a client.
 - Each client's own door is `/login?for=<slug>` (name and mark on the
   slate; the code still opens it).
+- **A client is shown only what they have.** `src/lib/rooms.ts`:
+  `writtenPages(sys)` is the personalised pages the studio has written,
+  `liveChapters(sys)` the rooms to show, `livePaths()` every path they
+  answer to. The nav, the footer, the home strip (renumbered 01 upwards),
+  the palette, the call sheet's Film and Say cells, the five steps' links,
+  the home readout and `neighbours()` at the foot of every guide all take
+  from it. The pages stay routed so the design can be previewed by URL;
+  nothing links to them. Examples never count as written.
+- **The for-you / for-everyone split is the studio's, not the client's.**
+  It decides what gets written per client and what is written once; it is
+  never printed on a card, a panel or a room. `personalised` on a chapter
+  and on a home access item is a build-time flag only.
 - Every client's pages are pre-rendered at `/c/<slug>/...`. `src/proxy.ts`
   verifies the signed session cookie (`tn-room`, HMAC under PORTAL_SECRET)
   and rewrites clean URLs into that client's tree; `/c/...` direct hits are
@@ -201,6 +213,20 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 36: the template is a template again, and the studio's own
+      vocabulary comes off the client's site. Two corrections from the user:
+      (1) the personalised rooms were to be empty pages until a client is
+      onboarded, so a page with nothing written is now nowhere on the site
+      (src/lib/rooms.ts; nav, footer, home strip renumbered 01 upwards,
+      palette, call sheet, five steps, recently added, and the foot of
+      every guide all follow it; the routes stay so the design can be
+      previewed by URL). The template's example ideas and script are gone:
+      an open door now shows three parts, the demo still shows seven.
+      (2) "For Company Name" and "Same for everyone" were the brief’s way
+      of telling me what to write once and what to write per client, and I
+      had printed them on the cards and in the nav panel. Removed, with
+      the strip’s line rewritten. Also: the hero backdrop goes from 0.14
+      to 0.45 so the clients’ films read behind the name. 71 tests.
 - [x] Wave 35: the ninth film found. TikTok's own status for Laser Eye
       Clinic London's 7276573223955729696 is 10249 "content classification
       unavailable": the film exists (posted 2023-09-08, 116s, 16,505,902

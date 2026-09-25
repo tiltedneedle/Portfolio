@@ -5,7 +5,7 @@ import { CutLink } from "@/components/room/CutLink";
 import { WordStrip } from "@/components/editorial/WordStrip";
 import { ClientMark } from "@/components/portal/ClientMark";
 import { useClient } from "@/components/portal/ClientContext";
-import { chapters } from "@/content/chapters";
+import { chapters, type Chapter } from "@/content/chapters";
 import { shortName } from "@/content/clients/types";
 import { PRESENCE } from "@/lib/session";
 import { useCookieFlag } from "@/lib/use-cookie-flag";
@@ -21,7 +21,7 @@ const heading = "mono mb-5 block";
 const link = "underline-draw w-fit text-[15px] text-[color:var(--ink-soft)] transition-colors duration-300 hover:text-[color:var(--ink)]";
 
 /** The tail leader: the approach as a crawl, then the contents once more. */
-export function PortalFooter() {
+export function PortalFooter({ rooms = chapters }: { rooms?: Chapter[] }) {
   const who = useClient();
   // The pages are pre-rendered, so whether someone is logged in can only be
   // known in the browser: the door leaves a presence cookie beside the session.
@@ -46,7 +46,7 @@ export function PortalFooter() {
           <div className="md:col-span-4 md:col-start-7">
             <p className={heading}>The system</p>
             <nav className="flex flex-col gap-3" aria-label="Footer">
-              {chapters.map((c) => (
+              {rooms.map((c) => (
                 <CutLink key={c.id} href={c.href} className={link}>
                   <span className="mono mr-3 text-[color:var(--ink-mid)]">{c.n}</span>
                   {c.title}

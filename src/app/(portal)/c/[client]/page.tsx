@@ -18,6 +18,7 @@ import { pillars } from "@/content/system/pillars";
 import { firstMoves } from "@/content/clients/types";
 import { home } from "@/content/system/home";
 import { requireClient } from "@/content/clients/registry";
+import { liveChapters, livePaths, writtenPages } from "@/lib/rooms";
 
 // The home page, in running order: the slate (once), the welcome, the
 // objective, what you have access to, how to use the system, the approach.
@@ -25,6 +26,15 @@ export default async function Home({ params }: { params: Promise<{ client: strin
   const { client } = await params;
   const sys = requireClient(client);
   const { identity } = sys;
+  // The personalised pages the studio has written for this client. Everything
+  // else stays off the website until it exists.
+  const written = writtenPages(sys);
+  const paths = livePaths(liveChapters(sys));
+  const pad = (i: number) => String(i).padStart(2, "0");
+  // The strip's cards, renumbered so they always read 01 upwards.
+  const access = home.access
+    .filter((it) => !it.personalised || written.has(it.href))
+    .map((it, i) => ({ n: pad(i + 1), title: it.title, href: it.href, text: it.text }));
   // What each personalised room holds so far, for the strip's cards.
   const writtenIn = (r: { sections: { body?: string[]; score?: number }[] }) => {
     const written = r.sections.filter((s) => s.body?.length);
@@ -59,8 +69,9 @@ export default async function Home({ params }: { params: Promise<{ client: strin
   const entries: ({ k: string; v: ReactNode } | null)[] = [
     scored.length ? { k: "Audit", v: Math.round((scored.reduce((a, s) => a + (s.score ?? 0), 0) / scored.length) * 10) / 10 + " / 10" } : diag.length ? { k: "Audit", v: diag.length + " of " + sys.contentDiagnostic.sections.length } : null,
     firstMoves(sys.contentDiagnostic)[0] ? { k: "First move", v: firstMoves(sys.contentDiagnostic)[0].title } : null,
-    { k: "Ideas", v: String(ideas.filter((i) => i.text).length) },
-    {
+    written.has("/content/ideas") ? { k: "Ideas", v: String(ideas.filter((i) => i.text).length) } : null,
+    written.has("/content/scripts")
+      ? {
       k: "Scripts",
       v: (
         <>
@@ -68,7 +79,8 @@ export default async function Home({ params }: { params: Promise<{ client: strin
           <FilmedCount ns={sys.scripts.filter((s) => s.body?.length).map((s) => s.n)} prefix={" · "} className="text-[color:var(--ink-mid)]" />
         </>
       ),
-    },
+    }
+      : null,
     sys.notes ? { k: "Notes", v: String(Object.values(sys.notes).flat().length) } : null,
   ];
   const readout = entries.filter((x): x is { k: string; v: ReactNode } => !!x);
@@ -149,11 +161,11 @@ export default async function Home({ params }: { params: Promise<{ client: strin
 
       <Showreel />
 
-      <AccessStrip counts={counts} readKeys={readKeys} />
+      <AccessStrip items={access} counts={counts} readKeys={readKeys} />
 
       <ThisWeek ideas={weekIdeas} scripts={weekScripts} guides={weekGuides} />
 
-      <RecentChanges slug={identity.slug} mine={sys.changes} />
+      <RecentChanges slug={identity.slug} mine={sys.changes} paths={paths} />
 
       <section id="how" className="scroll-mt-16 border-t border-[color:var(--rule)] bg-[color:var(--stage)] py-24 md:py-36">
         <div className="mx-auto max-w-[1600px] px-6 md:px-14">
@@ -162,7 +174,7 @@ export default async function Home({ params }: { params: Promise<{ client: strin
             Five steps, on a <span className="em-serif">loop.</span>
           </h2>
           <div className="mt-16 md:mt-24">
-            <Loop />
+            <Loop paths={paths} />
           </div>
           <div className="mt-20 md:mt-28">
             <TrainingFilm film={home.films.outro} number="Outro" />

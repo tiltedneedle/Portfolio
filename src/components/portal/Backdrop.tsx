@@ -35,11 +35,11 @@ export function Backdrop() {
   );
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-      <div className="drift absolute left-0 top-1/2 flex w-max -translate-y-1/2 opacity-[0.14]">
+      <div className="drift absolute left-0 top-1/2 flex w-max -translate-y-1/2 opacity-[0.45]">
         {row("a", false)}
         {row("b", true)}
       </div>
-      <div className="absolute inset-0 bg-gradient-to-b from-[rgba(11,11,12,0.7)] via-[rgba(11,11,12,0.35)] to-[color:var(--stage)]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[rgba(11,11,12,0.72)] via-[rgba(11,11,12,0.5)] to-[color:var(--stage)]" />
       <div className="absolute inset-0 bg-gradient-to-r from-[color:var(--stage)] via-transparent to-[color:var(--stage)]" />
     </div>
   );

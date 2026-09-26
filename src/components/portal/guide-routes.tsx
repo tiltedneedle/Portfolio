@@ -6,6 +6,8 @@ import { chapter } from "@/content/chapters";
 import { findGuide, guidesFor, readingMinutes } from "@/content/system";
 import { requireClient } from "@/content/clients/registry";
 import { stillFor } from "@/lib/published";
+import { liveChapters } from "@/lib/rooms";
+import { chapters } from "@/content/chapters";
 import { shortName } from "@/content/clients/types";
 
 type GuideChapterId = "create" | "publish" | "analyse";
@@ -27,7 +29,16 @@ export function GuideChapter({ id, client }: { id: GuideChapterId; client?: stri
       readKey: g.chapter + "/" + g.slug,
     };
   });
-  return <ChapterOverview id={id} rows={rows} lead={chapter(id).blurb} countLabel="Guides" />;
+  return <ChapterOverview id={id} rows={rows} lead={chapter(id).blurb} countLabel="Guides" next={nextRoom(id, sys)} />;
+}
+
+/** The room after this one, among the rooms this client actually has. */
+function nextRoom(id: string, sys: { identity: { slug: string } } | null) {
+  const live = sys ? liveChapters(sys as Parameters<typeof liveChapters>[0]) : chapters;
+  const order = live.filter((c) => c.id !== "home");
+  const i = order.findIndex((c) => c.id === id);
+  const n = i >= 0 ? order[i + 1] : undefined;
+  return n ? { href: n.href, n: n.n + " \u2014 " + n.title, title: n.title, blurb: n.blurb } : undefined;
 }
 
 export function GuidePage({ id, slug, client }: { id: GuideChapterId; slug: string; client: string }) {

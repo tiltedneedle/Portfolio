@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ClientMark } from "@/components/portal/ClientMark";
+import { DoorBackdrop } from "@/components/room/DoorBackdrop";
 import { getClient } from "@/content/clients/registry";
 import { publicIdentity } from "@/content/clients/types";
 import { doorOpen } from "@/lib/session";
@@ -27,8 +28,9 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const named = sp.for && /^[a-z0-9-]{1,64}$/.test(sp.for) ? getClient(sp.for) : undefined;
   const who = named?.identity.accessHash ? publicIdentity(named.identity) : null;
   return (
-    <main className="flex min-h-screen items-center bg-[color:var(--stage)] px-6 py-24 md:px-14">
-      <form action={enter} className="w-full max-w-[560px]">
+    <main className="relative flex min-h-screen items-center overflow-hidden bg-[color:var(--stage)] px-6 py-24 md:px-14">
+      <DoorBackdrop />
+      <form action={enter} className="relative w-full max-w-[560px]">
         <input type="hidden" name="next" value={sp.next ?? "/"} />
         {who && <input type="hidden" name="for" value={who.slug} />}
         <p className="mono">Private screening{who && <span className="text-[color:var(--ink-mid)]"> / prepared for {who.name}</span>}</p>

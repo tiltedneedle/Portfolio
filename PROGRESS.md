@@ -213,6 +213,18 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 40: a room has a way in and a way out. The hero carries a
+      pill to the first page not yet read (“Start reading”, then “Pick up
+      where you left off”, gone once everything is read), and the foot
+      cuts to the next room, chosen from the rooms this client has, so the
+      last room simply ends.
+- [x] Wave 39: the door stands in front of the work. Two rows of the
+      reel’s frames drift against each other behind the form, blurred to
+      5px at 0.17 under a scrim and a vignette: depth without telling a
+      stranger whose work it is, no names and nothing legible. The frames
+      are the local stills only, because YouTube answers a dead id with a
+      placeholder that Still then hides, which would leave holes in a
+      drifting row.
 - [x] Wave 38: a guide opens on its own frame. The still from its film
       sits behind the title, held right, defocused (blur 3px at 0.16) and
       faded into the stage: these stills carry burnt-in captions, and a

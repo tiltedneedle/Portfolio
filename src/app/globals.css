@@ -859,6 +859,10 @@ a:focus-visible > .wm {
 .drift {
   animation: drift-left 160s linear infinite;
 }
+/* The door's second row, travelling against the first. */
+.drift-back {
+  animation: drift-left 190s linear infinite reverse;
+}
 
 /* the skip link: invisible until it has keyboard focus */
 .skip {
@@ -937,6 +941,7 @@ a:focus-visible > .wm {
   .wm-mark,
   .loop-dash,
   .drift,
+  .drift-back,
   .journey-draw,
   .journey-ring,
   .journey-label,

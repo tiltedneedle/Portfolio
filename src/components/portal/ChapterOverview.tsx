@@ -44,6 +44,7 @@ export function ChapterOverview({
   lead,
   identity,
   countLabel = "pages",
+  next,
   children,
 }: {
   id: ChapterId;
@@ -52,6 +53,8 @@ export function ChapterOverview({
   identity?: PublicIdentity;
   /** What the room holds, for the readout: "guides", "reports". */
   countLabel?: string;
+  /** The room after this one, for the cut at the foot. */
+  next?: { href: string; n: string; title: string; blurb: string };
   children?: ReactNode;
 }) {
   const c = chapter(id);
@@ -106,6 +109,11 @@ export function ChapterOverview({
                 </div>
               )}
             </dl>
+            {firstUnread >= 0 && marked.length > 0 && (
+              <CutLink href={pageHref(id, rows[firstUnread].slug)} className="pill pill-solid mt-9 inline-block px-7 py-3 text-[15px]" data-cursor="Open">
+                {readCount === 0 ? "Start reading" : "Pick up where you left off"} &rarr;
+              </CutLink>
+            )}
           </div>
 
           {glass && shown && (
@@ -171,6 +179,22 @@ export function ChapterOverview({
         </ol>
         {children}
       </div>
+
+      {next && (
+        <nav className="border-t border-[color:var(--rule)] bg-[color:var(--stage-2)]" aria-label="The next room">
+          <CutLink href={next.href} className="group block" data-cursor="Cut">
+            <div className="mx-auto max-w-[1600px] px-6 py-14 md:px-14 md:py-20">
+              <p className="mono">
+                Next <span className="text-[color:var(--ink-mid)]">/</span> {next.n}
+              </p>
+              <p className="display mt-3 text-[clamp(36px,5.5vw,88px)] transition-colors duration-300 group-hover:text-white">
+                {next.title} <span aria-hidden="true" className="text-[color:var(--ink-mid)] transition-colors group-hover:text-[color:var(--ink)]">&#8599;</span>
+              </p>
+              <p className="em-serif mt-3 max-w-[40ch] text-[19px] text-[color:var(--ink-soft)]">{next.blurb}</p>
+            </div>
+          </CutLink>
+        </nav>
+      )}
     </div>
   );
 }

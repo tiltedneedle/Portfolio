@@ -1,5 +1,6 @@
 import { chapters, pageHref, type Chapter } from "@/content/chapters";
 import type { AuditReport, ClientSystem } from "@/content/clients/types";
+import type { ChapterId } from "@/content/types";
 
 /**
  * Which of a client's personalised pages exist yet.
@@ -33,6 +34,18 @@ export function liveChapters(sys: ClientSystem): Chapter[] {
   return chapters
     .filter((c) => !c.personalised || has(c))
     .map((c) => (c.personalised ? { ...c, pages: c.pages.filter((p) => written.has(pageHref(c.id, p.slug))) } : c));
+}
+
+/**
+ * The room after this one, among the rooms this client has, for the cut at
+ * the foot of a room. The last room has none, and a room the client does
+ * not have is not a step on the way.
+ */
+export function roomAfter(id: ChapterId, sys?: ClientSystem) {
+  const order = (sys ? liveChapters(sys) : chapters).filter((c) => c.id !== "home");
+  const i = order.findIndex((c) => c.id === id);
+  const next = i >= 0 ? order[i + 1] : undefined;
+  return next ? { href: next.href, n: next.n + " \u2014 " + next.title, title: next.title, blurb: next.blurb } : undefined;
 }
 
 /** Every path the live chapters answer to, for filtering links into rooms that are not there. */

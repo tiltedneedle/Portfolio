@@ -55,6 +55,12 @@ if (!gated) {
   await expect("/content/scripts/21", 404, { contains: "Nothing on this" });
   await expect("/opengraph-image", 200);
   await expect("/create", 200);
+  // A room states what is in it, offers a way in, and cuts to the next room.
+  await expect("/create", 200, { contains: "To read" });
+  await expect("/create", 200, { contains: "Start reading" });
+  await expect("/create", 200, { contains: "The next room" });
+  await expect("/analyse", 200, { lacks: "The next room" });
+  await expect("/create/hooks", 200, { contains: "In this guide" });
   for (const s of ["study-your-niche", "ideation", "video-style", "hooks", "core-message", "filming", "editing"]) await expect("/create/" + s, 200, { contains: "The rule" });
   for (const s of ["strategy", "packaging", "discoverability", "profile"]) await expect("/publish/" + s, 200, { contains: "The rule" });
   for (const s of ["understanding-your-analytics", "monthly-process"]) await expect("/analyse/" + s, 200, { contains: "The rule" });

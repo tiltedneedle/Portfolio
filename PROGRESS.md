@@ -213,6 +213,11 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 41: hardening. The next room was worked out three times in
+      three files; it is now `roomAfter()` in lib/rooms.ts with tests (75),
+      and the smoke suite holds the room furniture in place: the readout,
+      the way in, the cut to the next room, no cut on the last room, and a
+      guide’s contents.
 - [x] Wave 40: a room has a way in and a way out. The hero carries a
       pill to the first page not yet read (“Start reading”, then “Pick up
       where you left off”, gone once everything is read), and the foot

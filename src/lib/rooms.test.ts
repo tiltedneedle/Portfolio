@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { liveChapters, livePaths, writtenPages } from "@/lib/rooms";
+import { liveChapters, livePaths, roomAfter, writtenPages } from "@/lib/rooms";
 import { chapters } from "@/content/chapters";
 import { demo } from "@/content/clients/demo";
 import { template } from "@/content/clients/template";
@@ -69,5 +69,28 @@ describe("livePaths", () => {
     expect(paths.has("/create/hooks")).toBe(true);
     expect(paths.has("/content/ideas")).toBe(false);
     expect(paths.has("/audit")).toBe(false);
+  });
+});
+
+describe("roomAfter", () => {
+  it("steps through the rooms in the system's order", () => {
+    expect(roomAfter("audit")?.title).toBe("Your content");
+    expect(roomAfter("content")?.title).toBe("Create");
+    expect(roomAfter("create")?.title).toBe("Publish");
+    expect(roomAfter("publish")?.title).toBe("Analyse");
+  });
+
+  it("gives the last room nothing to cut to", () => {
+    expect(roomAfter("analyse")).toBeUndefined();
+  });
+
+  it("steps over the rooms this client has not got", () => {
+    expect(roomAfter("audit", template)).toBeUndefined();
+    expect(roomAfter("create", template)?.title).toBe("Publish");
+    expect(roomAfter("audit", demo)?.title).toBe("Your content");
+  });
+
+  it("names the room the way the slate does", () => {
+    expect(roomAfter("create")).toEqual({ href: "/publish", n: "05 — Publish", title: "Publish", blurb: chapters.find((c) => c.id === "publish")!.blurb });
   });
 });

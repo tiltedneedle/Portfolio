@@ -3,7 +3,7 @@ import { ChapterOverview } from "@/components/portal/ChapterOverview";
 import { chapter } from "@/content/chapters";
 import { requireClient } from "@/content/clients/registry";
 import { publicIdentity } from "@/content/clients/types";
-import { liveChapters } from "@/lib/rooms";
+import { roomAfter } from "@/lib/rooms";
 
 export const metadata: Metadata = { title: "Your content" };
 
@@ -14,15 +14,14 @@ export default async function ContentPage({ params }: { params: Promise<{ client
   const ideaCount = ideaLists.reduce((s, list) => s + list.length, 0);
   const ideasWritten = ideaLists.reduce((s, list) => s + list.filter((i) => i.text).length, 0);
   const scriptsWritten = sys.scripts.filter((s) => s.body?.length).length;
-  const live = liveChapters(sys).filter((c) => c.id !== "home");
-  const after = live[live.findIndex((c) => c.id === "content") + 1];
+  const after = roomAfter("content", sys);
   return (
     <ChapterOverview
       id="content"
       identity={publicIdentity(sys.identity)}
       lead={chapter("content").blurb}
       countLabel="Parts"
-      next={after && { href: after.href, n: after.n + " \u2014 " + after.title, title: after.title, blurb: after.blurb }}
+      next={after}
       rows={[
         {
           slug: "ideas",

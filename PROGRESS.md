@@ -213,6 +213,13 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 38: a guide opens on its own frame. The still from its film
+      sits behind the title, held right, defocused (blur 3px at 0.16) and
+      faded into the stage: these stills carry burnt-in captions, and a
+      sharp one reads as stray words behind the headline. The column that
+      held only three mono lines now carries the contents, every numbered
+      section as an anchor, desktop only (the rail in the margin does this
+      once you are reading; this is the index before you start).
 - [x] Wave 37: a room opens like a suite. ChapterOverview gained a
       readout (how many pages, how many minutes, how many read) and a
       monitor: a 3:4 plate holding every page’s still stacked and

@@ -8,6 +8,8 @@ import { readingMinutes } from "@/content/system";
 import { Blocks } from "@/components/portal/blocks";
 import { GuideRail } from "@/components/portal/GuideRail";
 import { TrainingFilm } from "@/components/portal/TrainingFilm";
+import { Still } from "@/components/portal/Still";
+import { stillFor } from "@/lib/published";
 import { NextCut } from "@/components/portal/NextCut";
 import { Rich } from "@/components/portal/Rich";
 import { ReadingProgress } from "@/components/portal/ReadingProgress";
@@ -31,18 +33,48 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
   return (
     <article className="bg-[color:var(--stage)]">
       <ReadingProgress />
-      <header className="mx-auto max-w-[1600px] px-6 pb-14 pt-28 md:px-14 md:pt-36">
-        <p className="mono">
+      <header className="relative mx-auto max-w-[1600px] px-6 pb-14 pt-28 md:px-14 md:pt-36">
+        {guide.poster && (
+          // The page opens on its own frame: the still from its film, held to
+          // the right, defocused and faded into the stage. Soft on purpose:
+          // these stills carry burnt-in captions, and a sharp one reads as
+          // stray words behind the headline rather than as a frame.
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[420px] overflow-hidden md:h-[520px]">
+            <Still src={stillFor(guide.poster)} className="absolute right-0 top-0 h-full w-full scale-105 object-cover opacity-[0.16] blur-[3px] md:w-[58%]" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[color:var(--stage)] via-[rgba(11,11,12,0.82)] to-[rgba(11,11,12,0.45)]" />
+            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-[color:var(--stage)]" />
+          </div>
+        )}
+        <p className="mono relative">
           {ch.n} &mdash; {ch.title} <span className="text-[color:var(--ink-mid)]">/</span> {n}
         </p>
-        <h1 className="display mt-6 max-w-[12ch] text-[clamp(52px,8.5vw,140px)]">{guide.title}</h1>
-        <p className="em-serif mt-6 max-w-[34ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">{guide.kicker}</p>
+        <h1 className="display relative mt-6 max-w-[12ch] text-[clamp(52px,8.5vw,140px)]">{guide.title}</h1>
+        <p className="em-serif relative mt-6 max-w-[34ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">{guide.kicker}</p>
 
-        <div className="mt-12 grid gap-10 md:grid-cols-[1fr_minmax(0,60ch)] md:gap-16">
-          <div className="mono flex flex-col gap-2 md:pt-2">
-            {numbered > 0 && <span>{numbered} principles</span>}
-            <span>{minutes} min read</span>
-            {guide.film && <span>Training film</span>}
+        <div className="relative mt-12 grid gap-10 md:grid-cols-[1fr_minmax(0,60ch)] md:gap-16">
+          <div className="md:pt-2">
+            <p className="mono flex flex-col gap-2">
+              {numbered > 0 && <span>{numbered} principles</span>}
+              <span>{minutes} min read</span>
+              {guide.film && <span>Training film</span>}
+            </p>
+            {railItems.length > 1 && (
+              // The shape of the page before you commit to it. The rail in the
+              // margin does this once you are reading; this is the contents.
+              <nav aria-label="In this guide" className="mt-10 hidden border-t border-[color:var(--rule)] md:block">
+                <p className="mono py-3 text-[color:var(--ink-mid)]">In this guide</p>
+                <ol className="flex flex-col border-t border-[color:var(--rule)]">
+                  {railItems.map((it) => (
+                    <li key={it.id} className="border-b border-[color:var(--rule)] last:border-b-0">
+                      <a href={"#" + it.id} className="flex items-baseline gap-3 py-2 text-[15px] leading-snug text-[color:var(--ink-soft)] transition-colors hover:text-[color:var(--ink)]">
+                        <span className="mono w-[3ch] shrink-0 text-[color:var(--ink-mid)]">{it.n ?? "\u2014"}</span>
+                        <span className="min-w-0 flex-1">{it.title}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </nav>
+            )}
           </div>
           <div className="flex flex-col gap-5">
             {guide.intro.map((p) => (

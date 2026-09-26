@@ -213,6 +213,15 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 37: a room opens like a suite. ChapterOverview gained a
+      readout (how many pages, how many minutes, how many read) and a
+      monitor: a 3:4 plate holding every page’s still stacked and
+      cross-dissolved, showing the first page not yet read and following
+      the pointer or the keyboard down the list, with scanlines and a slow
+      sweep across the glass (.scan, off under reduced motion, hidden in
+      print). It is aria-hidden: the list already says everything. The
+      component became a client one, so stills are resolved on the server
+      (the published index must never reach the browser).
 - [x] Wave 36: the template is a template again, and the studio's own
       vocabulary comes off the client's site. Two corrections from the user:
       (1) the personalised rooms were to be empty pages until a client is

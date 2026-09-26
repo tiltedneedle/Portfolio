@@ -5,6 +5,7 @@ import { ChapterOverview } from "@/components/portal/ChapterOverview";
 import { chapter } from "@/content/chapters";
 import { findGuide, guidesFor, readingMinutes } from "@/content/system";
 import { requireClient } from "@/content/clients/registry";
+import { stillFor } from "@/lib/published";
 import { shortName } from "@/content/clients/types";
 
 type GuideChapterId = "create" | "publish" | "analyse";
@@ -20,11 +21,13 @@ export function GuideChapter({ id, client }: { id: GuideChapterId; client?: stri
       title: g.title,
       line: g.kicker,
       meta: readingMinutes(g) + " min" + (notes ? " \u00B7 " + notes + (notes === 1 ? " note" : " notes") + " for " + who : ""),
-      poster: g.poster,
+      // The published index never reaches the browser, so the still is looked up here.
+      still: g.poster ? stillFor(g.poster) : undefined,
+      minutes: readingMinutes(g),
       readKey: g.chapter + "/" + g.slug,
     };
   });
-  return <ChapterOverview id={id} rows={rows} lead={chapter(id).blurb} />;
+  return <ChapterOverview id={id} rows={rows} lead={chapter(id).blurb} countLabel="Guides" />;
 }
 
 export function GuidePage({ id, slug, client }: { id: GuideChapterId; slug: string; client: string }) {

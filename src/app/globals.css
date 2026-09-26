@@ -315,6 +315,33 @@ body {
   }
 }
 
+/* ------------------------------------------------------- the glass
+   A suite monitor: fine scanlines over the still, and a slow sweep down
+   the glass. Decoration on an aria-hidden preview, so it says nothing. */
+.scan::before,
+.scan::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+.scan::before {
+  inset: 0;
+  background: repeating-linear-gradient(to bottom, rgba(242, 239, 233, 0.05) 0 1px, transparent 1px 3px);
+}
+.scan::after {
+  left: 0;
+  right: 0;
+  height: 26%;
+  top: -30%;
+  background: linear-gradient(to bottom, transparent, rgba(242, 239, 233, 0.07), transparent);
+  animation: scan-sweep 5.5s linear infinite;
+}
+@keyframes scan-sweep {
+  to {
+    top: 100%;
+  }
+}
+
 /* The three moves land in beats once their section is in view. */
 .reveal-wait .beat {
   opacity: 0;
@@ -917,7 +944,8 @@ a:focus-visible > .wm {
   .desk-bar,
   .desk-avg,
   .pop,
-  .beat {
+  .beat,
+  .scan::after {
     animation: none;
   }
 }
@@ -970,6 +998,9 @@ a:focus-visible > .wm {
     opacity: 1 !important;
     transform: none !important;
     animation: none !important;
+  }
+  .scan {
+    display: none !important;
   }
   a {
     text-decoration: none;

@@ -15,6 +15,7 @@ export default async function AuditPage({ params }: { params: Promise<{ client: 
       id="audit"
       identity={publicIdentity(sys.identity)}
       lead={chapter("audit").blurb}
+      countLabel="Reports"
       rows={[
         {
           slug: "content-diagnostic",

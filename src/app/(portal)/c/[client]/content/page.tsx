@@ -18,6 +18,7 @@ export default async function ContentPage({ params }: { params: Promise<{ client
       id="content"
       identity={publicIdentity(sys.identity)}
       lead={chapter("content").blurb}
+      countLabel="Parts"
       rows={[
         {
           slug: "ideas",

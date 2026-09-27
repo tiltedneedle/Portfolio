@@ -98,7 +98,7 @@ export function GuideRail({ items, minutes = 0, k }: { items: { id: string; n?: 
               aria-current={on ? "location" : undefined}
             >
               <span className="flex w-[2ch] shrink-0 items-center gap-2" aria-hidden="true">
-                {done ? <span className="mono text-[10px] leading-none text-[color:var(--ink-mid)]">&#10003;</span> : <span className={on ? "lamp" : "lamp-off"} />}
+                {done ? <span className="mono text-[10px] leading-none text-[color:var(--ink-mid)]">&#10003;</span> : <span className={on ? "lamp lamp-live" : "lamp-off"} />}
               </span>
               <span className="mono w-[3ch] shrink-0 text-[color:var(--ink-mid)]">{it.n ?? "—"}</span>
               <span>{it.title}</span>

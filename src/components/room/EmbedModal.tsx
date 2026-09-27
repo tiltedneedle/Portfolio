@@ -66,7 +66,7 @@ export function EmbedModal({
           >
             <div className="mb-3 flex items-center justify-between mono">
               <span className="flex items-center gap-2">
-                <span className="lamp" aria-hidden="true" />
+                <span className="lamp lamp-live" aria-hidden="true" />
                 Playing
               </span>
               <button type="button" onClick={onClose} className="slate-link text-[color:var(--ink)]" data-cursor="Cut">

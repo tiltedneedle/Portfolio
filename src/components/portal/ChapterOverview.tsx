@@ -129,7 +129,7 @@ export function ChapterOverview({
             <div aria-hidden="true" className="hidden w-[280px] shrink-0 md:block">
               <p className="mono flex items-center justify-between">
                 <span className="flex items-center gap-2 text-[color:var(--ink)]">
-                  <span className={hot === null ? "lamp-off" : "lamp"} />
+                  <span className={hot === null ? "lamp-off" : "lamp lamp-live"} />
                   Preview
                 </span>
                 <span className="text-[color:var(--ink-mid)]">{pageNumber(id, shown.slug)}</span>

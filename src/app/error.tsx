@@ -16,7 +16,7 @@ export default function ErrorPage({ error, reset }: { error: Error & { digest?: 
     <main className="flex min-h-screen items-center bg-[color:var(--stage)]">
       <div className="mx-auto w-full max-w-[1600px] px-6 py-32 md:px-14">
         <p className="mono mb-8 flex items-center gap-2">
-          <span className="lamp" aria-hidden="true" />
+          <span className="lamp lamp-live" aria-hidden="true" />
           Fault <span className="text-[color:var(--ink-mid)]">/</span> The take broke
         </p>
         <h1 className="display max-w-[10ch] text-[clamp(64px,11vw,176px)]">

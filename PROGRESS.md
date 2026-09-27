@@ -213,6 +213,31 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 51: audit item 6, parts A and C. The stated rule is that
+      motion carries meaning and is off when it is asked to be, and the
+      reveal was a generic fade-and-rise. A block is now laid down with a
+      wipe: the cut the route change makes, at block scale, with nothing
+      moving and nothing at partial alpha. The clip box overshoots by 40px
+      on every side except the moving edge, so a tally glow, a hover ring
+      or a focus outline is never shaved. Two blocks that stage their own
+      entrance (the audit's three first moves, the positioning map's road)
+      opt out through `:has()`, verified firing on both audit pages, and a
+      block reached by Tab opts out through `:focus-within`, verified
+      going from clipped to none on focus.
+      And the lamp. Thirty of them pulsed, fifteen on one grid, at things
+      that were not happening. `.lamp` is now a still dot and `.lamp-live`
+      is the breath, on the eleven places where something is happening
+      now: the Live readout, an error, the open door, the nav's new-work
+      lamp, the section being read, the prompter while it runs, the
+      monitor while you hover it, a script just copied, a film playing,
+      the playhead on the reel. The nav's lamp breathes because it is an
+      alert calling you; the same additions listed in Recently added go
+      static, because that is the record you came to read.
+      Verification note: this headless Chromium never advances a CSS
+      transition — opacity, transform and clip-path all sit at their
+      start value forever. Finish the animations first
+      (`document.getAnimations().forEach(a => a.finish())`) and then read
+      the end state: 5 revealed blocks at inset(-40px), 39 still waiting.
 - [x] Wave 50: audit item 12, the last of the design audit's build list.
       A script page was a stack of paragraphs with one total at the top. It
       is now one row per beat, with the running time in the gutter, and a
@@ -635,7 +660,8 @@ The marketing site this grew out of is on the `marketing-site` branch.
 
 ## In flight
 
-- [ ] Nothing mid-change. All verified and committed. Pick from Next.
+- [ ] Wave 52: the access strip honours stillness (audit item 6, part B).
+      Verifying.
 
 ## Next
 

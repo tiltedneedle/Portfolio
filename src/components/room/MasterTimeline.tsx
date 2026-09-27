@@ -104,7 +104,7 @@ export function MasterTimeline({ clips }: { clips: Clip[] }) {
                         }
                       >
                         {on && <span aria-hidden="true" className="absolute inset-y-0 left-0 w-[2px] bg-[color:var(--tally)] shadow-[0_0_8px_var(--tally-glow)]" />}
-                        {on && <span className="lamp absolute -top-1 left-[5px]" aria-hidden="true" />}
+                        {on && <span className="lamp lamp-live absolute -top-1 left-[5px]" aria-hidden="true" />}
                       </CutLink>
                     </li>
                   );

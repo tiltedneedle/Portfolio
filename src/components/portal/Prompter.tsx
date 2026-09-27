@@ -166,7 +166,7 @@ export function Prompter({ title, hook, body, cta, spoken }: Props) {
           <div className="mono relative flex items-center justify-between border-b border-[color:var(--rule)] px-5 py-3 md:px-8">
             <div ref={bar} aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[2px] origin-left bg-[color:var(--ink)]" style={{ transform: "scaleX(0)" }} />
             <span className="flex items-center gap-2">
-              <span className={playing || count !== null ? "lamp" : "lamp-off"} aria-hidden="true" />
+              <span className={playing || count !== null ? "lamp lamp-live" : "lamp-off"} aria-hidden="true" />
               {playing ? "Rolling" : count !== null ? "Ready" : "Standby"}
               <span ref={tc} className="tc ml-3">
                 00:00:00:00

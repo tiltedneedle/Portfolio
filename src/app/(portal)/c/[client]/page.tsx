@@ -108,7 +108,7 @@ export default async function Home({ params }: { params: Promise<{ client: strin
 
         <div className="mono relative flex items-center justify-between px-6 pt-20 md:px-14">
           <p className="flex items-center gap-2">
-            <span className="lamp" aria-hidden="true" />
+            <span className="lamp lamp-live" aria-hidden="true" />
             <span>Live</span>
             <ReelPosition clips={clips} className="ml-2" />
           </p>

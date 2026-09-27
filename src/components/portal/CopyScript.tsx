@@ -58,7 +58,7 @@ export function CopyScript({ text, disabled }: { text: string; disabled?: boolea
       className="pill pill-solid inline-flex items-center gap-3 px-6 py-3 text-[15px] disabled:opacity-40"
       aria-live="polite"
     >
-      {state === "done" && <span className="lamp" aria-hidden="true" />}
+      {state === "done" && <span className="lamp lamp-live" aria-hidden="true" />}
       {state === "idle" ? "Copy script" : state === "done" ? "Copied" : "Select the text and copy"}
     </button>
   );

@@ -54,7 +54,7 @@ function Panel({ chapter: c, onPick, current, read }: { chapter: Chapter; onPick
                 <span className="mono w-[5ch] shrink-0 text-[color:var(--ink-mid)]">{c.id === "home" ? pad(j) : pageNumber(c.id, p.slug)}</span>
                 {p.title}
                 {here ? (
-                  <span className="lamp ml-auto shrink-0 self-center" aria-hidden="true" />
+                  <span className="lamp lamp-live ml-auto shrink-0 self-center" aria-hidden="true" />
                 ) : read.has(c.id + "/" + p.slug) ? (
                   <span className="ml-auto inline-block h-1.5 w-1.5 shrink-0 self-center rounded-full bg-[color:var(--ink)]" aria-label="Read" />
                 ) : null}
@@ -90,7 +90,7 @@ function NewLamp({ latest }: { latest?: string }) {
   if (!latest || !seen || latest <= seen) return null;
   return (
     <span className="inline-flex items-center">
-      <span className="lamp" aria-hidden="true" />
+      <span className="lamp lamp-live" aria-hidden="true" />
       <span className="sr-only">New additions since your last visit</span>
     </span>
   );
@@ -303,7 +303,7 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
                               <span className="mono text-[color:var(--ink-mid)]">{c.id === "home" ? pad(j) : pageNumber(c.id, p.slug)}</span>
                               {p.title}
                               {here ? (
-                                <span className="lamp ml-2 shrink-0 self-center" aria-hidden="true" />
+                                <span className="lamp lamp-live ml-2 shrink-0 self-center" aria-hidden="true" />
                               ) : read.has(c.id + "/" + p.slug) ? (
                                 <span className="ml-2 inline-block h-1.5 w-1.5 shrink-0 self-center rounded-full bg-[color:var(--ink)]" aria-label="Read" />
                               ) : null}

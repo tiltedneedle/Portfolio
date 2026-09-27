@@ -46,7 +46,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         <input id="code" name="code" type="password" required autoComplete="current-password" autoFocus className={field} />
         {error && (
           <p className="mono mt-3 flex items-center gap-2 text-[color:var(--ink)]" role="alert">
-            <span className="lamp" aria-hidden="true" />
+            <span className="lamp lamp-live" aria-hidden="true" />
             {error}
           </p>
         )}

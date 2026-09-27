@@ -258,6 +258,11 @@ body {
   border-radius: 50%;
   background: var(--tally);
   box-shadow: 0 0 10px 2px var(--tally-glow);
+}
+/* It breathes only while something is happening now. Every other lamp is
+   a mark, and a mark that pulses is motion without meaning -- there were
+   thirty of them, fifteen on one grid alone. */
+.lamp-live {
   animation: lamp-breathe 2.4s ease-in-out infinite;
 }
 .lamp-off {
@@ -1100,7 +1105,7 @@ a:focus-visible > .wm {
 
   .grain,
   .skeleton,
-  .lamp,
+  .lamp-live,
   .wm-l,
   .wm-a,
   .wm-b,
@@ -1165,6 +1170,9 @@ a:focus-visible > .wm {
   }
   .journey-draw {
     stroke-dashoffset: 0 !important;
+    animation: none !important;
+  }
+  .lamp-live {
     animation: none !important;
   }
   .journey-ring,
@@ -1321,17 +1329,39 @@ a:focus-visible > .wm {
 }
 
 /* -------------------------------------------------------------- reveals
-   Added by Reveal.tsx after hydration, only to blocks below the fold. */
+   Added by Reveal.tsx after hydration, only to blocks below the fold.
+
+   A block is laid down with a wipe, not a cross-fade: the cut the route
+   change makes, at block scale. Nothing moves and nothing renders at
+   partial alpha.
+
+   The clip box overshoots the border box by 40px on the sides and at rest,
+   so a tally glow, a hover ring or a focus outline is never shaved --
+   inset(0 0 0 0) would clip to the border box for the life of the page,
+   which is not the same as none. Only the bottom edge carries the wipe;
+   the top starts at 0 so a shadow above a block stays out of the band
+   while the block is still hidden. */
 .reveal-wait {
-  opacity: 0;
-  transform: translateY(14px);
+  clip-path: inset(0 -40px 100% -40px);
 }
 .reveal-wait.reveal-in {
-  opacity: 1;
-  transform: none;
-  transition:
-    opacity 0.6s var(--ease-out-expo),
-    transform 0.6s var(--ease-out-expo);
+  clip-path: inset(-40px);
+  transition: clip-path 0.52s var(--ease-out-expo);
+}
+/* Two blocks stage their own entrance off these same classes -- the road
+   draws itself, the three moves land in beats. A wipe over the top of
+   either is two motions saying one thing. */
+.reveal-wait:has(.journey-draw),
+.reveal-wait:has(.beat) {
+  clip-path: none;
+  transition: none;
+}
+/* Tabbing into a block not yet reached scrolls it in and starts the wipe
+   under the focus ring. Equal specificity to .reveal-in, so this must stay
+   last in source order to win. */
+.reveal-wait:focus-within {
+  clip-path: none;
+  transition: none;
 }
 
 /* On paper a rail is a sheet: every card, in a grid, nothing scrolled. */
@@ -1374,8 +1404,7 @@ a:focus-visible > .wm {
 /* Paper has no fold: nothing waits for the reader. */
 @media print {
   .reveal-wait {
-    opacity: 1 !important;
-    transform: none !important;
+    clip-path: none !important;
   }
 }
 

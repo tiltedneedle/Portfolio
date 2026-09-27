@@ -43,7 +43,7 @@ export default async function IdeasPage({ params }: { params: Promise<{ client: 
           </span>
         </p>
         <h1 className="display mt-6 max-w-[10ch] text-[clamp(52px,8.5vw,140px)]">100 viral content ideas</h1>
-        <p className="em-serif mt-6 max-w-[40ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">
+        <p className="em-serif statement mt-6 max-w-[40ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">
           One hundred content concepts built across four core content pillars. Use these ideas as the foundation of your content output.
         </p>
         <div className="mt-12 flex flex-wrap items-end justify-between gap-x-12 gap-y-8">

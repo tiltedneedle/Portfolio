@@ -167,7 +167,7 @@ export function PositionMap({ map }: { map: PositionMapT }) {
       </svg>
       <figcaption>
         <p className="mono">Where everyone stands</p>
-        <p className="em-serif mt-3 max-w-[30ch] text-[clamp(21px,2.2vw,27px)] leading-[1.25] text-[color:var(--ink)]">
+        <p className="em-serif statement mt-3 max-w-[30ch] text-[clamp(21px,2.2vw,27px)] leading-[1.25] text-[color:var(--ink)]">
           {map.x[0]} to {map.x[1]}, {map.y[0].toLowerCase()} to {map.y[1].toLowerCase()}.
         </p>
         <ul className="mono mt-5 flex flex-col gap-1.5">

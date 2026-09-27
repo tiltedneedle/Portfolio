@@ -31,7 +31,7 @@ export default async function ScriptsPage({ params }: { params: Promise<{ client
           <FilmedCount ns={sys.scripts.filter((s) => s.body?.length).map((s) => s.n)} className="text-[color:var(--ink-mid)]" />
         </p>
         <h1 className="display mt-6 max-w-[10ch] text-[clamp(52px,8.5vw,140px)]">20 personalised scripts</h1>
-        <p className="em-serif mt-6 max-w-[40ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">
+        <p className="em-serif statement mt-6 max-w-[40ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">
           Twenty complete videos written specifically for your business. Open the script. Film it. Execute.
         </p>
       </header>

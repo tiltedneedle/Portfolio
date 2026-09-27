@@ -142,7 +142,7 @@ function Lines({ title, items, mode = "spoken" }: { title?: string; items: strin
       <Title text={title} />
       <ul className="flex flex-col gap-5">
         {items.map((it) => (
-          <li key={it} className="spoken em-serif max-w-[30ch] text-[clamp(22px,2.4vw,30px)] leading-[1.25] text-[color:var(--ink)]">
+          <li key={it} className="spoken em-serif statement max-w-[30ch] text-[clamp(22px,2.4vw,30px)] leading-[1.25] text-[color:var(--ink)]">
             <Rich text={it} />
           </li>
         ))}
@@ -355,7 +355,7 @@ function Aside({ label, text }: { label?: string; text: string }) {
   return (
     <div className="border-l-2 border-[color:var(--ink)] pl-6 md:pl-8">
       {label && <p className="mono mb-2">{label}</p>}
-      <p className="em-serif max-w-[34ch] text-[clamp(21px,2.2vw,27px)] leading-[1.3] text-[color:var(--ink)]">
+      <p className="em-serif statement max-w-[34ch] text-[clamp(21px,2.2vw,27px)] leading-[1.3] text-[color:var(--ink)]">
         <Rich text={text} />
       </p>
     </div>

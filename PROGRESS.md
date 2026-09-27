@@ -213,6 +213,17 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 43: audit item 3. The serif italic had stopped being a
+      signature: on a room overview it set the lead, then every row's line,
+      then the next-room blurb, so it was the body face. The two highest
+      frequency uses drop to sans at a readable measure (52ch/48ch, 1.45
+      leading) — on the Create room that is eight fewer italic paragraphs,
+      14 serif spans down to 6. The survivors are set like display type: a
+      new `.statement` puts `text-wrap: balance` on the twelve large serif
+      statements, so a 44px italic can no longer drop one word onto its own
+      line. `.measure` gains `text-wrap: pretty` for running prose, and
+      `.em-serif .em-serif` inverts to upright sans, because a mark cannot
+      be the same face as what surrounds it.
 - [x] Wave 42: the first two items of the design audit. An unshot
       training film was eight 747px empty rectangles across the Create
       guides; it is now a slot on the timeline (title, state, frame marks,
@@ -485,7 +496,9 @@ The marketing site this grew out of is on the `marketing-site` branch.
 
 ## In flight
 
-- [ ] Nothing mid-change. All verified and committed. Pick from Next.
+- [ ] Wave 44: the conformed master timeline (audit item 4). In progress:
+      lib/sequence.ts, hhmm(), MasterTimeline, ReelPosition replacing the
+      running stopwatch, two hero defects.
 
 ## Next
 

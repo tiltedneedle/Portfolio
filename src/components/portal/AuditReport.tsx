@@ -193,7 +193,7 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
           )}
         </p>
         <h1 className="display mt-6 max-w-[10ch] text-[clamp(52px,8.5vw,140px)]">{title}</h1>
-        <p className="em-serif mt-6 max-w-[40ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">{report.intro}</p>
+        <p className="em-serif statement mt-6 max-w-[40ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">{report.intro}</p>
 
         <div className="mt-12 grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
           <div className="min-w-0">

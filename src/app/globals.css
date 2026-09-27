@@ -145,6 +145,15 @@ body {
   text-wrap: balance;
 }
 
+/* The same decision as .display, for the statements that are not .display.
+   A line set in the serif italic is display scale even when it is a
+   paragraph, and a dropped last word in 44px italic is the loudest
+   typographic fault this site can make. Not for running prose: browsers
+   cap balancing at a few lines, and it is the wrong algorithm at 62ch. */
+.statement {
+  text-wrap: balance;
+}
+
 /* The signature move: one word of a statement drops to the serif italic. */
 .em-serif {
   font-family: var(--font-serif-face), Georgia, serif;
@@ -153,6 +162,13 @@ body {
   text-transform: none;
   letter-spacing: 0;
   line-height: inherit;
+}
+/* Emphasis inside an italic passage inverts. The mark cannot be the same
+   face as what surrounds it, and no roman serif is vendored, so it goes
+   upright sans: the reverse-italic convention. */
+.em-serif .em-serif {
+  font-family: var(--font-sans-face), "Helvetica Neue", Arial, sans-serif;
+  font-style: normal;
 }
 
 /* Slates, timecodes, readouts, labels. */
@@ -772,8 +788,10 @@ a:focus-visible > .wm {
    scroll sideways without a scrollbar, and the nav's dropdown panel.
    ====================================================================== */
 
+/* Running prose: cap the measure, and let the browser avoid the widow. */
 .measure {
   max-width: 62ch;
+  text-wrap: pretty;
 }
 
 /* A numeral is a watermark: faint by design, drawn by CSS from data-n so

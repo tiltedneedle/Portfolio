@@ -49,7 +49,7 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
           {ch.n} &mdash; {ch.title} <span className="text-[color:var(--ink-mid)]">/</span> {n}
         </p>
         <h1 className="display relative mt-6 max-w-[12ch] text-[clamp(52px,8.5vw,140px)]">{guide.title}</h1>
-        <p className="em-serif relative mt-6 max-w-[34ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">{guide.kicker}</p>
+        <p className="em-serif statement relative mt-6 max-w-[34ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">{guide.kicker}</p>
 
         <div className="relative mt-12 grid gap-10 md:grid-cols-[1fr_minmax(0,60ch)] md:gap-16">
           <div className="md:pt-2">
@@ -167,7 +167,7 @@ function RuleBlocks({ guide }: { guide: GuideT }) {
     <div className="flex flex-col gap-8">
       {guide.rule.map((b, i) =>
         b.kind === "p" ? (
-          <p key={i} className="em-serif text-[clamp(26px,3.4vw,44px)] leading-[1.2] text-[color:var(--ink)]">
+          <p key={i} className="em-serif statement text-[clamp(26px,3.4vw,44px)] leading-[1.2] text-[color:var(--ink)]">
             <Rich text={b.text} />
           </p>
         ) : (

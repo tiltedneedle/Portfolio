@@ -104,7 +104,7 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
               {s.hook && (
                 <section>
                   <p className="mono mb-5">Hook</p>
-                  <p className="spoken em-serif text-[clamp(24px,3vw,38px)] leading-[1.25] text-[color:var(--ink)]">{s.hook}</p>
+                  <p className="spoken em-serif statement text-[clamp(24px,3vw,38px)] leading-[1.25] text-[color:var(--ink)]">{s.hook}</p>
                 </section>
               )}
               <section>

@@ -146,7 +146,7 @@ export default async function Home({ params }: { params: Promise<{ client: strin
           <div>
             <p className="mono">01 &mdash; Welcome</p>
             <p className="mono mt-10 text-[color:var(--ink-mid)]">{home.objective.label}</p>
-            <p className="em-serif mt-4 max-w-[30ch] text-[clamp(24px,3vw,40px)] leading-[1.2] text-[color:var(--ink)]">{home.objective.text}</p>
+            <p className="em-serif statement mt-4 max-w-[30ch] text-[clamp(24px,3vw,40px)] leading-[1.2] text-[color:var(--ink)]">{home.objective.text}</p>
           </div>
           <div className="flex flex-col gap-6 md:pt-12">
             {home.intro.map((p) => (
@@ -189,7 +189,7 @@ export default async function Home({ params }: { params: Promise<{ client: strin
           <p className="mono">{home.approach.title}</p>
           <div className="mt-10 flex max-w-[40ch] flex-col gap-6">
             {home.approach.lines.map((l) => (
-              <p key={l} className="em-serif text-[clamp(26px,3.4vw,44px)] leading-[1.2] text-[color:var(--ink)]">
+              <p key={l} className="em-serif statement text-[clamp(26px,3.4vw,44px)] leading-[1.2] text-[color:var(--ink)]">
                 {l}
               </p>
             ))}

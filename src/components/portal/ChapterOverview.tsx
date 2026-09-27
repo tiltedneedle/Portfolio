@@ -91,7 +91,7 @@ export function ChapterOverview({
               )}
             </p>
             <h1 className="display mt-6 max-w-[10ch] text-[clamp(64px,11vw,176px)]">{c.title}</h1>
-            <p className="em-serif mt-8 max-w-[36ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">{lead}</p>
+            <p className="em-serif statement mt-8 max-w-[36ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">{lead}</p>
             <dl className="mono mt-8 flex flex-wrap gap-x-8 gap-y-2" aria-label={"What is in " + c.title}>
               <div className="flex gap-2">
                 <dt className="text-[color:var(--ink-mid)]">{countLabel}</dt>
@@ -173,7 +173,7 @@ export function ChapterOverview({
                 )}
                 <span>
                   <span className="display block text-[clamp(32px,4.4vw,64px)] leading-[0.95] text-[color:var(--ink)] transition-colors group-hover:text-white">{r.title}</span>
-                  <span className="em-serif mt-2 block max-w-[44ch] text-[17px] text-[color:var(--ink-soft)] md:text-[19px]">{r.line}</span>
+                  <span className="mt-2 block max-w-[52ch] text-[16px] leading-[1.45] text-[color:var(--ink-soft)] md:text-[17px]">{r.line}</span>
                 </span>
                 <span className="mono col-start-2 mt-3 md:col-start-3 md:mt-0 md:text-right">
                   {r.readKey && <ReadMark k={r.readKey} />}
@@ -199,7 +199,7 @@ export function ChapterOverview({
               <p className="display mt-3 text-[clamp(36px,5.5vw,88px)] transition-colors duration-300 group-hover:text-white">
                 {next.title} <span aria-hidden="true" className="text-[color:var(--ink-mid)] transition-colors group-hover:text-[color:var(--ink)]">&#8599;</span>
               </p>
-              <p className="em-serif mt-3 max-w-[40ch] text-[19px] text-[color:var(--ink-soft)]">{next.blurb}</p>
+              <p className="mt-3 max-w-[48ch] text-[17px] leading-[1.45] text-[color:var(--ink-soft)]">{next.blurb}</p>
             </div>
           </CutLink>
         </nav>

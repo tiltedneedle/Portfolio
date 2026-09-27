@@ -100,9 +100,11 @@ export const home = {
   ],
   approach: {
     title: "The Tilted Needle approach",
+    // These set up the beats below them. They no longer restate the
+    // objective: the Welcome block states it once, two sections up.
     lines: [
-      "The objective is not to create one viral video.",
-      "The objective is to build a repeatable system capable of producing high performing content consistently.",
+      "One video that works is luck.",
+      "The same six steps, every week, is why the next one works too.",
     ],
     beats: ["Research.", "Create.", "Publish.", "Analyse.", "Improve.", "Then repeat."],
   },

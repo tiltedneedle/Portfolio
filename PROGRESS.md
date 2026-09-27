@@ -213,6 +213,16 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 54: the thing wave 53 flagged, plus a patch. The front page
+      said "The objective" three times — once as an 11px label, twice at
+      44px two sections later, in the agency-deck voice the writing pass
+      had just removed everywhere else. The approach block now sets up the
+      beats under it instead of restating the objective: "One video that
+      works is luck. / The same six steps, every week, is why the next one
+      works too." copy.test.ts holds the rule, both as a literal and as a
+      shared-vocabulary check against the objective's own words.
+      framer-motion 13.4.2 -> 13.4.4, a patch release, verified through the
+      full suite because nine components import `motion`.
 - [x] Wave 53: audit item 8, the writing pass, and with it all twelve
       items of the design audit. The site was written like a studio
       everywhere except its front page, where it reverted to agency-deck
@@ -236,13 +246,6 @@ The marketing site this grew out of is on the `marketing-site` branch.
       tripped: the front page was serialising counts ("0 of 100 written")
       for rooms this client has not got. Gated to the cards actually shown.
 
-## Flagged, not fixed
-
-- [ ] "The objective" now appears three times on the front page: once as
-      an 11px label in the Welcome block, and twice at 44px in the approach
-      block ("The objective is not to create one viral video." / "The
-      objective is to build a repeatable system..."). Read the page top to
-      bottom and decide whether approach.lines still earns its place.
 - [x] Wave 52: audit item 6, part B, and with it the last of the twelve.
       The access strip pinned a viewport and shuttled ~400vw sideways off
       vertical scroll for every reader, including one who asked for
@@ -720,8 +723,14 @@ The marketing site this grew out of is on the `marketing-site` branch.
    Create guides plus intro/outro (the nine client videos that arrived are
    the showreel, not these), first real client content, images for
    `figure` blocks, a real client logo to test `--logo`.
-2. Majors available and not taken (`npm outdated`, 2026-09-24): typescript
-   7.0 and @types/node 26. Each is its own wave with the full loop.
-   framer-motion 13 was taken in wave 29. vitest 4/5 stays blocked by the
-   npm 10.9.2 crash; its two moderate dev-only audit findings
-   (@vitest/mocker) go with it.
+2. Majors available and not taken (`npm outdated`, re-checked 2026-09-27):
+   typescript 7.0 and @types/node 26. Each is its own wave with the full
+   loop, and typescript 7 is the Go rewrite, so it is a decision rather
+   than a bump. framer-motion 13.4.4 (patch) was taken in wave 54.
+   vitest 4.1.11 would clear the two moderate dev-only audit findings
+   (@vitest/mocker path traversal, which covers 2.1.0 to 4.1.10 and has no
+   patched 3.x), but `npm install -D vitest@4.1.11` still dies with
+   "Cannot read properties of null (reading 'edgesOut')" on npm 10.9.2,
+   with and without a verified cache. The suite uses no mocking at all, so
+   the finding is not reachable here; it needs a working npm, not a
+   workaround.

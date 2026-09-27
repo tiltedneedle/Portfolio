@@ -95,3 +95,25 @@ describe("permanence is claimed once", () => {
     expect(home.access_note.toLowerCase()).toContain("permanent");
   });
 });
+
+describe("the objective is stated once", () => {
+  it("does not restate the Welcome block's label two sections later", () => {
+    for (const line of home.approach.lines) expect(line.toLowerCase()).not.toContain("the objective");
+  });
+
+  it("sets up the beats rather than repeating the objective's words", () => {
+    const words = new Set(
+      home.objective.text
+        .toLowerCase()
+        .split(/[^a-z']+/)
+        .filter((w) => w.length > 5)
+    );
+    for (const line of home.approach.lines) {
+      const shared = line
+        .toLowerCase()
+        .split(/[^a-z']+/)
+        .filter((w) => words.has(w));
+      expect(shared, "approach line repeats the objective: " + shared.join(", ")).toEqual([]);
+    }
+  });
+});

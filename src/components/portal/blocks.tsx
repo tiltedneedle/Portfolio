@@ -265,7 +265,7 @@ function Steps({ title, items }: { title?: string; items: { title: string; text?
           <li key={it.title} className="relative pb-8 pl-8 last:pb-0">
             <span aria-hidden="true" className="absolute -left-[5px] top-[10px] h-[9px] w-[9px] rounded-full bg-[color:var(--ink)]" />
             <p className="mono mb-1">{pad(i)}</p>
-            <p className="display text-[clamp(24px,2.6vw,34px)] leading-[0.95] text-[color:var(--ink)]">{it.title}</p>
+            <p className="display step-title leading-[0.95] text-[color:var(--ink)]">{it.title}</p>
             {it.text && (
               <p className="measure mt-2 text-[17px] leading-relaxed text-[color:var(--ink-soft)]">
                 <Rich text={it.text} />
@@ -286,7 +286,7 @@ function Cards({ title, items }: { title?: string; items: { title: string; text:
         {items.map((it, i) => (
           <li key={it.title} className="border-t border-[color:var(--rule-strong)] pt-4">
             <p className="mono mb-3">{pad(i)}</p>
-            <p className="display text-[32px] leading-[0.95] text-[color:var(--ink)]">{it.title}</p>
+            <p className="display card-title leading-[0.95] text-[color:var(--ink)]">{it.title}</p>
             <p className="mt-3 text-[15px] leading-relaxed text-[color:var(--ink-mid)]">
               <Rich text={it.text} />
             </p>
@@ -363,18 +363,25 @@ function Aside({ label, text }: { label?: string; text: string }) {
 }
 
 export function Blocks({ blocks }: { blocks: Block[] }) {
+  // Sub-sections are lettered a, b, c among their siblings. A plain counter
+  // is safe here: this is a server component rendering a synchronous map.
+  // Past z there is no letter to give, so the index simply stops.
+  let subs = 0;
   return (
     <div className="flex flex-col gap-9">
-      {blocks.map((b, i) => (
-        <Reveal key={i}>
-          <BlockView block={b} />
-        </Reveal>
-      ))}
+      {blocks.map((b, i) => {
+        const index = b.kind === "sub" && subs < 26 ? String.fromCharCode(97 + subs++) : undefined;
+        return (
+          <Reveal key={i}>
+            <BlockView block={b} index={index} />
+          </Reveal>
+        );
+      })}
     </div>
   );
 }
 
-export function BlockView({ block }: { block: Block }) {
+export function BlockView({ block, index }: { block: Block; index?: string }) {
   switch (block.kind) {
     case "p":
       return <Paragraph text={block.text} />;
@@ -405,8 +412,13 @@ export function BlockView({ block }: { block: Block }) {
     case "sub":
       return (
         <div className="border-t border-[color:var(--rule-strong)] pt-6">
-          <h3 className="mono mb-6 text-[color:var(--ink)]">{block.title}</h3>
-          <Blocks blocks={block.blocks} />
+          <h3 className="mb-7 flex items-baseline gap-3">
+            {index && <span aria-hidden="true" className="sub-index" data-a={index} />}
+            <span className="subhead">{block.title}</span>
+          </h3>
+          <div className="sub-body">
+            <Blocks blocks={block.blocks} />
+          </div>
         </div>
       );
     case "clips":

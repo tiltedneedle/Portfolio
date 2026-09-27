@@ -145,6 +145,17 @@ body {
   text-wrap: balance;
 }
 
+/* The second voice. The same condensed face, opened right up: used only
+   for large display type the page is pointing AT rather than naming itself.
+   Never below 48px -- a 0.05em stem on this stage is grey blur, not light.
+   Everything in the small band stays at 800 on purpose, because light is
+   weak there. font-weight, not font-variation-settings, so it still goes
+   through the weight cascade and the fallback stack. */
+.display-light {
+  font-weight: 320;
+  letter-spacing: 0.022em;
+}
+
 /* The same decision as .display, for the statements that are not .display.
    A line set in the serif italic is display scale even when it is a
    paragraph, and a dropped last word in 44px italic is the loudest
@@ -832,6 +843,56 @@ a:focus-visible > .wm {
 .measure {
   max-width: 62ch;
   text-wrap: pretty;
+}
+
+/* A sub-section is a level, not a caption. It had been rendering as .mono,
+   which is the same typographic object as a list's caption, so a reader had
+   no way to tell a heading from a label. Display face, low on the weight
+   axis so it never competes with a section's 800. The letter that indexes
+   it is drawn by CSS from data-a, exactly as a numeral is from data-n, so
+   an audit never weighs it as text. */
+.subhead {
+  font-family: var(--font-display-face), "Arial Narrow", Impact, sans-serif;
+  font-weight: 500;
+  font-size: 26px;
+  line-height: 1.02;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.sub-index {
+  font-family: var(--font-mono-face), Consolas, monospace;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: none;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+  flex: none;
+  width: 2ch;
+}
+.sub-index::before {
+  content: attr(data-a);
+}
+
+/* Nothing inside a sub-section may out-size its own heading. These two block
+   kinds render display titles; their sizes move out of Tailwind utilities
+   into component classes precisely so the nested cap can beat them. Not a
+   blanket rule on .display: the diagrams use it for labels, which are not
+   headings and must not shrink just because they sit inside a sub. */
+.step-title {
+  font-size: clamp(24px, 2.6vw, 34px);
+}
+.card-title {
+  font-size: 32px;
+}
+.sub-body .step-title {
+  font-size: clamp(18px, 1.8vw, 24px);
+}
+.sub-body .card-title {
+  font-size: 24px;
 }
 
 /* A numeral is a watermark: faint by design, drawn by CSS from data-n so

@@ -113,7 +113,7 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
                 <span aria-hidden="true" className="numeral pointer-events-none absolute -right-2 top-1/2 -translate-y-1/2 text-[200px] opacity-50 md:text-[240px]" data-n={it.n} />
                 <span className="mono relative">{it.n}</span>
                 <span className="relative">
-                  <span className="display block max-w-[10ch] text-[clamp(34px,3.4vw,54px)] leading-[0.92] text-[color:var(--ink)]">{it.title}</span>
+                  <span className="display display-light block max-w-[11ch] text-[clamp(48px,3.4vw,54px)] leading-[0.92] text-[color:var(--ink)]">{it.title}</span>
                   <span className="mt-4 block max-w-[32ch] text-[15px] leading-relaxed text-[color:var(--ink-mid)]">{it.text}</span>
                   <span className="mono mt-6 flex items-baseline justify-between gap-4 text-[color:var(--ink-soft)] transition-colors group-hover:text-[color:var(--ink)]">
                     <span>

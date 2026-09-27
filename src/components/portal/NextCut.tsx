@@ -36,7 +36,7 @@ export function NextCut({ chapter: id, slug, client }: { chapter: ChapterId; slu
             <p className="mono">
               Next <span className="text-[color:var(--ink-mid)]">/</span> {next.chapter.n} &mdash; {next.chapter.title}
             </p>
-            <p className="display mt-3 text-[clamp(36px,5.5vw,88px)] transition-colors duration-300 group-hover:text-white">
+            <p className="display display-light mt-3 text-[clamp(48px,5.5vw,88px)] transition-colors duration-300 group-hover:text-white">
               {next.page.title} <span aria-hidden="true" className="text-[color:var(--ink-mid)] transition-colors group-hover:text-[color:var(--ink)]">&#8599;</span>
             </p>
             <p className="mono mt-2">{pageNumber(next.chapter.id, next.page.slug)}</p>

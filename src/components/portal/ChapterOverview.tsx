@@ -197,7 +197,7 @@ export function ChapterOverview({
               <p className="mono">
                 Next <span className="text-[color:var(--ink-mid)]">/</span> {next.n}
               </p>
-              <p className="display mt-3 text-[clamp(36px,5.5vw,88px)] transition-colors duration-300 group-hover:text-white">
+              <p className="display display-light mt-3 text-[clamp(48px,5.5vw,88px)] transition-colors duration-300 group-hover:text-white">
                 {next.title} <span aria-hidden="true" className="text-[color:var(--ink-mid)] transition-colors group-hover:text-[color:var(--ink)]">&#8599;</span>
               </p>
               <p className="mt-3 max-w-[48ch] text-[17px] leading-[1.45] text-[color:var(--ink-soft)]">{next.blurb}</p>

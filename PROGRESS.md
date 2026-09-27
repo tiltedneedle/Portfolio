@@ -213,6 +213,28 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 49: audit item 10. The type system had two holes. A
+      sub-section rendered as `.mono`, which is the same typographic object
+      as a list's caption, so on /create/editing section 07 the sub
+      "Captions" and the list title "Captions should" read as the same
+      thing. A sub is now its own level: display face at weight 500, 26px,
+      with a lettered index drawn by CSS from data-a exactly as a numeral
+      is from data-n. Nothing inside a sub may out-size its own heading, so
+      the two block kinds that render display titles got component classes
+      (`.step-title`, `.card-title`) whose sizes a `.sub-body` rule can cap
+      — not a blanket rule on `.display`, because the diagrams use it for
+      labels, which are not headings. Section h2 stays at 51.84px, the sub
+      at 26px, capped step titles at 24px: no inversion at either width,
+      and h1 -> h2 -> h3 is unchanged.
+      The second hole: Big Shoulders is vendored variable 300-900 and used
+      at exactly one weight. `.display-light` (320, slightly opened
+      tracking) is the second voice, used in exactly three places, all of
+      them large display type the page is pointing AT rather than naming
+      itself: the next-room cut on a room overview and on a guide, and the
+      access strip's card titles. Each has a 48px floor, because a 0.05em
+      stem on this stage is grey blur, not light. Checked at 390 on a 1x
+      display, which is the only place it could fail and the one place the
+      script cannot see.
 - [x] Wave 48: audit item 9. Nine of the thirteen universal guides draw
       their examples from one client's real work — aviation vocabulary
       runs from 96 references in video-style down to 11 in strategy — and
@@ -594,7 +616,7 @@ The marketing site this grew out of is on the `marketing-site` branch.
 
 ## In flight
 
-- [ ] Nothing mid-change. All verified and committed. Pick from Next.
+- [ ] Wave 50: a script is timed the way the edit will be. Verifying.
 
 ## Next
 

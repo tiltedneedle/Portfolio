@@ -5,10 +5,12 @@ export const strategy: Guide = {
   slug: "strategy",
   title: "Publishing strategy",
   kicker: "Do not make a video, post it once and hope.",
+  example: { client: "The Jet Business", handle: "thejetbusiness" },
   poster: "iMqGv-W5DhY",
   intro: [
     "Once your content has been created, you need a consistent publishing system.",
     "You want to build a bank of strong content, publish it consistently across every relevant platform and give yourself enough data to understand what your audience actually responds to.",
+    "The examples here are from *The Jet Business*, a client whose films are on the showreel. Read them as a worked example: the principle is the same in your field, the specifics are yours.",
   ],
   sections: [
     {

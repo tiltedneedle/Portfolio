@@ -102,6 +102,17 @@ const { reel } = await import(pathToFileURL(join(out, "content/system/reel.js"))
   }
 }
 
+// A guide that credits a client must credit a real one: the whole value of
+// saying where the examples come from is that it is checkable, so an
+// invented or mistyped attribution is a build failure, not a warning.
+const exampleHandles = new Set([...published.map((p) => p.handle), ...reel.map((r) => r.handle)]);
+for (const g of guides) {
+  if (!g.example) continue;
+  const { client, handle } = g.example;
+  if (!published.some((p) => p.client === client)) problems.push(`guide ${g.chapter}/${g.slug}: example client "${client}" is not a client in published.json`);
+  if (!exampleHandles.has(handle)) problems.push(`guide ${g.chapter}/${g.slug}: example handle @${handle} is in neither published.json nor the reel`);
+}
+
 // Clients
 for (const [slug, c] of Object.entries(clients)) {
   const id = c.identity;

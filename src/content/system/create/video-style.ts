@@ -5,11 +5,13 @@ export const videoStyle: Guide = {
   slug: "video-style",
   title: "Choose your video style",
   kicker: "The idea comes first. Then the format that makes it most interesting to watch.",
+  example: { client: "The Jet Business", handle: "thejetbusiness" },
   poster: "93f2iVn6rIc",
   intro: [
     "Once you have the idea, the next step is deciding how that idea should be presented.",
     "In aviation, you often have access to highly visual environments: aircraft, hangars, cabins, airports, clients and experiences that most people never get to see. The format you choose should take advantage of that access.",
     "The same topic could be filmed as a Q&A inside a Gulfstream, a Day In The Life at an FBO, a reaction to a new Bombardier launch or a short documentary following an aircraft delivery.",
+    "The examples here are from *The Jet Business*, a client whose films are on the showreel. Read them as a worked example: the principle is the same in your field, the specifics are yours.",
   ],
   film: { title: "Choose your video style" },
   sections: [

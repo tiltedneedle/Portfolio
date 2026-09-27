@@ -213,6 +213,22 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 48: audit item 9. Nine of the thirteen universal guides draw
+      their examples from one client's real work — aviation vocabulary
+      runs from 96 references in video-style down to 11 in strategy — and
+      none of them said so, which reads as a template nobody finished
+      generalising rather than as a studio showing its working. Each of the
+      nine now carries a credit in the header column that already holds the
+      facts ("Examples from / The Jet Business / @thejetbusiness") and one
+      sentence at the end of its intro naming it as a worked example, with
+      the client's name dropping to the serif italic through the existing
+      Rich renderer. Two list titles stop pretending now that the page
+      frames them: "In aviation, this could be" is just "This could be".
+      Ideation and study-your-niche are left alone: one stray reference
+      each, nothing to frame, and labelling them would be false.
+      The attribution is checked, not asserted: check-content.mjs fails the
+      build unless the client is in published.json and the handle is in
+      published.json or the reel. Confirmed by typoing the handle.
 - [x] Wave 47: audit item 11. On the demo's shelves, sixteen identical
       empty script cards and eighteen identical empty idea cards said the
       system was unfinished. Now the first undelivered slot in each rail is
@@ -578,8 +594,7 @@ The marketing site this grew out of is on the `marketing-site` branch.
 
 ## In flight
 
-- [ ] Wave 48: the nine aviation guides name their worked example.
-      Verifying.
+- [ ] Nothing mid-change. All verified and committed. Pick from Next.
 
 ## Next
 

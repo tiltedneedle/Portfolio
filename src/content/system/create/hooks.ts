@@ -5,10 +5,12 @@ export const hooks: Guide = {
   slug: "hooks",
   title: "Hooks",
   kicker: "The first few seconds decide whether someone keeps watching or scrolls past.",
+  example: { client: "The Jet Business", handle: "thejetbusiness" },
   poster: "R0YRf0nWEw4",
   intro: [
     "A strong hook creates an immediate reason to pay attention.",
     "It can come from what the viewer sees, what they hear, what you say, or ideally a combination of all three.",
+    "The examples here are from *The Jet Business*, a client whose films are on the showreel. Read them as a worked example: the principle is the same in your field, the specifics are yours.",
   ],
   film: { title: "Hooks" },
   sections: [
@@ -19,7 +21,7 @@ export const hooks: Guide = {
         { kind: "p", text: "Before someone has even processed what you are saying, they have already seen the first frame of the video. Use something visually interesting to immediately interrupt the feed." },
         {
           kind: "list",
-          title: "In aviation, this could be",
+          title: "This could be",
           style: "tag",
           items: [
             "Walking onto a Gulfstream",

@@ -97,6 +97,12 @@ export type Guide = {
   title: string;
   /** One line under the title, set in the serif italic. */
   kicker: string;
+  /**
+   * The client whose real work this guide's examples are drawn from. Must
+   * match a `client` in src/lib/published.json; check-content.mjs fails the
+   * build otherwise, because a frame is only worth anything if it is true.
+   */
+  example?: { client: string; handle: string };
   intro: string[];
   /** Blocks that belong before the first numbered section (a comparison, a list of searches). */
   opener?: Block[];

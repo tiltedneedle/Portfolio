@@ -5,10 +5,12 @@ export const coreMessage: Guide = {
   slug: "core-message",
   title: "Deliver your core message",
   kicker: "Once you have captured attention, you need to earn it.",
+  example: { client: "The Jet Business", handle: "thejetbusiness" },
   poster: "vvfyWPtViUY",
   intro: [
     "The viewer should quickly understand what the video is about and feel that every sentence is taking them closer to the answer, result or payoff.",
     "Do not make people work to understand your point.",
+    "The examples here are from *The Jet Business*, a client whose films are on the showreel. Read them as a worked example: the principle is the same in your field, the specifics are yours.",
   ],
   film: { title: "Deliver your core message" },
   sections: [

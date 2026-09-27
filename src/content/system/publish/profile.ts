@@ -10,10 +10,12 @@ export const profile: Guide = {
   slug: "profile",
   title: "Profile optimisation",
   kicker: "The profile is where attention becomes a decision.",
+  example: { client: "The Jet Business", handle: "thejetbusiness" },
   poster: "DEuqrU7q9Rc",
   intro: [
     "Someone has just watched a video, liked it, and tapped your name. In the next few seconds they decide whether to follow, message, or leave.",
     "Every element of the profile should make that decision easy. This is the part most businesses ignore, and it is the part that turns views into enquiries.",
+    "The examples here are from *The Jet Business*, a client whose films are on the showreel. Read them as a worked example: the principle is the same in your field, the specifics are yours.",
   ],
   opener: [{ kind: "profile" }],
   sections: [

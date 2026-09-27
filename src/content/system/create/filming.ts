@@ -5,10 +5,12 @@ export const filming: Guide = {
   slug: "filming",
   title: "Viral filming blueprint",
   kicker: "Every shot should give the viewer a reason to keep watching.",
+  example: { client: "The Jet Business", handle: "thejetbusiness" },
   poster: "EcAAmQII-9c",
   intro: [
     "Great filming is not simply about making something look cinematic. Every shot should help keep the viewer engaged, communicate the story clearly and give the editor everything they need to create a strong final video.",
     "In aviation, you already have access to visually powerful environments.",
+    "The examples here are from *The Jet Business*, a client whose films are on the showreel. Read them as a worked example: the principle is the same in your field, the specifics are yours.",
   ],
   opener: [
     { kind: "list", style: "beat", items: ["Aircraft.", "Cabins.", "Cockpits.", "Hangars.", "FBOs.", "Runways.", "Aircraft deliveries."] },

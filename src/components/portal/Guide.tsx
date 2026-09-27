@@ -63,6 +63,16 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
               <span>{minutes} min read</span>
               {guide.film && <span>Training film</span>}
             </p>
+            {guide.example && (
+              // Nine of the thirteen guides are built on one client's real work.
+              // Said once, here, a page reads as a studio showing its working;
+              // unsaid, it reads as a template nobody finished generalising.
+              <div className="mt-10 border-t border-[color:var(--rule)] pt-3">
+                <p className="mono text-[color:var(--ink-mid)]">Examples from</p>
+                <p className="mt-1 text-[15px] leading-snug text-[color:var(--ink)]">{guide.example.client}</p>
+                <p className="mono mt-1 text-[color:var(--ink-mid)]">@{guide.example.handle}</p>
+              </div>
+            )}
             {railItems.length > 1 && (
               // The shape of the page before you commit to it. The rail in the
               // margin does this once you are reading; this is the contents.

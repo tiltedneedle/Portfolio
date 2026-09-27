@@ -5,9 +5,11 @@ export const packaging: Guide = {
   slug: "packaging",
   title: "Content packaging",
   kicker: "You can create an excellent video and still lose the viewer before they ever properly watch it.",
+  example: { client: "The Jet Business", handle: "thejetbusiness" },
   poster: "1JyE72paX1A",
   intro: [
     "Packaging is everything surrounding the content that influences whether someone decides it is worth their attention.",
+    "The examples here are from *The Jet Business*, a client whose films are on the showreel. Read them as a worked example: the principle is the same in your field, the specifics are yours.",
   ],
   opener: [
     { kind: "list", style: "beat", items: ["The title.", "The cover.", "The opening text.", "The caption.", "The way the idea itself is framed."] },
@@ -145,7 +147,7 @@ export const packaging: Guide = {
         { kind: "p", text: "The brain naturally notices differences. This makes comparisons one of the simplest ways to package information." },
         {
           kind: "lines",
-          title: "In aviation this could be",
+          title: "This could be",
           mode: "screen",
           items: ["£10M jet versus £50M jet", "Gulfstream versus Bombardier", "First class versus private aviation", "New jet versus 15 year old jet", "Short range versus ultra long range"],
         },

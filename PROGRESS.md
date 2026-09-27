@@ -819,10 +819,13 @@ The marketing site this grew out of is on the `marketing-site` branch.
    `LazyMotion` + `m` (nine files import `motion`) to cut the largest
    client chunk; the site is private and static, so it was left. Take it
    only if a real client reports slow first loads.
-1. Awaiting from the user (do not block): nine training-video ids for the
-   Create guides plus intro/outro (the nine client videos that arrived are
-   the showreel, not these), first real client content, images for
-   `figure` blocks, a real client logo to test `--logo`.
+1. Awaiting from the user (do not block): eight YouTube ids for the
+   training films — six Create guides (study-your-niche, video-style,
+   hooks, core-message, filming, editing) plus home's intro and outro.
+   Counted 2026-09-27; the note used to say nine, which was wrong. The
+   nine client videos that arrived are the showreel, not these. Also the
+   first real client's content, images for `figure` blocks, and a real
+   client logo to test `--logo`.
 2. Majors available and not taken (`npm outdated`, re-checked 2026-09-27):
    typescript 7.0 and @types/node 26. Each is its own wave with the full
    loop, and typescript 7 is the Go rewrite, so it is a decision rather

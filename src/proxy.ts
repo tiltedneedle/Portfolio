@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { COOKIE, PRESENCE, portalSecret, verify } from "@/lib/session";
-import { TEMPLATE_SLUG } from "@/content/clients/slugs";
+import { TEMPLATE_SLUG, isClientSlug } from "@/content/clients/slugs";
 import { cleanPath, isRoomPath, roomPath } from "@/lib/room-paths";
 
 /**
@@ -10,9 +10,15 @@ import { cleanPath, isRoomPath, roomPath } from "@/lib/room-paths";
  *
  * The slug comes from the signed session cookie, or is the template when
  * the door is open (no PORTAL_SECRET). A visitor with no valid session is
- * sent to the door. The internal tree is never addressed directly: a request
- * to /c/... is bounced back to the clean path, so no one can reach another
- * client's pages by guessing a slug.
+ * sent to the door, and so is one holding a perfectly valid cookie for a
+ * client who has since been taken off the registry: the tree they would be
+ * rewritten into no longer exists, and `dynamicParams = false` would serve
+ * them the site's own 404 for every path including the front page, with no
+ * nav and no way back to the door, for as long as their cookie lasts.
+ *
+ * The internal tree is never addressed directly: a request to /c/... is
+ * bounced back to the clean path, so no one can reach another client's
+ * pages by guessing a slug.
  */
 export async function proxy(request: NextRequest) {
   const url = request.nextUrl.clone();
@@ -27,6 +33,7 @@ export async function proxy(request: NextRequest) {
   let slug: string | null = TEMPLATE_SLUG;
   if (secret) {
     slug = await verify(secret, request.cookies.get(COOKIE)?.value);
+    if (slug && !isClientSlug(slug)) slug = null;
     if (!slug) {
       const wanted = path + url.search;
       url.pathname = "/login";

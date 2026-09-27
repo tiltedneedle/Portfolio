@@ -81,6 +81,12 @@ if (!gated) {
   await expect("/c/template", 307, { location: "/" });
   await expect("/nope", 404);
   await expect("/login", 200, { contains: "door is open" });
+  // A hostile or mistyped ?error must not take the door down: messages is a
+  // plain object, so messages["__proto__"] used to render Object.prototype
+  // and throw, replacing the login form with the fault page.
+  await expect("/login?error=__proto__", 200, { contains: "Access code" });
+  await expect("/login?error=constructor", 200, { contains: "Access code" });
+  await expect("/login?error=nosuchthing", 200, { contains: "Access code" });
   await expect("/login?for=demo", 200, { contains: /prepared for (<!-- -->)?Horizon Aviation/ });
   await expect("/login?for=nope", 200, { contains: "Private screening" });
   await expect("/robots.txt", 200, { contains: "Disallow: /" });
@@ -98,6 +104,14 @@ if (!gated) {
   await expect("/", 307, { location: "/login", headers: { cookie: "tn-room=demo.9999999999999.deadbeef" } });
   await expect("/c/demo/audit", 307, { location: "/audit" });
   await expect("/login", 200, { contains: "Access code" });
+  await expect("/login?error=__proto__", 200, { contains: "Access code" });
+  // A backslash is a slash to a browser, so this used to survive safeNext
+  // and end up in the form as a redirect target. The framework echoes the
+  // request URL in its own router payload either way; what matters is that
+  // the field the form actually submits has been sanitised back to "/".
+  await expect("/login?next=%2F%5Cevil.example", 200, { contains: 'name="next" value="/"' });
+  await expect("/login?next=%2F%2Fevil.example", 200, { contains: 'name="next" value="/"' });
+  await expect("/login?next=%2Fcreate%2Fhooks", 200, { contains: 'name="next" value="/create/hooks"' });
 }
 
 console.log(failed ? "\n" + failed + " failed" : "\nall passed");

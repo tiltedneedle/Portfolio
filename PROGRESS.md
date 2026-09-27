@@ -213,6 +213,54 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 56: an error-handling review of the whole tree, and the seven
+      real defects it found. Two were reachable from a URL.
+      `/login?error=__proto__` took the door down with a 500: `messages` is
+      a plain object, so the lookup returned Object.prototype, which is
+      truthy and throws when React renders it. Anyone with a mistyped or
+      hostile link could not reach the login form. And `safeNext()` blocked
+      a leading "//" but not a leading backslash — in a special scheme a
+      browser reads "\\" as "/", so `/\evil.example` resolved to
+      https://evil.example/ and walked straight past the guard, into the
+      form's hidden field and the action's redirect. Writing the test for
+      that found a second hole in my own first fix: `/..//evil.example`
+      parses on-origin but its pathname is `//evil.example`, protocol
+      relative again the moment anything resolves it. safeNext now checks
+      its own answer, not just the question, and the field is sanitised at
+      render as well as in the action.
+      Then five that were not exploitable but were wrong. A valid cookie
+      for a client taken off the registry dead-ended in the site's own 404
+      for every path, with no nav and no door, for up to thirty days; the
+      proxy now treats an unknown slug as a bad cookie, and the edge's slug
+      list is asserted equal to the registry's in both directions. The rate
+      limiter trusted the leftmost X-Forwarded-For, which the caller
+      supplies, so rotating it defeated the limit; it reads the rightmost
+      now, or Vercel's own header. It also recorded every blocked attempt,
+      so a flood cost more per request than the one before. There was no
+      error boundary inside the portal, so one throw in one client
+      component replaced the nav, the footer, the palette and every way
+      out. The boundary went in at `(portal)/c/[client]/error.tsx` after
+      measuring both placements: one segment higher it catches a layout
+      fault but takes the nav and footer with it, which is what the root
+      boundary is already for. Where it is now, a page fault renders inside
+      the room's shell with the nav intact, so "take another room from the
+      nav above" is true. Forced a real uncaught client render fault
+      through it to check, rather than trusting that it compiled. And
+      `lib/portal-auth.ts` was a dead second copy of the door, imported by
+      nothing, exporting a `safeNext` without the /login guard and an
+      unsalted `tokenFor` — exactly what auto-import reaches for. Deleted.
+      The review also confirmed a lot: every localStorage access is already
+      in try/catch, the only JSON.parse and fetch are guarded, all three
+      clipboard callers feature-detect and fall back twice, and the
+      half-written-client worry is solved structurally, because pillar()
+      and scripts() pad every client to 4x25 and 20.
+      One more thing, found by reading CI rather than the code: the gated
+      a11y job had failed once on `page.goto(..., "networkidle")` timing
+      out on home. Since the stills went through the image optimiser home
+      issues fifteen requests, and "no traffic for 500ms" can simply never
+      happen inside the timeout on a slow runner. It passed locally every
+      time, which is the worst kind of check. a11y.mjs now waits for the
+      document and then a fixed beat, with no networkidle anywhere.
 - [x] Wave 55: the README catches up with twelve waves of design work,
       and one instruction in it that had gone false. It told the next
       person to freeze reveals with

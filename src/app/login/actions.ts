@@ -14,7 +14,10 @@ const attempts = new Map<string, number[]>();
 function limited(ip: string) {
   const now = Date.now();
   const recent = (attempts.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
-  recent.push(now);
+  // Stop recording once the window is already over the limit. Pushing every
+  // blocked attempt made a flood cost more per request than the one before,
+  // since the whole array is re-filtered each time.
+  if (recent.length <= MAX_PER_WINDOW) recent.push(now);
   attempts.set(ip, recent);
   if (attempts.size > 5000) {
     for (const [k, v] of attempts) if (v.every((t) => now - t >= WINDOW_MS)) attempts.delete(k);
@@ -24,7 +27,12 @@ function limited(ip: string) {
 
 async function clientIp() {
   const h = await headers();
-  return h.get("x-forwarded-for")?.split(",")[0].trim() || h.get("x-real-ip") || "unknown";
+  // The LEFTMOST x-forwarded-for entry is whatever the caller sent, so
+  // rotating it defeated the limit entirely. The rightmost is the one the
+  // proxy closest to us appended, and Vercel's own header is better still.
+  const xff = h.get("x-forwarded-for");
+  const rightmost = xff?.split(",").pop()?.trim();
+  return h.get("x-vercel-forwarded-for")?.trim() || rightmost || h.get("x-real-ip") || "unknown";
 }
 
 function back(error: string, next: string, who = ""): never {

@@ -3,7 +3,7 @@ import { ClientMark } from "@/components/portal/ClientMark";
 import { DoorBackdrop } from "@/components/room/DoorBackdrop";
 import { getClient } from "@/content/clients/registry";
 import { publicIdentity } from "@/content/clients/types";
-import { doorOpen } from "@/lib/session";
+import { doorOpen, safeNext } from "@/lib/session";
 import { enter } from "./actions";
 
 export const metadata: Metadata = { title: "Enter" };
@@ -24,14 +24,19 @@ const messages: Record<string, string> = {
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string; next?: string; for?: string }> }) {
   const sp = await searchParams;
   const open = doorOpen();
-  const error = sp.error ? messages[sp.error] : null;
+  // `messages` is a plain object, so messages["__proto__"] is
+  // Object.prototype: truthy, and rendering it throws. /login?error=__proto__
+  // took the whole door down. Only our own keys count.
+  const error = typeof sp.error === "string" && Object.hasOwn(messages, sp.error) ? messages[sp.error] : null;
   const named = sp.for && /^[a-z0-9-]{1,64}$/.test(sp.for) ? getClient(sp.for) : undefined;
   const who = named?.identity.accessHash ? publicIdentity(named.identity) : null;
   return (
     <main className="relative flex min-h-screen items-center overflow-hidden bg-[color:var(--stage)] px-6 py-24 md:px-14">
       <DoorBackdrop />
       <form action={enter} className="relative w-full max-w-[560px]">
-        <input type="hidden" name="next" value={sp.next ?? "/"} />
+        {/* Sanitised here as well as in the action: the field should never
+            carry a value we would refuse to redirect to. */}
+        <input type="hidden" name="next" value={safeNext(sp.next)} />
         {who && <input type="hidden" name="for" value={who.slug} />}
         <p className="mono">Private screening{who && <span className="text-[color:var(--ink-mid)]"> / prepared for {who.name}</span>}</p>
         <div className="mt-8">

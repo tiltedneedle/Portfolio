@@ -46,9 +46,12 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
     };
     measure();
     let live = true;
-    document.fonts?.ready.then(() => {
-      if (live) measure();
-    });
+    // A font that never loads must not leave an unhandled rejection behind.
+    document.fonts?.ready
+      .then(() => {
+        if (live) measure();
+      })
+      .catch(() => {});
     const ro = new ResizeObserver(measure);
     ro.observe(el);
     window.addEventListener("resize", measure);

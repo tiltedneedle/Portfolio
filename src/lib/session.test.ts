@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { accessHash, issue, safeEqual, safeNext, sha256, verify, SESSION_DAYS } from "@/lib/session";
+import { CLIENT_SLUGS, isClientSlug } from "@/content/clients/slugs";
+import { clientSlugs } from "@/content/clients/registry";
 
 const SECRET = "a-secret-for-the-tests";
 
@@ -91,5 +93,34 @@ describe("safeNext", () => {
     expect(safeNext("")).toBe("/");
     expect(safeNext(null)).toBe("/");
     expect(safeNext(42)).toBe("/");
+  });
+
+  it("treats a backslash the way a browser does", () => {
+    // In a special scheme "\\" is "/", so these leave the site even though
+    // none of them starts with "//". This was an open redirect.
+    for (const s of ["/\evil.example", "/\\evil.example", "/\/evil.example", "/\	evil.example"]) {
+      const out = safeNext(s);
+      expect(new URL(out, "https://portal.example/").origin, s + " escaped to " + out).toBe("https://portal.example");
+    }
+  });
+
+  it("never returns anything that resolves off-origin", () => {
+    const nasty = ["/\evil.example", "//evil.example", "/%2F%2Fevil.example", "/\\\\", "/..//evil.example", "/\r\n//evil.example"];
+    for (const s of nasty) expect(new URL(safeNext(s), "https://portal.example/").origin).toBe("https://portal.example");
+  });
+});
+
+describe("the edge's slug list", () => {
+  it("is the registry's list, so a valid cookie always has a tree to land in", () => {
+    expect([...CLIENT_SLUGS]).toEqual(clientSlugs);
+  });
+
+  it("knows a client from anything else", () => {
+    expect(isClientSlug("template")).toBe(true);
+    expect(isClientSlug("demo")).toBe(true);
+    expect(isClientSlug("a-client-we-offboarded")).toBe(false);
+    expect(isClientSlug("")).toBe(false);
+    expect(isClientSlug("__proto__")).toBe(false);
+    expect(isClientSlug("constructor")).toBe(false);
   });
 });

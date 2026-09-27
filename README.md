@@ -297,6 +297,11 @@ overflow or any console error; then the palette, open. CI runs it after
 the gated smoke. Visual checks run through Playwright against
 `next start`, with screenshots into a scratch directory.
 
+Stop both servers before rebuilding. `next start` reads the build manifest
+once, so a rebuild underneath it serves chunks that no longer exist, and the
+accessibility pass then reports dozens of 500s on unrelated routes that look
+exactly like a regression.
+
 Two traps in that browser. It never advances a CSS transition at all, so
 a correct reveal sits at its start value forever and looks like a broken
 cascade; finish the animations first

@@ -41,7 +41,7 @@ try {
   });
 
   if (code) {
-    await page.goto(base + "/login", { waitUntil: "networkidle" });
+    await visit(page, base + "/login");
     await page.fill("#code", code);
     await Promise.all([page.waitForURL((u) => !u.pathname.startsWith("/login")), page.press("#code", "Enter")]);
     say(!page.url().includes("/login"), "logged in as the client behind the door");
@@ -64,12 +64,28 @@ try {
       };
     }, TAGS);
 
-  for (const w of widths) {
+  /**
+ * Go to a page and wait for it to settle.
+ *
+ * Not `networkidle`: since the stills go through the image optimiser the home
+ * page issues fifteen requests, and on a slow runner "no traffic for 500ms"
+ * can simply never happen inside the timeout. It timed out in CI while
+ * passing every time locally, which is the worst kind of check. Wait for the
+ * document instead, then give the page a fixed beat to finish painting.
+ */
+async function visit(page, url, settle = 600) {
+  const resp = await page.goto(url, { waitUntil: "domcontentloaded", timeout: 45000 });
+  await page.waitForLoadState("load", { timeout: 45000 }).catch(() => {});
+  await page.waitForTimeout(settle);
+  return resp;
+}
+
+for (const w of widths) {
     await page.setViewportSize({ width: w.width, height: w.height });
     for (const route of routes) {
       errors.length = 0;
-      const resp = await page.goto(base + route, { waitUntil: "networkidle" });
-      await page.waitForTimeout(route === "/" ? 3000 : 400);
+      // Home opens on the slate, which has to finish before anything is measured.
+      const resp = await visit(page, base + route, route === "/" ? 3000 : 400);
       await page.addScriptTag({ content: axeSource });
       const r = await audit();
       const wide = r.scrollW > r.innerW;
@@ -87,7 +103,7 @@ try {
 
   // The palette, open with results, is a dialog of its own.
   await page.setViewportSize({ width: widths[0].width, height: widths[0].height });
-  await page.goto(base + "/create/hooks", { waitUntil: "networkidle" });
+  await visit(page, base + "/create/hooks");
   await page.mouse.move(700, 500);
   await page.keyboard.press("/");
   await page.waitForTimeout(300);

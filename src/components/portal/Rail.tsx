@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useReducedMotion } from "framer-motion";
 
 /**
  * A rail: content that slides sideways. Native scrolling with snap points,
@@ -10,6 +11,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 export function Rail({ children, count, label }: { children: ReactNode; count: number; label?: string }) {
   const ref = useRef<HTMLUListElement>(null);
   const [first, setFirst] = useState(0);
+  const reduced = useReducedMotion();
   const [atEnd, setAtEnd] = useState(false);
 
   useEffect(() => {
@@ -41,7 +43,8 @@ export function Rail({ children, count, label }: { children: ReactNode; count: n
   const by = (dir: 1 | -1) => {
     const el = ref.current;
     if (!el) return;
-    el.scrollBy({ left: dir * el.clientWidth * 0.85, behavior: "smooth" });
+    // The arrows are the one motion on a rail; stillness turns it into a jump.
+    el.scrollBy({ left: dir * el.clientWidth * 0.85, behavior: reduced ? "auto" : "smooth" });
   };
 
   return (

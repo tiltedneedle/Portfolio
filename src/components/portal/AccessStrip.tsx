@@ -34,10 +34,15 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
   useEffect(() => {
     const el = track.current;
     if (!el) return;
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     const measure = () => {
       const isMobile = !window.matchMedia("(min-width: 768px)").matches;
+      // A reader who asked for stillness is not shuttled 400vw sideways off
+      // their vertical scroll. With no range the section has no extra
+      // height, the track does not transform, and focusCard no-ops.
+      const still = mq.matches;
       setMobile(isMobile);
-      setRange(isMobile ? 0 : Math.max(0, el.scrollWidth - window.innerWidth));
+      setRange(isMobile || still ? 0 : Math.max(0, el.scrollWidth - window.innerWidth));
     };
     measure();
     let live = true;
@@ -47,10 +52,12 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
     const ro = new ResizeObserver(measure);
     ro.observe(el);
     window.addEventListener("resize", measure);
+    mq.addEventListener("change", measure);
     return () => {
       live = false;
       ro.disconnect();
       window.removeEventListener("resize", measure);
+      mq.removeEventListener("change", measure);
     };
   }, []);
 
@@ -79,14 +86,14 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
     <section
       id="access"
       ref={section}
-      className="relative scroll-mt-16 bg-[color:var(--stage)]"
+      className="shuttle relative scroll-mt-16 bg-[color:var(--stage)]"
       style={{ height: range > 0 ? "calc(100svh + " + range + "px)" : undefined }}
     >
-      <div className="md:sticky md:top-0 md:flex md:h-[100svh] md:flex-col md:justify-center md:overflow-clip">
+      <div className="shuttle-pin md:sticky md:top-0 md:flex md:h-[100svh] md:flex-col md:justify-center md:overflow-clip">
         <motion.div
           ref={track}
           style={mobile ? undefined : { x }}
-          className="flex flex-col md:w-max md:flex-row md:items-stretch md:gap-5 md:px-[8vw]"
+          className="shuttle-track flex flex-col md:w-max md:flex-row md:items-stretch md:gap-5 md:px-[8vw]"
         >
           <div className="w-full shrink-0 px-6 py-20 md:flex md:w-[34vw] md:flex-col md:justify-center md:py-0 md:pr-14">
             <p className="mono">02 &mdash; What you have access to</p>
@@ -96,18 +103,18 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
             <p className="mt-6 max-w-[34ch] text-[17px] leading-relaxed text-[color:var(--ink-soft)]">
               Everything in your system, in the order you will use it. All of it yours, for as long as you want it.
             </p>
-            <p className="mono mt-8 max-md:hidden">Scroll to shuttle &middot; click to open</p>
+            <p className="shuttle-hint mono mt-8 max-md:hidden">Scroll to shuttle &middot; click to open</p>
           </div>
 
           {items.map((it, i) => (
-            <div key={it.n} className="w-full shrink-0 px-6 py-3 md:w-auto md:px-0 md:py-0">
+            <div key={it.n} className="shuttle-cell w-full shrink-0 px-6 py-3 md:w-auto md:px-0 md:py-0">
               <CutLink
                 href={it.href}
                 onFocus={() => focusCard(i)}
                 data-cursor="Open"
                 className={
-                  "group relative flex min-h-[380px] w-full flex-col justify-between overflow-hidden border bg-[color:var(--stage-2)] p-6 transition-colors duration-500 md:h-[66svh] md:w-[calc(66svh*0.72)] md:p-8 " +
-                  (active === i && !mobile ? "border-[color:var(--rule-strong)]" : "border-[color:var(--rule)] hover:border-[color:var(--rule-strong)]")
+                  "shuttle-card group relative flex min-h-[380px] w-full flex-col justify-between overflow-hidden border bg-[color:var(--stage-2)] p-6 transition-colors duration-500 md:h-[66svh] md:w-[calc(66svh*0.72)] md:p-8 " +
+                  (active === i && !mobile && range > 0 ? "border-[color:var(--rule-strong)]" : "border-[color:var(--rule)] hover:border-[color:var(--rule-strong)]")
                 }
               >
                 <span aria-hidden="true" className="numeral pointer-events-none absolute -right-2 top-1/2 -translate-y-1/2 text-[200px] opacity-50 md:text-[240px]" data-n={it.n} />
@@ -127,7 +134,7 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
           ))}
         </motion.div>
 
-        <div className="mx-[8vw] mt-8 max-md:hidden">
+        <div className="shuttle-ruler mx-[8vw] mt-8 max-md:hidden">
           <div className="relative h-6 border-t border-[color:var(--rule-strong)]">
             {items.map((it, i) => (
               <span

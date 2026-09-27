@@ -1130,6 +1130,44 @@ a:focus-visible > .wm {
   .cut-frame[data-to]::after {
     content: none;
   }
+
+  /* The access strip stops being a shuttle and becomes a list. Done in CSS
+     rather than from state so there is no first-paint flash, and with
+     !important because the layout is Tailwind's and Tailwind's utilities
+     sit in a later layer. `transform: none` is load-bearing: it beats
+     framer's inline transform if the state half is ever bypassed. */
+  .shuttle {
+    height: auto !important;
+  }
+  .shuttle-pin {
+    position: static !important;
+    height: auto !important;
+    display: block !important;
+    overflow: visible !important;
+  }
+  .shuttle-track {
+    width: auto !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    padding-inline: 0 !important;
+    transform: none !important;
+  }
+  .shuttle-cell {
+    width: 100% !important;
+    padding-inline: 1.5rem !important;
+    padding-block: 0.75rem !important;
+  }
+  .shuttle-card {
+    width: 100% !important;
+    height: auto !important;
+    padding: 1.5rem !important;
+  }
+  /* A ruler reading a position nothing moves through, and an instruction
+     to do the one thing this reader turned off. */
+  .shuttle-ruler,
+  .shuttle-hint {
+    display: none !important;
+  }
 }
 
 /* ------------------------------------------------------------------ print

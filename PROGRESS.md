@@ -213,6 +213,24 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 52: audit item 6, part B, and with it the last of the twelve.
+      The access strip pinned a viewport and shuttled ~400vw sideways off
+      vertical scroll for every reader, including one who asked for
+      stillness — and since scripts/a11y.mjs builds its context with
+      reducedMotion "reduce", that was the layout the suite had been
+      auditing all along. It now becomes a stacked list: the section takes
+      its natural height, the track is a column, the cards are full width,
+      and the ruler and the "scroll to shuttle" instruction come off,
+      because a ruler reading a position nothing moves through is a lie.
+      Fixed in two halves: the range goes to 0 in state so the transform
+      and the extra section height never exist, and the layout is undone in
+      CSS with !important, because the layout is Tailwind's and Tailwind
+      sits in a later layer. Doing it in CSS rather than from state also
+      avoids a first-paint flash. Measured both ways at 1440: sticky ->
+      static, row -> column, cards 428px -> 1384px, ruler and hint hidden,
+      all three cards focusable with a visible ring and none clipped. An OS
+      toggle with the page open reassembles it without a reload.
+      A rail's arrows also stop scrolling smoothly under stillness.
 - [x] Wave 51: audit item 6, parts A and C. The stated rule is that
       motion carries meaning and is off when it is asked to be, and the
       reveal was a generic fade-and-rise. A block is now laid down with a
@@ -660,8 +678,7 @@ The marketing site this grew out of is on the `marketing-site` branch.
 
 ## In flight
 
-- [ ] Wave 52: the access strip honours stillness (audit item 6, part B).
-      Verifying.
+- [ ] Nothing mid-change. All verified and committed. Pick from Next.
 
 ## Next
 

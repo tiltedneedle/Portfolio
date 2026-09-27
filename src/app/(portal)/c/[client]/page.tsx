@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Slate } from "@/components/room/Slate";
-import { RunningTimecode, StudioClocks } from "@/components/room/Readouts";
+import { ReelPosition, StudioClocks } from "@/components/room/Readouts";
 import { CutLink } from "@/components/room/CutLink";
 import { Backdrop } from "@/components/portal/Backdrop";
 import { ClientMark } from "@/components/portal/ClientMark";
@@ -19,6 +19,7 @@ import { firstMoves } from "@/content/clients/types";
 import { home } from "@/content/system/home";
 import { requireClient } from "@/content/clients/registry";
 import { firstRoom, liveChapters, livePaths, writtenPages } from "@/lib/rooms";
+import { sequence } from "@/lib/sequence";
 
 // The home page, in running order: the slate (once), the welcome, the
 // objective, what you have access to, how to use the system, the approach.
@@ -30,6 +31,8 @@ export default async function Home({ params }: { params: Promise<{ client: strin
   // else stays off the website until it exists.
   const written = writtenPages(sys);
   const paths = livePaths(liveChapters(sys));
+  // The reel this client has, for the position readout in the first frame.
+  const clips = sequence(sys);
   // The last line of the front page sends them into a room they actually have.
   const first = firstRoom(sys);
   const pad = (i: number) => String(i).padStart(2, "0");
@@ -107,7 +110,7 @@ export default async function Home({ params }: { params: Promise<{ client: strin
           <p className="flex items-center gap-2">
             <span className="lamp" aria-hidden="true" />
             <span>Live</span>
-            <RunningTimecode className="ml-2 text-[color:var(--ink-soft)]" />
+            <ReelPosition clips={clips} className="ml-2" />
           </p>
           <StudioClocks className="max-md:hidden" />
         </div>
@@ -123,17 +126,22 @@ export default async function Home({ params }: { params: Promise<{ client: strin
           </h1>
           <p className="mono mt-8 text-[color:var(--ink)]">{home.kicker}</p>
           <p className="mt-6 max-w-[46ch] text-[19px] leading-[1.5] text-[color:var(--ink-soft)] md:text-[23px]">{home.lead(identity.name)}</p>
-          <dl className="mono mt-8 flex flex-wrap gap-x-8 gap-y-2" aria-label="Where the system stands">
-            {readout.map((r) => (
-              <div key={r.k} className="flex gap-2">
-                <dt className="text-[color:var(--ink-mid)]">{r.k}</dt>
-                <dd className="text-[color:var(--ink)]">{r.v}</dd>
-              </div>
-            ))}
-          </dl>
+          {/* A client with nothing marked and nothing written has nothing to
+              read out, and an empty labelled list is a promise the page does
+              not keep. */}
+          {readout.length > 0 && (
+            <dl className="mono mt-8 flex flex-wrap gap-x-8 gap-y-2" aria-label="Where the system stands">
+              {readout.map((r) => (
+                <div key={r.k} className="flex gap-2">
+                  <dt className="text-[color:var(--ink-mid)]">{r.k}</dt>
+                  <dd className="text-[color:var(--ink)]">{r.v}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
         </div>
 
-        <div className="mono relative flex flex-col gap-3 border-t border-[color:var(--rule)] px-6 py-6 md:flex-row md:items-center md:justify-between md:px-14">
+        <div className="mono relative flex flex-col gap-3 border-t border-[color:var(--rule)] px-6 py-6 md:flex-row md:items-center md:justify-between md:px-14 md:pb-20">
           <p className="text-[color:var(--ink-soft)]">{home.access_note}</p>
           <a href="#objective" className="slate-link text-[13px] text-[color:var(--ink)]" data-cursor="Cut">
             Start here &darr;

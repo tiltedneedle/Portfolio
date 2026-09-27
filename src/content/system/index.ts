@@ -38,9 +38,17 @@ export function findGuide(chapter: ChapterId, slug: string) {
   return guides.find((g) => g.chapter === chapter && g.slug === slug);
 }
 
+/**
+ * Rough reading time from the words in a thing. One ruler for the whole
+ * system: a guide, a written audit section, a set of ideas. Two minutes is
+ * the floor, because nothing on this site is worth less than opening.
+ */
+export function minutesOf(x: unknown) {
+  const words = JSON.stringify(x).split(/\s+/).length;
+  return Math.max(2, Math.round(words / 190));
+}
+
 /** Rough reading time from the words on the page. */
 export function readingMinutes(g: Guide) {
-  const text = JSON.stringify(g);
-  const words = text.split(/\s+/).length;
-  return Math.max(2, Math.round(words / 190));
+  return minutesOf(g);
 }

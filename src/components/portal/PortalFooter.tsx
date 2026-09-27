@@ -3,11 +3,13 @@
 import { useSyncExternalStore } from "react";
 import { CutLink } from "@/components/room/CutLink";
 import { WordStrip } from "@/components/editorial/WordStrip";
+import { MasterTimeline } from "@/components/room/MasterTimeline";
 import { ClientMark } from "@/components/portal/ClientMark";
 import { useClient } from "@/components/portal/ClientContext";
 import { chapters, type Chapter } from "@/content/chapters";
 import { shortName } from "@/content/clients/types";
 import { PRESENCE } from "@/lib/session";
+import type { Clip } from "@/lib/sequence";
 import { useCookieFlag } from "@/lib/use-cookie-flag";
 import { leave } from "@/app/login/actions";
 
@@ -20,8 +22,8 @@ const builtYear = () => BUILD_YEAR;
 const heading = "mono mb-5 block";
 const link = "underline-draw w-fit text-[15px] text-[color:var(--ink-soft)] transition-colors duration-300 hover:text-[color:var(--ink)]";
 
-/** The tail leader: the approach as a crawl, then the contents once more. */
-export function PortalFooter({ rooms = chapters }: { rooms?: Chapter[] }) {
+/** The conform, then the tail leader: the reel, the crawl, the contents once more. */
+export function PortalFooter({ rooms = chapters, clips }: { rooms?: Chapter[]; clips?: Clip[] }) {
   const who = useClient();
   // The pages are pre-rendered, so whether someone is logged in can only be
   // known in the browser: the door leaves a presence cookie beside the session.
@@ -30,6 +32,7 @@ export function PortalFooter({ rooms = chapters }: { rooms?: Chapter[] }) {
 
   return (
     <footer className="border-t border-[color:var(--rule)] bg-[color:var(--stage)] text-[color:var(--ink-soft)]">
+      {clips && clips.length > 0 ? <MasterTimeline clips={clips} /> : null}
       <WordStrip words="research. create. publish. analyse. improve. repeat. " />
       <div className="mx-auto max-w-[1600px] px-6 py-16 md:px-14 md:py-20">
         <div className="grid grid-cols-1 gap-x-10 gap-y-12 md:grid-cols-12">

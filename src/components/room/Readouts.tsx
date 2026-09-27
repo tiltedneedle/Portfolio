@@ -1,30 +1,42 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { timecode } from "@/lib/timecode";
+import { useEffect, useState } from "react";
+import { useClient } from "@/components/portal/ClientContext";
+import { useRead } from "@/lib/read";
+import { hhmm } from "@/lib/timecode";
+import type { Clip } from "@/lib/sequence";
 
 /**
- * Small live instruments used around the room: a running timecode and the
- * two studio clocks. Both are filled by effects so the server never guesses
- * a time and the client never has to correct one.
+ * Small instruments for the first frame: where this client stands in the
+ * reel, and the two studio clocks. The clocks are filled by an effect so the
+ * server never guesses a time and the client never has to correct one.
+ *
+ * There used to be a running timecode here, a requestAnimationFrame loop
+ * counting how long you had been looking at the page. It measured staring,
+ * not the system, and it was frozen at zero under reduced motion, which is
+ * the state the accessibility pass measures. A readout should say something
+ * true, so it now reads position in the reel.
  */
 
-export function RunningTimecode({ className = "" }: { className?: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const start = performance.now();
-    let raf = 0;
-    const tick = () => {
-      if (ref.current) ref.current.textContent = timecode((performance.now() - start) / 1000);
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, []);
+export function ReelPosition({ clips, className = "" }: { clips: Clip[]; className?: string }) {
+  const me = useClient();
+  const { read } = useRead(me.slug);
+  // Whole clips only. The footer's timeline and this readout share one
+  // estimator and one denominator, so the two can never disagree; a
+  // mid-page position store would give the site two answers.
+  const total = clips.reduce((n, c) => n + c.minutes, 0);
+  const done = clips.reduce((n, c) => (read.has(c.readKey) ? n + c.minutes : n), 0);
   return (
-    <span ref={ref} className={"tc " + className}>
-      00:00:00:00
+    <span className={"mono " + className}>
+      <span className="text-[color:var(--ink-mid)]">POS</span>{" "}
+      <span aria-hidden="true" className="tc">
+        {hhmm(done)}
+        <span className="text-[color:var(--ink-mid)]"> / </span>
+        {hhmm(total)}
+      </span>
+      <span className="sr-only">
+        Position: {done} of {total} minutes read
+      </span>
     </span>
   );
 }

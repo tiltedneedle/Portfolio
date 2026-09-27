@@ -8,6 +8,7 @@ import { clientSlugs, requireClient } from "@/content/clients/registry";
 import { publicIdentity } from "@/content/clients/types";
 import { changes } from "@/content/system/changes";
 import { liveChapters } from "@/lib/rooms";
+import { sequence } from "@/lib/sequence";
 
 /**
  * One tree per client, pre-rendered. The proxy rewrites every clean URL
@@ -37,6 +38,8 @@ export default async function ClientLayout({ children, params }: { children: Rea
   // The rooms this client has: a personalised room appears when the studio
   // has written a page in it, and until then it is nowhere on the website.
   const rooms = liveChapters(sys);
+  // The whole system as one measured reel, for the conform at the foot of every page.
+  const clips = sequence(sys);
   // The palette's index carries this client's written ideas and scripts as hidden, searchable entries.
   const index = paletteIndex(sys);
   // The newest addition, the system's or this client's own, for the nav's lamp.
@@ -50,7 +53,7 @@ export default async function ClientLayout({ children, params }: { children: Rea
       <main id="main" tabIndex={-1} className="outline-none">
         {children}
       </main>
-      <PortalFooter rooms={rooms} />
+      <PortalFooter rooms={rooms} clips={clips} />
       <Palette items={index} />
     </ClientProvider>
   );

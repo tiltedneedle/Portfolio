@@ -213,6 +213,35 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 44: audit item 4, the conform. The whole system is measured
+      once, in lib/sequence.ts, and the measurement is used twice: as a
+      position readout in the first frame and as a timeline at the foot of
+      every page. Each page is a clip whose width is its reading time, so
+      the strip is a true duration scale end to end and inside each room;
+      read pages step up in luminance, and the playhead sits on the page
+      you are on. One estimator and one denominator, so the two devices can
+      never disagree: readingMinutes() now calls a shared minutesOf(), and
+      a personalised page is measured by what is written in it rather than
+      by its headings. sequence.ts is server-only — MasterTimeline and
+      Readouts take `Clip` with `import type`, which is erased, so the
+      thirteen guides stay out of the browser bundle (checked against the
+      built chunks). hhmm() beside timecode(), both tested.
+      The hero's running stopwatch is gone. It counted how long you had
+      stared at the page, read "Live 00:00:00:00" to a screen reader, and
+      was frozen at zero under reduced motion — which is the state the
+      accessibility pass measures. It now reads POS 00:18 / 01:00.
+      Two first-frame defects with it: an empty `<dl aria-label="Where the
+      system stands">` no longer ships for a client with nothing written,
+      and the access note clears the Contents chip at 1440.
+      Two defects found by verifying rather than by reading: the playhead
+      compared usePathname() during hydration, and since these pages are
+      pre-rendered at /c/<slug>/... and served at the clean path, that was
+      a mismatch on every page with a footer (React #418, 26 rows). The
+      pathname is now read through a store with a null server snapshot, the
+      shape PortalFooter already uses for the year. And the Analyse room,
+      6 minutes of 60, was too narrow for its own label: it wrapped and
+      pushed its strip out of line, so a group has a 172px floor and the
+      side-by-side layout starts at lg rather than md.
 - [x] Wave 43: audit item 3. The serif italic had stopped being a
       signature: on a room overview it set the lead, then every row's line,
       then the next-room blurb, so it was the body face. The two highest
@@ -496,9 +525,7 @@ The marketing site this grew out of is on the `marketing-site` branch.
 
 ## In flight
 
-- [ ] Wave 44: the conformed master timeline (audit item 4). In progress:
-      lib/sequence.ts, hhmm(), MasterTimeline, ReelPosition replacing the
-      running stopwatch, two hero defects.
+- [ ] Nothing mid-change. All verified and committed. Pick from Next.
 
 ## Next
 

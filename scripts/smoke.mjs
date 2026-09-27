@@ -61,6 +61,15 @@ if (!gated) {
   await expect("/create", 200, { contains: "The next room" });
   await expect("/analyse", 200, { lacks: "The next room" });
   await expect("/create/hooks", 200, { contains: "In this guide" });
+  // The conform: one measured reel at the foot of every page, and the same
+  // measurement read out in the first frame. The template client has thirteen
+  // universal pages and no audit, so its reel starts at 04.
+  await expect("/create/hooks", 200, { contains: "The whole system, end to end" });
+  await expect("/create/hooks", 200, { contains: /13(<!-- -->)? pages/ });
+  await expect("/create/hooks", 200, { contains: /04(<!-- -->)? — (<!-- -->)?Create/ });
+  await expect("/create/hooks", 200, { lacks: "Your audit" });
+  await expect("/", 200, { contains: "POS" });
+  await expect("/", 200, { contains: "Position:" });
   for (const s of ["study-your-niche", "ideation", "video-style", "hooks", "core-message", "filming", "editing"]) await expect("/create/" + s, 200, { contains: "The rule" });
   for (const s of ["strategy", "packaging", "discoverability", "profile"]) await expect("/publish/" + s, 200, { contains: "The rule" });
   for (const s of ["understanding-your-analytics", "monthly-process"]) await expect("/analyse/" + s, 200, { contains: "The rule" });

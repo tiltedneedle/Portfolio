@@ -8,12 +8,28 @@ const pad = (n: number) => String(n).padStart(2, "0");
 
 const spoken = (s: Script) => (s.body?.length ? spokenSeconds([s.hook, ...s.body, s.cta].filter(Boolean).join(" ")) : 0);
 
-/** Twenty scripts on a rail. A title opens the script; a slot says so. */
+/**
+ * Twenty scripts on a rail. A title opens the script; a slot says so --
+ * once. The first undelivered slot is a full card carrying the promise;
+ * every one after it is a spine, because nineteen identical empty cards
+ * say the system is unfinished where one promise and a row of spines says
+ * the rest is on order. The count above the rail is unchanged: a spine is
+ * still a slot, so the promise stays countable.
+ */
 export function ScriptsRail({ scripts }: { scripts: Script[] }) {
   const written = scripts.filter((s) => s.body?.length).length;
+  const firstEmpty = scripts.findIndex((s) => !s.body?.length);
   return (
     <Rail count={scripts.length} label={written + " of " + scripts.length + " written"}>
-      {scripts.map((s) => (
+      {scripts.map((s, i) =>
+        !s.body?.length && i !== firstEmpty ? (
+          // A plain span, not a link: sixteen keyboard stops that all lead to
+          // "In production" are sixteen too many. These pages stay reachable
+          // from the foot of any script page and from the palette.
+          <li key={s.n} className="slot-empty spine snap-align-none w-14 border-l border-[color:var(--rule)] md:w-16">
+            <span className="mono text-[color:var(--ink-mid)]">Script {pad(s.n)}</span>
+          </li>
+        ) : (
         <li key={s.n} className={"w-[min(224px,72vw)] md:w-[256px]" + (s.body?.length ? "" : " slot-empty")}>
           <CutLink
             href={"/content/scripts/" + s.n}
@@ -51,7 +67,8 @@ export function ScriptsRail({ scripts }: { scripts: Script[] }) {
             </span>
           </CutLink>
         </li>
-      ))}
+        )
+      )}
     </Rail>
   );
 }

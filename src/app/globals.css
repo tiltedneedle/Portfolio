@@ -914,6 +914,16 @@ a:focus-visible > .wm {
   scroll-snap-align: start;
   flex: none;
 }
+/* An undelivered slot after the first is a spine on a shelf: the label
+   standing up, at a quarter of the width a delivered card takes. The first
+   one is still a full card, so the promise is kept once, in full. */
+.spine {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
 
 .panel {
   background: var(--stage-2);
@@ -1274,6 +1284,11 @@ a:focus-visible > .wm {
     display: none;
   }
   /* A slot with nothing in it yet has no place on paper, and a card need not keep its screen proportions. */
+  /* Belt and braces: an empty slot is not printed at all, but if one ever
+     is, it must not be printed lying on its side. */
+  .spine {
+    writing-mode: horizontal-tb;
+  }
   .rail > li.slot-empty {
     display: none;
   }

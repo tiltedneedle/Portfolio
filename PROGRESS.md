@@ -213,6 +213,24 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 47: audit item 11. On the demo's shelves, sixteen identical
+      empty script cards and eighteen identical empty idea cards said the
+      system was unfinished. Now the first undelivered slot in each rail is
+      still a full card carrying the promise — "In production.",
+      "Written for Horizon Aviation." — and every one after it is a
+      spine: a 64px column with its label standing up, no fill, no hover,
+      no link. A pillar with nothing missing (the demo's authority, 25/25)
+      is untouched. The count above the rail is unchanged, because a spine
+      is still a slot and the promise has to stay countable. Sixteen
+      keyboard stops that all led to "In production" are gone; those pages
+      are still reachable from the foot of any script page and from the
+      palette. The spines are not snap points either, or the rail would
+      stutter over nineteen of them.
+      One defect found by measuring rather than reading: the Tailwind
+      `flex` utility I first put on the spine beat the print rule that
+      hides an empty slot, so the spines would have printed. The centring
+      moved into `.spine` itself, where the print rule's higher specificity
+      wins. Checked in print emulation: 52 spines, all display:none.
 - [x] Wave 46: audit item 7. Two leaks, both of them work that had been
       specified and then not wired through.
       The studio's publishing index — 634 entries, 250 KB — was in the
@@ -560,7 +578,8 @@ The marketing site this grew out of is on the `marketing-site` branch.
 
 ## In flight
 
-- [ ] Nothing mid-change. All verified and committed. Pick from Next.
+- [ ] Wave 48: the nine aviation guides name their worked example.
+      Verifying.
 
 ## Next
 

@@ -18,6 +18,8 @@ export function IdeasPillars({ ideas, identity, scripts = [] }: { ideas: Record<
       {pillars.map((p, pi) => {
         const list = ideas[p.id];
         const written = list.filter((i) => i.text).length;
+        // One full promise per pillar, then spines. See ScriptsRail.
+        const firstEmpty = list.findIndex((x) => !x.text);
         return (
           <section key={p.id} id={p.id} className="scroll-mt-28">
             <div className="mb-8 grid gap-6 md:grid-cols-[1fr_minmax(0,44ch)] md:items-end">
@@ -30,10 +32,17 @@ export function IdeasPillars({ ideas, identity, scripts = [] }: { ideas: Record<
               <p className="em-serif text-[19px] leading-snug text-[color:var(--ink-soft)] md:text-[21px]">{p.definition}</p>
             </div>
             <Rail count={list.length} label={written + " of " + list.length + " written"}>
-              {list.map((idea, i) => (
+              {list.map((idea, i) =>
+                !idea.text && i !== firstEmpty ? (
+                  <li key={i} className="slot-empty spine snap-align-none w-14 border-l border-[color:var(--rule)] md:w-[72px]">
+                    <span className="mono text-[color:var(--ink-mid)]">
+                      {p.title} {pad(i)}
+                    </span>
+                  </li>
+                ) : (
                 <li
                   key={i}
-                  className="relative aspect-[4/5] w-[min(248px,78vw)] overflow-hidden border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-5 md:w-[292px] md:p-6"
+                  className={"relative aspect-[4/5] w-[min(248px,78vw)] overflow-hidden border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-5 md:w-[292px] md:p-6" + (idea.text ? "" : " slot-empty")}
                 >
                   <span aria-hidden="true" className="numeral pointer-events-none absolute -right-1 bottom-2 text-[120px] opacity-50" data-n={pad(i)} />
                   <div className="relative flex h-full flex-col justify-between">
@@ -69,7 +78,8 @@ export function IdeasPillars({ ideas, identity, scripts = [] }: { ideas: Record<
                     )}
                   </div>
                 </li>
-              ))}
+                )
+              )}
             </Rail>
           </section>
         );

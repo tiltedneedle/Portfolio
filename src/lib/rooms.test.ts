@@ -90,8 +90,15 @@ describe("roomAfter", () => {
     expect(roomAfter("audit", demo)?.title).toBe("Your content");
   });
 
-  it("names the room the way the slate does", () => {
-    expect(roomAfter("create")).toEqual({ href: "/publish", n: "05 — Publish", title: "Publish", blurb: chapters.find((c) => c.id === "publish")!.blurb });
+  it("gives the number and the name apart, so a cut can use each once", () => {
+    expect(roomAfter("create")).toEqual({ href: "/publish", n: "05", title: "Publish", blurb: chapters.find((c) => c.id === "publish")!.blurb });
+  });
+
+  it("never folds the name into the number", () => {
+    for (const id of ["audit", "content", "create", "publish"] as const) {
+      const after = roomAfter(id);
+      if (after) expect(after.n).not.toContain(after.title);
+    }
   });
 });
 

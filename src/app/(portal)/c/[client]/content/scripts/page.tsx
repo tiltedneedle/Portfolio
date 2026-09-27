@@ -4,7 +4,7 @@ import { NextCut } from "@/components/portal/NextCut";
 import { DealOne } from "@/components/portal/DealOne";
 import { FirstMonth } from "@/components/portal/FirstMonth";
 import { FilmedCount } from "@/components/portal/FilmedMark";
-import { pillars } from "@/content/system/pillars";
+import { SCRIPTS_INTRO, pillars } from "@/content/system/pillars";
 import { chapter, pageNumber } from "@/content/chapters";
 import { requireClient } from "@/content/clients/registry";
 import { shortName } from "@/content/clients/types";
@@ -32,7 +32,7 @@ export default async function ScriptsPage({ params }: { params: Promise<{ client
         </p>
         <h1 className="display mt-6 max-w-[10ch] text-[clamp(52px,8.5vw,140px)]">20 personalised scripts</h1>
         <p className="em-serif statement mt-6 max-w-[40ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">
-          Twenty complete videos written specifically for your business. Open the script. Film it. Execute.
+          {SCRIPTS_INTRO}
         </p>
       </header>
 

@@ -35,9 +35,10 @@ export function IdeasPillars({ ideas, identity, scripts = [] }: { ideas: Record<
               {list.map((idea, i) =>
                 !idea.text && i !== firstEmpty ? (
                   <li key={i} className="slot-empty spine snap-align-none w-14 border-l border-[color:var(--rule)] md:w-[72px]">
-                    <span className="mono text-[color:var(--ink-mid)]">
-                      {p.title} {pad(i)}
-                    </span>
+                    {/* Not "{p.title} {n}": the pillar heading is already on
+                        screen at up to 120px, and the delivered cards carry
+                        that label. A spine names the slot. */}
+                    <span className="mono text-[color:var(--ink-mid)]">Idea {pad(i)}</span>
                   </li>
                 ) : (
                 <li

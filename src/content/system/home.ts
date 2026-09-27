@@ -112,7 +112,7 @@ export const home = {
   begin: {
     audit: "your audit",
     content: "your content",
-    create: "Create, and study your niche",
+    create: "Create",
     publish: "Publish",
     analyse: "Analyse",
     home: "the system",

@@ -21,8 +21,10 @@ const noop = () => () => {};
  * `.numeral` / `data-n` rule draws the audit's *display* numerals from CSS,
  * and it does not govern readouts. Do not "fix" this later.
  *
- * Nothing here animates beyond the inherited colour transition. The device is
- * information; a reveal would make it decoration.
+ * The only motion is the lamp on the playhead, which breathes because that
+ * is where you are standing right now; everything else is a still mark. No
+ * reveal, no draw-in: the device is information, and animating it would
+ * make it decoration.
  */
 export function MasterTimeline({ clips }: { clips: Clip[] }) {
   const me = useClient();
@@ -60,11 +62,14 @@ export function MasterTimeline({ clips }: { clips: Clip[] }) {
   return (
     <section aria-labelledby="reel-h" className="border-t border-[color:var(--rule)] bg-[color:var(--stage)] px-6 pb-12 pt-14 md:px-14 md:pt-16">
       <div className="mx-auto max-w-[1600px]">
-        <div className="mono flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2">
-          <h2 id="reel-h" className="mono">
+        {/* The heading is a heading, not another mono label: set as .mono it
+            was the same typographic object as the caption beside it, which is
+            the exact fault .subhead exists to fix. */}
+        <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2">
+          <h2 id="reel-h" className="subhead">
             The whole system, end to end
           </h2>
-          <p className="text-[color:var(--ink-mid)]">Read on this device</p>
+          <p className="mono text-[color:var(--ink-mid)]">Read on this device</p>
         </div>
         <p className="tc mt-5 text-[clamp(38px,7vw,92px)] leading-none">
           {hhmm(readMin)}

@@ -109,7 +109,6 @@ export function chapter(id: ChapterId): Chapter {
   return c;
 }
 
-/** "04.03" for the third page of chapter 04. */
 /**
  * The chapter a clean path belongs to; null for the door and the 404.
  *
@@ -132,6 +131,7 @@ export function chapterOfPath(path: string): Chapter | null {
   return best;
 }
 
+/** "04.03" for the third page of chapter 04. */
 export function pageNumber(id: ChapterId, slug: string): string {
   const c = chapter(id);
   const i = c.pages.findIndex((p) => p.slug === slug);

@@ -872,7 +872,11 @@ a:focus-visible > .wm {
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: none;
-  color: var(--ink-faint);
+  /* Not --ink-faint. It is 2.6:1 on the stage and line 41 of this file says
+     never on text; a 13px letter is text, whoever draws it. axe measures
+     contrast on text nodes and not on generated content, so it would have
+     shipped green. */
+  color: var(--ink-mid);
   font-variant-numeric: tabular-nums;
   user-select: none;
   flex: none;
@@ -898,6 +902,15 @@ a:focus-visible > .wm {
 }
 .sub-body .card-title {
   font-size: 24px;
+}
+/* An aside reaches 27px, which is above a sub-section's 26px, and it
+   carries a 2px ink rule down its side, so inside a sub it shouted over
+   the heading it belongs to. */
+.aside-line {
+  font-size: clamp(21px, 2.2vw, 27px);
+}
+.sub-body .aside-line {
+  font-size: clamp(18px, 1.8vw, 22px);
 }
 
 /* A script timed the way the edit will be: one row per beat, the running

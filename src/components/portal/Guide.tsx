@@ -76,8 +76,11 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
             {railItems.length > 1 && (
               // The shape of the page before you commit to it. The rail in the
               // margin does this once you are reading; this is the contents.
-              <nav aria-label="In this guide" className="mt-10 hidden border-t border-[color:var(--rule)] md:block">
-                <p className="mono py-3 text-[color:var(--ink-mid)]">In this guide</p>
+              <nav aria-labelledby="in-this-guide" className="mt-10 hidden border-t border-[color:var(--rule)] md:block">
+                {/* Labelled BY the visible heading, not with a copy of it. */}
+                <p id="in-this-guide" className="mono py-3 text-[color:var(--ink-mid)]">
+                  In this guide
+                </p>
                 <ol className="flex flex-col border-t border-[color:var(--rule)]">
                   {railItems.map((it) => (
                     <li key={it.id} className="border-b border-[color:var(--rule)] last:border-b-0">

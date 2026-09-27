@@ -46,6 +46,18 @@ export const DIAGNOSTIC_INTRO = "Where you are now, measured. What is working, w
 export const COMPETITOR_INTRO = "What is already working in your market, and who it is working for. The topics, the formats, and the gap nobody has taken.";
 
 /**
+ * What the two personalised content pages say at the top. Here rather than
+ * in the pages so copy.test.ts can hold them to the same no-repeat rule as
+ * the front page's cards: a card is a teaser, a page header is for someone
+ * already standing on the page, and they must not be the same sentence.
+ * The scripts page kept its card's old wording through a whole writing
+ * pass because nothing was watching.
+ */
+export const IDEAS_INTRO = "Twenty-five in each pillar. Pin the ones you want, and ask for any of them as a full script.";
+
+export const SCRIPTS_INTRO = "Each one is a hook, a script and a call to action, with the shots and the location it needs.";
+
+/**
  * Build a report from the fixed headings and a map of written findings, so a
  * client file only ever writes the findings and can never drift from the
  * structure. A finding is either the paragraphs alone or a full

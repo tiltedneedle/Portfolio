@@ -56,7 +56,9 @@ export function roomAfter(id: ChapterId, sys?: ClientSystem) {
   const order = (sys ? liveChapters(sys) : chapters).filter((c) => c.id !== "home");
   const i = order.findIndex((c) => c.id === id);
   const next = i >= 0 ? order[i + 1] : undefined;
-  return next ? { href: next.href, n: next.n + " \u2014 " + next.title, title: next.title, blurb: next.blurb } : undefined;
+  // `n` is the number alone. The display line under it carries the name,
+   // and "Next / 04 \u2014 Create" above a 88px CREATE says one fact twice.
+  return next ? { href: next.href, n: next.n, title: next.title, blurb: next.blurb } : undefined;
 }
 
 /** Every path the live chapters answer to, for filtering links into rooms that are not there. */

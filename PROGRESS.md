@@ -213,6 +213,47 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 57: a second review, this time of the twelve design waves
+      themselves, and the twelve defects it found. Most were mine, from
+      today.
+      The worst was accessibility: `.sub-index`, the letter that indexes a
+      sub-section, was set in --ink-faint, which line 41 of globals.css
+      says never to put on text because it fails AA. It is 2.6:1 on the
+      stage, and axe measures contrast on text nodes rather than on
+      generated content, so it shipped green through four passes. Now
+      --ink-mid.
+      Then two pages that the writing pass missed, and the miss was
+      visible: the scripts page still ended "Film it. Execute." while its
+      card on the front page now said "Post it.", and the ideas page still
+      carried the exact sentence the pass had deleted from home. The rule
+      could not see them because it only compared cards against chapter
+      blurbs. Both page headers are content now, in pillars.ts, and
+      copy.test.ts holds them to the same no-repeat rule. Checked by
+      restoring the old wording and watching it fail.
+      And a fault I reintroduced in the same range that fixed it: the new
+      footer's `<h2>` was set as `.mono`, beside a `.mono` caption, which
+      is exactly the "a heading reads as a label" fault `.subhead` exists
+      to fix. It is a `.subhead` now.
+      The rest: the cut to the next room said "Next / 04 - Create" above an
+      88px CREATE, so `roomAfter` returns the number and the name apart;
+      an `aside` reaches 27px inside a 26px sub-section, so it is capped
+      like the other two block kinds; MasterTimeline's comment claimed
+      nothing animates while shipping a breathing playhead lamp;
+      TrainingFilm hand-built the player URL that lib/embed.ts calls "the
+      one" helper; a spine repeated the pillar heading standing right
+      beside it; "POS" and "In this guide" were each announced twice to a
+      screen reader; and wave 45 left pageNumber's doc comment stranded
+      above chapterOfPath.
+      Last: the audit and content rooms passed no minutes to their
+      overview, so two of the five rooms silently dropped the "To read"
+      readout the other three show, while the footer's reel printed
+      minutes for them anyway. They take their minutes from sequence()
+      now, which is the same estimator, so all five rooms read their own
+      length the same way.
+      Not changed, on purpose: the reel's total appears in the footer on
+      every page and the position appears in the hero on home, which reads
+      as duplication on one page and is the audit's stated intent (the
+      site opens on the slate and closes on the conform).
 - [x] Wave 56: an error-handling review of the whole tree, and the seven
       real defects it found. Two were reachable from a URL.
       `/login?error=__proto__` took the door down with a 500: `messages` is

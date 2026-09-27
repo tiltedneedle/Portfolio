@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { home } from "@/content/system/home";
 import { chapters } from "@/content/chapters";
-import { COMPETITOR_INTRO, DIAGNOSTIC_INTRO } from "@/content/system/pillars";
+import { COMPETITOR_INTRO, DIAGNOSTIC_INTRO, IDEAS_INTRO, SCRIPTS_INTRO } from "@/content/system/pillars";
 
 /**
  * The front page's access cards and the rooms' blurbs are one copy family.
@@ -115,5 +115,46 @@ describe("the objective is stated once", () => {
         .filter((w) => words.has(w));
       expect(shared, "approach line repeats the objective: " + shared.join(", ")).toEqual([]);
     }
+  });
+});
+
+describe("a card and the page it opens do not say the same thing either", () => {
+  // The scripts page carried its card's old wording through a whole writing
+  // pass, because the only no-repeat rule compared cards against chapter
+  // blurbs. These two page headers live in content so this can watch them.
+  const pageIntros = [
+    { name: "content diagnostic", href: "/audit/content-diagnostic", text: DIAGNOSTIC_INTRO },
+    { name: "competitor intelligence", href: "/audit/competitor-intelligence", text: COMPETITOR_INTRO },
+    { name: "ideas", href: "/content/ideas", text: IDEAS_INTRO },
+    { name: "scripts", href: "/content/scripts", text: SCRIPTS_INTRO },
+  ];
+
+  it("gives the two content pages a header of their own, not their card's", () => {
+    const offenders: string[] = [];
+    for (const page of pageIntros) {
+      // The two audit pages are the deliberate exception: the card imports
+      // the report's own intro so they cannot drift.
+      if (page.href.startsWith("/audit/")) continue;
+      const card = home.access.find((a) => a.href === page.href);
+      if (!card) continue;
+      for (const s of sentences(page.text)) if (card.text.includes(s)) offenders.push(page.name + " repeats its card: " + s);
+      for (const s of sentences(card.text)) if (page.text.includes(s)) offenders.push(page.name + " repeats its card: " + s);
+    }
+    expect(offenders, offenders.join("; ")).toEqual([]);
+  });
+
+  it("keeps the audit cards importing their report's intro, which is the exception", () => {
+    expect(home.access.find((a) => a.href === "/audit/content-diagnostic")?.text).toBe(DIAGNOSTIC_INTRO);
+    expect(home.access.find((a) => a.href === "/audit/competitor-intelligence")?.text).toBe(COMPETITOR_INTRO);
+  });
+
+  it("says nothing twice across the four page headers", () => {
+    const offenders: string[] = [];
+    for (const a of pageIntros) {
+      for (const s of sentences(a.text)) {
+        for (const b of pageIntros) if (b !== a && b.text.includes(s)) offenders.push(a.name + " and " + b.name + ": " + s);
+      }
+    }
+    expect(offenders, offenders.join("; ")).toEqual([]);
   });
 });

@@ -28,7 +28,10 @@ export function ReelPosition({ clips, className = "" }: { clips: Clip[]; classNa
   const done = clips.reduce((n, c) => (read.has(c.readKey) ? n + c.minutes : n), 0);
   return (
     <span className={"mono " + className}>
-      <span className="text-[color:var(--ink-mid)]">POS</span>{" "}
+      {/* aria-hidden, or the accessible name reads "POS Position: ...". */}
+      <span aria-hidden="true" className="text-[color:var(--ink-mid)]">
+        POS
+      </span>{" "}
       <span aria-hidden="true" className="tc">
         {hhmm(done)}
         <span className="text-[color:var(--ink-mid)]"> / </span>

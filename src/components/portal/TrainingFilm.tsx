@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { TrainingFilm as Film } from "@/content/types";
 import { Still } from "@/components/portal/Still";
+import { embedUrl } from "@/lib/embed";
 
 /**
  * The training film for a guide. With a YouTube id it fills a 16:9 well,
@@ -40,7 +41,7 @@ export function TrainingFilm({ film, number }: { film: Film; number: string }) {
     <figure className="relative aspect-video w-full overflow-hidden border border-[color:var(--rule)] bg-[color:var(--stage-2)]">
       {playing ? (
         <iframe
-          src={"https://www.youtube-nocookie.com/embed/" + id + "?rel=0&modestbranding=1&playsinline=1&color=white&autoplay=1"}
+          src={embedUrl(id)}
           title={"Training film: " + film.title}
           allow="autoplay; encrypted-media; picture-in-picture"
           allowFullScreen

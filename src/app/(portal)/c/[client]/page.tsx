@@ -18,7 +18,7 @@ import { pillars } from "@/content/system/pillars";
 import { firstMoves } from "@/content/clients/types";
 import { home } from "@/content/system/home";
 import { requireClient } from "@/content/clients/registry";
-import { liveChapters, livePaths, writtenPages } from "@/lib/rooms";
+import { firstRoom, liveChapters, livePaths, writtenPages } from "@/lib/rooms";
 
 // The home page, in running order: the slate (once), the welcome, the
 // objective, what you have access to, how to use the system, the approach.
@@ -30,6 +30,8 @@ export default async function Home({ params }: { params: Promise<{ client: strin
   // else stays off the website until it exists.
   const written = writtenPages(sys);
   const paths = livePaths(liveChapters(sys));
+  // The last line of the front page sends them into a room they actually have.
+  const first = firstRoom(sys);
   const pad = (i: number) => String(i).padStart(2, "0");
   // The strip's cards, renumbered so they always read 01 upwards.
   const access = home.access
@@ -201,8 +203,8 @@ export default async function Home({ params }: { params: Promise<{ client: strin
             ))}
           </ul>
           <div className="mt-16 border-t border-[color:var(--rule)] pt-6">
-            <CutLink href="/audit" className="slate-link text-[13px]" data-cursor="Cut">
-              Begin with your audit &#8599;
+            <CutLink href={first.href} className="slate-link text-[13px]" data-cursor="Cut">
+              Begin with {home.begin[first.id]} &#8599;
             </CutLink>
           </div>
         </div>

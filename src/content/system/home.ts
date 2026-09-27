@@ -1,3 +1,4 @@
+import type { ChapterId } from "@/content/types";
 /**
  * THE HOME PAGE. The same for everyone; only the client name and logo change.
  */
@@ -99,6 +100,15 @@ export const home = {
     ],
     beats: ["Research.", "Create.", "Publish.", "Analyse.", "Improve.", "Then repeat."],
   },
+  // Where the front page sends you, named by the room you are actually sent to.
+  begin: {
+    audit: "your audit",
+    content: "your content",
+    create: "Create, and study your niche",
+    publish: "Publish",
+    analyse: "Analyse",
+    home: "the system",
+  } as Record<ChapterId, string>,
   access_note: "Permanent access. This system is yours to keep, and it is updated as we learn more.",
   films: {
     intro: { title: "Welcome to your system" },

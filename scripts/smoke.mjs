@@ -57,7 +57,7 @@ if (!gated) {
   await expect("/create", 200);
   // A room states what is in it, offers a way in, and cuts to the next room.
   await expect("/create", 200, { contains: "To read" });
-  await expect("/create", 200, { contains: "Start reading" });
+  await expect("/create", 200, { contains: "Start at 04.01" });
   await expect("/create", 200, { contains: "The next room" });
   await expect("/analyse", 200, { lacks: "The next room" });
   await expect("/create/hooks", 200, { contains: "In this guide" });

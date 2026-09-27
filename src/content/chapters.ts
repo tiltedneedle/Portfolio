@@ -64,7 +64,7 @@ export const chapters: Chapter[] = [
     title: "Create",
     href: "/create",
     personalised: false,
-    blurb: "The exact process we use to research, write, film and edit.",
+    blurb: "Research, write, film, cut. In that order, every time.",
     pages: [
       { slug: "study-your-niche", title: "Study your niche" },
       { slug: "ideation", title: "Infinite content ideation system", short: "Ideation system" },

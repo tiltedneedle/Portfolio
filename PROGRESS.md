@@ -213,6 +213,16 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 42: the first two items of the design audit. An unshot
+      training film was eight 747px empty rectangles across the Create
+      guides; it is now a slot on the timeline (title, state, frame marks,
+      the playhead parked at zero) at 199px, hidden in print. And every
+      control names where it goes: the front page's last link reads "Begin
+      with Create, and study your niche" for a client with no audit yet
+      (`firstRoom()`), the room pill reads "Start at 04.01" with the page
+      title in its label, and the read toggle asks in the page's own words
+      ("Got the rule?", "Got the notes?") — `ask` is required, so a new
+      call site has to decide. 78 tests.
 - [x] Wave 41: hardening. The next room was worked out three times in
       three files; it is now `roomAfter()` in lib/rooms.ts with tests (75),
       and the smoke suite holds the room furniture in place: the readout,

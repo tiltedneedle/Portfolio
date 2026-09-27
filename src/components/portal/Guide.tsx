@@ -155,7 +155,7 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
         </div>
       </section>
 
-      <ReadToggle k={guide.chapter + "/" + guide.slug} />
+      <ReadToggle k={guide.chapter + "/" + guide.slug} ask="Got the rule?" />
       <NextCut chapter={guide.chapter} slug={guide.slug} client={client} />
     </article>
   );

@@ -6,8 +6,11 @@ import { useRead } from "@/lib/read";
 /**
  * The foot of a page: mark it read. The mark lives on this device only
  * and shows on the room's overview, in the nav and on the home strip.
+ *
+ * `ask` is what this page asks, in its own words. It has no default: a new
+ * call site has to decide what it is asking about.
  */
-export function ReadToggle({ k }: { k: string }) {
+export function ReadToggle({ k, ask }: { k: string; ask: string }) {
   const me = useClient();
   const { read, toggle } = useRead(me.slug);
   const done = read.has(k);
@@ -24,7 +27,7 @@ export function ReadToggle({ k }: { k: string }) {
           ) : (
             <>
               <span className="lamp-off" aria-hidden="true" />
-              Done with this page?
+              {ask}
             </>
           )}
         </p>

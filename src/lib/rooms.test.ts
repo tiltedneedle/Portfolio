@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { liveChapters, livePaths, roomAfter, writtenPages } from "@/lib/rooms";
+import { firstRoom, liveChapters, livePaths, roomAfter, writtenPages } from "@/lib/rooms";
 import { chapters } from "@/content/chapters";
 import { demo } from "@/content/clients/demo";
 import { template } from "@/content/clients/template";
@@ -92,5 +92,19 @@ describe("roomAfter", () => {
 
   it("names the room the way the slate does", () => {
     expect(roomAfter("create")).toEqual({ href: "/publish", n: "05 — Publish", title: "Publish", blurb: chapters.find((c) => c.id === "publish")!.blurb });
+  });
+});
+
+describe("firstRoom", () => {
+  it("starts a client with nothing written in the first universal room", () => {
+    expect(firstRoom(template).id).toBe("create");
+  });
+
+  it("starts a written client in their own audit", () => {
+    expect(firstRoom(demo).id).toBe("audit");
+  });
+
+  it("starts a client with only scripts in their content", () => {
+    expect(firstRoom(bare({ scripts: scripts([{ n: 1, title: "Written", body: ["Words."] }]) })).id).toBe("content");
   });
 });

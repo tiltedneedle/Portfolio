@@ -70,6 +70,9 @@ export function ChapterOverview({
   const firstUnread = rows.findIndex((r) => r.readKey && !read.has(r.readKey));
   const shownIndex = hot ?? (firstUnread >= 0 ? firstUnread : 0);
   const shown = rows[shownIndex];
+  // A way in that names the page it opens, rather than "start reading".
+  const at = firstUnread >= 0 ? rows[firstUnread] : null;
+  const verb = readCount === 0 ? "Start at " : "Resume at ";
 
   return (
     <div className="bg-[color:var(--stage)]">
@@ -109,9 +112,15 @@ export function ChapterOverview({
                 </div>
               )}
             </dl>
-            {firstUnread >= 0 && marked.length > 0 && (
-              <CutLink href={pageHref(id, rows[firstUnread].slug)} className="pill pill-solid mt-9 inline-block px-7 py-3 text-[15px]" data-cursor="Open">
-                {readCount === 0 ? "Start reading" : "Pick up where you left off"} &rarr;
+            {at && marked.length > 0 && (
+              <CutLink
+                href={pageHref(id, at.slug)}
+                aria-label={verb + pageNumber(id, at.slug) + " \u2014 " + at.title}
+                className="pill pill-solid mt-9 inline-block px-7 py-3 text-[15px]"
+                data-cursor="Open"
+              >
+                {verb}
+                {pageNumber(id, at.slug)} &rarr;
               </CutLink>
             )}
           </div>

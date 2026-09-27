@@ -37,6 +37,17 @@ export function liveChapters(sys: ClientSystem): Chapter[] {
 }
 
 /**
+ * The room this client starts in: the first room after home that they have.
+ * A client with nothing written starts in Create, not in an audit that is
+ * not there yet.
+ */
+export function firstRoom(sys: ClientSystem): Chapter {
+  const first = liveChapters(sys).find((c) => c.id !== "home");
+  if (!first) throw new Error("A client with no rooms at all");
+  return first;
+}
+
+/**
  * The room after this one, among the rooms this client has, for the cut at
  * the foot of a room. The last room has none, and a room the client does
  * not have is not a step on the way.

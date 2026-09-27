@@ -456,6 +456,34 @@ body {
   border-radius: var(--r-sharp);
 }
 
+/* An unshot film: the slot exists on the timeline, nothing is on it yet.
+   Frame marks along a hairline, and the playhead parked at zero. The red is
+   state, which is what the tally is for, and nothing here moves. */
+.film-track {
+  position: relative;
+  height: 10px;
+  background-image: repeating-linear-gradient(to right, var(--rule) 0 1px, transparent 1px 10%);
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 100% 6px;
+}
+.film-track::before {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 1px;
+  background: var(--rule-strong);
+}
+.film-track::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 2px;
+  height: 10px;
+  background: var(--tally);
+}
+
 .skeleton {
   background: linear-gradient(
     90deg,

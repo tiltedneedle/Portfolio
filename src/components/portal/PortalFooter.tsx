@@ -39,10 +39,10 @@ export function PortalFooter({ rooms = chapters, clips }: { rooms?: Chapter[]; c
           <div className="md:col-span-5">
             <ClientMark size={28} />
             <p className="mt-6 max-w-[36ch] text-[15px] leading-relaxed text-[color:var(--ink-mid)]">
-              Your complete viral content system. Built once, personalised for {shortName(who)}, and yours to keep.
+              Built once, written for {shortName(who)}.
             </p>
             <p className="mono mt-6">
-              Permanent access <span className="text-[color:var(--ink-mid)]">/</span> Reel {who.since}
+              Reel {who.since}
             </p>
           </div>
 
@@ -65,7 +65,7 @@ export function PortalFooter({ rooms = chapters, clips }: { rooms?: Chapter[]; c
                 {who.contact}
               </a>
               <p className="text-[13px] leading-relaxed text-[color:var(--ink-mid)]">
-                Questions about any part of the system, or a video you want a second pair of eyes on: message your Tilted Needle team.
+                Any part of the system, or a cut you want a second pair of eyes on.
               </p>
               {inRoom && (
                 <form action={leave} className="mt-4">

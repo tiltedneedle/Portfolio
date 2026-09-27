@@ -2,7 +2,7 @@ import type { Change } from "@/content/clients/types";
 
 /**
  * What has been added to the system, newest first. Home shows the latest
- * few, so a client who comes back sees that the system keeps growing.
+ * few, so a client who comes back sees what has been added since.
  * Dates are ISO (YYYY-MM-DD); `npm run check` keeps them in order.
  */
 export const changes: Change[] = [

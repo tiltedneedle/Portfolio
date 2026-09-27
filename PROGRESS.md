@@ -213,6 +213,36 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 53: audit item 8, the writing pass, and with it all twelve
+      items of the design audit. The site was written like a studio
+      everywhere except its front page, where it reverted to agency-deck
+      claims and then repeated each of them three or four times in one
+      scroll. The hero's five-line lead is two sentences. The seven access
+      cards say seven different things: the two audit cards now IMPORT the
+      report intros from pillars.ts, so a card and the page it opens cannot
+      drift; the Create card is seven imperatives, one per guide in the
+      room's own order; the Publish card no longer opens with the Publish
+      room's blurb word for word. The five loop steps went from 104 words
+      re-listing those cards to 8-14 words each, and the rail is levelled by
+      construction (mt-auto), so the three Open links sit on one baseline.
+      Permanence was claimed in five places in one scroll; it is claimed in
+      the hero strip and nowhere else.
+      The rule is a test, not a discipline: copy.test.ts asserts the audit
+      cards take their words from the reports, and that no sentence is
+      shared between a card and a room's blurb, between two cards, or
+      between a loop step and a card. Confirmed by restoring the old
+      Publish card and watching it fail with the offender named.
+      One real leak found by a smoke assertion that my own new tagline
+      tripped: the front page was serialising counts ("0 of 100 written")
+      for rooms this client has not got. Gated to the cards actually shown.
+
+## Flagged, not fixed
+
+- [ ] "The objective" now appears three times on the front page: once as
+      an 11px label in the Welcome block, and twice at 44px in the approach
+      block ("The objective is not to create one viral video." / "The
+      objective is to build a repeatable system..."). Read the page top to
+      bottom and decide whether approach.lines still earns its place.
 - [x] Wave 52: audit item 6, part B, and with it the last of the twelve.
       The access strip pinned a viewport and shuttled ~400vw sideways off
       vertical scroll for every reader, including one who asked for

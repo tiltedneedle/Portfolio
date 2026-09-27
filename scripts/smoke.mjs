@@ -36,7 +36,11 @@ if (!gated) {
   // from what was recently added.
   await expect("/", 200, { contains: "Everything in your system" });
   await expect("/", 200, { lacks: "Your audit" });
-  await expect("/", 200, { lacks: "Your content" });
+  // The room's own name, not the tagline that happens to contain the words:
+  // "Your content system, in full" is the site's line, "Your content" is a
+  // room this client has not got.
+  await expect("/", 200, { lacks: "Your content<" });
+  await expect("/", 200, { lacks: "/content/ideas" });
   await expect("/", 200, { lacks: "Same for everyone" });
   await expect("/create/hooks", 200, { lacks: "Your audit" });
   await expect("/create/hooks", 200, { contains: "Name the hook" });

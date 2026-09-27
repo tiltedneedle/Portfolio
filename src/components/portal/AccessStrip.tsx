@@ -101,7 +101,7 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
               {numberWord(n)} <span className="em-serif">{n === 1 ? "part." : "parts."}</span>
             </h2>
             <p className="mt-6 max-w-[34ch] text-[17px] leading-relaxed text-[color:var(--ink-soft)]">
-              Everything in your system, in the order you will use it. All of it yours, for as long as you want it.
+              Everything in your system, in the order you will use it.
             </p>
             <p className="shuttle-hint mono mt-8 max-md:hidden">Scroll to shuttle &middot; click to open</p>
           </div>

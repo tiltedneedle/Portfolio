@@ -36,11 +36,14 @@ export const competitorHeadings: { title: string; covers: string }[] = [
   { title: "Opportunities for you", covers: "The gaps this business is best placed to fill." },
 ];
 
-export const DIAGNOSTIC_INTRO =
-  "A complete analysis of your current social media presence. What is working, what is limiting your growth, and what we would change.";
+/**
+ * The one description of each report. The front page's access cards import
+ * these rather than restating them, so the card and the page it opens can
+ * never drift apart. copy.test.ts holds the rest of that rule.
+ */
+export const DIAGNOSTIC_INTRO = "Where you are now, measured. What is working, what is holding it back, and what we would change first.";
 
-export const COMPETITOR_INTRO =
-  "What is already working within your market. The topics, formats and hooks your competitors are using, and where the opportunities are for your brand.";
+export const COMPETITOR_INTRO = "What is already working in your market, and who it is working for. The topics, the formats, and the gap nobody has taken.";
 
 /**
  * Build a report from the fixed headings and a map of written findings, so a

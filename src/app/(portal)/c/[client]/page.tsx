@@ -64,6 +64,11 @@ export default async function Home({ params }: { params: Promise<{ client: strin
       </>
     ),
   };
+  // A card this client has not got takes its count with it. Otherwise the
+  // browser is still sent "0 of 100 written" for a room that is nowhere on
+  // the site, which is the same leak the rooms themselves were fixed for.
+  const shown = new Set(access.map((it) => it.href));
+  const liveCounts = Object.fromEntries(Object.entries(counts).filter(([href]) => shown.has(href)));
   // The universal rooms count what has been read on this device instead.
   const readKeys = Object.fromEntries(
     (["create", "publish", "analyse"] as const).map((id) => ["/" + id, guides.filter((g) => g.chapter === id).map((g) => g.chapter + "/" + g.slug)])
@@ -171,7 +176,7 @@ export default async function Home({ params }: { params: Promise<{ client: strin
 
       <Showreel />
 
-      <AccessStrip items={access} counts={counts} readKeys={readKeys} />
+      <AccessStrip items={access} counts={liveCounts} readKeys={readKeys} />
 
       <ThisWeek ideas={weekIdeas} scripts={weekScripts} guides={weekGuides} />
 

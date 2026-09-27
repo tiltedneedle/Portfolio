@@ -48,7 +48,7 @@ const mono = localFont({
 // A private system for one client: nothing here is for search engines.
 export const metadata: Metadata = {
   title: { default: "Tilted Needle", template: "%s · Tilted Needle" },
-  description: "Your complete viral content system.",
+  description: "Your content system, in full.",
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
   icons: {
     icon: [{ url: "/favicon.ico", sizes: "256x256", type: "image/x-icon" }],

@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Tilted Needle",
     short_name: "Tilted Needle",
-    description: "Your complete viral content system.",
+    description: "Your content system, in full.",
     start_url: "/",
     display: "standalone",
     background_color: "#0b0b0c",

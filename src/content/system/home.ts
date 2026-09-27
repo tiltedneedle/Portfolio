@@ -1,18 +1,23 @@
+import { COMPETITOR_INTRO, DIAGNOSTIC_INTRO } from "@/content/system/pillars";
 import type { ChapterId } from "@/content/types";
 /**
  * THE HOME PAGE. The same for everyone; only the client name and logo change.
  */
 export const home = {
-  kicker: "Your complete viral content system",
-  lead: (name: string) =>
-    "Everything we have learned from generating over 5 billion organic views, built into one complete system for " + name + ".",
+  // No terminal period: no other mono label on this page carries one.
+  kicker: "Your content system, in full",
+  // The number is spelled out because the showreel spells its own out too,
+  // so the two biggest numbers on the page agree in treatment.
+  lead: (name: string) => "Five billion organic views taught us what makes someone stop. The whole method is in here, written for " + name + ".",
   intro: [
-    "This portal gives you the exact frameworks, processes and principles we use at Tilted Needle to create high performing social media content.",
-    "You now have everything you need to research, create, film, edit, publish and analyse content internally.",
+    "Nothing in here is a summary. These are the pages we work from: how we research a niche, how we write a hook, how we shoot it and how we cut it.",
+    "From today the work can happen in your building instead of ours.",
   ],
   objective: {
-    label: "The objective is simple",
-    text: "To give your team the knowledge and infrastructure required to consistently create content that captures attention, builds an audience and generates more opportunities for your business.",
+    label: "The objective",
+    // "This week's call sheet" is not a metaphor: ThisWeek renders two
+    // sections down on this same page, labelled Call sheet / Week N.
+    text: "A shoot stops being an event. It becomes a line on this week's call sheet.",
   },
   access: [
     {
@@ -20,75 +25,76 @@ export const home = {
       title: "Your content audit",
       href: "/audit/content-diagnostic",
       personalised: true,
-      text: "A complete analysis of your current social media presence. Understand what is working, what is limiting your growth and what we would change.",
+      text: DIAGNOSTIC_INTRO,
     },
     {
       n: "02",
       title: "Competitor intelligence",
       href: "/audit/competitor-intelligence",
       personalised: true,
-      text: "Understand what is already working within your market. See the topics, formats and content opportunities your competitors are using, and where opportunities exist for your brand.",
+      text: COMPETITOR_INTRO,
     },
     {
       n: "03",
       title: "100 viral content ideas",
       href: "/content/ideas",
       personalised: true,
-      text: "One hundred content concepts built across four core pillars: authority, education, entertainment and personal. Use them as the foundation of your content output.",
+      text: "One hundred content concepts built across four core pillars: authority, education, entertainment and personal. Enough that you never open a blank page.",
     },
     {
       n: "04",
       title: "20 personalised scripts",
       href: "/content/scripts",
       personalised: true,
-      text: "Twenty complete videos written specifically for your business. Open the script. Film it. Execute.",
+      text: "Twenty videos, written for your business. Open the script. Film it. Post it.",
     },
     {
       n: "05",
       title: "Create",
       href: "/create",
       personalised: false,
-      text: "The exact process we use to create content. Research your niche, generate ideas, choose formats, write stronger hooks, deliver your message, film effectively and edit for retention.",
+      // Seven imperatives, one per guide in the room, in the room's order.
+      text: "Study the niche. Find the idea. Choose the style. Write the hook. Land the message. Film it. Cut it.",
     },
     {
       n: "06",
       title: "Publish",
       href: "/publish",
       personalised: false,
-      text: "How to maximise the potential of every piece of content after it has been created. Where to post, how often, when, how to write titles and captions, how to create covers and how to optimise your profiles.",
+      text: "Where it goes and how often. What it is called and what the cover has to do. How it gets found, and what your profile says when it does.",
     },
     {
       n: "07",
       title: "Analyse",
       href: "/analyse",
       personalised: false,
-      text: "How to understand what your content performance is actually telling you. Why a video worked, why a video failed, and what to repeat, improve and change next time.",
+      text: "Why a video worked, why one failed, and what to do differently on the next. Then the same read, once a month, in order.",
     },
   ],
   how: [
     {
       title: "Understand",
-      text: "Start with your content audit and competitor intelligence. Understand your current position and the opportunities available to you.",
+      text: "Read the audit before you film anything. It tells you what to stop doing.",
       href: "/audit",
     },
     {
       title: "Create",
-      text: "Use your 100 content ideas and 20 scripts to begin producing content immediately. Then use the Create section whenever you need to generate new ideas, improve your hooks, film better content or improve your editing.",
+      text: "Pick an idea, or open a script already written for you. Film it.",
       href: "/create",
     },
     {
       title: "Publish",
-      text: "Follow the publishing system every time a piece of content is ready to go live.",
+      text: "The same sequence every time. It is the part everyone skips.",
       href: "/publish",
     },
     {
       title: "Analyse",
-      text: "Review the performance of your content and understand what the data is telling you.",
+      text: "Once a month, ask the numbers what happened.",
       href: "/analyse",
     },
     {
       title: "Repeat",
-      text: "Use those learnings to improve the next piece of content. The system becomes stronger the more you use it.",
+      text: "The second pass begins where the first one ended: knowing more.",
       href: "/create",
     },
   ],
@@ -109,7 +115,8 @@ export const home = {
     analyse: "Analyse",
     home: "the system",
   } as Record<ChapterId, string>,
-  access_note: "Permanent access. This system is yours to keep, and it is updated as we learn more.",
+  // The one place the site claims permanence. It was claimed in five.
+  access_note: "Permanent access. Yours to keep, and we add to it as we learn.",
   films: {
     intro: { title: "Welcome to your system" },
     outro: { title: "Where to go from here" },

@@ -21,13 +21,13 @@ export function Loop({ paths }: { paths?: Set<string> }) {
         </svg>
         <ol className="grid grid-cols-5 border-t border-[color:var(--rule-strong)]" style={{ marginTop: 72 }}>
           {steps.map((s, i) => (
-            <li key={s.title} className="relative px-4 pt-8 first:pl-0 last:pr-0">
+            <li key={s.title} className="relative flex flex-col px-4 pt-8 first:pl-0 last:pr-0">
               <span aria-hidden="true" className="absolute -top-[5px] left-1/2 h-[9px] w-[9px] -translate-x-1/2 rounded-full bg-[color:var(--ink)]" />
               <p className="mono mb-3">{String(i + 1).padStart(2, "0")}</p>
               <h3 className="display text-[clamp(28px,3vw,44px)] leading-[0.95] text-[color:var(--ink)]">{s.title}</h3>
               <p className="mt-4 text-[15px] leading-relaxed text-[color:var(--ink-mid)]">{s.text}</p>
               {i < n - 1 && (!paths || paths.has(s.href)) && (
-                <CutLink href={s.href} className="slate-link mt-5 inline-block" data-cursor="Cut">
+                <CutLink href={s.href} className="slate-link mt-auto inline-block self-start pt-5" data-cursor="Cut">
                   Open &#8599;
                 </CutLink>
               )}

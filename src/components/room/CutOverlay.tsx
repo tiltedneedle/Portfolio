@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { HOLD_MS, endCut, isCutting } from "@/lib/cut";
+import { cutHold, endCut, isCutting } from "@/lib/cut";
 
 /**
  * The black frame that every cut passes through. Rendered once in the root
@@ -19,6 +19,8 @@ export function CutOverlay() {
       return;
     }
     if (!isCutting()) return;
+    // Set at click time: short inside a room, longer across a scene change.
+    const held = cutHold();
     // The new scene has committed. Hold the black for one beat, then reveal.
     // Instant, not the page's smooth default: this happens under the black
     // frame and must be over before it lifts. A hash means the router has
@@ -30,7 +32,7 @@ export function CutOverlay() {
       // not wherever focus was left on the old one. A hash means a section
       // was the target, and the router has already put it in view.
       if (!window.location.hash) document.getElementById("main")?.focus({ preventScroll: true });
-    }, HOLD_MS);
+    }, held);
     return () => clearTimeout(t);
   }, [pathname]);
 

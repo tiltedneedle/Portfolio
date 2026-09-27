@@ -582,6 +582,46 @@ body.is-cutting .cut-frame {
   pointer-events: auto;
 }
 
+/* Across a scene the cut is slated, the way the opening clapper slates 01.
+   Drawn from data attributes, so none of it is weighed as text: the frame
+   is aria-hidden, and generated content is neither selectable nor
+   focusable. No fade on any of it -- the frame is a hard cut and the slate
+   is struck with it. */
+.cut-frame[data-to]::before,
+.cut-frame[data-to]::after {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.cut-frame[data-to]::before {
+  content: attr(data-scene);
+  top: calc(50% - 2.2rem);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+}
+.cut-frame[data-to]::after {
+  content: attr(data-to);
+  top: calc(50% - 0.9rem);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(40px, 9vw, 96px);
+  line-height: 0.9;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+/* the clapper stripe, as on the opening slate */
+.cut-frame[data-to] {
+  background:
+    repeating-linear-gradient(-45deg, var(--ink) 0 22px, transparent 22px 44px) top left / 100% 10px no-repeat,
+    #000;
+}
+
 /* ============================================================== the cursor
    On fine pointers the native arrow is replaced by a small ring that names
    what a click will do (PLAY, OPEN, CUT). Touch devices never see it.
@@ -999,6 +1039,12 @@ a:focus-visible > .wm {
   .scan::after {
     animation: none;
   }
+
+  /* No cut at all under reduced motion, so nothing to slate. */
+  .cut-frame[data-to]::before,
+  .cut-frame[data-to]::after {
+    content: none;
+  }
 }
 
 /* ------------------------------------------------------------------ print
@@ -1025,6 +1071,7 @@ a:focus-visible > .wm {
   footer,
   .no-print,
   .grain,
+  .cut-frame,
   .cursor-ring,
   .cursor-label,
   .skip {

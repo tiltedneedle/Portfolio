@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import type { ComponentProps, MouseEvent } from "react";
 import { useReducedMotion } from "framer-motion";
 import { beginCut } from "@/lib/cut";
+import { chapterOfPath } from "@/content/chapters";
 
 type Props = ComponentProps<typeof Link>;
 
@@ -15,6 +16,8 @@ type Props = ComponentProps<typeof Link>;
  *
  * A link to the page already showing does not cut either: the pathname would
  * never change, so nothing would lift the frame until the safety timer.
+ *
+ * A link that leaves the room slates its cut with the room it is going to.
  */
 export function CutLink({ href, onClick, onPointerEnter, ...rest }: Props) {
   const router = useRouter();
@@ -41,7 +44,9 @@ export function CutLink({ href, onClick, onPointerEnter, ...rest }: Props) {
       return;
     }
     e.preventDefault();
-    beginCut();
+    const here = chapterOfPath(pathname);
+    const there = chapterOfPath(target.split("#")[0]);
+    beginCut(there && there.id !== here?.id ? { n: there.n, title: there.title } : null);
     // One frame of black before the route starts changing, so the cut lands
     // on a painted black frame rather than mid-render.
     requestAnimationFrame(() => router.push(target));

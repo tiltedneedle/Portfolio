@@ -213,6 +213,22 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 45: audit item 5. The site prints "Scene 01" on its opening
+      clapperboard and numbers its rooms 01-06, then never slated scenes
+      02-06. Now a cut has two lengths. Inside a room it is unchanged: 140ms
+      of black, no label. Across rooms it is held to 260ms and struck with
+      the scene it is cutting to — the clapper stripe, "SCENE 05", and
+      PUBLISH in the display face — so the length says how far you
+      travelled and the slate says where you landed. Drawn by CSS from data
+      attributes on the frame, which is aria-hidden, so none of it is
+      selectable, focusable or weighed as text. The label goes on before
+      the frame does, or it would be a flicker rather than a slate.
+      `chapterOfPath()` decides, segment-exact and tested: home's "/" is a
+      prefix of everything and /contentious must never resolve to /content.
+      The palette slates too, since it is the most common cross-room jump
+      and would otherwise make the slate read as a bug. Verified by hand at
+      full motion: no slate inside a room, no slate on browser back, and a
+      cut that never lands is cleared, slate and all, by the safety timer.
 - [x] Wave 44: audit item 4, the conform. The whole system is measured
       once, in lib/sequence.ts, and the measurement is used twice: as a
       position readout in the first frame and as a timeline at the foot of

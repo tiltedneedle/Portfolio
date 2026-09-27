@@ -4,6 +4,7 @@ import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "rea
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { beginCut } from "@/lib/cut";
+import { chapterOfPath } from "@/content/chapters";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 import { useFocusTrap } from "@/lib/use-focus-trap";
 import { snippet, type SearchEntry } from "@/lib/search-index";
@@ -161,7 +162,11 @@ export function Palette({ items }: { items: PaletteItem[] }) {
         return;
       }
       pendingHash.current = href.split("#")[1] || null;
-      if (!reduced) beginCut();
+      // The palette jumps between rooms more than anything else on the site;
+      // if it were the one cut with no slate the slate would read as a bug.
+      const here = chapterOfPath(pathname);
+      const there = chapterOfPath(href.split("#")[0]);
+      if (!reduced) beginCut(there && there.id !== here?.id ? { n: there.n, title: there.title } : null);
       requestAnimationFrame(() => router.push(href));
     },
     [pathname, reduced, router, close, me.slug]

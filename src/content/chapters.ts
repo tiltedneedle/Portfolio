@@ -110,6 +110,28 @@ export function chapter(id: ChapterId): Chapter {
 }
 
 /** "04.03" for the third page of chapter 04. */
+/**
+ * The chapter a clean path belongs to; null for the door and the 404.
+ *
+ * Segment-exact, never a bare startsWith: home's "/" is a prefix of every
+ * path, and a future /contentious must not resolve to /content. Reads the
+ * static list rather than lib/rooms.ts, because this has to be synchronous
+ * in the browser -- safe, since no link to a room a client has not got is
+ * ever rendered in the first place.
+ */
+export function chapterOfPath(path: string): Chapter | null {
+  const p = path.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
+  if (p === "/") return chapters[0];
+  let best: Chapter | null = null;
+  for (const c of chapters) {
+    if (c.href === "/") continue;
+    if (p === c.href || p.startsWith(c.href + "/")) {
+      if (!best || c.href.length > best.href.length) best = c;
+    }
+  }
+  return best;
+}
+
 export function pageNumber(id: ChapterId, slug: string): string {
   const c = chapter(id);
   const i = c.pages.findIndex((p) => p.slug === slug);

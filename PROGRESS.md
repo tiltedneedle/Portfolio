@@ -213,6 +213,17 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 55: the README catches up with twelve waves of design work,
+      and one instruction in it that had gone false. It told the next
+      person to freeze reveals with
+      `[style*="opacity"]{opacity:1!important;transform:none!important}`,
+      which matched nothing after the reveal became a clip-path wipe on a
+      class. It now documents the real trap: this browser never advances a
+      CSS transition, so finish the animations and read the end state. And
+      the print trap beside it. The design-system section gains the display
+      face's three registers, the serif italic's demotion to a signature,
+      the slated scene change, the lamp rule, and the conform's server-only
+      boundary.
 - [x] Wave 54: the thing wave 53 flagged, plus a patch. The front page
       said "The objective" three times — once as an 11px label, twice at
       44px two sections later, in the agency-deck voice the writing pass

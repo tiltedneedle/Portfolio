@@ -232,12 +232,39 @@ entry without a still.
 Display, Instrument Sans, Instrument Serif italic, JetBrains Mono, all
 vendored, all SIL OFL), tally red used only for state. Rules: display type
 is condensed and uppercase with one word dropped to the serif italic; labels
-are mono; corners are square or pill; nothing floats. Route changes are
-black-frame cuts; fine pointers get a playhead cursor. Motion carries
-meaning or it is not there: the audit desk powers up on the cut, the
-positioning map's road draws itself once in view, a mark set by hand pops;
-all of it is CSS, off under reduced motion. Scripts and the first month
-print black on white with the room left out.
+are mono; corners are square or pill; nothing floats.
+
+The display face carries three registers. `.display` at 800 is how a page
+names itself. `.display-light` at 320 is the second voice, for large type
+the page is pointing at rather than naming: the cut to the next room, the
+access strip's card titles. It has a 48px floor, because a thin stem below
+that reads as grey blur on this stage. `.subhead` at 500/26px is a
+sub-section, a level below a section heading and above a list caption;
+nothing inside a `.sub-body` may out-size it. The serif italic is a
+signature, not a second body face: `.statement` balances the dozen large
+serif lines, `.measure` sets running prose, and `.em-serif` inside
+`.em-serif` inverts to upright sans.
+
+Route changes are black-frame cuts, and a cut that changes room is held
+longer and slated with the room it is cutting to, the way the opening
+clapper slates Scene 01 (`chapterOfPath()` decides). Fine pointers get a
+playhead cursor.
+
+Motion carries meaning or it is not there. A block below the fold is wiped
+in from its top edge, not faded; two blocks that stage their own entrance
+opt out through `:has()`. The lamp is a still dot by default and only
+`.lamp lamp-live` breathes, at the eleven places where something is
+happening now. The access strip becomes a stacked list under reduced
+motion rather than a shuttle. All of it is CSS, all of it off under
+reduced motion.
+
+Scripts and the first month print black on white with the room left out.
+The whole system is measured once, in `src/lib/sequence.ts`, and read
+twice: as a position in the first frame and as a conformed timeline at the
+foot of every page. That module is server-only — a client component may
+take `Clip` from it with `import type`, never the function, and
+`src/lib/client-bundle.test.ts` holds the same rule for the publishing
+index.
 
 Every class in `globals.css` sits in Tailwind's `components` layer, so a
 utility on the same element wins (`mono text-[color:var(--ink)]` is ink);
@@ -268,6 +295,17 @@ plus the fixed pages through axe at desktop and phone width (WCAG 2.2 AA
 and best practice, no filter), failing on any violation, any horizontal
 overflow or any console error; then the palette, open. CI runs it after
 the gated smoke. Visual checks run through Playwright against
-`next start`, with screenshots into a scratch directory. Freeze reveals
-with `[style*="opacity"]{opacity:1!important;transform:none!important}`
-for stills, and wait for the home slate to finish before shooting home.
+`next start`, with screenshots into a scratch directory.
+
+Two traps in that browser. It never advances a CSS transition at all, so
+a correct reveal sits at its start value forever and looks like a broken
+cascade; finish the animations first
+(`document.getAnimations().forEach((a) => a.finish())`) and read the end
+state, or freeze the reveal outright with
+`.reveal-wait{clip-path:none!important}`. And print emulation does not
+re-resolve `var()` consumers when `@media print` redefines a token, so
+every colour it reports under print is the screen colour; check print with
+a clean `page.pdf()` and read the fill operators out of the content
+streams instead. Layout under print emulation is still trustworthy.
+
+Wait for the home slate to finish before shooting home.

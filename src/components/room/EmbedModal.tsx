@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useFocusTrap } from "@/lib/use-focus-trap";
-import { embedUrl } from "@/lib/published";
+import { embedUrl } from "@/lib/embed";
 
 /**
  * A lightbox for a published cut. The film plays in a 9:16 well from

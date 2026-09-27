@@ -140,7 +140,8 @@ export function ChapterOverview({
                     <Still
                       key={r.slug}
                       src={r.still}
-                      className={"absolute inset-0 h-full w-full object-cover transition-opacity duration-500 " + (i === shownIndex ? "opacity-100" : "opacity-0")}
+                      sizes="280px"
+                      className={"object-cover transition-opacity duration-500 " + (i === shownIndex ? "opacity-100" : "opacity-0")}
                     />
                   ) : null
                 )}
@@ -166,7 +167,7 @@ export function ChapterOverview({
                 <span className={"mono transition-colors " + (i === shownIndex ? "text-[color:var(--ink)]" : "")}>{pageNumber(id, r.slug)}</span>
                 {r.still ? (
                   <span className="well hidden w-[64px] border border-[color:var(--rule)] transition-colors group-hover:border-[color:var(--rule-strong)] md:block">
-                    <Still src={r.still} className="absolute inset-0 h-full w-full object-cover opacity-80 transition-opacity group-hover:opacity-100" />
+                    <Still src={r.still} sizes="64px" className="object-cover opacity-80 transition-opacity group-hover:opacity-100" />
                   </span>
                 ) : (
                   <span className="hidden md:block" />

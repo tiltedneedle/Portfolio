@@ -30,7 +30,7 @@ export function DoorBackdrop() {
         <div key={copy} className="flex shrink-0 gap-4 pr-4">
           {srcs.map((src, i) => (
             <span key={copy + "-" + i} className="well w-[132px] shrink-0 border border-[color:var(--rule)] md:w-[172px]">
-              <Still src={src} className="absolute inset-0 h-full w-full object-cover" />
+              <Still src={src} sizes="(min-width:768px) 172px, 132px" className="object-cover" />
             </span>
           ))}
         </div>

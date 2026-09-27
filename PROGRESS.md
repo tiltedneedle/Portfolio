@@ -213,6 +213,25 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 46: audit item 7. Two leaks, both of them work that had been
+      specified and then not wired through.
+      The studio's publishing index — 634 entries, 250 KB — was in the
+      client bundle, because EmbedModal is a client component and imported
+      `embedUrl` from lib/published, whose first line imports the JSON. Two
+      comments in the repo claimed the index never reached the browser
+      while it did. `embedUrl` now lives data-free in lib/embed.ts, and
+      lib/client-bundle.test.ts walks the import graph from every "use
+      client" entry (ignoring `import type`, which SWC erases) and fails
+      with the offending chain named. It failed before the fix and passes
+      after. Client JS: 1,185 KB → 944 KB.
+      The image optimiser was declared in next.config.ts and never invoked:
+      Still.tsx was a raw `<img>` with an eslint-disable. It is next/image
+      now, with `sizes` required, because a missing `sizes` silently falls
+      back to 100vw and re-opens the bug. Home at 1440 fetched 2.18 MB of
+      JPEG into wells as small as 64px; it now fetches 98 KB of AVIF, all
+      of it through /_next/image. Guide's poster needed a wrapper for its
+      md:w-[58%], since `fill` writes its own inline width; verified it
+      still stops at 58% with the blur and opacity intact.
 - [x] Wave 45: audit item 5. The site prints "Scene 01" on its opening
       clapperboard and numbers its rooms 01-06, then never slated scenes
       02-06. Now a cut has two lengths. Inside a room it is unchanged: 140ms

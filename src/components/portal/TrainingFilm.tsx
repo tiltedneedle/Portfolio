@@ -48,7 +48,7 @@ export function TrainingFilm({ film, number }: { film: Film; number: string }) {
         />
       ) : (
         <>
-          <Still src={"https://i.ytimg.com/vi/" + id + "/maxresdefault.jpg"} eager className="absolute inset-0 h-full w-full object-cover opacity-70" />
+          <Still src={"https://i.ytimg.com/vi/" + id + "/maxresdefault.jpg"} eager sizes="(min-width:1600px) 1600px, 100vw" className="object-cover opacity-70" />
           <div className="absolute inset-x-0 top-0 flex items-center justify-between p-5 mono md:p-6">
             <span className="flex items-center gap-2">
               <span className="lamp" aria-hidden="true" />

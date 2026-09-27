@@ -40,7 +40,12 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
           // these stills carry burnt-in captions, and a sharp one reads as
           // stray words behind the headline rather than as a frame.
           <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[420px] overflow-hidden md:h-[520px]">
-            <Still src={stillFor(guide.poster)} className="absolute right-0 top-0 h-full w-full scale-105 object-cover opacity-[0.16] blur-[3px] md:w-[58%]" />
+            {/* The width lives on a wrapper, not on the image: `fill` writes its own
+                inline width and would take the poster full-bleed on desktop. Transform,
+                opacity and filter are untouched by it, so they stay put. */}
+            <div className="absolute right-0 top-0 h-full w-full md:w-[58%]">
+              <Still src={stillFor(guide.poster)} sizes="(min-width:768px) 58vw, 100vw" className="scale-105 object-cover opacity-[0.16] blur-[3px]" />
+            </div>
             <div className="absolute inset-0 bg-gradient-to-r from-[color:var(--stage)] via-[rgba(11,11,12,0.82)] to-[rgba(11,11,12,0.45)]" />
             <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-[color:var(--stage)]" />
           </div>

@@ -47,7 +47,7 @@ export function Showreel() {
                   data-cursor={r.restricted ? "Open" : "Play"}
                 >
                   <span className="well block border border-[color:var(--rule)] transition-colors duration-300 group-hover:border-[color:var(--rule-strong)]">
-                    <Still src={r.thumb} className="absolute inset-0 h-full w-full object-cover" />
+                    <Still src={r.thumb} sizes="248px" className="object-cover" />
                     <span className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[rgba(0,0,0,0.78)] to-transparent" />
                     <span className="absolute inset-x-3 bottom-3 flex items-end justify-between gap-3">
                       <span className="display text-[36px] leading-none text-[color:var(--ink)]">{viewsLabel(r.views)}</span>

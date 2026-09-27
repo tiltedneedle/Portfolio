@@ -28,7 +28,7 @@ export function Backdrop() {
     <div key={key} className="flex shrink-0 gap-3 pr-3" aria-hidden={hidden || undefined}>
       {stills.map((s, i) => (
         <span key={s.id + i} className="well w-[120px] border border-[color:var(--rule)] md:w-[150px]">
-          <Still src={s.thumb} className="absolute inset-0 h-full w-full object-cover" />
+          <Still src={s.thumb} sizes="(min-width:768px) 150px, 120px" className="object-cover" />
         </span>
       ))}
     </div>

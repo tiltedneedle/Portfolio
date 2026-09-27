@@ -8,7 +8,7 @@ import { FilmedToggle } from "@/components/portal/FilmedToggle";
 import { chapter, pageNumber } from "@/content/chapters";
 import { requireClient } from "@/content/clients/registry";
 import { scriptAsText, shortName } from "@/content/clients/types";
-import { mmss, spokenSeconds, wordCount } from "@/lib/words";
+import { SPOKEN_WPM, mmss, runningTimes, spokenSeconds, wordCount } from "@/lib/words";
 import { pillars } from "@/content/system/pillars";
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -38,6 +38,16 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
   const spokenText = written ? [s.hook, ...s.body!, s.cta].filter(Boolean).join(" ") : "";
   const words = wordCount(spokenText);
   const spoken = spokenSeconds(spokenText);
+  // One row per beat, so the page can be timed rather than just read. The
+  // label only appears where a new part starts; the rest are continuations.
+  const beats = written
+    ? [
+        ...(s.hook ? [{ label: "Hook", text: s.hook, hook: true, cta: false }] : []),
+        ...s.body!.map((p, i) => ({ label: i === 0 ? "Script" : "", text: p, hook: false, cta: false })),
+        ...(s.cta ? [{ label: "Call to action", text: s.cta, hook: false, cta: true }] : []),
+      ]
+    : [];
+  const times = runningTimes(beats.map((b) => b.text));
 
   return (
     <article className="script-page bg-[color:var(--stage)]">
@@ -99,31 +109,44 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
               <span className="text-[color:var(--ink-mid)]">
                 &asymp; {mmss(spoken)} <span className="text-[color:var(--ink-mid)]">spoken</span>
               </span>
+              {/* Said once, here, so the twenty times in the gutter do not each
+                  have to carry a tilde to stay honest. */}
+              <span className="text-[color:var(--ink-mid)]">{SPOKEN_WPM} wpm</span>
+              {/* The shape of the script: constant height, each beat as tall as
+                  its seconds. A six-second hook reads short even though it is
+                  set at 38px. Structure's strip, stood on end. */}
+              <div aria-hidden="true" className="mt-4 flex h-[200px] w-px flex-col gap-[2px]">
+                {times.map((t, i) => (
+                  <span key={i} style={{ flexGrow: t.end - t.start, flexBasis: 0 }} className="w-px bg-[color:var(--rule-strong)]" />
+                ))}
+              </div>
             </div>
-            <div className="flex max-w-[62ch] flex-col gap-14">
-              {s.hook && (
-                <section>
-                  <p className="mono mb-5">Hook</p>
-                  <p className="spoken em-serif statement text-[clamp(24px,3vw,38px)] leading-[1.25] text-[color:var(--ink)]">{s.hook}</p>
-                </section>
-              )}
-              <section>
-                <p className="mono mb-5">Script</p>
-                <div className="flex flex-col gap-6">
-                  {s.body!.map((p, i) => (
-                    <p key={i} className="text-[19px] leading-[1.65] text-[color:var(--ink)] md:text-[21px]">
-                      {p}
+            <div className="max-w-[74ch]">
+              <ol className="script-beats" aria-label={"Script, with running time estimated at " + SPOKEN_WPM + " words a minute"}>
+                {beats.map((b, i) => (
+                  <li
+                    key={i}
+                    className={
+                      "grid grid-cols-1 gap-y-2 md:grid-cols-[3.25rem_minmax(0,62ch)] md:gap-x-8" +
+                      (b.label ? " beat-label" : "") +
+                      (b.cta ? " border-t border-[color:var(--rule)] pt-8" : "")
+                    }
+                  >
+                    {b.label && <p className="mono mb-3 md:col-start-2">{b.label}</p>}
+                    <span className="tc text-[11px] md:col-start-1 md:pt-[0.5em]">{mmss(times[i].start)}</span>
+                    <p
+                      className={
+                        b.hook
+                          ? "spoken em-serif statement text-[clamp(24px,3vw,38px)] leading-[1.25] text-[color:var(--ink)] md:col-start-2"
+                          : "text-[19px] leading-[1.65] text-[color:var(--ink)] md:col-start-2 md:text-[21px]"
+                      }
+                    >
+                      {b.text}
                     </p>
-                  ))}
-                </div>
-              </section>
-              {s.cta && (
-                <section className="border-t border-[color:var(--rule)] pt-8">
-                  <p className="mono mb-5">Call to action</p>
-                  <p className="text-[19px] leading-[1.6] text-[color:var(--ink-soft)]">{s.cta}</p>
-                </section>
-              )}
-              <div className="no-print border-t border-[color:var(--rule)] pt-8">
+                  </li>
+                ))}
+              </ol>
+              <div className="no-print mt-10 border-t border-[color:var(--rule)] pt-8">
                 <CopyScript text={scriptAsText(s)} />
               </div>
             </div>

@@ -213,6 +213,25 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 50: audit item 12, the last of the design audit's build list.
+      A script page was a stack of paragraphs with one total at the top. It
+      is now one row per beat, with the running time in the gutter, and a
+      duration strip in the rail: constant height, each segment as tall as
+      its seconds, so the six-second hook reads short even though it is set
+      at 38px. `runningTimes()` computes from the cumulative word count and
+      never sums rounded parts, so its last end is exactly
+      `spokenSeconds()` of the whole and the gutter can never disagree with
+      the rail — tested, including a twenty-beat case where summing
+      rounded parts would drift. The estimate is stated once, as "150 wpm"
+      under the total, rather than a tilde on twenty timecodes. Nothing
+      animates and nothing is sticky in the beat column, so it is identical
+      under reduced motion and on paper, where a timecoded script is what a
+      call sheet looks like.
+      Verification note worth keeping: Playwright's print emulation does
+      not re-resolve var() consumers when @media print redefines a token,
+      so every colour it reports under print is the screen colour. A clean
+      page.pdf() render proves the print stylesheet is fine (black and
+      greys, no cream). Layout under emulation is still trustworthy.
 - [x] Wave 49: audit item 10. The type system had two holes. A
       sub-section rendered as `.mono`, which is the same typographic object
       as a list's caption, so on /create/editing section 07 the sub
@@ -616,7 +635,7 @@ The marketing site this grew out of is on the `marketing-site` branch.
 
 ## In flight
 
-- [ ] Wave 50: a script is timed the way the edit will be. Verifying.
+- [ ] Nothing mid-change. All verified and committed. Pick from Next.
 
 ## Next
 

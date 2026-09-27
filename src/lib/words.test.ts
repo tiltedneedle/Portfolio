@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { mmss, spokenSeconds, wordCount, SPOKEN_WPM, numberWord } from "@/lib/words";
+import { SPOKEN_WPM, mmss, numberWord, runningTimes, spokenSeconds, wordCount } from "@/lib/words";
 
 describe("wordCount", () => {
   it("counts words, not punctuation or spacing", () => {
@@ -45,5 +45,37 @@ describe("numberWord", () => {
     expect(numberWord(12)).toBe("twelve");
     expect(numberWord(13)).toBe("13");
     expect(numberWord(100)).toBe("100");
+  });
+});
+
+describe("runningTimes", () => {
+  it("has nothing to time when there is nothing", () => {
+    expect(runningTimes([])).toHaveLength(0);
+  });
+
+  it("starts at zero and hands each part on to the next", () => {
+    const t = runningTimes(["one two three", "four five six", "seven"]);
+    expect(t[0].start).toBe(0);
+    expect(t[1].start).toBe(t[0].end);
+    expect(t[2].start).toBe(t[1].end);
+  });
+
+  it("ends exactly where the whole script ends, so the gutter and the rail agree", () => {
+    const parts = ["A hook that stops the scroll.", "Then the body of the script, which runs on for a while and says several things.", "And the call to action."];
+    expect(runningTimes(parts).at(-1)!.end).toBe(spokenSeconds(parts.join(" ")));
+  });
+
+  it("never sums rounded parts: twenty short beats still total the whole", () => {
+    const parts = Array.from({ length: 20 }, (_, i) => "beat " + i + " says a few words here");
+    const t = runningTimes(parts);
+    expect(t.at(-1)!.end).toBe(spokenSeconds(parts.join(" ")));
+    // Summing each rounded part would drift; the cumulative count cannot.
+    const drifted = parts.reduce((n, p) => n + spokenSeconds(p), 0);
+    expect(t.at(-1)!.end).not.toBe(drifted);
+  });
+
+  it("takes a different pace when given one", () => {
+    const parts = ["one two three four five six"];
+    expect(runningTimes(parts, 60).at(-1)!.end).toBe(6);
   });
 });

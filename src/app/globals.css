@@ -895,6 +895,15 @@ a:focus-visible > .wm {
   font-size: 24px;
 }
 
+/* A script timed the way the edit will be: one row per beat, the running
+   time in the gutter. Only the rhythm lives here; the grid is on the row. */
+.script-beats > li + li {
+  margin-top: 1.5rem;
+}
+.script-beats > li + li.beat-label {
+  margin-top: 1.75rem;
+}
+
 /* A numeral is a watermark: faint by design, drawn by CSS from data-n so
    it is never text an accessibility audit has to weigh. The one place a
    number matters (a section's) also carries it as sr-only text. */

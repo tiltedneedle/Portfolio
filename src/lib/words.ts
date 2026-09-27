@@ -21,6 +21,22 @@ export function spokenSeconds(text: string, wpm = SPOKEN_WPM) {
   return Math.round((wordCount(text) / wpm) * 60);
 }
 
+/**
+ * Where each part of a script starts and ends, in seconds.
+ *
+ * Computed from the cumulative word count, never by summing rounded parts,
+ * so the last end is exactly spokenSeconds() of the whole: the running time
+ * in the gutter and the total in the rail can never disagree.
+ */
+export function runningTimes(parts: string[], wpm = SPOKEN_WPM) {
+  let words = 0;
+  return parts.map((p) => {
+    const start = Math.round((words / wpm) * 60);
+    words += wordCount(p);
+    return { start, end: Math.round((words / wpm) * 60) };
+  });
+}
+
 /** "1:20" style, for a spoken length. */
 export function mmss(seconds: number) {
   const s = Math.max(0, Math.round(seconds));

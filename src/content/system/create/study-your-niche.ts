@@ -11,7 +11,7 @@ export const studyYourNiche: Guide = {
     "One of the biggest mistakes brands make is creating content based purely on what they think people want to see. We take a different approach. We study what the audience is already responding to and use that information to make smarter creative decisions.",
     "The objective is not to copy other people. The objective is to understand what is working and why.",
   ],
-  film: { title: "Study your niche" },
+  film: { title: "Study your niche", youtubeId: "jR8E12lZcH0" },
   sections: [
     {
       n: "01",

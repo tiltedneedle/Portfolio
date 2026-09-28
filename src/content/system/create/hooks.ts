@@ -12,7 +12,7 @@ export const hooks: Guide = {
     "It can come from what the viewer sees, what they hear, what you say, or ideally a combination of all three.",
     "The examples here are from *The Jet Business*, a client whose films are on the showreel. Read them as a worked example: the principle is the same in your field, the specifics are yours.",
   ],
-  film: { title: "Hooks" },
+  film: { title: "Hooks", youtubeId: "yGBRmiqsnMk" },
   sections: [
     {
       n: "01",

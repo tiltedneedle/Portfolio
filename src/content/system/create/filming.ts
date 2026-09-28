@@ -16,7 +16,7 @@ export const filming: Guide = {
     { kind: "list", style: "beat", items: ["Aircraft.", "Cabins.", "Cockpits.", "Hangars.", "FBOs.", "Runways.", "Aircraft deliveries."] },
     { kind: "p", text: "Your job is to capture them properly." },
   ],
-  film: { title: "How to film" },
+  film: { title: "How to film", youtubeId: "trGIYWPLNKY" },
   sections: [
     {
       n: "01",

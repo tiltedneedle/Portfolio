@@ -12,7 +12,7 @@ export const coreMessage: Guide = {
     "Do not make people work to understand your point.",
     "The examples here are from *The Jet Business*, a client whose films are on the showreel. Read them as a worked example: the principle is the same in your field, the specifics are yours.",
   ],
-  film: { title: "Deliver your core message" },
+  film: { title: "Deliver your core message", youtubeId: "goPYNMW91Hw" },
   sections: [
     {
       n: "01",

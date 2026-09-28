@@ -50,6 +50,11 @@ export function TrainingFilm({ film, number }: { film: Film; number: string }) {
       ) : (
         <>
           <Still src={"https://i.ytimg.com/vi/" + id + "/maxresdefault.jpg"} eager sizes="(min-width:1600px) 1600px, 100vw" className="object-cover opacity-70" />
+          {/* The slate line and the title are ink on whatever frame YouTube
+              chose, and these films open on a bright room. Two scrims, so the
+              type is legible on a light frame and the frame still reads. */}
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-2/5 bg-gradient-to-b from-[rgba(0,0,0,0.75)] via-[rgba(0,0,0,0.35)] to-transparent" />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-[rgba(0,0,0,0.85)] via-[rgba(0,0,0,0.4)] to-transparent" />
           <div className="absolute inset-x-0 top-0 flex items-center justify-between p-5 mono md:p-6">
             <span className="flex items-center gap-2">
               <span className="lamp" aria-hidden="true" />

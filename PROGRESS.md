@@ -213,6 +213,22 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 59: the nine training films. The ids arrived, and the count
+      settled a question the resume note had got wrong twice: nine, not
+      eight and not six. Seven steps map onto the seven Create guides in
+      the room's own order, and ideation — the second page, and the only
+      one that had never declared a film — gained its block, which is why
+      the site had looked as though it needed six. Intro and outro sit on
+      the front page. Every id was checked for a real maxres frame before
+      anything was wired (37 to 78 KB each, so none is YouTube's grey
+      placeholder), and one film was played end to end: the still comes
+      through the image optimiser and the button loads the
+      privacy-enhanced player, which the CSP already allowed.
+      One thing only real stills could show: these films open on a bright
+      room, and the slate line and the title are ink laid straight on the
+      frame. With the wells empty that never mattered. Two scrims now, so
+      "TRAINING FILM / 04.04" sits at 12.6:1 instead of on a white wall,
+      and the frame still reads.
 - [x] Wave 58: a ten-lens audit of ground the two earlier reviews never
       touched (onboarding, performance, print, touch, untested modules,
       brief fidelity, search, dead code, CI, privacy). 61 findings, each put
@@ -902,13 +918,12 @@ The marketing site this grew out of is on the `marketing-site` branch.
    `LazyMotion` + `m` (nine files import `motion`) to cut the largest
    client chunk; the site is private and static, so it was left. Take it
    only if a real client reports slow first loads.
-1. Awaiting from the user (do not block): eight YouTube ids for the
-   training films — six Create guides (study-your-niche, video-style,
-   hooks, core-message, filming, editing) plus home's intro and outro.
-   Counted 2026-09-27; the note used to say nine, which was wrong. The
-   nine client videos that arrived are the showreel, not these. Also the
-   first real client's content, images for `figure` blocks, and a real
-   client logo to test `--logo`.
+1. Awaiting from the user (do not block): the first real client's content,
+   images for `figure` blocks, and a real client logo to test `--logo`.
+   The training films ARRIVED on 2026-09-28 and are in: nine of them, and
+   the count was nine rather than eight because ideation was the one Create
+   guide that had never declared a film. Seven steps across the seven
+   Create guides in the room's order, plus home's intro and outro.
 2. Majors available and not taken (`npm outdated`, re-checked 2026-09-27):
    typescript 7.0 and @types/node 26. Each is its own wave with the full
    loop, and typescript 7 is the Go rewrite, so it is a decision rather

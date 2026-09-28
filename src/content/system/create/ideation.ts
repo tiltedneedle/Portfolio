@@ -6,6 +6,7 @@ export const ideation: Guide = {
   title: "Infinite content ideation system",
   kicker: "You should never reach a point where you do not know what to post.",
   poster: "qj-bCVEaxko",
+  film: { title: "The infinite ideation system", youtubeId: "Mb2LYbPdjCI" },
   intro: [
     "Once you know where to look, your business can continuously generate new content ideas.",
     "The objective of this system is to help you recognise those opportunities and turn them into content.",

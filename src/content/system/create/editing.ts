@@ -19,7 +19,7 @@ export const editing: Guide = {
     },
     { kind: "p", text: "If an edit does none of those things, you probably do not need it." },
   ],
-  film: { title: "How to edit" },
+  film: { title: "How to edit", youtubeId: "pHjdzCGCTE0" },
   sections: [
     {
       n: "01",

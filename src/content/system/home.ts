@@ -120,7 +120,7 @@ export const home = {
   // The one place the site claims permanence. It was claimed in five.
   access_note: "Permanent access. Yours to keep, and we add to it as we learn.",
   films: {
-    intro: { title: "Welcome to your system" },
-    outro: { title: "Where to go from here" },
+    intro: { title: "Welcome to your system", youtubeId: "KHcTcsDBQyQ" },
+    outro: { title: "Where to go from here", youtubeId: "NqJLjtmVOpw" },
   },
 };

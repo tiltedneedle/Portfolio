@@ -74,9 +74,11 @@ export default async function Home({ params }: { params: Promise<{ client: strin
       // the router payload either, which a string on a prop would put there.
       href: locked ? undefined : it.href,
       text: it.text,
+      list: it.list,
+      after: it.after,
       locked: locked || undefined,
       anchor: locked ? lockAnchor(it.href) : undefined,
-      still: it.personalised ? undefined : roomStill(it.href),
+      still: it.personalised ? undefined : it.frame ? stillFor(it.frame) : roomStill(it.href),
       meta: it.personalised ? undefined : roomMeta(it.href),
     };
   });
@@ -149,8 +151,6 @@ export default async function Home({ params }: { params: Promise<{ client: strin
       <Slate />
 
       <section id="welcome" className="relative flex min-h-[100svh] flex-col justify-between overflow-hidden bg-[color:var(--stage)] scroll-mt-0">
-        <Backdrop />
-
         <div className="mono relative flex items-center justify-between px-6 pt-20 md:px-14">
           <p className="flex items-center gap-2">
             <span className="lamp lamp-live" aria-hidden="true" />
@@ -162,19 +162,32 @@ export default async function Home({ params }: { params: Promise<{ client: strin
 
         <div className="relative px-6 py-16 md:px-14 md:py-20">
           <ClientMark size={64} />
-          <h1 className="display footage-type mt-10 max-w-[15ch] text-[clamp(56px,10vw,168px)] leading-[0.86]">
-            Tilted Needle
-            <br />
-            <span className="md:whitespace-nowrap">
-              {/* --ink-soft, not --ink-mid: the × now sits over the drift at
-                  full strength on a phone, and measured against real frames
-                  --ink-mid fell to 1.96:1 there. --ink-soft holds 4.4:1 over
-                  the brightest frame and is still a step below the names. */}
-              <span className="em-serif text-[0.7em] text-[color:var(--ink-soft)]">&times;</span> {identity.name}
-            </span>
-          </h1>
-          <p className="mono footage-type mt-8 text-[color:var(--ink)]">{home.kicker}</p>
-          <p className="footage-type mt-6 max-w-[46ch] text-[19px] leading-[1.5] text-[color:var(--ink-soft)] md:text-[23px]">{home.lead(identity.name)}</p>
+          {/* The name sets the size for itself and for the work drifting
+              behind it: the band is centred on this box and its frames are
+              sized in em, so it sits behind the name at every width and never
+              reaches the tagline below. */}
+          <div className="relative mt-10 text-[clamp(56px,10vw,168px)]">
+            <Backdrop className="-inset-x-6 top-1/2 -translate-y-1/2 md:-inset-x-14" />
+            <h1 className="display footage-type relative max-w-[15ch] leading-[0.86]">
+              Tilted Needle
+              <br />
+              <span className="md:whitespace-nowrap">
+                {/* --ink-soft, not --ink-mid: the × sits over the drift at
+                    full strength, and measured against real frames --ink-mid
+                    fell to 1.96:1 on a phone. */}
+                <span className="em-serif text-[0.7em] text-[color:var(--ink-soft)]">&times;</span> {identity.name}
+              </span>
+            </h1>
+          </div>
+          {/* The brief's tagline, as the brief sets it: a heading under the
+              name, VIRAL in red. The system keeps --tally for state; the
+              client's own document asks for the red, and the client wins. */}
+          <p className="display footage-type mt-8 text-[clamp(24px,2.8vw,44px)] leading-[1] text-[color:var(--ink)]">
+            {home.kicker.split(home.accent)[0]}
+            <span className="text-[color:var(--tally)]">{home.accent}</span>
+            {home.kicker.split(home.accent)[1]}
+          </p>
+          <p className="footage-type mt-6 max-w-[48ch] text-[19px] leading-[1.5] text-[color:var(--ink-soft)] md:text-[22px]">{home.lead(identity.name)}</p>
           {/* A client with nothing marked and nothing written has nothing to
               read out, and an empty labelled list is a promise the page does
               not keep. */}
@@ -199,18 +212,23 @@ export default async function Home({ params }: { params: Promise<{ client: strin
       </section>
 
       <section id="objective" className="scroll-mt-16 border-t border-[color:var(--rule)] bg-[color:var(--stage-2)] py-24 md:py-36">
-        <div className="mx-auto grid max-w-[1600px] gap-12 px-6 md:grid-cols-[1fr_minmax(0,60ch)] md:gap-20 md:px-14">
+        {/* The brief's order, read left to right: what the portal gives you,
+            then the objective. (It used to open on the objective, in words
+            the brief never used.) */}
+        <div className="mx-auto grid max-w-[1600px] gap-12 px-6 md:grid-cols-2 md:gap-20 md:px-14">
           <div>
             <p className="mono">01 &mdash; Welcome</p>
-            <p className="mono mt-10 text-[color:var(--ink-mid)]">{home.objective.label}</p>
-            <p className="em-serif statement mt-4 max-w-[30ch] text-[clamp(24px,3vw,40px)] leading-[1.2] text-[color:var(--ink)]">{home.objective.text}</p>
+            <div className="mt-10 flex flex-col gap-6">
+              {home.intro.map((p) => (
+                <p key={p} className="max-w-[40ch] text-[20px] leading-[1.55] text-[color:var(--ink-soft)] md:text-[24px] [text-wrap:pretty]">
+                  {p}
+                </p>
+              ))}
+            </div>
           </div>
-          <div className="flex flex-col gap-6 md:pt-12">
-            {home.intro.map((p) => (
-              <p key={p} className="text-[19px] leading-[1.6] text-[color:var(--ink-soft)] md:text-[21px]">
-                {p}
-              </p>
-            ))}
+          <div className="md:border-l md:border-[color:var(--rule)] md:pl-20 md:pt-[calc(1.5rem+2.5rem)]">
+            <p className="mono text-[color:var(--ink-mid)]">{home.objective.label}</p>
+            <p className="em-serif statement mt-4 max-w-[30ch] text-[clamp(26px,2.6vw,40px)] leading-[1.2] text-[color:var(--ink)]">{home.objective.text}</p>
           </div>
         </div>
         <div className="mx-auto mt-16 max-w-[1600px] px-6 md:mt-24 md:px-14">
@@ -228,9 +246,10 @@ export default async function Home({ params }: { params: Promise<{ client: strin
 
       <section id="how" className="scroll-mt-16 border-t border-[color:var(--rule)] bg-[color:var(--stage)] py-24 md:py-36">
         <div className="mx-auto max-w-[1600px] px-6 md:px-14">
-          <p className="mono">03 &mdash; How to use the system</p>
-          <h2 className="display mt-6 max-w-[12ch] text-[clamp(52px,7vw,120px)]">
-            Five steps, on a <span className="em-serif">loop.</span>
+          <p className="mono">03 &mdash; Five steps, on a loop</p>
+          {/* The brief's heading. */}
+          <h2 className="display mt-6 max-w-[14ch] text-[clamp(52px,7vw,120px)]">
+            How to use the <span className="em-serif">system.</span>
           </h2>
           <div className="mt-16 md:mt-24">
             <Loop paths={paths} />

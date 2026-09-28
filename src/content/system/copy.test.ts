@@ -68,8 +68,57 @@ describe("the loop steps do not re-list the cards", () => {
     expect(offenders, offenders.join("\n")).toEqual([]);
   });
 
-  it("keeps every step short enough to read at a glance", () => {
-    for (const step of home.how) expect(step.text.split(/\s+/).length).toBeLessThanOrEqual(16);
+});
+
+/**
+ * The home page is the brief's "Step 1: Home Page", word for word. An
+ * earlier writing pass paraphrased nearly every line of it -- and also wrote
+ * the house rules that pass followed into this file (steps capped at sixteen
+ * words, the approach forbidden to say "the objective"), which the brief's
+ * own copy breaks. The user had to ask whether the brief was being followed.
+ * These pin the brief's sentences so a later pass has to fail a test to
+ * rewrite them.
+ */
+describe("the home page says what the brief says", () => {
+  it("opens on the brief's tagline and lead", () => {
+    expect(home.kicker).toBe("Your complete viral content system");
+    expect(home.kicker.split(" ")).toContain(home.accent);
+    expect(home.lead("Company Name")).toBe("Everything we have learned from generating over 5 billion organic views, built into one complete system for Company Name.");
+  });
+
+  it("welcomes the client in the brief's words, objective last", () => {
+    expect(home.intro).toEqual([
+      "This portal gives you the exact frameworks, processes and principles we use at Tilted Needle to create high performing social media content.",
+      "You now have everything you need to research, create, film, edit, publish and analyse content internally.",
+    ]);
+    expect(home.objective.label).toBe("The objective is simple");
+    expect(home.objective.text).toBe(
+      "To give your team the knowledge and infrastructure required to consistently create content that captures attention, builds an audience and generates more opportunities for your business."
+    );
+  });
+
+  it("describes the seven parts as the brief does", () => {
+    const by = (href: string) => home.access.find((a) => a.href === href)!;
+    expect(by("/audit/content-diagnostic").text).toBe("A complete analysis of your current social media presence. Understand what is working, what is limiting your growth and what we would change.");
+    expect(by("/audit/competitor-intelligence").text).toBe(
+      "Understand what is already working within your market. See the topics, formats and content opportunities your competitors are using and where opportunities exist for your brand."
+    );
+    expect(by("/content/ideas").list).toEqual(["Authority", "Education", "Entertainment", "Personal"]);
+    expect(by("/content/scripts").list).toEqual(["Open the script.", "Film it.", "Execute."]);
+    expect(by("/create").list).toEqual(["Research your niche.", "Analyse competitors.", "Generate ideas.", "Choose formats.", "Create stronger hooks.", "Deliver your message.", "Film effectively.", "Edit for retention."]);
+    expect(by("/publish").text).toContain("how to create covers and how to optimise your profiles.");
+    expect(by("/analyse").list).toContain("Understand what to repeat, what to improve and what to change next time.");
+  });
+
+  it("gives the five steps and the approach as the brief does", () => {
+    expect(home.how.map((h) => h.title)).toEqual(["Understand", "Create", "Publish", "Analyse", "Repeat"]);
+    expect(home.how[0].text).toBe("Start with your Content Audit and Competitor Intelligence. Understand your current position and the opportunities available to you.");
+    expect(home.how[4].text).toBe("Use those learnings to improve the next piece of content. The system becomes stronger the more you use it.");
+    expect(home.approach.lines).toEqual([
+      "The objective is not to create one viral video.",
+      "The objective is to build a repeatable system capable of producing high performing content consistently.",
+    ]);
+    expect(home.approach.beats).toEqual(["Research.", "Create.", "Publish.", "Analyse.", "Improve.", "Then repeat."]);
   });
 });
 
@@ -93,28 +142,6 @@ describe("permanence is claimed once", () => {
     ];
     for (const line of everywhere) expect(line.toLowerCase()).not.toContain("permanent");
     expect(home.access_note.toLowerCase()).toContain("permanent");
-  });
-});
-
-describe("the objective is stated once", () => {
-  it("does not restate the Welcome block's label two sections later", () => {
-    for (const line of home.approach.lines) expect(line.toLowerCase()).not.toContain("the objective");
-  });
-
-  it("sets up the beats rather than repeating the objective's words", () => {
-    const words = new Set(
-      home.objective.text
-        .toLowerCase()
-        .split(/[^a-z']+/)
-        .filter((w) => w.length > 5)
-    );
-    for (const line of home.approach.lines) {
-      const shared = line
-        .toLowerCase()
-        .split(/[^a-z']+/)
-        .filter((w) => words.has(w));
-      expect(shared, "approach line repeats the objective: " + shared.join(", ")).toEqual([]);
-    }
   });
 });
 

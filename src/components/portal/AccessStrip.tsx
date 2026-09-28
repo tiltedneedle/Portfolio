@@ -27,9 +27,25 @@ import { numberWord } from "@/lib/words";
  * `still` is the frame this part opens on, where the part is one the studio
  * has filmed. The personalised parts are documents and carry none.
  * `locked` means this client has nothing in it yet; `anchor` is which of
- * the four the modal should open on.
+ * the four the modal should open on. `list` and `after` carry the brief's
+ * own lists (the eight Create steps, the four pillars) and a line it sets
+ * below one.
  */
-export type AccessItem = { n: string; title: string; href?: string; text: string; still?: string; meta?: string; locked?: boolean; anchor?: string };
+export type AccessItem = {
+  n: string;
+  title: string;
+  href?: string;
+  text: string;
+  list?: string[];
+  after?: string;
+  still?: string;
+  meta?: string;
+  locked?: boolean;
+  anchor?: string;
+};
+
+/** A list of short lines sets in two columns; one long line keeps it to one. */
+const twoUp = (list: string[]) => list.length >= 4 && list.every((l) => l.length <= 24);
 
 /** `counts` is what each personalised card has so far, keyed by href ("4 of 13 written"). */
 export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: AccessItem[]; counts?: Record<string, ReactNode>; readKeys?: Record<string, string[]> }) {
@@ -110,57 +126,81 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
           className="shuttle-track flex flex-col md:w-max md:flex-row md:items-stretch md:gap-5 md:px-[8vw]"
         >
           <div className="w-full shrink-0 px-6 py-20 md:flex md:w-[34vw] md:flex-col md:justify-center md:py-0 md:pr-14">
-            <p className="mono">02 &mdash; What you have access to</p>
-            <h2 className="display mt-4 text-[clamp(52px,6.5vw,110px)]">
-              {numberWord(n)} <span className="em-serif">{n === 1 ? "part." : "parts."}</span>
-            </h2>
-            <p className="mt-6 max-w-[34ch] text-[17px] leading-relaxed text-[color:var(--ink-soft)]">
-              Everything in your system, in the order you will use it.
+            <p className="mono">
+              02 &mdash; {numberWord(n)} {n === 1 ? "part" : "parts"}
             </p>
+            {/* The brief's own heading, "WHAT YOU HAVE ACCESS TO". The count
+                that used to be the headline is the label above it now. */}
+            <h2 className="display mt-4 text-[clamp(48px,5.4vw,96px)] leading-[0.9]">
+              What you have <span className="em-serif">access to.</span>
+            </h2>
             <p className="shuttle-hint mono mt-8 max-md:hidden">Scroll to shuttle &middot; click to open</p>
           </div>
 
           {items.map((it, i) => {
             const shell =
-              "shuttle-card group relative flex min-h-[380px] w-full flex-col justify-between overflow-hidden border bg-[color:var(--stage-2)] p-6 text-left transition-colors duration-500 md:h-[66svh] md:w-[calc(66svh*0.72)] md:p-8 " +
+              "shuttle-card group relative flex min-h-[380px] w-full flex-col overflow-hidden border bg-[color:var(--stage-2)] p-6 text-left transition-colors duration-500 md:h-[74svh] md:w-[calc(74svh*0.8)] md:p-8 " +
               (active === i && !mobile && range > 0 ? "border-[color:var(--rule-strong)]" : "border-[color:var(--rule)] hover:border-[color:var(--rule-strong)]");
             const face = (
               <>
-                {/* A part the studio filmed opens on its own frame, held in
-                    the top half of the card and dissolving into the card
-                    colour before any text starts -- so every line below
-                    keeps the contrast it was designed against, whatever
-                    the frame happens to be. A part that is a document has
-                    no frame to show, and keeps the numeral instead. */}
+                {/* A part the studio filmed opens on its own frame: a header
+                    across the top of the card, in the flow, so the words are
+                    always laid out below it and never on it. (It used to sit
+                    behind the top half, which was safe while the cards said
+                    one short line; with the brief's full descriptions the
+                    text would have run up over the picture on a laptop.) A
+                    part that is a document has no frame, and keeps the
+                    numeral instead.
+                    The frame gives way before the words do: 21svh where there
+                    is room, but never so tall that it leaves the card less
+                    than 400px for its text. At 1366x650 the Create card, with
+                    all eight of the brief's steps, ran 26px off its own foot. */}
                 {it.still && !it.locked ? (
-                  <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[54%] overflow-hidden">
-                    {/* Anchored to the top of the frame, not its middle. These are
-                        9:16 stills with burnt-in captions across the waist, and
-                        a landscape crop taken from the centre lands squarely on
-                        them -- three cards of stray half-sentences. The top of
-                        the frame is where the face is. */}
-                    <Still src={it.still} sizes="(min-width:768px) 480px, 100vw" className="object-cover object-top opacity-60" />
-                    <span className="absolute inset-0 bg-gradient-to-b from-[rgba(11,11,12,0.55)] via-[rgba(11,11,12,0.12)] to-[color:var(--stage-2)]" />
+                  <span aria-hidden="true" className="pointer-events-none relative -mx-6 -mt-6 mb-6 block h-[168px] shrink-0 overflow-hidden md:-mx-8 md:-mt-8 md:mb-7 md:h-[max(40px,min(21svh,calc(74svh_-_400px)))]">
+                    {/* A wide slice of a 9:16 still, taken at 22% of its height.
+                        The very top is ceiling and sky once the frame is this
+                        short (the slice is a fifth of the picture); the middle
+                        is where the burnt-in captions run. A fifth of the way
+                        down is where a vertical video keeps its face. */}
+                    <Still src={it.still} sizes="(min-width:768px) 600px, 100vw" className="object-cover object-[center_22%] opacity-70" />
+                    <span className="absolute inset-0 bg-gradient-to-b from-[rgba(11,11,12,0.6)] via-[rgba(11,11,12,0.1)] to-[color:var(--stage-2)]" />
+                    {/* The slate rides on the frame, so it takes full ink:
+                        --ink-mid has no contrast headroom over a picture. */}
+                    <span className="mono absolute inset-x-6 top-6 flex items-baseline justify-between gap-4 text-[color:var(--ink)] md:inset-x-8 md:top-8">
+                      <span>{it.n}</span>
+                      {it.meta && <span>{it.meta}</span>}
+                    </span>
                   </span>
                 ) : (
-                  <span aria-hidden="true" className="numeral pointer-events-none absolute -right-2 top-1/2 -translate-y-1/2 text-[200px] opacity-50 md:text-[240px]" data-n={it.n} />
-                )}
-                {/* On a frame this line is the slate, so it takes full ink:
-                    --ink-mid has no contrast headroom left over a picture. */}
-                <span className={"mono relative flex items-baseline justify-between gap-4 " + (it.still && !it.locked ? "text-[color:var(--ink)]" : "")}>
-                  <span>{it.n}</span>
-                  {it.locked ? (
-                    <span className="inline-flex items-center gap-1.5 text-[color:var(--ink-mid)]">
-                      <Lock />
-                      Not yours yet
+                  <>
+                    <span aria-hidden="true" className="numeral pointer-events-none absolute -right-2 top-1/2 -translate-y-1/2 text-[200px] opacity-50 md:text-[240px]" data-n={it.n} />
+                    <span className="mono relative flex items-baseline justify-between gap-4">
+                      <span>{it.n}</span>
+                      {it.locked ? (
+                        <span className="inline-flex items-center gap-1.5 text-[color:var(--ink-mid)]">
+                          <Lock />
+                          Not yours yet
+                        </span>
+                      ) : (
+                        it.meta && <span className="text-[color:var(--ink-mid)]">{it.meta}</span>
+                      )}
                     </span>
-                  ) : (
-                    it.meta && <span className={it.still ? "" : "text-[color:var(--ink-mid)]"}>{it.meta}</span>
+                  </>
+                )}
+                <span className="relative mt-auto block pt-6">
+                  <span className={"display display-light block text-[clamp(40px,3.2vw,52px)] leading-[0.92] " + (it.locked ? "text-[color:var(--ink-soft)] transition-colors duration-500 group-hover:text-[color:var(--ink)]" : "text-[color:var(--ink)]")}>{it.title}</span>
+                  <span className="mt-4 block text-[15px] leading-relaxed text-[color:var(--ink-mid)] [text-wrap:pretty]">{it.text}</span>
+                  {it.list && (
+                    <span className={"mt-3 grid gap-x-5 gap-y-1 text-[14px] leading-snug text-[color:var(--ink-soft)] " + (twoUp(it.list) ? "grid-cols-2" : "grid-cols-1")}>
+                      {it.list.map((l) => (
+                        <span key={l} className="flex items-baseline gap-2">
+                          <span aria-hidden="true" className="text-[color:var(--ink-faint)]">&mdash;</span>
+                          {l}
+                        </span>
+                      ))}
+                    </span>
                   )}
-                </span>
-                <span className="relative">
-                  <span className={"display display-light block max-w-[11ch] text-[clamp(48px,3.4vw,54px)] leading-[0.92] " + (it.locked ? "text-[color:var(--ink-soft)] transition-colors duration-500 group-hover:text-[color:var(--ink)]" : "text-[color:var(--ink)]")}>{it.title}</span>
-                  <span className="mt-4 block max-w-[32ch] text-[15px] leading-relaxed text-[color:var(--ink-mid)]">{it.text}</span>
+                  {it.after && <span className="mt-3 block text-[15px] leading-relaxed text-[color:var(--ink-mid)]">{it.after}</span>}
                   <span className="mono mt-6 flex items-baseline justify-between gap-4 text-[color:var(--ink-soft)] transition-colors group-hover:text-[color:var(--ink)]">
                     <span>
                       {it.locked ? "Ask for it" : "Open"} <span aria-hidden="true">&#8599;</span>

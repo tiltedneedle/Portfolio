@@ -6,18 +6,19 @@ import { Rail } from "@/components/portal/Rail";
 import { Odometer } from "@/components/portal/Odometer";
 import { EmbedModal } from "@/components/room/EmbedModal";
 import { PLATFORM, STUDIO_VIEWS, embedFor, reel, reelTotal, viewsLabel, type Reel } from "@/content/system/reel";
-import { numberWord, ordinalWord } from "@/lib/words";
+import { numberWord } from "@/lib/words";
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 /**
  * From our clients' feeds: the studio's own results, on the client's home.
  *
- * It opens on the whole of the work -- over five billion organic views,
- * set in full and counted in -- and then narrows to the proof you can
- * press play on: the top performers, ranked, with the best of them, the
- * nine together and the ninth read out, because "even the ninth did 2.5M"
- * says more about the method than the first one does.
+ * One header, two halves read left to right: the whole of the work -- over
+ * five billion organic views, set in full and counted in on its reels --
+ * and then what you can press play on, the top performers. The per-video
+ * facts that used to sit between them are gone at the user's call: the
+ * cards already carry each film's views and client, so the row only said
+ * them twice.
  *
  * Each card is a still with the views it took and its rank; a tap plays
  * the film in the platform's own player, inside the lightbox. The same
@@ -31,52 +32,40 @@ export function Showreel() {
   // Ranked by what they did, whatever order the data file lists them in,
   // so "No. 1" can never be a claim the numbers do not back.
   const ranked = [...reel].sort((a, b) => b.views - a.views);
-  const best = ranked[0];
-  const last = ranked[ranked.length - 1];
   const n = ranked.length;
-  const facts = [
-    { k: "The best of them", v: viewsLabel(best.views), who: best.client },
-    { k: "The top " + numberWord(n) + " together", v: viewsLabel(total), who: "Between them" },
-    { k: "Even the " + ordinalWord(n), v: viewsLabel(last.views), who: last.client },
-  ];
   return (
     <section className="border-t border-[color:var(--rule)] bg-[color:var(--stage)] py-20 md:py-28" aria-label="From our clients' feeds">
       <div className="mx-auto max-w-[1600px] px-6 md:px-14">
-        <p className="mono">From our clients&rsquo; feeds</p>
-        <h2 className="mt-5">
-          <span className="sr-only">Over five billion organic views.</span>
-          {/* Sized to fill the measure: the figure and its plus are 6.16em
-              wide in this face, so 13vw fits inside the gutters at every
-              width from 360 to 1920 and the 232px cap holds it inside the
-              1600px column. Measured, not guessed: 995px at 176px. */}
-          <span aria-hidden="true" className="display flex items-start text-[clamp(44px,13vw,232px)] leading-none text-[color:var(--ink)]">
-            <Odometer value={STUDIO_VIEWS} />
-            <span className="odo-sep text-[color:var(--ink-mid)]">+</span>
-          </span>
-          <span aria-hidden="true" className="em-serif mt-1 block text-[clamp(34px,6.2vw,108px)] leading-[1] text-[color:var(--ink-soft)]">
-            organic views.
-          </span>
-        </h2>
+        <div className="grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-x-12">
+          <div className="lg:col-span-7">
+            <p className="mono">From our clients&rsquo; feeds</p>
+            <h2 className="mt-5">
+              <span className="sr-only">Over five billion organic views.</span>
+              {/* A headline, not a wall. The figure and its plus are 6.16em
+                  wide in this face (measured: 995px at 176px), so at 7vw it
+                  is 43% of the screen and sits inside its seven columns at
+                  every width; the 120px cap keeps it there past 1600. */}
+              <span aria-hidden="true" className="display flex items-start text-[clamp(40px,7vw,120px)] leading-none text-[color:var(--ink)]">
+                <Odometer value={STUDIO_VIEWS} />
+                <span className="odo-sep text-[color:var(--ink-mid)]">+</span>
+              </span>
+              <span aria-hidden="true" className="em-serif mt-1 block text-[clamp(28px,3.6vw,62px)] leading-[1] text-[color:var(--ink-soft)]">
+                organic views.
+              </span>
+            </h2>
+          </div>
 
-        <div className="mt-12 grid gap-10 border-t border-[color:var(--rule)] pt-10 md:mt-16 md:grid-cols-12 md:gap-x-14 md:pt-12">
-          <div className="md:col-span-5">
-            <p className="display text-[clamp(30px,3vw,46px)] leading-[0.95] text-[color:var(--ink)]">
+          {/* The turn from the whole to the nine, across a hairline, its
+              foot level with the foot of the figure. */}
+          <div className="border-[color:var(--rule)] lg:col-span-5 lg:border-l lg:pb-2 lg:pl-12">
+            <p className="display text-[clamp(28px,2.6vw,42px)] leading-[0.95] text-[color:var(--ink)]">
               These are the <span className="em-serif">top performers.</span>
             </p>
-            <p className="measure mt-5 text-[16px] leading-relaxed text-[color:var(--ink-soft)]">
+            <p className="mt-4 max-w-[44ch] text-[16px] leading-relaxed text-[color:var(--ink-soft)] [text-wrap:pretty]">
               {cap(numberWord(n))} videos from our clients&rsquo; feeds, {viewsLabel(total)} views between them: the work this system is built from.
               Watch the first three seconds of each; the hook is the lesson.
             </p>
           </div>
-          <dl className="grid grid-cols-3 gap-x-5 gap-y-6 border-[color:var(--rule)] md:col-span-7 md:gap-x-10 md:border-l md:pl-12">
-            {facts.map((f) => (
-              <div key={f.k} className="flex flex-col">
-                <dt className="mono text-[color:var(--ink-mid)]">{f.k}</dt>
-                <dd className="display mt-3 text-[clamp(30px,3.6vw,60px)] leading-none text-[color:var(--ink)]">{f.v}</dd>
-                <dd className="mt-2 text-[13px] leading-snug text-[color:var(--ink-mid)]">{f.who}</dd>
-              </div>
-            ))}
-          </dl>
         </div>
 
         <div className="mt-14 md:mt-16">

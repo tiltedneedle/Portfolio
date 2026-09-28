@@ -16,12 +16,15 @@ import { Still } from "@/components/portal/Still";
  * under a 0.5 scrim and a side ramp that was only clear at the dead centre:
  * 3-22% across the name, which read as murk rather than film.)
  *
- * The kicker and the lead sit just under the band and are small text, so
- * they need 4.5:1 and cannot have a frame at 0.5 behind them. The band
- * therefore dissolves downward (.hero-band): full strength through its
- * middle, gone by its lower edge, wherever a given screen puts that edge.
+ * The band is centred on the NAME, not on the section: the caller puts it
+ * inside the name's own box, and the frames are sized in em from the name's
+ * font size (a well is 0.9em wide, so the band is about as tall as two
+ * lines of the name). Centred on the section it drifted onto the tagline
+ * and the lead on some screens, and the brief's tagline carries a red word
+ * that has no contrast to spare over a picture. It also dissolves downward
+ * (.hero-band), gone by its own lower edge.
  */
-export function Backdrop() {
+export function Backdrop({ className = "" }: { className?: string }) {
   const own = reel.map((r) => ({ id: r.id, thumb: r.thumb }));
   const rest = published.filter((p) => p.platform === "youtube_shorts" && p.vertical).map((p) => ({ id: p.id, thumb: p.thumb }));
   // Step through the Shorts so neighbouring stills come from different posts,
@@ -39,18 +42,18 @@ export function Backdrop() {
   const row = (key: string, hidden: boolean) => (
     <div key={key} className="flex shrink-0 gap-3 pr-3" aria-hidden={hidden || undefined}>
       {stills.map((s, i) => (
-        <span key={s.id + i} className="well w-[120px] border border-[color:var(--rule)] md:w-[150px]">
-          <Still src={s.thumb} sizes="(min-width:768px) 150px, 120px" className="object-cover" />
+        <span key={s.id + i} className="well w-[max(0.9em,64px)] border border-[color:var(--rule)]">
+          <Still src={s.thumb} sizes="(min-width:1680px) 152px, (min-width:712px) 9vw, 64px" className="object-cover" />
         </span>
       ))}
     </div>
   );
   return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+    <div aria-hidden="true" className={"pointer-events-none absolute " + className}>
       {/* The band holds still and carries the fade; the row moves inside it,
           so the fade stays where the type is instead of travelling with the
           frames. */}
-      <div className="hero-band absolute inset-x-0 top-1/2 -translate-y-1/2">
+      <div className="hero-band">
         <div className="drift flex w-max opacity-50">
           {row("a", false)}
           {row("b", true)}

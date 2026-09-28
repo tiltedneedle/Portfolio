@@ -213,6 +213,40 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 62 (2026-09-28): the home page says what the brief says.
+      **The user asked "is this being followed?" of the brief's Home Page
+      tab, and it was not**: the structure was, but a writing pass (wave 53)
+      had paraphrased nearly every line -- tagline, lead, welcome, objective,
+      all seven card descriptions, all five how-to steps, the approach lines
+      -- and had written its own style rules into copy.test.ts (steps capped
+      at 16 words; the approach forbidden to say "the objective") which the
+      brief's own copy breaks. All restored VERBATIM from "Step 1: Home Page"
+      (Info Product Servicing.md, lines 934-1084); those two rules removed;
+      a new test pins the brief's sentences, and smoke checks them as served.
+      THE BRIEF IS CONTENT TO PUT ON THE SITE, NOT NOTES TO REWRITE.
+      Layout followed the copy: the tagline is a display heading with VIRAL
+      in --tally, as the brief colours it (the client's document outranks the
+      "tally is state only" rule); Welcome reads intro then objective, the
+      brief's order; the strip's heading is "What you have access to" (count
+      moved to the label); the loop's is "How to use the system". Cards carry
+      the brief's lists (eight Create steps two-up, the four pillars, "Open
+      the script. Film it. Execute."), and their frame became an in-flow
+      header that shrinks before the text does -- verified at ten sizes down
+      to 1366x600 and 360px: no overflow, no text on a picture. Each room's
+      frame is now chosen (`frame` in home.ts) from a contact sheet: Create
+      and Publish had both opened on the same man in the same jet cabin.
+      The hero band is now centred on the NAME (inside its box, frames sized
+      in em), not the section, so it cannot reach the red word or the lead:
+      measured at nine widths, VIRAL 4.54:1 and the lead 10.68:1 on clean
+      ground everywhere, the name >= 3.96:1, the x >= 5.26:1.
+      Showreel per the user: the figure smaller (7vw, 120px cap) and set
+      beside "These are the top performers"; the three-fact row removed (the
+      cards already carry each film's numbers). The modal's part rows now use
+      the cards' words; my invented "takes" lines are gone.
+      The brief calls the scripts card "20 PERSONALIZED FOR YOU SCRIPTS" on
+      the Home Page tab and the page "20 Personalised Scripts" in STRUCTURE;
+      the card follows the first, the nav the second.
+
 - [x] Wave 61 (2026-09-28): the hero drift turned up, and the showreel
       opens on the studio's whole number.
       **Hero:** the stills ran at 3-22% across the name (0.45 under a 0.5

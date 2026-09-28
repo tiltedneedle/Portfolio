@@ -26,7 +26,7 @@ import { numberWord } from "@/lib/words";
  * the footer and the home strip all need to reach it and none of them owns
  * it. See @/lib/locked.
  */
-export type LockedPart = { n: string; anchor: string; title: string; text: string; takes: string };
+export type LockedPart = { n: string; anchor: string; title: string; text: string };
 
 // Spelled out so Tailwind generates them: one column per part still to come.
 const COLS: Record<number, string> = { 1: "md:grid-cols-1", 2: "md:grid-cols-2", 3: "md:grid-cols-3", 4: "md:grid-cols-4" };
@@ -189,7 +189,7 @@ export function LockedModal({ parts, needs, ask, contact, lead, kicker }: Props)
                         <Lock label="Locked" />
                       </span>
                       <span className={"subhead " + (here ? "text-[color:var(--ink)]" : "text-[color:var(--ink-soft)]")}>{p.title}</span>
-                      <p className="text-[14px] leading-relaxed text-[color:var(--ink-mid)]">{here ? p.text : p.takes}</p>
+                      <p className="text-[14px] leading-relaxed text-[color:var(--ink-mid)]">{p.text}</p>
                     </motion.li>
                   );
                 })}

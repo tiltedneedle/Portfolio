@@ -37,13 +37,14 @@ export const competitorHeadings: { title: string; covers: string }[] = [
 ];
 
 /**
- * The one description of each report. The front page's access cards import
- * these rather than restating them, so the card and the page it opens can
- * never drift apart. copy.test.ts holds the rest of that rule.
+ * The one description of each report, in the brief's words (Step 1: Home
+ * Page, cards 01 and 02). The front page's access cards import these rather
+ * than restating them, so the card and the page it opens can never drift
+ * apart. copy.test.ts holds the rest of that rule, and pins the wording.
  */
-export const DIAGNOSTIC_INTRO = "Where you are now, measured. What is working, what is holding it back, and what we would change first.";
+export const DIAGNOSTIC_INTRO = "A complete analysis of your current social media presence. Understand what is working, what is limiting your growth and what we would change.";
 
-export const COMPETITOR_INTRO = "What is already working in your market, and who it is working for. The topics, the formats, and the gap nobody has taken.";
+export const COMPETITOR_INTRO = "Understand what is already working within your market. See the topics, formats and content opportunities your competitors are using and where opportunities exist for your brand.";
 
 /**
  * What the two personalised content pages say at the top. Here rather than

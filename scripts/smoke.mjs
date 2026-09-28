@@ -35,12 +35,18 @@ if (!gated) {
   // LOCKED: named on the strip and in the nav, so the client sees the whole
   // shape of the system, with nothing of anyone else's on it and no way into
   // the empty room behind it.
-  await expect("/", 200, { contains: "Everything in your system" });
+  // The strip's heading is the brief's own: WHAT YOU HAVE ACCESS TO.
+  await expect("/", 200, { contains: 'What you have <span class="em-serif">access to.' });
   await expect("/", 200, { contains: "Your audit" });
-  // The room's own name, not the tagline that happens to contain the words:
-  // "Your content system, in full" is the site's line, "Your content" is the
-  // room. Both are on the page now; this asserts the room.
+  // The room's own name, not a tagline that happens to share words with it:
+  // this asserts the room.
   await expect("/", 200, { contains: "Your content<" });
+  // The brief's own words, as served: the tagline with its red word, the lead,
+  // and the objective. A writing pass once paraphrased all three.
+  await expect("/", 200, { contains: ">viral<" });
+  await expect("/", 200, { contains: "Everything we have learned from generating over 5 billion organic views, built into one complete system for" });
+  await expect("/", 200, { contains: "This portal gives you the exact frameworks, processes and principles we use at Tilted Needle" });
+  await expect("/", 200, { contains: "To give your team the knowledge and infrastructure required to consistently create content" });
   await expect("/", 200, { contains: "Not yours yet" });
   // A locked part is a button, never a link. The path into the room it will
   // one day open must be nowhere on the page, router payload included.

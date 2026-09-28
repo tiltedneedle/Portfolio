@@ -11,6 +11,7 @@ import { allRooms, writtenPages } from "@/lib/rooms";
 import { sequence } from "@/lib/sequence";
 import { LockedModal } from "@/components/portal/LockedModal";
 import { personalised } from "@/content/system/personalised";
+import { home } from "@/content/system/home";
 import { shortName } from "@/content/clients/types";
 
 /**
@@ -45,7 +46,12 @@ export default async function ClientLayout({ children, params }: { children: Rea
   // The parts still to be written for this client, for the commission. A
   // client with all four written has nothing locked and no modal at all.
   const written = writtenPages(sys);
-  const locked = personalised.parts.filter((p) => !written.has(p.href)).map(({ n, anchor, title, text, takes }) => ({ n, anchor, title, text, takes }));
+  const locked = personalised.parts
+    .filter((p) => !written.has(p.href))
+    .map((p) => {
+      const card = home.access.find((a) => a.href === p.href);
+      return { n: p.n, anchor: p.anchor, title: card?.title ?? "", text: card?.text ?? "" };
+    });
   // The whole system as one measured reel, for the conform at the foot of every page.
   const clips = sequence(sys);
   // The palette's index carries this client's written ideas and scripts as hidden, searchable entries.

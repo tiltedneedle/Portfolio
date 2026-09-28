@@ -5,17 +5,6 @@ const WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "e
 export function numberWord(n: number) {
   return WORDS[n] ?? String(n);
 }
-
-const ORDINALS = ["zeroth", "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth"];
-
-/** "ninth" for 9; "13th" above twelve, by the same newspaper rule. */
-export function ordinalWord(n: number) {
-  if (ORDINALS[n]) return ORDINALS[n];
-  const tens = n % 100;
-  const suffix = tens >= 11 && tens <= 13 ? "th" : ({ 1: "st", 2: "nd", 3: "rd" } as Record<number, string>)[n % 10] ?? "th";
-  return n + suffix;
-}
-
 export function wordCount(text: string) {
   return text.split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w)).length;
 }

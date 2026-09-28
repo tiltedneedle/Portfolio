@@ -16,40 +16,14 @@ export const personalised = {
   // lists only the ones that are still to come.
   lead: (name: string) => "Four parts of this system are researched and written for one business. The ones below have not been written for " + name + " yet.",
   // The four, in the order they are written and in the order they appear on
-  // the strip. `anchor` is how a locked card names the part it was.
+  // the strip. `anchor` is how a locked card names the part it was. Their
+  // titles and descriptions are not here: they are the brief's, and the
+  // modal takes them from the home page's cards so the two cannot differ.
   parts: [
-    {
-      n: "01",
-      anchor: "audit",
-      title: "Your content audit",
-      href: "/audit/content-diagnostic",
-      text: "Thirteen headings on where your content stands today: how the brand reads to someone landing on it cold, what is already working, what is holding it back, and what we would change first.",
-      takes: "We read everything you have published, score it, and write the diagnosis.",
-    },
-    {
-      n: "02",
-      anchor: "competitors",
-      title: "Competitor intelligence",
-      href: "/audit/competitor-intelligence",
-      text: "Eight headings on your market: who is already winning attention in it, the formats and topics carrying them, and the gap nobody has taken.",
-      takes: "We study the accounts you compete with for attention, not the ones you compete with for sales.",
-    },
-    {
-      n: "03",
-      anchor: "ideas",
-      title: "100 viral content ideas",
-      href: "/content/ideas",
-      text: "One hundred concepts across four pillars — authority, education, entertainment and personal — written from your business, not from a category.",
-      takes: "Built on the audit and the competitor read, so the hundred are yours and nobody else's.",
-    },
-    {
-      n: "04",
-      anchor: "scripts",
-      title: "20 personalised scripts",
-      href: "/content/scripts",
-      text: "Twenty of those ideas taken all the way: a hook, a script, a call to action, and the shots and location each one needs.",
-      takes: "Chosen from the hundred, so the twenty are the ones most likely to work first.",
-    },
+    { n: "01", anchor: "audit", href: "/audit/content-diagnostic" },
+    { n: "02", anchor: "competitors", href: "/audit/competitor-intelligence" },
+    { n: "03", anchor: "ideas", href: "/content/ideas" },
+    { n: "04", anchor: "scripts", href: "/content/scripts" },
   ],
   // What the studio needs before any of it can start. Short, and all of it
   // things a client already has -- nothing here asks them to make something.

@@ -2,22 +2,37 @@ import { COMPETITOR_INTRO, DIAGNOSTIC_INTRO } from "@/content/system/pillars";
 import type { ChapterId } from "@/content/types";
 /**
  * THE HOME PAGE. The same for everyone; only the client name and logo change.
+ *
+ * THE WORDS ARE THE BRIEF'S, verbatim: "Step 1: Home Page" in the client's
+ * brief (Info Product Servicing.md). An earlier writing pass paraphrased
+ * nearly every line of it, and the user had to ask whether the brief was
+ * being followed at all. It is content to put on the website, not notes to
+ * rewrite. Change a line here only when the brief changes; the copy test
+ * pins the brief's sentences so a future pass cannot drift them again.
+ *
+ * Where the brief sets a list under a line (the eight Create steps, the
+ * four pillars), it stays a list: `list` holds it, `after` holds a line the
+ * brief sets below the list.
+ *
+ * `frame` is the published video whose still fronts a room's card, chosen by
+ * eye from a contact sheet of every poster in the room. Left to "the room's
+ * first poster", Create and Publish both opened on the same presenter in the
+ * same jet cabin. These three are three different places: a conversation in
+ * a lobby, an office of framed photographs, the sky over an airfield.
  */
 export const home = {
-  // No terminal period: no other mono label on this page carries one.
-  kicker: "Your content system, in full",
-  // The number is spelled out because the showreel spells its own out too,
-  // so the two biggest numbers on the page agree in treatment.
-  lead: (name: string) => "Five billion organic views taught us what makes someone stop. The whole method is in here, written for " + name + ".",
+  // "YOUR COMPLETE VIRAL CONTENT SYSTEM", with VIRAL set in red in the
+  // brief. `accent` is the word that takes the colour.
+  kicker: "Your complete viral content system",
+  accent: "viral",
+  lead: (name: string) => "Everything we have learned from generating over 5 billion organic views, built into one complete system for " + name + ".",
   intro: [
-    "Nothing in here is a summary. These are the pages we work from: how we research a niche, how we write a hook, how we shoot it and how we cut it.",
-    "From today the work can happen in your building instead of ours.",
+    "This portal gives you the exact frameworks, processes and principles we use at Tilted Needle to create high performing social media content.",
+    "You now have everything you need to research, create, film, edit, publish and analyse content internally.",
   ],
   objective: {
-    label: "The objective",
-    // "This week's call sheet" is not a metaphor: ThisWeek renders two
-    // sections down on this same page, labelled Call sheet / Week N.
-    text: "A shoot stops being an event. It becomes a line on this week's call sheet.",
+    label: "The objective is simple",
+    text: "To give your team the knowledge and infrastructure required to consistently create content that captures attention, builds an audience and generates more opportunities for your business.",
   },
   access: [
     {
@@ -39,72 +54,79 @@ export const home = {
       title: "100 viral content ideas",
       href: "/content/ideas",
       personalised: true,
-      text: "One hundred content concepts built across four core pillars: authority, education, entertainment and personal. Enough that you never open a blank page.",
+      text: "100 content concepts built across four core content pillars.",
+      list: ["Authority", "Education", "Entertainment", "Personal"],
+      after: "Use these ideas as the foundation of your content output.",
     },
     {
       n: "04",
-      title: "20 personalised scripts",
+      // The Home Page tab's own heading. The STRUCTURE tab calls the page
+      // itself "20 Personalised Scripts", which is what the nav says.
+      title: "20 personalized for you scripts",
       href: "/content/scripts",
       personalised: true,
-      text: "Twenty videos, written for your business. Open the script. Film it. Post it.",
+      text: "20 complete videos written specifically for your business.",
+      list: ["Open the script.", "Film it.", "Execute."],
     },
     {
       n: "05",
       title: "Create",
       href: "/create",
       personalised: false,
-      // Seven imperatives, one per guide in the room, in the room's order.
-      text: "Study the niche. Find the idea. Choose the style. Write the hook. Land the message. Film it. Cut it.",
+      frame: "qj-bCVEaxko",
+      text: "Learn the exact process we use to create content.",
+      list: ["Research your niche.", "Analyse competitors.", "Generate ideas.", "Choose formats.", "Create stronger hooks.", "Deliver your message.", "Film effectively.", "Edit for retention."],
     },
     {
       n: "06",
       title: "Publish",
       href: "/publish",
       personalised: false,
-      text: "Where it goes and how often. What it is called and what the cover has to do. How it gets found, and what your profile says when it does.",
+      frame: "WtFrrO8SvTE",
+      text: "Learn how to maximise the potential of every piece of content after it has been created. Understand where to post, how often to post, when to post, how to write titles and captions, how to create covers and how to optimise your profiles.",
     },
     {
       n: "07",
       title: "Analyse",
       href: "/analyse",
       personalised: false,
-      text: "Why a video worked, why one failed, and what to do differently on the next. Then the same read, once a month, in order.",
+      frame: "BC_ZaHvv01U",
+      text: "Learn how to understand what your content performance is actually telling you.",
+      list: ["Identify why a video worked.", "Identify why a video failed.", "Understand what to repeat, what to improve and what to change next time."],
     },
-  ],
+  ] as { n: string; title: string; href: string; personalised: boolean; text: string; list?: string[]; after?: string; frame?: string }[],
   how: [
     {
       title: "Understand",
-      text: "Read the audit before you film anything. It tells you what to stop doing.",
+      text: "Start with your Content Audit and Competitor Intelligence. Understand your current position and the opportunities available to you.",
       href: "/audit",
     },
     {
       title: "Create",
-      text: "Pick an idea, or open a script already written for you. Film it.",
+      text: "Use your 100 content ideas and 20 scripts to begin producing content immediately. Then use the Create section whenever you need to generate new ideas, improve your hooks, film better content or improve your editing.",
       href: "/create",
     },
     {
       title: "Publish",
-      text: "The same sequence every time. It is the part everyone skips.",
+      text: "Follow the publishing system every time a piece of content is ready to go live.",
       href: "/publish",
     },
     {
       title: "Analyse",
-      text: "Once a month, ask the numbers what happened.",
+      text: "Review the performance of your content and understand what the data is telling you.",
       href: "/analyse",
     },
     {
       title: "Repeat",
-      text: "The second pass begins where the first one ended: knowing more.",
+      text: "Use those learnings to improve the next piece of content. The system becomes stronger the more you use it.",
       href: "/create",
     },
   ],
   approach: {
     title: "The Tilted Needle approach",
-    // These set up the beats below them. They no longer restate the
-    // objective: the Welcome block states it once, two sections up.
     lines: [
-      "One video that works is luck.",
-      "The same six steps, every week, is why the next one works too.",
+      "The objective is not to create one viral video.",
+      "The objective is to build a repeatable system capable of producing high performing content consistently.",
     ],
     beats: ["Research.", "Create.", "Publish.", "Analyse.", "Improve.", "Then repeat."],
   },
@@ -117,7 +139,8 @@ export const home = {
     analyse: "Analyse",
     home: "the system",
   } as Record<ChapterId, string>,
-  // The one place the site claims permanence. It was claimed in five.
+  // The brief's planning asks for a "permanent access message"; this is it,
+  // and the only place the site claims permanence.
   access_note: "Permanent access. Yours to keep, and we add to it as we learn.",
   films: {
     intro: { title: "Welcome to your system", youtubeId: "KHcTcsDBQyQ" },

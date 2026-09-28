@@ -213,6 +213,37 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 61 (2026-09-28): the hero drift turned up, and the showreel
+      opens on the studio's whole number.
+      **Hero:** the stills ran at 3-22% across the name (0.45 under a 0.5
+      scrim and a side ramp clear only at the dead centre). Now 0.5 through
+      the band, which is the ceiling a contrast sum allows (--ink display
+      type needs 3:1; a pure-white frame at 0.5 gives 3.21:1). The band fades
+      by mask, not overlay (.hero-band): soft top, full middle, gone by its
+      lower edge, so the kicker and lead are never over a frame at strength.
+      Sides fade over the outer 18% (.hero-vignette). Type over footage gets
+      a halo in its own em (.footage-type, screen only). MEASURED, not
+      assumed: text hidden, drift frozen at 8 points, pixels sampled behind
+      every line at 9 widths. Worst cases: name 3.65:1, kicker 6.42:1, lead
+      8.35:1. The × fell to 1.96:1 on phones in --ink-mid and is now
+      --ink-soft.
+      **Showreel:** the user asked for the full 5B and "these are the top
+      performers". The brief's words are "over 5 billion organic views", so
+      it reads 5,000,000,000+ (STUDIO_VIEWS in reel.ts), counted in on
+      per-digit reels (Odometer.tsx), then "These are the top performers."
+      with three facts (the best 36.2M, the top nine 134.6M, even the ninth
+      2.5M), a "Top nine" rail, and No. 1-9 on the cards, ranked by views at
+      render so the rank can never contradict the numbers.
+      **The odometer can never read wrong**, and that took two tries. First
+      build wound the reels back to zero below the fold; a browser producing
+      no frames left the figure at 0,000,000,000. Now each reel holds its
+      digit three times: rest on the third copy, wound back to the first --
+      the same digit -- and the spin is two full turns landing where it
+      started. Release is a forced style flush, not requestAnimationFrame.
+      Verified wound-back, printed, mid-scroll, landed, reduced motion and
+      phone all read 5,000,000,000; the figure is sized from its measured
+      width (6.16em) to fill the column at every width from 360 to 1920.
+
 - [x] Wave 60 (2026-09-28): locked parts, the commission modal, and the
       hero backdrop that had gone blank.
       **Policy change, the user's call:** the four personalised parts are

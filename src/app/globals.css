@@ -1052,6 +1052,70 @@ a:focus-visible > .wm {
 .drift {
   animation: drift-left 160s linear infinite;
 }
+/* The band the home drift runs in. It holds still while the row moves
+   through it, and fades by mask rather than by a dark overlay, so the
+   frames go transparent instead of going grey: a soft top edge under the
+   client's mark, full strength through the middle where the name sits,
+   gone by the lower edge, which is where the small text below the name
+   starts on a short screen. The numbers behind the 58% are in Backdrop.tsx. */
+.hero-band {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 58%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 58%, transparent 100%);
+}
+/* The sides fall away to the stage. Clear across the middle 64% of the
+   width, where the name is, rather than only at the dead centre. */
+.hero-vignette {
+  background: linear-gradient(to right, var(--stage) 0%, transparent 18%, transparent 82%, var(--stage) 100%);
+}
+/* Type laid over footage takes a halo in its own size, the way a title
+   card does: invisible over the dark stage, and a margin over a bright
+   frame. Declared per element, not inherited, because an inherited em is
+   resolved once at the parent's size. Screen only: on paper the type is
+   black and a dark halo would print as a grey smear. */
+@media screen {
+  .footage-type {
+    text-shadow:
+      0 0 0.3em rgba(11, 11, 12, 0.55),
+      0 1px 2px rgba(11, 11, 12, 0.5);
+  }
+}
+/* The odometer (Odometer.tsx). Every piece sits in a one-em box on one flex
+   row, so a digit on its reel, a comma and whatever follows share a line
+   and a baseline; tabular figures make every reel the same width, so a
+   landing 1 does not sit off-centre in a column cut for an 8. A reel holds
+   its digits three times over (TURNS in Odometer.tsx): at rest it shows the
+   third copy of its digit, wound back (.odo-wait) the first copy -- the
+   same digit -- so the figure reads right whether or not the spin runs. */
+.odo {
+  display: inline-flex;
+  align-items: flex-start;
+  font-variant-numeric: tabular-nums;
+}
+.odo-col,
+.odo-sep {
+  display: inline-block;
+  height: 1em;
+  line-height: 1em;
+}
+.odo-col {
+  overflow: hidden;
+}
+.odo-reel {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  transform: translateY(calc(var(--odo-land) * -1em));
+  transition: transform calc(1.8s + var(--odo-i) * 110ms) cubic-bezier(0.16, 1, 0.3, 1) calc(var(--odo-i) * 60ms);
+}
+.odo-reel > span {
+  height: 1em;
+  line-height: 1em;
+}
+.odo-wait .odo-reel {
+  transform: translateY(calc(var(--odo-d) * -1em));
+  transition: none;
+}
+
 /* The door's second row, travelling against the first. */
 .drift-back {
   animation: drift-left 190s linear infinite reverse;

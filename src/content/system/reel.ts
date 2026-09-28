@@ -29,6 +29,14 @@ export type Reel = {
 
 export const PLATFORM: Record<Reel["platform"], string> = { tiktok: "TikTok", instagram: "Instagram" };
 
+/**
+ * The studio's organic views across every client, as the brief states it:
+ * "generating over 5 billion organic views". A floor, not a count, which is
+ * why everywhere it is printed it carries a plus or the word "over". The
+ * hero's "Five billion organic views taught us..." is the same figure.
+ */
+export const STUDIO_VIEWS = 5_000_000_000;
+
 export const reel: Reel[] = [
   {
     id: "tjb-19-year-old",

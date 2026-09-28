@@ -162,15 +162,19 @@ export default async function Home({ params }: { params: Promise<{ client: strin
 
         <div className="relative px-6 py-16 md:px-14 md:py-20">
           <ClientMark size={64} />
-          <h1 className="display mt-10 max-w-[15ch] text-[clamp(56px,10vw,168px)] leading-[0.86]">
+          <h1 className="display footage-type mt-10 max-w-[15ch] text-[clamp(56px,10vw,168px)] leading-[0.86]">
             Tilted Needle
             <br />
             <span className="md:whitespace-nowrap">
-              <span className="em-serif text-[0.7em] text-[color:var(--ink-mid)]">&times;</span> {identity.name}
+              {/* --ink-soft, not --ink-mid: the × now sits over the drift at
+                  full strength on a phone, and measured against real frames
+                  --ink-mid fell to 1.96:1 there. --ink-soft holds 4.4:1 over
+                  the brightest frame and is still a step below the names. */}
+              <span className="em-serif text-[0.7em] text-[color:var(--ink-soft)]">&times;</span> {identity.name}
             </span>
           </h1>
-          <p className="mono mt-8 text-[color:var(--ink)]">{home.kicker}</p>
-          <p className="mt-6 max-w-[46ch] text-[19px] leading-[1.5] text-[color:var(--ink-soft)] md:text-[23px]">{home.lead(identity.name)}</p>
+          <p className="mono footage-type mt-8 text-[color:var(--ink)]">{home.kicker}</p>
+          <p className="footage-type mt-6 max-w-[46ch] text-[19px] leading-[1.5] text-[color:var(--ink-soft)] md:text-[23px]">{home.lead(identity.name)}</p>
           {/* A client with nothing marked and nothing written has nothing to
               read out, and an empty labelled list is a promise the page does
               not keep. */}

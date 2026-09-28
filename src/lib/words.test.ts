@@ -1,5 +1,24 @@
 import { describe, expect, it } from "vitest";
-import { SPOKEN_WPM, mmss, numberWord, runningTimes, spokenSeconds, wordCount } from "@/lib/words";
+import { SPOKEN_WPM, mmss, numberWord, ordinalWord, runningTimes, spokenSeconds, wordCount } from "@/lib/words";
+
+describe("ordinalWord", () => {
+  it("spells the first twelve, then sets figures the way numberWord does", () => {
+    expect(ordinalWord(1)).toBe("first");
+    expect(ordinalWord(9)).toBe("ninth");
+    expect(ordinalWord(12)).toBe("twelfth");
+    expect(ordinalWord(13)).toBe("13th");
+    expect(ordinalWord(21)).toBe("21st");
+    expect(ordinalWord(22)).toBe("22nd");
+    expect(ordinalWord(23)).toBe("23rd");
+    expect(ordinalWord(111)).toBe("111th");
+    expect(ordinalWord(112)).toBe("112th");
+  });
+
+  it("agrees with numberWord about where words stop", () => {
+    expect(numberWord(12)).toBe("twelve");
+    expect(numberWord(13)).toBe("13");
+  });
+});
 
 describe("wordCount", () => {
   it("counts words, not punctuation or spacing", () => {

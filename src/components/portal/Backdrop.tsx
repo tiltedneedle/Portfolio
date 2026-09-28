@@ -4,10 +4,22 @@ import { Still } from "@/components/portal/Still";
 
 /**
  * Behind the home hero: a row of stills from the studio's work, the
- * showreel's films interleaved with published Shorts, drifting slowly,
- * dimmed to a texture. The system is built from that work, so it stands
- * behind the name. Two copies of the row make the drift seamless; reduced
- * motion holds it still.
+ * showreel's films interleaved with published Shorts, drifting slowly
+ * behind the name. The system is built from that work, so it stands behind
+ * the name. Two copies of the row make the drift seamless; reduced motion
+ * holds it still.
+ *
+ * How bright it can be is a contrast sum, not a taste call. The name is
+ * --ink at display size and needs 3:1; a pure-white frame at 0.5 over the
+ * stage still gives it 3.21:1, so 0.5 is the ceiling for the band, and it
+ * is what the band now runs at across its middle. (It used to run at 0.45
+ * under a 0.5 scrim and a side ramp that was only clear at the dead centre:
+ * 3-22% across the name, which read as murk rather than film.)
+ *
+ * The kicker and the lead sit just under the band and are small text, so
+ * they need 4.5:1 and cannot have a frame at 0.5 behind them. The band
+ * therefore dissolves downward (.hero-band): full strength through its
+ * middle, gone by its lower edge, wherever a given screen puts that edge.
  */
 export function Backdrop() {
   const own = reel.map((r) => ({ id: r.id, thumb: r.thumb }));
@@ -35,12 +47,16 @@ export function Backdrop() {
   );
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-      <div className="drift absolute left-0 top-1/2 flex w-max -translate-y-1/2 opacity-[0.45]">
-        {row("a", false)}
-        {row("b", true)}
+      {/* The band holds still and carries the fade; the row moves inside it,
+          so the fade stays where the type is instead of travelling with the
+          frames. */}
+      <div className="hero-band absolute inset-x-0 top-1/2 -translate-y-1/2">
+        <div className="drift flex w-max opacity-50">
+          {row("a", false)}
+          {row("b", true)}
+        </div>
       </div>
-      <div className="absolute inset-0 bg-gradient-to-b from-[rgba(11,11,12,0.72)] via-[rgba(11,11,12,0.5)] to-[color:var(--stage)]" />
-      <div className="absolute inset-0 bg-gradient-to-r from-[color:var(--stage)] via-transparent to-[color:var(--stage)]" />
+      <div className="hero-vignette absolute inset-0" />
     </div>
   );
 }

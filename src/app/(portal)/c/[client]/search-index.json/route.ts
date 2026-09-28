@@ -17,5 +17,10 @@ export function generateStaticParams() {
 export async function GET(_request: Request, { params }: { params: Promise<{ client: string }> }) {
   const { client } = await params;
   const sys = requireClient(client);
-  return Response.json(searchIndex(sys), { headers: { "Cache-Control": "private, max-age=3600" } });
+  // `private` keeps it out of shared caches, and the palette asks for it at
+  // a URL carrying the client's own slug, so one client's browser cannot
+  // serve another's index back from disk. `no-store` would be safer still
+  // but costs every visit a fresh 100 KB; the key is what makes the hour
+  // of caching safe.
+  return Response.json(searchIndex(sys), { headers: { "Cache-Control": "private, max-age=3600", Vary: "Cookie" } });
 }

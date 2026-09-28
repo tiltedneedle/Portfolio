@@ -50,13 +50,28 @@ function pushRecent(slug: string, hit: Hit) {
   }
 }
 
-// The full-text index, fetched once per visit the first time three letters are typed.
+// The full-text index, fetched once per visit the first time three letters
+// are typed. It is one client's private words, so the cache is keyed by
+// whose it is: signing out and signing in as someone else is a Server
+// Action redirect, which is a soft navigation that never tears this module
+// down, so without the key the second client's palette would search the
+// first client's audit and scripts out of this variable.
 let indexCache: SearchEntry[] | null = null;
+let indexFor: string | null = null;
 let indexLoading: Promise<void> | null = null;
-function loadIndex() {
+function loadIndex(slug: string) {
+  if (indexFor !== slug) {
+    indexCache = null;
+    indexLoading = null;
+    indexFor = slug;
+  }
   if (indexCache || indexLoading) return indexLoading ?? Promise.resolve();
-  // The build id on the URL: the browser may keep the index for an hour, but never across a deploy.
-  indexLoading = fetch("/search-index.json?v=" + (process.env.NEXT_PUBLIC_BUILD ?? "dev"), { credentials: "same-origin" })
+  // The client on the URL as well as the build id. The proxy rewrites this
+  // path by cookie, so the query changes nothing about what is served -- it
+  // is purely a cache key, and without it every client shares one entry in
+  // the browser's private cache under `max-age=3600`.
+  const url = "/search-index.json?c=" + encodeURIComponent(slug) + "&v=" + (process.env.NEXT_PUBLIC_BUILD ?? "dev");
+  indexLoading = fetch(url, { credentials: "same-origin" })
     .then((r) => (r.ok ? r.json() : null))
     .then((data) => {
       if (Array.isArray(data)) indexCache = data as SearchEntry[];
@@ -249,15 +264,15 @@ export function Palette({ items }: { items: PaletteItem[] }) {
   }, [open]);
 
   useEffect(() => {
-    if (!open || indexCache || q.trim().length < 3) return;
+    if (!open || (indexCache && indexFor === me.slug) || q.trim().length < 3) return;
     let live = true;
-    loadIndex().then(() => {
+    loadIndex(me.slug).then(() => {
       if (live && indexCache) setIndexed((n) => n + 1);
     });
     return () => {
       live = false;
     };
-  }, [open, q]);
+  }, [open, q, me.slug]);
 
   const hits = useMemo<Hit[]>(() => {
     const needle = q.trim().toLowerCase();

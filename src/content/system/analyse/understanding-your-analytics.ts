@@ -34,7 +34,7 @@ export const understandingYourAnalytics: Guide = {
         {
           kind: "aside",
           label: "Action point",
-          text: "If viewers leave early, improve the opening. If they leave halfway through, improve the structure and pacing. If retention remains strong, reuse that structure with another aviation topic.",
+          text: "If viewers leave early, improve the opening. If they leave halfway through, improve the structure and pacing. If retention remains strong, reuse that structure on another topic in your field.",
         },
       ],
     },
@@ -47,13 +47,13 @@ export const understandingYourAnalytics: Guide = {
           kind: "list",
           title: "Was it",
           style: "tag",
-          items: ["The topic", "The aircraft", "The hook", "The person on camera", "The format", "The story", "The access", "The title"],
+          items: ["The topic", "The subject", "The hook", "The person on camera", "The format", "The story", "The access", "The title"],
         },
-        { kind: "p", text: "For example, if Gulfstream versus Bombardier videos repeatedly outperform standard aircraft tours, the lesson may be that your audience responds strongly to comparisons." },
+        { kind: "p", text: "For example, if videos comparing two of the things you sell repeatedly outperform a straight tour of one, the lesson may be that your audience responds strongly to comparisons." },
         {
           kind: "aside",
           label: "Action point",
-          text: "Take the strongest element from the video and test it again. Create another comparison. Use the same hook structure on another topic. Use the same person on camera. Test another aircraft using the same format. The goal is to discover whether the success can be repeated.",
+          text: "Take the strongest element from the video and test it again. Create another comparison. Use the same hook structure on another topic. Use the same person on camera. Put another subject through the same format. The goal is to discover whether the success can be repeated.",
         },
       ],
     },
@@ -69,7 +69,7 @@ export const understandingYourAnalytics: Guide = {
             { label: "A high number of saves often means", lines: ["“I want to come back to this.”"] },
           ],
         },
-        { kind: "p", text: "An unusual aircraft feature may generate shares. A guide explaining what to check before purchasing an aircraft may generate saves." },
+        { kind: "p", text: "An unusual detail may generate shares. A guide explaining what to check before buying may generate saves." },
         {
           kind: "aside",
           label: "Action point",
@@ -85,9 +85,9 @@ export const understandingYourAnalytics: Guide = {
         {
           kind: "list",
           title: "Look for",
-          items: ["Repeated questions", "Disagreements", "Misconceptions", "Requests for comparisons", "Aircraft people repeatedly mention", "Subjects people want explained further"],
+          items: ["Repeated questions", "Disagreements", "Misconceptions", "Requests for comparisons", "Names people repeatedly mention", "Subjects people want explained further"],
         },
-        { kind: "p", text: "If you publish a Gulfstream versus Bombardier comparison and the comments repeatedly ask about Dassault Falcon, your audience has already given you another idea." },
+        { kind: "p", text: "If you publish a comparison of two options and the comments repeatedly ask about a third, your audience has already given you another idea." },
         {
           kind: "aside",
           label: "Action point",
@@ -100,7 +100,7 @@ export const understandingYourAnalytics: Guide = {
       title: "Look at followers and profile visits",
       blocks: [
         { kind: "p", text: "Some videos get attention. Other videos make people want to know more about you. That difference matters." },
-        { kind: "p", text: "You may find that cinematic aircraft content generates the largest reach while educational aviation videos generate more followers and profile visits. One attracts attention. The other builds the audience." },
+        { kind: "p", text: "You may find that cinematic content generates the largest reach while educational videos generate more followers and profile visits. One attracts attention. The other builds the audience." },
         {
           kind: "aside",
           label: "Action point",
@@ -155,11 +155,11 @@ export const understandingYourAnalytics: Guide = {
         {
           kind: "questions",
           items: [
-            "Do aircraft comparisons repeatedly outperform tours?",
+            "Do comparisons repeatedly outperform tours?",
             "Do founder stories hold attention longer?",
             "Do Q&A videos generate more saves?",
             "Does one person consistently perform better on camera?",
-            "Do videos filmed inside aircraft outperform office based content?",
+            "Do videos filmed on location outperform office based content?",
             "Do certain manufacturers create significantly more interest?",
           ],
         },

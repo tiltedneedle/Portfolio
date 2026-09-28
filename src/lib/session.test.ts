@@ -112,7 +112,9 @@ describe("safeNext", () => {
 
 describe("the edge's slug list", () => {
   it("is the registry's list, so a valid cookie always has a tree to land in", () => {
-    expect([...CLIENT_SLUGS]).toEqual(clientSlugs);
+    // Membership, not order: neither list's order carries meaning, and the
+    // registry's own guard checks membership.
+    expect([...CLIENT_SLUGS].sort()).toEqual([...clientSlugs].sort());
   });
 
   it("knows a client from anything else", () => {

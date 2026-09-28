@@ -26,8 +26,15 @@ Without `PORTAL_SECRET` the door is open and the site shows the `template`
 client, which is the right thing for previewing. To test the door locally:
 
 ```bash
-PORTAL_SECRET=any-long-random-string npx next start -p 3401
+PORTAL_SECRET=any-long-random-string PORTAL_DEMO=1 npx next start -p 3401
 ```
+
+`PORTAL_DEMO=1` is what opens the demo client's door. Its code is printed
+below and this repository is public, so without the flag that door stays
+shut: `accessHash` is a plain sha256 of `"tn:" + slug + ":" + code` with no
+secret mixed in, which means rotating `PORTAL_SECRET` ends sessions but does
+not revoke a code. Set the flag in development and in CI. Never in
+production.
 
 If `next start` fails with `EADDRINUSE`, an older instance holds the port
 and you would be looking at a stale build. Kill it first:
@@ -67,6 +74,16 @@ to resume at the last section read on this device, and every section
 heading carries a copy-link anchor on hover.
 
 ## Clients
+
+> **Before the first real client: this repository is public.** Both clients
+> that ship with it are fictional, so nothing private is exposed today. But
+> the steps below put a client's audit, their hundred ideas and their twenty
+> scripts into `src/content/clients/<slug>/index.ts`, and committing that
+> publishes their material to anyone who looks. Decide first: make the
+> repository private, or keep client content out of git and supply it at
+> build time. Do not write a paying client's words into this tree until
+> that is settled. The demo's access code is published here too, which is
+> why the demo door needs `PORTAL_DEMO=1` to open at all.
 
 Everything personal lives in `src/content/clients/<slug>/`, one folder per
 client, listed in `src/content/clients/registry.ts`. Two ship with the
@@ -280,7 +297,7 @@ npm test
 npm run check
 npm run smoke -- http://localhost:3400
 npm run smoke -- http://localhost:3401 --gated
-npm run a11y -- http://localhost:3401 --code horizon-2026
+PORTAL_DEMO=1 npm run a11y -- http://localhost:3401 --code horizon-2026
 ```
 
 `test` runs the unit tests for the pure parts: the session token and

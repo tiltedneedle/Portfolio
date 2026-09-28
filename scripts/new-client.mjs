@@ -105,22 +105,36 @@ export const ${ident}: ClientSystem = {
 };
 `;
 
-mkdirSync(dir, { recursive: true });
-writeFileSync(join(dir, "index.ts"), file);
-
-// The registry: one import, one entry.
+// Two files have to agree with the new folder: the registry, which the
+// server reads, and the slug list, which the proxy reads at the edge where
+// it cannot import the registry. Both anchors are checked BEFORE anything
+// is written, because a half-scaffolded client does not merely fail to
+// build: the registry throws at module load and takes `npm run check`,
+// `npm run build` and `npm test` down with it.
 const regPath = join(root, "src/content/clients/registry.ts");
+const slugsPath = join(root, "src/content/clients/slugs.ts");
 let reg = readFileSync(regPath, "utf8");
+let slugsSrc = readFileSync(slugsPath, "utf8");
 const importLine = `import { ${ident} } from "@/content/clients/${slug}";`;
 const anchorImport = 'import { demo } from "@/content/clients/demo";';
 const anchorAll = /const all: ClientSystem\[\] = \[([^\]]*)\];/;
+const anchorSlugs = /export const CLIENT_SLUGS = \[([^\]]*)\] as const;/;
 if (!reg.includes(anchorImport) || !anchorAll.test(reg)) fail("registry.ts does not look like the one this script knows; add the client by hand");
+if (!anchorSlugs.test(slugsSrc)) fail("slugs.ts does not look like the one this script knows; add the client by hand");
+
+mkdirSync(dir, { recursive: true });
+writeFileSync(join(dir, "index.ts"), file);
+
 reg = reg.replace(anchorImport, anchorImport + "\n" + importLine);
 reg = reg.replace(anchorAll, (m, list) => `const all: ClientSystem[] = [${list.trim()}, ${ident}];`);
 writeFileSync(regPath, reg);
 
+slugsSrc = slugsSrc.replace(anchorSlugs, (m, list) => `export const CLIENT_SLUGS = [${list.trim()}, "${slug}"] as const;`);
+writeFileSync(slugsPath, slugsSrc);
+
 console.log("created  src/content/clients/" + slug + "/index.ts");
 console.log("updated  src/content/clients/registry.ts");
+console.log("updated  src/content/clients/slugs.ts");
 console.log(accessHash ? "access   hash set from the code you gave (the code itself is not stored)" : "access   no code given: the client cannot log in until accessHash is set");
 console.log("link     /login?for=" + slug + "   (their own door; the code still opens it)");
 console.log("next     write the reports, ideas and scripts, then: npm run check && npm run build");

@@ -213,6 +213,77 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 58: a ten-lens audit of ground the two earlier reviews never
+      touched (onboarding, performance, print, touch, untested modules,
+      brief fidelity, search, dead code, CI, privacy). 61 findings, each put
+      to two independent verifiers; 44 survived, ranked into 24. The first
+      five are done, and two of the worst were mine from the day before.
+      **The rails could not be scrolled.** Wave 47 gave every spine
+      `snap-align-none` to stop the rail stuttering over nineteen narrow
+      snap points. Under `scroll-snap-type: x mandatory` the browser must
+      come to rest ON a snap position, so a rail whose later children have
+      none simply stops at the last one. Measured at 390px: the scripts
+      rail reached 720 of 1762, so sixteen of twenty scripts were
+      unreachable, and a client with nothing written yet could not move it
+      at all. Desktop was hit too (2464 of 2836 on ideas). The rail is
+      `proximity` now, which still pulls a card flush when you stop near
+      one. Measured before and after; `scripts/a11y.mjs` now fails any page
+      where a rail cannot reach its end, and that check fails on the old
+      CSS and passes on the new.
+      **One client's search index could answer another's request.** Two
+      independent halves. The index is fetched at `/search-index.json?v=`
+      plus a build id that is the same for every client, under
+      `Cache-Control: private, max-age=3600`, so a second client on the
+      same browser within the hour gets the first one's 108 KB of audit
+      findings, ideas and scripts from disk cache. And `indexCache` in
+      Palette.tsx is a module singleton, which a Server Action redirect
+      never tears down, so it survived signing out and back in as someone
+      else. The URL now carries the slug, the response carries
+      `Vary: Cookie`, and the cache remembers whose it is.
+      **The scaffolder left a tree that could not build**, because wave 56
+      added `CLIENT_SLUGS` and `npm run new-client` did not know about it:
+      the registry's parity assert then threw at module load and took
+      check, build and test with it. It updates both files now, validates
+      every anchor before the first write, and the assert and its test
+      check membership rather than order. Proved by scaffolding a client
+      for real: 138 pages built, then reverted.
+      **`/login?for=constructor` answered 500**, the same prototype-key bug
+      as `?error` one line above, fixed the day before. `getClient` uses
+      `Object.hasOwn` now, which covers every caller rather than that page,
+      with tests and smoke assertions.
+      **The demo door is behind `PORTAL_DEMO=1`.** Its code is printed in
+      the README, this repository is public, and `accessHash` is an
+      unsalted sha256, so rotating `PORTAL_SECRET` ends sessions but does
+      not revoke a code: the moment the secret went live for a real client,
+      the demo door would have opened to anyone who had read the README.
+      Verified both ways — with the flag the code opens the portal,
+      without it the door says it does not recognise it.
+      **The approach block was rebuilt** after the user said it had too
+      much empty space. It was a 40ch statement stranded in a 1600px column
+      with the six beats below as a wall of display type. It is now a
+      composition at its own 1200px measure: the statement and the way in
+      on the left, the loop on the right as a numbered running order, five
+      ruled rows and a sixth carrying the loop mark rather than a number,
+      because "then repeat" is not a sixth step.
+      **The two Analyse guides told every client to look at their
+      aircraft.** Nine guides earn their aviation by declaring it in a
+      header credit; these two carried none and still put aviation nouns in
+      instruction text, so the monthly checklist asked a client in any
+      field what their five strongest videos had in common: "the person on
+      camera, the aircraft, the access". Thirteen strings are neutral now,
+      and the hypotheticals stay hypothetical. Zero aviation words left in
+      that room.
+      **A printed audit read backwards.** The score chart paints each
+      scored heading as a background colour and an unscored one as a dashed
+      border. Browsers ship with background graphics off, so on paper every
+      scored heading was blank and only the unscored ones marked. Measured:
+      allowing backgrounds adds 26 paints to that page, which is the chart
+      and the verdict lamps. `print-color-adjust: exact` is on the print
+      body now, and the reading-progress bar gained `no-print` so the fix
+      does not put a red line across page one. Honest limit: Playwright's
+      `printBackground` flag overrides the CSS property, so the fix itself
+      cannot be demonstrated through a PDF render here — what is measured
+      is that the 26 paints exist and are background-only.
 - [x] Wave 57: a second review, this time of the twelve design waves
       themselves, and the twelve defects it found. Most were mine, from
       today.
@@ -814,6 +885,18 @@ The marketing site this grew out of is on the `marketing-site` branch.
 - [ ] Nothing mid-change. All verified and committed. Pick from Next.
 
 ## Next
+
+**A. Decide before the first real client's content is written (only you can
+   decide this).** The GitHub repository is PUBLIC. Both clients in it are
+   fictional so nothing private is exposed today, but the documented
+   onboarding writes a client's audit, hundred ideas and twenty scripts into
+   `src/content/clients/<slug>/index.ts`, and committing that publishes
+   them. Either make the repository private, or keep client content out of
+   git and supply it at build time. Flagged 2026-09-28; the README now warns
+   at the step itself. Related and already fixed: the demo door needed
+   `PORTAL_DEMO=1` because its code is printed in the public README and the
+   access hash is unsalted, so rotating PORTAL_SECRET does not revoke a code.
+
 
 0. Performance option, not taken: framer-motion could load through
    `LazyMotion` + `m` (nine files import `motion`) to cut the largest

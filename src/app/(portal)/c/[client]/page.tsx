@@ -197,29 +197,54 @@ export default async function Home({ params }: { params: Promise<{ client: strin
         </div>
       </section>
 
-      <section className="border-t border-[color:var(--rule)] bg-black py-24 md:py-36">
-        <div className="mx-auto max-w-[1600px] px-6 md:px-14">
-          <p className="mono">{home.approach.title}</p>
-          <div className="mt-10 flex max-w-[40ch] flex-col gap-6">
-            {home.approach.lines.map((l) => (
-              <p key={l} className="em-serif statement text-[clamp(26px,3.4vw,44px)] leading-[1.2] text-[color:var(--ink)]">
-                {l}
-              </p>
-            ))}
+      {/* The statement and the loop stand side by side. Set one under the
+          other they left two thirds of a wide screen empty, and the beats
+          ran as a wall of display type with no order in it. As a running
+          order they read as what they are: five steps, then go again. */}
+      <section className="border-t border-[color:var(--rule)] bg-black py-20 md:py-28">
+        {/* A narrower measure than the rest of the page on purpose. This block
+            is a statement and a running order, not a data surface: stretched
+            to 1600px the two halves sat on opposite edges of a wide screen
+            with a void between them. Composed at 1200 they read as one
+            object, and the margins either side are even. */}
+        <div className="mx-auto grid max-w-[1200px] gap-x-14 gap-y-12 px-6 md:grid-cols-[minmax(0,34ch)_minmax(0,1fr)] md:items-stretch md:px-14">
+          <div className="flex flex-col">
+            <p className="mono">{home.approach.title}</p>
+            <div className="mt-8 flex flex-col gap-6">
+              {home.approach.lines.map((l) => (
+                <p key={l} className="em-serif statement text-[clamp(26px,2.6vw,40px)] leading-[1.2] text-[color:var(--ink)]">
+                  {l}
+                </p>
+              ))}
+            </div>
+            {/* mt-auto: the way in sits on the foot of the running order
+                beside it, rather than leaving a band of nothing under the
+                statement. */}
+            <div className="mt-10 border-t border-[color:var(--rule)] pt-6 md:mt-auto">
+              <CutLink href={first.href} className="slate-link text-[13px]" data-cursor="Cut">
+                Begin with {home.begin[first.id]} &#8599;
+              </CutLink>
+            </div>
           </div>
-          <ul className="mt-16 flex flex-wrap items-baseline gap-x-6 gap-y-3 md:mt-24">
-            {home.approach.beats.map((b, i) => (
-              <li key={b} className="flex items-baseline gap-6">
-                <span className="display text-[clamp(32px,5vw,88px)] leading-none text-[color:var(--ink)]">{b}</span>
-                {i < home.approach.beats.length - 1 && <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-[color:var(--ink-faint)]" />}
-              </li>
-            ))}
-          </ul>
-          <div className="mt-16 border-t border-[color:var(--rule)] pt-6">
-            <CutLink href={first.href} className="slate-link text-[13px]" data-cursor="Cut">
-              Begin with {home.begin[first.id]} &#8599;
-            </CutLink>
-          </div>
+
+          <ol className="md:pt-1">
+            {home.approach.beats.map((b, i) => {
+              // The last beat is not a sixth step, it is the instruction to
+              // run the five again, so it carries the loop mark, not a number.
+              const loops = i === home.approach.beats.length - 1;
+              return (
+                <li
+                  key={b}
+                  className="grid grid-cols-[3.5ch_1fr] items-baseline gap-x-5 border-t border-[color:var(--rule)] py-3 last:border-b last:border-[color:var(--rule)] md:gap-x-8 md:py-4"
+                >
+                  <span aria-hidden="true" className={"mono " + (loops ? "text-[color:var(--ink-mid)]" : "text-[color:var(--ink-mid)]")}>
+                    {loops ? "↻" : String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className={"display leading-[0.95] " + (loops ? "text-[clamp(28px,3.8vw,52px)] text-[color:var(--ink-soft)]" : "text-[clamp(32px,4.6vw,64px)] text-[color:var(--ink)]")}>{b}</span>
+                </li>
+              );
+            })}
+          </ol>
         </div>
       </section>
     </>

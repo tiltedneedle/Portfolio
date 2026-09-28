@@ -55,6 +55,10 @@ jobs:
       - name: Smoke, gated
         env:
           PORTAL_SECRET: ci-only-secret-not-for-production
+          # The demo client's code is published in the README and this repo
+          # is public, so the demo door only opens where this is set. Set it
+          # here and in development; never in production.
+          PORTAL_DEMO: "1"
         run: |
           npx next start -p 3401 > gated.log 2>&1 &
           for i in $(seq 1 30); do curl -sf -o /dev/null http://localhost:3401/login && break; sleep 1; done

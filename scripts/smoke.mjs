@@ -85,8 +85,14 @@ if (!gated) {
   // plain object, so messages["__proto__"] used to render Object.prototype
   // and throw, replacing the login form with the fault page.
   await expect("/login?error=__proto__", 200, { contains: "Access code" });
+  await expect("/login?for=constructor", 200, { contains: "Access code" });
   await expect("/login?error=constructor", 200, { contains: "Access code" });
   await expect("/login?error=nosuchthing", 200, { contains: "Access code" });
+  // Same bug, one line below the one that was fixed: a prototype key reached
+  // the client lookup, so /login?for=constructor answered 500.
+  await expect("/login?for=constructor", 200, { contains: "Access code" });
+  await expect("/login?for=tostring", 200, { contains: "Access code" });
+  await expect("/login?for=nosuchclient", 200, { contains: "Access code" });
   await expect("/login?for=demo", 200, { contains: /prepared for (<!-- -->)?Horizon Aviation/ });
   await expect("/login?for=nope", 200, { contains: "Private screening" });
   await expect("/robots.txt", 200, { contains: "Disallow: /" });

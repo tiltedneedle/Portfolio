@@ -18,9 +18,9 @@ export const monthlyProcess: Guide = {
           kind: "steps",
           items: [
             { title: "Identify your five strongest videos", text: "Across every platform, by the measure that matters most to you this month: views, retention, saves, or enquiries." },
-            { title: "Identify what they have in common", text: "The topic, the hook, the format, the person on camera, the aircraft, the access, the title." },
+            { title: "Identify what they have in common", text: "The topic, the hook, the format, the person on camera, the subject, the access, the title." },
             { title: "Review where viewers dropped off", text: "Early drop-off points to the opening. Mid-video drop-off points to structure and pacing." },
-            { title: "Read the comments and save potential ideas", text: "Repeated questions, disagreements, requests for comparisons, aircraft people keep mentioning." },
+            { title: "Read the comments and save potential ideas", text: "Repeated questions, disagreements, requests for comparisons, subjects people keep mentioning." },
             { title: "Identify which content generated the most shares, saves, followers and profile visits", text: "Each one tells you something different: worth sending on, worth keeping, worth following, worth knowing more about." },
             { title: "Choose three things that worked and should be repeated", text: "Be specific: a hook structure, a format, a subject, a person." },
             { title: "Choose three things you want to test differently", text: "One change per video, so you know what made the difference." },

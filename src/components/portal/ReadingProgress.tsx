@@ -31,7 +31,9 @@ export function ReadingProgress() {
     };
   }, []);
   return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 top-0 z-[60] h-[2px]">
+    // no-print: with backgrounds now printing, this would otherwise put a red
+    // bar across the top of page one, frozen at wherever the reader had scrolled.
+    <div aria-hidden="true" className="no-print pointer-events-none fixed inset-x-0 top-0 z-[60] h-[2px]">
       <div ref={bar} className="h-full w-full origin-left bg-[color:var(--tally)] shadow-[0_0_8px_var(--tally-glow)]" style={{ transform: "scaleX(0)" }} />
     </div>
   );

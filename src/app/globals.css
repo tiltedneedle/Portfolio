@@ -990,7 +990,16 @@ a:focus-visible > .wm {
 .rail {
   display: flex;
   overflow-x: auto;
-  scroll-snap-type: x mandatory;
+  /* Proximity, NOT mandatory. Under mandatory the browser must come to rest
+     on a snap position, so a rail whose later children are not snap targets
+     -- every spine after the first undelivered slot -- simply cannot be
+     scrolled past the last one. Measured at 390px on a client with three
+     scripts written: the rail stopped at 720 of 1762, so sixteen of twenty
+     scripts were unreachable on a phone, and on a client with nothing
+     written yet it could not move at all. Proximity still pulls a card
+     flush to the gutter when you stop near one; it just does not trap you
+     among the spines. */
+  scroll-snap-type: x proximity;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
@@ -1202,6 +1211,15 @@ a:focus-visible > .wm {
   body {
     background: #fff !important;
     color: #000 !important;
+    /* Browsers ship with background graphics off, so anything whose only
+       paint is a background colour prints as blank paper. The audit's score
+       chart is drawn that way, except an UNSCORED heading, which is a
+       dashed border -- and borders print. So the chart came out of the
+       printer with every scored heading blank and only the unscored ones
+       marking: exactly inverted. Same for the verdict lamps and the
+       script's duration strip. */
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
   nav,
   footer,

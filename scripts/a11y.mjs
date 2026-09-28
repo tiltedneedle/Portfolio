@@ -92,9 +92,29 @@ for (const w of widths) {
       // A not-found page is meant to answer 404; the browser logging that is not a fault of the page.
       const own404 = resp?.status() === 404;
       const consoleErrors = errors.filter((e) => !(own404 && /status of 404/.test(e)));
+      // A rail a thumb cannot reach the end of is a deliverable nobody can
+      // read. This shipped once: spines were made non-snapping to stop the
+      // rail stuttering over them, and under `scroll-snap-type: mandatory`
+      // that left sixteen of twenty scripts unreachable on a phone, with
+      // every other check green.
+      const stuck = await page.evaluate(async () => {
+        const out = [];
+        for (const r of document.querySelectorAll(".rail")) {
+          const max = r.scrollWidth - r.clientWidth;
+          if (max < 8) continue;
+          const was = r.scrollLeft;
+          r.scrollLeft = r.scrollWidth;
+          await new Promise((res) => setTimeout(res, 250));
+          const got = Math.round(r.scrollLeft);
+          r.scrollLeft = was;
+          if (got < max - 4) out.push(got + " of " + max);
+        }
+        return out;
+      });
       const problems = [
         r.violations.length ? "axe: " + r.violations.join("; ") : "",
         wide ? "overflow " + r.scrollW + " > " + r.innerW : "",
+        stuck.length ? "rail stops short: " + stuck.join(", ") : "",
         consoleErrors.length ? "console: " + consoleErrors[0].slice(0, 140) : "",
       ].filter(Boolean);
       say(problems.length === 0, w.name.padEnd(8) + route.padEnd(44) + problems.join("  "));

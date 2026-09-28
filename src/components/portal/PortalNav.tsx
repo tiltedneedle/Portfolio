@@ -5,7 +5,10 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { Wordmark } from "@/components/room/Wordmark";
-import { chapters, pageHref, pageNumber, type Chapter } from "@/content/chapters";
+import { chapters, pageHref, pageNumber } from "@/content/chapters";
+import { type Room } from "@/lib/rooms";
+import { openLocked } from "@/lib/locked";
+import { Lock } from "@/components/portal/Lock";
 import { useClient } from "@/components/portal/ClientContext";
 import { shortName } from "@/content/clients/types";
 import { cn } from "@/lib/utils";
@@ -22,20 +25,49 @@ import { seenKey } from "@/components/portal/RecentList";
  */
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
-function Panel({ chapter: c, onPick, current, read }: { chapter: Chapter; onPick: () => void; current: string; read: Set<string> }) {
+function Panel({ chapter: c, onPick, current, read }: { chapter: Room; onPick: () => void; current: string; read: Set<string> }) {
   return (
     <div className="panel w-[360px] p-2">
       <div className="mono flex items-baseline justify-between px-3 pb-2 pt-3">
         <span>
           {c.n} &mdash; {c.title}
         </span>
-        {c.id !== "home" && (
-          <span className="text-[color:var(--ink-mid)]">
-            {c.pages.filter((p) => read.has(c.id + "/" + p.slug)).length} of {c.pages.length} read
+        {c.locked ? (
+          <span className="inline-flex items-center gap-1.5 text-[color:var(--ink-mid)]">
+            <Lock />
+            Not yours yet
           </span>
+        ) : (
+          c.id !== "home" && (
+            <span className="text-[color:var(--ink-mid)]">
+              {c.pages.filter((p) => read.has(c.id + "/" + p.slug)).length} of {c.pages.length} read
+            </span>
+          )
         )}
       </div>
       <p className="px-3 pb-3 text-[13px] leading-snug text-[color:var(--ink-mid)]">{c.blurb}</p>
+      {c.locked ? (
+        <ul className="border-t border-[color:var(--rule)]">
+          {c.pages.map((p) => (
+            <li key={p.slug} className="flex items-baseline gap-3 border-b border-[color:var(--rule)] px-3 py-2.5 text-[15px] text-[color:var(--ink-mid)]">
+              <span className="mono w-[5ch] shrink-0">{pageNumber(c.id, p.slug)}</span>
+              {p.title}
+            </li>
+          ))}
+          <li>
+            <button
+              type="button"
+              onClick={() => {
+                onPick();
+                openLocked(c.id);
+              }}
+              className="flex w-full items-baseline gap-3 px-3 py-2.5 text-left text-[15px] text-[color:var(--ink)] transition-colors hover:bg-[color:var(--stage-3)]"
+            >
+              How this gets written &rarr;
+            </button>
+          </li>
+        </ul>
+      ) : (
       <ul className="border-t border-[color:var(--rule)]">
         {c.pages.map((p, j) => {
           const href = pageHref(c.id, p.slug);
@@ -63,6 +95,7 @@ function Panel({ chapter: c, onPick, current, read }: { chapter: Chapter; onPick
           );
         })}
       </ul>
+      )}
     </div>
   );
 }
@@ -96,7 +129,7 @@ function NewLamp({ latest }: { latest?: string }) {
   );
 }
 
-export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms?: Chapter[] }) {
+export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms?: Room[] }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [panel, setPanel] = useState<string | null>(null);
@@ -162,7 +195,7 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
     setOpen(false);
   };
 
-  const isActive = (c: Chapter) => (c.id === "home" ? pathname === "/" : pathname.startsWith(c.href));
+  const isActive = (c: Room) => (c.locked ? false : c.id === "home" ? pathname === "/" : pathname.startsWith(c.href));
 
   return (
     <>
@@ -201,6 +234,23 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
                   if (!e.currentTarget.contains(e.relatedTarget as Node)) hide();
                 }}
               >
+                {c.locked ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      pick();
+                      openLocked(c.id);
+                    }}
+                    aria-haspopup="dialog"
+                    className={cn("slate-link room-link", hot !== null && i <= hot && "is-lit", hot === i && "is-hot")}
+                  >
+                    <span aria-hidden="true" className="mr-1.5 text-[color:var(--ink-mid)]">
+                      {c.n}
+                    </span>
+                    {c.title}
+                    <Lock className="ml-1.5 text-[color:var(--ink-mid)]" label="Locked" />
+                  </button>
+                ) : (
                 <CutLink
                   href={c.href}
                   onClick={pick}
@@ -218,6 +268,7 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
                   </span>
                   {c.title}
                 </CutLink>
+                )}
                 <AnimatePresence>
                   {panel === c.id && (
                     <motion.div
@@ -283,13 +334,36 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
                     transition={{ delay: 0.04 * i, duration: 0.5, ease: EASE_OUT_EXPO }}
                     className="border-t border-[color:var(--rule)] py-5"
                   >
-                    <CutLink href={c.href} onClick={pick} className="flex items-baseline gap-4">
-                      <span className="mono">{c.n}</span>
-                      <span className="display text-[40px] text-[color:var(--ink)]">{c.title}</span>
-                      {c.personalised && <span className="lamp ml-auto" aria-hidden="true" />}
-                    </CutLink>
+                    {c.locked ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          pick();
+                          openLocked(c.id);
+                        }}
+                        aria-haspopup="dialog"
+                        className="flex w-full items-baseline gap-4 text-left"
+                      >
+                        <span className="mono">{c.n}</span>
+                        <span className="display text-[40px] text-[color:var(--ink-soft)]">{c.title}</span>
+                        <Lock className="ml-auto self-center text-[color:var(--ink-mid)]" label="Locked" />
+                      </button>
+                    ) : (
+                      <CutLink href={c.href} onClick={pick} className="flex items-baseline gap-4">
+                        <span className="mono">{c.n}</span>
+                        <span className="display text-[40px] text-[color:var(--ink)]">{c.title}</span>
+                        {c.personalised && <span className="lamp ml-auto" aria-hidden="true" />}
+                      </CutLink>
+                    )}
                     <ul className="mt-3 flex flex-col gap-2 pl-[calc(2ch+16px)]">
-                      {c.pages.map((p, j) => {
+                      {c.locked
+                        ? c.pages.map((p) => (
+                            <li key={p.slug} className="flex items-baseline gap-3 text-[15px] text-[color:var(--ink-mid)]">
+                              <span className="mono">{pageNumber(c.id, p.slug)}</span>
+                              {p.title}
+                            </li>
+                          ))
+                        : c.pages.map((p, j) => {
                         const href = pageHref(c.id, p.slug);
                         const here = href === pathname;
                         return (
@@ -310,7 +384,7 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
                             </CutLink>
                           </li>
                         );
-                      })}
+                          })}
                     </ul>
                   </motion.li>
                 ))}

@@ -13,6 +13,9 @@ import { RecentChanges } from "@/components/portal/RecentChanges";
 import { FilmedCount } from "@/components/portal/FilmedMark";
 import { PinnedCount } from "@/components/portal/PinIdea";
 import { guides } from "@/content/system";
+import { stillFor } from "@/lib/published";
+import { personalised } from "@/content/system/personalised";
+import { numberWord } from "@/lib/words";
 import { chapter, pageHref } from "@/content/chapters";
 import { pillars } from "@/content/system/pillars";
 import { firstMoves } from "@/content/clients/types";
@@ -37,9 +40,46 @@ export default async function Home({ params }: { params: Promise<{ client: strin
   const first = firstRoom(sys);
   const pad = (i: number) => String(i).padStart(2, "0");
   // The strip's cards, renumbered so they always read 01 upwards.
-  const access = home.access
-    .filter((it) => !it.personalised || written.has(it.href))
-    .map((it, i) => ({ n: pad(i + 1), title: it.title, href: it.href, text: it.text }));
+  // The frame a room opens on: the first page in it that has one. Resolved
+  // here because stillFor() reads the publishing index, which is server only.
+  const roomStill = (href: string) => {
+    const id = href.replace("/", "");
+    const g = guides.find((x) => x.chapter === id && x.poster);
+    return g?.poster ? stillFor(g.poster) : undefined;
+  };
+  // What is actually inside a room, said on the card itself. Without this the
+  // strip shows three doors and no indication that seven guides and seven
+  // films sit behind the first of them.
+  const roomMeta = (href: string) => {
+    const inRoom = guides.filter((g) => g.chapter === href.replace("/", ""));
+    if (!inRoom.length) return undefined;
+    const films = inRoom.filter((g) => g.film?.youtubeId).length;
+    const say = (k: number, noun: string) => numberWord(k) + " " + noun + (k === 1 ? "" : "s");
+    return [say(inRoom.length, "guide"), films ? say(films, "film") : null].filter(Boolean).join(" · ");
+  };
+  // Which of the four a locked card opens the modal on.
+  const lockAnchor = (href: string) => personalised.parts.find((x) => x.href === href)?.anchor;
+  // Every part, every time. A personalised part the studio has not written
+  // for this client is locked rather than hidden: the client sees the whole
+  // shape of the system and one way to ask for the rest. Nothing of anyone
+  // else's is on a locked card -- no counts, no headings, no ideas, not even
+  // a frame -- because there is nothing of theirs yet to show.
+  const access = home.access.map((it, i) => {
+    const locked = it.personalised && !written.has(it.href);
+    return {
+      n: pad(i + 1),
+      title: it.title,
+      // A locked part carries no path at all, so the route into the room the
+      // client has not got is not on the page -- not as a link, and not in
+      // the router payload either, which a string on a prop would put there.
+      href: locked ? undefined : it.href,
+      text: it.text,
+      locked: locked || undefined,
+      anchor: locked ? lockAnchor(it.href) : undefined,
+      still: it.personalised ? undefined : roomStill(it.href),
+      meta: it.personalised ? undefined : roomMeta(it.href),
+    };
+  });
   // What each personalised room holds so far, for the strip's cards.
   const writtenIn = (r: { sections: { body?: string[]; score?: number }[] }) => {
     const written = r.sections.filter((s) => s.body?.length);
@@ -67,7 +107,7 @@ export default async function Home({ params }: { params: Promise<{ client: strin
   // A card this client has not got takes its count with it. Otherwise the
   // browser is still sent "0 of 100 written" for a room that is nowhere on
   // the site, which is the same leak the rooms themselves were fixed for.
-  const shown = new Set(access.map((it) => it.href));
+  const shown = new Set(access.map((it) => it.href).filter(Boolean));
   const liveCounts = Object.fromEntries(Object.entries(counts).filter(([href]) => shown.has(href)));
   // The universal rooms count what has been read on this device instead.
   const readKeys = Object.fromEntries(

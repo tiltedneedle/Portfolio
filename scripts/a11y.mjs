@@ -111,10 +111,23 @@ for (const w of widths) {
         }
         return out;
       });
+      // A well with nothing in it. Still drops itself when a frame will not
+      // load, so an empty well is invisible to axe, to the overflow check
+      // and to the console -- it is simply a bordered box. The hero backdrop
+      // ran as thirty-two of them, drifting, for as long as the placeholder
+      // guard read naturalWidth (which srcset density-corrects to the layout
+      // width, so every 256px still in a 150px well looked like a 150px
+      // placeholder). Nothing else here can see that.
+      const hollow = await page.evaluate(() => {
+        const wells = [...document.querySelectorAll(".well")];
+        const empty = wells.filter((w) => !w.querySelector("img") && !w.querySelector("iframe"));
+        return wells.length ? empty.length + " of " + wells.length : "";
+      });
       const problems = [
         r.violations.length ? "axe: " + r.violations.join("; ") : "",
         wide ? "overflow " + r.scrollW + " > " + r.innerW : "",
         stuck.length ? "rail stops short: " + stuck.join(", ") : "",
+        hollow && !hollow.startsWith("0 of ") ? "empty wells: " + hollow : "",
         consoleErrors.length ? "console: " + consoleErrors[0].slice(0, 140) : "",
       ].filter(Boolean);
       say(problems.length === 0, w.name.padEnd(8) + route.padEnd(44) + problems.join("  "));
@@ -133,6 +146,34 @@ for (const w of widths) {
   const pal = await audit();
   const open = await page.evaluate(() => !!document.querySelector("[role=dialog][aria-label='Contents']") && document.querySelectorAll("[role=option]").length > 0);
   say(open && pal.violations.length === 0, "desktop  palette open" + (open ? "" : "  (did not open)") + (pal.violations.length ? "  axe: " + pal.violations.join("; ") : ""));
+
+  // The commission, opened from a locked card, is a dialog of its own. Only a
+  // client with something still to be written has locked cards; a written
+  // client has none and no modal, and that is checked instead.
+  await page.keyboard.press("Escape");
+  await visit(page, base + "/", 3000);
+  const lockedCard = page.locator("button.shuttle-card").first();
+  if ((await lockedCard.count()) === 0) {
+    const stray = await page.evaluate(() => document.querySelectorAll("[aria-labelledby='locked-title']").length);
+    say(stray === 0, "desktop  commission (nothing locked for this client)");
+  } else {
+    await lockedCard.scrollIntoViewIfNeeded();
+    await lockedCard.click();
+    await page.waitForTimeout(1600);
+    await page.addScriptTag({ content: axeSource });
+    const com = await audit();
+    const shown = await page.evaluate(() => {
+      const d = document.querySelector("[role=dialog][aria-modal=true][aria-labelledby='locked-title']");
+      return !!d && !!document.getElementById("locked-title")?.textContent && !!d.querySelector("a[href^='mailto:']") && d.contains(document.activeElement);
+    });
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(500);
+    const closed = await page.evaluate(() => !document.querySelector("[aria-labelledby='locked-title']") && document.body.style.overflow === "");
+    say(
+      shown && closed && com.violations.length === 0,
+      "desktop  commission open" + (shown ? "" : "  (did not open, or focus is outside it)") + (closed ? "" : "  (Escape left it open or the page locked)") + (com.violations.length ? "  axe: " + com.violations.join("; ") : "")
+    );
+  }
 } finally {
   await browser.close();
 }

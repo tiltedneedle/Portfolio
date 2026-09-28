@@ -7,8 +7,11 @@ import { paletteIndex } from "@/components/portal/palette-index";
 import { clientSlugs, requireClient } from "@/content/clients/registry";
 import { publicIdentity } from "@/content/clients/types";
 import { changes } from "@/content/system/changes";
-import { liveChapters } from "@/lib/rooms";
+import { allRooms, writtenPages } from "@/lib/rooms";
 import { sequence } from "@/lib/sequence";
+import { LockedModal } from "@/components/portal/LockedModal";
+import { personalised } from "@/content/system/personalised";
+import { shortName } from "@/content/clients/types";
 
 /**
  * One tree per client, pre-rendered. The proxy rewrites every clean URL
@@ -35,9 +38,14 @@ export async function generateMetadata({ params }: { params: Promise<{ client: s
 export default async function ClientLayout({ children, params }: { children: React.ReactNode; params: Promise<{ client: string }> }) {
   const { client } = await params;
   const sys = requireClient(client);
-  // The rooms this client has: a personalised room appears when the studio
-  // has written a page in it, and until then it is nowhere on the website.
-  const rooms = liveChapters(sys);
+  // Every room in the system. A personalised room the studio has not written
+  // yet is shown locked, so the client can see the whole shape of what they
+  // have; its door opens the commission, which says how it gets written.
+  const rooms = allRooms(sys);
+  // The parts still to be written for this client, for the commission. A
+  // client with all four written has nothing locked and no modal at all.
+  const written = writtenPages(sys);
+  const locked = personalised.parts.filter((p) => !written.has(p.href)).map(({ n, anchor, title, text, takes }) => ({ n, anchor, title, text, takes }));
   // The whole system as one measured reel, for the conform at the foot of every page.
   const clips = sequence(sys);
   // The palette's index carries this client's written ideas and scripts as hidden, searchable entries.
@@ -55,6 +63,16 @@ export default async function ClientLayout({ children, params }: { children: Rea
       </main>
       <PortalFooter rooms={rooms} clips={clips} />
       <Palette items={index} />
+      {locked.length > 0 && (
+        <LockedModal
+          parts={locked}
+          needs={personalised.needs}
+          ask={personalised.ask}
+          contact={sys.identity.contact}
+          lead={personalised.lead(shortName(sys.identity))}
+          kicker={personalised.kicker}
+        />
+      )}
     </ClientProvider>
   );
 }

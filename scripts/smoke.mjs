@@ -31,18 +31,25 @@ if (!gated) {
   await expect("/content/ideas", 200, { contains: "Authority" });
   await expect("/content/scripts", 200);
   await expect("/content/scripts/1", 200, { contains: "Copy script" });
-  // The template has nothing written, so the personalised rooms are routed
-  // but nowhere on the site: not on the strip, not in the nav, not linked
-  // from what was recently added.
+  // The template has nothing written, so every personalised part is shown
+  // LOCKED: named on the strip and in the nav, so the client sees the whole
+  // shape of the system, with nothing of anyone else's on it and no way into
+  // the empty room behind it.
   await expect("/", 200, { contains: "Everything in your system" });
-  await expect("/", 200, { lacks: "Your audit" });
+  await expect("/", 200, { contains: "Your audit" });
   // The room's own name, not the tagline that happens to contain the words:
-  // "Your content system, in full" is the site's line, "Your content" is a
-  // room this client has not got.
-  await expect("/", 200, { lacks: "Your content<" });
+  // "Your content system, in full" is the site's line, "Your content" is the
+  // room. Both are on the page now; this asserts the room.
+  await expect("/", 200, { contains: "Your content<" });
+  await expect("/", 200, { contains: "Not yours yet" });
+  // A locked part is a button, never a link. The path into the room it will
+  // one day open must be nowhere on the page, router payload included.
   await expect("/", 200, { lacks: "/content/ideas" });
+  await expect("/", 200, { lacks: "/audit/content-diagnostic" });
   await expect("/", 200, { lacks: "Same for everyone" });
-  await expect("/create/hooks", 200, { lacks: "Your audit" });
+  // The nav names the locked rooms on every page; what it must never do is
+  // offer a way into one.
+  await expect("/create/hooks", 200, { lacks: "/audit/content-diagnostic" });
   await expect("/create/hooks", 200, { contains: "Name the hook" });
   await expect("/analyse/understanding-your-analytics", 200, { contains: "retention curve" });
   await expect("/publish/strategy", 200, { contains: "posts across" });
@@ -71,7 +78,7 @@ if (!gated) {
   await expect("/create/hooks", 200, { contains: "The whole system, end to end" });
   await expect("/create/hooks", 200, { contains: /13(<!-- -->)? pages/ });
   await expect("/create/hooks", 200, { contains: /04(<!-- -->)? — (<!-- -->)?Create/ });
-  await expect("/create/hooks", 200, { lacks: "Your audit" });
+
   await expect("/", 200, { contains: "POS" });
   await expect("/", 200, { contains: "Position:" });
   for (const s of ["study-your-niche", "ideation", "video-style", "hooks", "core-message", "filming", "editing"]) await expect("/create/" + s, 200, { contains: "The rule" });

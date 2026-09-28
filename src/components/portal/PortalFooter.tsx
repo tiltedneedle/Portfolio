@@ -6,7 +6,10 @@ import { WordStrip } from "@/components/editorial/WordStrip";
 import { MasterTimeline } from "@/components/room/MasterTimeline";
 import { ClientMark } from "@/components/portal/ClientMark";
 import { useClient } from "@/components/portal/ClientContext";
-import { chapters, type Chapter } from "@/content/chapters";
+import { chapters } from "@/content/chapters";
+import { Lock } from "@/components/portal/Lock";
+import { type Room } from "@/lib/rooms";
+import { openLocked } from "@/lib/locked";
 import { shortName } from "@/content/clients/types";
 import { PRESENCE } from "@/lib/session";
 import type { Clip } from "@/lib/sequence";
@@ -23,7 +26,7 @@ const heading = "mono mb-5 block";
 const link = "underline-draw w-fit text-[15px] text-[color:var(--ink-soft)] transition-colors duration-300 hover:text-[color:var(--ink)]";
 
 /** The conform, then the tail leader: the reel, the crawl, the contents once more. */
-export function PortalFooter({ rooms = chapters, clips }: { rooms?: Chapter[]; clips?: Clip[] }) {
+export function PortalFooter({ rooms = chapters, clips }: { rooms?: Room[]; clips?: Clip[] }) {
   const who = useClient();
   // The pages are pre-rendered, so whether someone is logged in can only be
   // known in the browser: the door leaves a presence cookie beside the session.
@@ -49,12 +52,20 @@ export function PortalFooter({ rooms = chapters, clips }: { rooms?: Chapter[]; c
           <div className="md:col-span-4 md:col-start-7">
             <p className={heading}>The system</p>
             <nav className="flex flex-col gap-3" aria-label="Footer">
-              {rooms.map((c) => (
-                <CutLink key={c.id} href={c.href} className={link}>
-                  <span className="mono mr-3 text-[color:var(--ink-mid)]">{c.n}</span>
-                  {c.title}
-                </CutLink>
-              ))}
+              {rooms.map((c) =>
+                c.locked ? (
+                  <button key={c.id} type="button" onClick={() => openLocked(c.id)} aria-haspopup="dialog" className={link + " inline-flex items-center text-left"}>
+                    <span className="mono mr-3 text-[color:var(--ink-mid)]">{c.n}</span>
+                    {c.title}
+                    <Lock className="ml-2 text-[color:var(--ink-mid)]" label="Locked" />
+                  </button>
+                ) : (
+                  <CutLink key={c.id} href={c.href} className={link}>
+                    <span className="mono mr-3 text-[color:var(--ink-mid)]">{c.n}</span>
+                    {c.title}
+                  </CutLink>
+                )
+              )}
             </nav>
           </div>
 

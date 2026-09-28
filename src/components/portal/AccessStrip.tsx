@@ -4,6 +4,9 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { ReadCount } from "@/components/portal/ReadMark";
+import { Still } from "@/components/portal/Still";
+import { Lock } from "@/components/portal/Lock";
+import { openLocked } from "@/lib/locked";
 import { numberWord } from "@/lib/words";
 
 /**
@@ -13,12 +16,20 @@ import { numberWord } from "@/lib/words";
  * cards stack. Lifted from the studio site's film sequence, which is the
  * move the client liked most.
  *
- * The cards are whatever this client has, numbered in the order they are
- * shown. Nothing on them says which parts were written for this client and
- * which are the same for everyone: that is how the studio divides the work,
- * not something the client came here to read.
+ * Every part of the system is on the strip from the first day, so a client
+ * can see the whole shape of what they have. The four parts the studio
+ * writes for one business are shown LOCKED until they are written: the name
+ * and what will be in it, and nothing of anyone's. A locked card is a
+ * button, not a link -- there is no page behind it -- and it opens the
+ * modal that explains how the part gets written.
  */
-export type AccessItem = { n: string; title: string; href: string; text: string };
+/**
+ * `still` is the frame this part opens on, where the part is one the studio
+ * has filmed. The personalised parts are documents and carry none.
+ * `locked` means this client has nothing in it yet; `anchor` is which of
+ * the four the modal should open on.
+ */
+export type AccessItem = { n: string; title: string; href?: string; text: string; still?: string; meta?: string; locked?: boolean; anchor?: string };
 
 /** `counts` is what each personalised card has so far, keyed by href ("4 of 13 written"). */
 export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: AccessItem[]; counts?: Record<string, ReactNode>; readKeys?: Record<string, string[]> }) {
@@ -109,32 +120,70 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
             <p className="shuttle-hint mono mt-8 max-md:hidden">Scroll to shuttle &middot; click to open</p>
           </div>
 
-          {items.map((it, i) => (
-            <div key={it.n} className="shuttle-cell w-full shrink-0 px-6 py-3 md:w-auto md:px-0 md:py-0">
-              <CutLink
-                href={it.href}
-                onFocus={() => focusCard(i)}
-                data-cursor="Open"
-                className={
-                  "shuttle-card group relative flex min-h-[380px] w-full flex-col justify-between overflow-hidden border bg-[color:var(--stage-2)] p-6 transition-colors duration-500 md:h-[66svh] md:w-[calc(66svh*0.72)] md:p-8 " +
-                  (active === i && !mobile && range > 0 ? "border-[color:var(--rule-strong)]" : "border-[color:var(--rule)] hover:border-[color:var(--rule-strong)]")
-                }
-              >
-                <span aria-hidden="true" className="numeral pointer-events-none absolute -right-2 top-1/2 -translate-y-1/2 text-[200px] opacity-50 md:text-[240px]" data-n={it.n} />
-                <span className="mono relative">{it.n}</span>
+          {items.map((it, i) => {
+            const shell =
+              "shuttle-card group relative flex min-h-[380px] w-full flex-col justify-between overflow-hidden border bg-[color:var(--stage-2)] p-6 text-left transition-colors duration-500 md:h-[66svh] md:w-[calc(66svh*0.72)] md:p-8 " +
+              (active === i && !mobile && range > 0 ? "border-[color:var(--rule-strong)]" : "border-[color:var(--rule)] hover:border-[color:var(--rule-strong)]");
+            const face = (
+              <>
+                {/* A part the studio filmed opens on its own frame, held in
+                    the top half of the card and dissolving into the card
+                    colour before any text starts -- so every line below
+                    keeps the contrast it was designed against, whatever
+                    the frame happens to be. A part that is a document has
+                    no frame to show, and keeps the numeral instead. */}
+                {it.still && !it.locked ? (
+                  <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[54%] overflow-hidden">
+                    {/* Anchored to the top of the frame, not its middle. These are
+                        9:16 stills with burnt-in captions across the waist, and
+                        a landscape crop taken from the centre lands squarely on
+                        them -- three cards of stray half-sentences. The top of
+                        the frame is where the face is. */}
+                    <Still src={it.still} sizes="(min-width:768px) 480px, 100vw" className="object-cover object-top opacity-60" />
+                    <span className="absolute inset-0 bg-gradient-to-b from-[rgba(11,11,12,0.55)] via-[rgba(11,11,12,0.12)] to-[color:var(--stage-2)]" />
+                  </span>
+                ) : (
+                  <span aria-hidden="true" className="numeral pointer-events-none absolute -right-2 top-1/2 -translate-y-1/2 text-[200px] opacity-50 md:text-[240px]" data-n={it.n} />
+                )}
+                {/* On a frame this line is the slate, so it takes full ink:
+                    --ink-mid has no contrast headroom left over a picture. */}
+                <span className={"mono relative flex items-baseline justify-between gap-4 " + (it.still && !it.locked ? "text-[color:var(--ink)]" : "")}>
+                  <span>{it.n}</span>
+                  {it.locked ? (
+                    <span className="inline-flex items-center gap-1.5 text-[color:var(--ink-mid)]">
+                      <Lock />
+                      Not yours yet
+                    </span>
+                  ) : (
+                    it.meta && <span className={it.still ? "" : "text-[color:var(--ink-mid)]"}>{it.meta}</span>
+                  )}
+                </span>
                 <span className="relative">
-                  <span className="display display-light block max-w-[11ch] text-[clamp(48px,3.4vw,54px)] leading-[0.92] text-[color:var(--ink)]">{it.title}</span>
+                  <span className={"display display-light block max-w-[11ch] text-[clamp(48px,3.4vw,54px)] leading-[0.92] " + (it.locked ? "text-[color:var(--ink-soft)] transition-colors duration-500 group-hover:text-[color:var(--ink)]" : "text-[color:var(--ink)]")}>{it.title}</span>
                   <span className="mt-4 block max-w-[32ch] text-[15px] leading-relaxed text-[color:var(--ink-mid)]">{it.text}</span>
                   <span className="mono mt-6 flex items-baseline justify-between gap-4 text-[color:var(--ink-soft)] transition-colors group-hover:text-[color:var(--ink)]">
                     <span>
-                      Open <span aria-hidden="true">&#8599;</span>
+                      {it.locked ? "Ask for it" : "Open"} <span aria-hidden="true">&#8599;</span>
                     </span>
-                    {readKeys[it.href] ? <ReadCount keys={readKeys[it.href]} /> : counts[it.href] && <span className="text-[color:var(--ink-mid)]">{counts[it.href]}</span>}
+                    {!it.href ? null : readKeys[it.href] ? <ReadCount keys={readKeys[it.href]} /> : counts[it.href] && <span className="text-[color:var(--ink-mid)]">{counts[it.href]}</span>}
                   </span>
                 </span>
-              </CutLink>
-            </div>
-          ))}
+              </>
+            );
+            return (
+              <div key={it.n} className="shuttle-cell w-full shrink-0 px-6 py-3 md:w-auto md:px-0 md:py-0">
+                {it.href ? (
+                  <CutLink href={it.href} onFocus={() => focusCard(i)} data-cursor="Open" className={shell}>
+                    {face}
+                  </CutLink>
+                ) : (
+                  <button type="button" onFocus={() => focusCard(i)} onClick={() => openLocked(it.anchor)} aria-haspopup="dialog" data-cursor="Ask" className={shell}>
+                    {face}
+                  </button>
+                )}
+              </div>
+            );
+          })}
         </motion.div>
 
         <div className="shuttle-ruler mx-[8vw] mt-8 max-md:hidden">

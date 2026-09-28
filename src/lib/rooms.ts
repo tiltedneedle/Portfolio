@@ -23,6 +23,33 @@ export function writtenPages(sys: ClientSystem): Set<string> {
   return written;
 }
 
+/** A room, plus whether its door is closed to this client for now. */
+export type Room = Chapter & { locked?: boolean };
+
+/**
+ * Every room in the system, with the personalised ones this client has
+ * nothing written in yet marked locked.
+ *
+ * This is the shape of the system, which is the same for everyone, and it
+ * is what the nav, the footer and the home strip draw. A locked room shows
+ * its name and what will be in it and nothing else -- no counts, no
+ * headings, no ideas -- and it is not a link, because there is no page
+ * behind it: it raises the locked modal instead. See @/lib/locked.
+ *
+ * Not the same question as liveChapters(), which answers "what does this
+ * client actually have". The reel, the palette, the week's call sheet and
+ * every prev/next link ask that one: an empty page is not a clip, not a
+ * search result and not a step on the way anywhere.
+ */
+export function allRooms(sys: ClientSystem): Room[] {
+  const written = writtenPages(sys);
+  return chapters.map((c) => {
+    if (!c.personalised) return c;
+    const mine = c.pages.filter((p) => written.has(pageHref(c.id, p.slug)));
+    return mine.length ? { ...c, pages: mine } : { ...c, locked: true };
+  });
+}
+
 /**
  * The chapters this client actually has: every universal room, and a
  * personalised room once one of its pages is written, carrying only the

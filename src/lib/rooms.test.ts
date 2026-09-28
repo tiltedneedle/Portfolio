@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { firstRoom, liveChapters, livePaths, roomAfter, writtenPages } from "@/lib/rooms";
+import { allRooms, firstRoom, liveChapters, livePaths, roomAfter, writtenPages } from "@/lib/rooms";
 import { chapters } from "@/content/chapters";
 import { demo } from "@/content/clients/demo";
 import { template } from "@/content/clients/template";
@@ -58,6 +58,30 @@ describe("liveChapters", () => {
     expect(live.find((c) => c.id === "audit")).toBeUndefined();
     // The source list is untouched: the filter copies.
     expect(chapters.find((c) => c.id === "content")?.pages).toHaveLength(2);
+  });
+});
+
+describe("allRooms", () => {
+  it("shows a client with nothing written every room, the two of theirs locked", () => {
+    const rooms = allRooms(template);
+    expect(rooms.map((c) => c.id)).toEqual(chapters.map((c) => c.id));
+    expect(rooms.filter((c) => c.locked).map((c) => c.id)).toEqual(["audit", "content"]);
+  });
+
+  it("locks nothing for a client whose rooms are written", () => {
+    expect(allRooms(demo).some((c) => c.locked)).toBe(false);
+  });
+
+  it("opens a half written room on the pages that exist, and does not lock it", () => {
+    const half = bare({ scripts: scripts([{ n: 1, title: "Written", body: ["Words."] }]) });
+    const content = allRooms(half).find((c) => c.id === "content");
+    expect(content?.locked).toBeUndefined();
+    expect(content?.pages.map((p) => p.slug)).toEqual(["scripts"]);
+    expect(allRooms(half).find((c) => c.id === "audit")?.locked).toBe(true);
+  });
+
+  it("never locks a room everyone has", () => {
+    for (const c of allRooms(template)) if (!c.personalised) expect(c.locked).toBeUndefined();
   });
 });
 

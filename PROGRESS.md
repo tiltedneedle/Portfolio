@@ -213,6 +213,44 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 60 (2026-09-28): locked parts, the commission modal, and the
+      hero backdrop that had gone blank.
+      **Policy change, the user's call:** the four personalised parts are
+      no longer hidden until written. Every part is shown from day one, and
+      the unwritten ones are LOCKED: named, described, padlocked, with
+      nothing of anyone's on them. The strip says "seven parts." for every
+      client; the nav and footer run 01-06 without gaps. `allRooms()` in
+      rooms.ts draws the shape (nav, footer, strip); `liveChapters()` still
+      answers "what does this client have" (reel, palette, week, prev/next),
+      so an empty page is never a clip, a search hit or a step.
+      A locked part is a BUTTON with no href: the route into the empty room
+      is not on the page or in the router payload (smoke asserts both).
+      It raises `tn:locked` (src/lib/locked.ts); one `LockedModal` in the
+      layout answers, mounted only while something is still locked.
+      The user asked for a premium pop-up, NOT a separate page (a
+      /personalised page was built and removed on their word). The modal is
+      "the commission": clip-path wipe in, a --tally lamp wash struck from
+      above (the only colour; worst case --ink-mid 4.53:1), the top edge
+      drawing itself, a latching lock; three full-width bands (headline +
+      the mailto plate level with it / the parts still to come as frames,
+      the opened one carrying the playhead / what we need from you). Copy
+      in src/content/system/personalised.ts. a11y opens it, runs axe, checks
+      focus and Escape; a written client is checked for having no modal.
+      Room cards now carry a poster frame in their top half and say what is
+      inside ("seven guides · seven films").
+      **The hero backdrop was 32 empty boxes drifting.** Still's placeholder
+      guard read `naturalWidth <= 160`, but under `sizes` + a w-descriptor
+      srcset the browser reports naturalWidth density-corrected to the
+      LAYOUT width: a 256px still in a 150px well reports 150. Every still
+      in the backdrop deleted itself. Now recognised by shape (YouTube's
+      placeholder is the only 4:3 frame the site can receive). a11y fails on
+      any empty `.well`, because axe, overflow and the console all passed
+      while the hero was blank.
+      The design Workflow's judges and synthesis died on the monthly spend
+      limit; the four directions survived in its journal and were merged by
+      hand (commission as the spine; the playhead and the struck lamp taken
+      from the others).
+
 - [x] Wave 59: the nine training films. The ids arrived, and the count
       settled a question the resume note had got wrong twice: nine, not
       eight and not six. Seven steps map onto the seven Create guides in

@@ -1515,6 +1515,49 @@ a:focus-visible > .wm {
     transform: none;
   }
 }
+/* The deck (IdeasHand) and the stack (ScriptStack): what a page holds,
+   dealt onto the desk beside its title as it opens, one after another.
+   Backwards fill only: once a card has landed, the fan is its own style,
+   so reaching for the hand can spread it with a plain transition. */
+.hand-card {
+  transform-origin: 50% 115%;
+  transform: translateX(-50%) translate(var(--x), var(--y)) rotate(var(--r));
+  animation: card-deal 0.9s var(--ease-out-expo) backwards;
+  animation-delay: calc(0.55s + var(--i, 0) * 0.11s);
+  transition: transform 0.6s var(--ease-out-expo);
+}
+@keyframes card-deal {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translate(calc(var(--x) * 0.2 + 90px), 110px) rotate(calc(var(--r) + 18deg));
+  }
+}
+.hand:hover .hand-card {
+  transform: translateX(-50%) translate(calc(var(--x) * 1.15), calc(var(--y) * 1.4 - 8px)) rotate(calc(var(--r) * 1.2));
+}
+.stack-page {
+  transform-origin: 50% 100%;
+  transform: translateX(-50%) translate(calc(var(--d, 0) * 26px), calc(var(--d, 0) * -10px)) rotate(calc(var(--d, 0) * 3.5deg));
+  animation: page-deal 0.9s var(--ease-out-expo) backwards;
+  animation-delay: calc(0.5s + var(--i, 0) * 0.14s);
+  transition:
+    transform 0.6s var(--ease-out-expo),
+    border-color 0.3s;
+}
+@keyframes page-deal {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translate(70px, 50px) rotate(9deg);
+  }
+}
+/* Reaching for the top page lifts it and fans the ones under it. */
+.stack:is(:hover, :focus-visible) .stack-page {
+  transform: translateX(-50%) translate(calc(var(--d, 0) * 32px), calc(var(--d, 0) * -14px)) rotate(calc(var(--d, 0) * 4.5deg));
+}
+.stack:is(:hover, :focus-visible) .stack-page:last-child {
+  transform: translateX(-50%) translateY(-10px) rotate(-1deg);
+  border-color: var(--ink-mid);
+}
 /* A number that lands on its reels as the page opens (Odometer's `now`),
    from the same digit two turns back: correct at every frame. */
 .odo-now .odo-reel {
@@ -1549,6 +1592,8 @@ a:focus-visible > .wm {
       .scene-frame,
       .monitor-on,
       .door-field,
+      .hand-card,
+      .stack-page,
       .odo-now .odo-reel,
       .desk-tile,
       .desk-bar,
@@ -1576,6 +1621,8 @@ body.is-cutting
     .scene-frame,
     .monitor-on,
     .door-field,
+    .hand-card,
+    .stack-page,
     .odo-now .odo-reel,
     .desk-tile,
     .desk-bar,
@@ -1917,6 +1964,8 @@ body.is-cutting
   .monitor-on,
   .door-field,
   .bars,
+  .hand-card,
+  .stack-page,
   .odo-now .odo-reel,
   .cue::before,
   .rule-wash,

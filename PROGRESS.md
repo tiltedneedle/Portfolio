@@ -213,6 +213,33 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 67 (2026-09-29): the deck and the stack.
+      A review of the demo's ideas and scripts pages found both headers
+      half empty on the right, the complaint the home page had drawn. Each
+      now holds what the page holds, dealt onto the desk as it opens:
+      - Ideas (IdeasHand): the first written idea of each pillar as a hand
+        of four cards, fanned about a pivot below them and dealt in one
+        after another; reaching for the hand spreads it. The page already
+        deals (DealOne, face down), so the header holds the deck.
+      - Scripts (ScriptStack): the first written script as a page set like
+        a script (slate line, location as the scene heading, title, who is
+        on camera as the cue, the hook as dialogue, the script running on
+        off the foot), on blank sheets for the others written. One link,
+        named for the script it opens; reaching for it lifts the top page
+        and fans the sheets under it. The under-sheets are blank because
+        their words peeking out read as litter.
+      Both are wide-screen only (xl, where the title leaves the room),
+      aria-hidden decoration over what the page says in full (the stack's
+      link carries its own name), absent when nothing is written, out of
+      print, still under reduced motion, and held with the titles under the
+      slate and the cut. Deal-ins use backwards fill only, so a landed card
+      is its own style and the hover spread is a plain transition.
+      Caught by the a11y suite: the first fan ran 27px past a 1440 screen
+      and scrolled it sideways. Refitted (measured at 1280, 1440 and 1920,
+      at rest and spread: every card ends 24px or more inside the screen,
+      125px or more clear of the title) and both headers now clip sideways
+      overflow as a net. Smoke and a11y pass on both servers.
+
 - [x] Wave 66 (2026-09-29): every other page opens as a scene.
       The user asked for "the same for the other pages too". One grammar,
       shorter than the home's cold open, plus a signature moment where

@@ -12,6 +12,7 @@ import { chapter, pageNumber } from "@/content/chapters";
 import { requireClient } from "@/content/clients/registry";
 import { publicIdentity, shortName } from "@/content/clients/types";
 import { IDEAS_INTRO, pillars } from "@/content/system/pillars";
+import { IdeasHand } from "@/components/portal/IdeasHand";
 
 export const metadata: Metadata = { title: "100 viral content ideas" };
 
@@ -33,22 +34,28 @@ export default async function IdeasPage({ params }: { params: Promise<{ client: 
   const cards = pillars.flatMap((p) => sys.ideas[p.id].map((idea, i) => ({ pillar: p.title, n: i + 1, text: idea.text || "" })).filter((x) => x.text));
   return (
     <article className="ideas-page bg-[color:var(--stage)]">
-      <header className="mx-auto max-w-[1600px] px-6 pb-14 pt-28 md:px-14 md:pt-36">
-        <p className="mono scene-slate flex flex-wrap items-center gap-x-4">
-          <span>
-            {c.n} &mdash; {c.title} <span className="text-[color:var(--ink-mid)]">/</span> {pageNumber("content", "ideas")}
-          </span>
-          <span className="flex items-center gap-2 text-[color:var(--ink)]">
-            <span className="lamp" aria-hidden="true" />
-            Written for {shortName(identity)}
-          </span>
-        </p>
-        <h1 className="display mt-6 max-w-[10ch] text-[clamp(52px,8.5vw,140px)]">
-          <Rise text="100 viral content ideas" />
-        </h1>
-        <p className="em-serif statement mt-6 max-w-[40ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">
-          <Focus text={IDEAS_INTRO} />
-        </p>
+      <header className="mx-auto max-w-[1600px] overflow-x-clip px-6 pb-14 pt-28 md:px-14 md:pt-36">
+        {/* On a wide screen the title keeps the left and a hand of cards takes the right, where the header was empty. */}
+        <div className="xl:flex xl:items-center xl:justify-between xl:gap-12">
+          <div className="min-w-0">
+            <p className="mono scene-slate flex flex-wrap items-center gap-x-4">
+              <span>
+                {c.n} &mdash; {c.title} <span className="text-[color:var(--ink-mid)]">/</span> {pageNumber("content", "ideas")}
+              </span>
+              <span className="flex items-center gap-2 text-[color:var(--ink)]">
+                <span className="lamp" aria-hidden="true" />
+                Written for {shortName(identity)}
+              </span>
+            </p>
+            <h1 className="display mt-6 max-w-[10ch] text-[clamp(52px,8.5vw,140px)]">
+              <Rise text="100 viral content ideas" />
+            </h1>
+            <p className="em-serif statement mt-6 max-w-[40ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">
+              <Focus text={IDEAS_INTRO} />
+            </p>
+          </div>
+          <IdeasHand ideas={sys.ideas} />
+        </div>
         <div className="scene-up mt-12 flex flex-wrap items-end justify-between gap-x-12 gap-y-8" style={delay(0.7)}>
           <ul className="mono flex flex-wrap gap-x-8 gap-y-3">
             {pillars.map((p, i) => (

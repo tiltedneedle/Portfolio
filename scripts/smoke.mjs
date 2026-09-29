@@ -72,7 +72,7 @@ if (!gated) {
   await expect("/search-index.json?v=smoke", 200, { contains: "Verbal hooks" });
   await expect("/create/hooks", 200, { contains: "Mark as read" });
   await expect("/content/scripts/20", 200);
-  await expect("/content/scripts/21", 404, { contains: "Nothing on this" });
+  await expect("/content/scripts/21", 404, { contains: "Missing reel" });
   await expect("/opengraph-image", 200);
   await expect("/create", 200);
   // A room states what is in it, offers a way in, and cuts to the next room.

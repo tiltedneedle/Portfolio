@@ -15,6 +15,12 @@ import { useEffect, useRef, type CSSProperties } from "react";
  * build wound the reels back to zero, and a throttled browser left the
  * studio's five billion reading 0,000,000,000.
  *
+ * `now` is for a figure in a page's opening titles, which is on screen
+ * from the start: it lands as the page opens instead of when it is scrolled
+ * to, by a CSS animation from the same wound-back copy (the scene titles
+ * block in globals.css), so it waits out the slate and the cut like the
+ * titles around it.
+ *
  * Reduced motion never winds it back. Decorative: the reels are aria-hidden,
  * because a screen reader would read "0 1 2 3 4 5 6 7 8 9" thirty times. The
  * caller says the number in words.
@@ -22,7 +28,7 @@ import { useEffect, useRef, type CSSProperties } from "react";
 const TURNS = 3;
 const REEL = Array.from({ length: TURNS * 10 }, (_, i) => i % 10);
 
-export function Odometer({ value, className = "" }: { value: number; className?: string }) {
+export function Odometer({ value, className = "", now = false }: { value: number; className?: string; now?: boolean }) {
   const ref = useRef<HTMLSpanElement>(null);
   // "en-US" pinned, so the server and the browser group the digits alike and
   // hydration never meets a figure it did not render.
@@ -30,7 +36,7 @@ export function Odometer({ value, className = "" }: { value: number; className?:
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || now) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     // Nothing to let the reels go with: never wind them back. A figure that
     // cannot roll in must not be left reading zero.
@@ -52,11 +58,11 @@ export function Odometer({ value, className = "" }: { value: number; className?:
     );
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [now]);
 
   let reel = 0;
   return (
-    <span ref={ref} aria-hidden="true" className={"odo " + className}>
+    <span ref={ref} aria-hidden="true" className={"odo " + (now ? "odo-now " : "") + className}>
       {[...figure].map((ch, i) => {
         if (!/\d/.test(ch)) {
           return (

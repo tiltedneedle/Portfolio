@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, type CSSProperties, type ElementType, type ReactNode } from "react";
 
 /**
  * A block rises a few pixels as it enters the viewport, once.
@@ -10,9 +10,26 @@ import { useEffect, useRef, type ReactNode } from "react";
  * and an observer lets each one in as the reader reaches it. So the first
  * screen never fades in, a reader with JavaScript off sees everything,
  * and reduced motion is honoured before anything is hidden.
+ *
+ * `as` lets the revealed element be the section or list item itself, where
+ * a wrapping div would break the grid or the list it sits in.
  */
-export function Reveal({ children, className }: { children: ReactNode; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
+export function Reveal({
+  children,
+  className,
+  as: Tag = "div",
+  id,
+  style,
+  "aria-label": label,
+}: {
+  children: ReactNode;
+  className?: string;
+  as?: "div" | "section" | "li" | "nav";
+  id?: string;
+  style?: CSSProperties;
+  "aria-label"?: string;
+}) {
+  const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const el = ref.current;
@@ -33,9 +50,10 @@ export function Reveal({ children, className }: { children: ReactNode; className
     return () => io.disconnect();
   }, []);
 
+  const Element = Tag as ElementType;
   return (
-    <div ref={ref} className={className}>
+    <Element ref={ref} className={className} id={id} style={style} aria-label={label}>
       {children}
-    </div>
+    </Element>
   );
 }

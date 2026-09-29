@@ -9,6 +9,8 @@ import { ReadMark } from "@/components/portal/ReadMark";
 import { Still } from "@/components/portal/Still";
 import { useClient } from "@/components/portal/ClientContext";
 import { useRead } from "@/lib/read";
+import { Reveal } from "@/components/portal/Reveal";
+import { Focus, Rise, delay } from "@/components/portal/Scene";
 import { numberWord } from "@/lib/words";
 
 export type OverviewRow = {
@@ -37,6 +39,11 @@ export type OverviewRow = {
  * still is stacked in the glass and cross-dissolved, so switching is a
  * dissolve rather than a load. It is decoration over information the list
  * already carries, so it is hidden from a screen reader.
+ *
+ * The room opens as a scene (Scene.tsx): the title rises, the lead is
+ * pulled into focus, the readout comes up and the monitor powers on. Each
+ * row is cued as it comes on -- a playhead runs its rule, its title rises --
+ * and hovering a row runs a playhead along its foot, toward the cut.
  */
 export function ChapterOverview({
   id,
@@ -79,7 +86,7 @@ export function ChapterOverview({
       <header className="mx-auto max-w-[1600px] px-6 pb-14 pt-28 md:px-14 md:pt-36">
         <div className="grid gap-12 md:grid-cols-[1fr_auto] md:items-end md:gap-20">
           <div className="min-w-0">
-            <p className="mono flex flex-wrap items-center gap-x-4">
+            <p className="mono scene-slate flex flex-wrap items-center gap-x-4">
               <span>
                 {c.n} &mdash; {c.title}
               </span>
@@ -90,9 +97,13 @@ export function ChapterOverview({
                 </span>
               )}
             </p>
-            <h1 className="display mt-6 max-w-[10ch] text-[clamp(64px,11vw,176px)]">{c.title}</h1>
-            <p className="em-serif statement mt-8 max-w-[36ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">{lead}</p>
-            <dl className="mono mt-8 flex flex-wrap gap-x-8 gap-y-2" aria-label={"What is in " + c.title}>
+            <h1 className="display mt-6 max-w-[10ch] text-[clamp(64px,11vw,176px)]">
+              <Rise text={c.title} />
+            </h1>
+            <p className="em-serif statement mt-8 max-w-[36ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">
+              <Focus text={lead} />
+            </p>
+            <dl className="mono scene-up mt-8 flex flex-wrap gap-x-8 gap-y-2" style={delay(0.7)} aria-label={"What is in " + c.title}>
               <div className="flex gap-2">
                 <dt className="text-[color:var(--ink-mid)]">{countLabel}</dt>
                 <dd className="text-[color:var(--ink)]">{numberWord(rows.length)}</dd>
@@ -116,7 +127,8 @@ export function ChapterOverview({
               <CutLink
                 href={pageHref(id, at.slug)}
                 aria-label={verb + pageNumber(id, at.slug) + " \u2014 " + at.title}
-                className="pill pill-solid mt-9 inline-block px-7 py-3 text-[15px]"
+                className="pill pill-solid scene-up mt-9 inline-block px-7 py-3 text-[15px]"
+                style={delay(0.85)}
                 data-cursor="Open"
               >
                 {verb}
@@ -127,14 +139,14 @@ export function ChapterOverview({
 
           {glass && shown && (
             <div aria-hidden="true" className="hidden w-[280px] shrink-0 md:block">
-              <p className="mono flex items-center justify-between">
+              <p className="mono scene-up flex items-center justify-between" style={delay(0.5)}>
                 <span className="flex items-center gap-2 text-[color:var(--ink)]">
                   <span className={hot === null ? "lamp-off" : "lamp lamp-live"} />
                   Preview
                 </span>
                 <span className="text-[color:var(--ink-mid)]">{pageNumber(id, shown.slug)}</span>
               </p>
-              <div className="relative mt-3 aspect-[3/4] overflow-hidden border border-[color:var(--rule-strong)] bg-[color:var(--stage-2)]">
+              <div className="monitor-on relative mt-3 aspect-[3/4] overflow-hidden border border-[color:var(--rule-strong)] bg-[color:var(--stage-2)]">
                 {rows.map((r, i) =>
                   r.still ? (
                     <Still
@@ -156,13 +168,13 @@ export function ChapterOverview({
       <div className="mx-auto max-w-[1600px] px-6 pb-24 md:px-14 md:pb-32">
         <ol className="border-b border-[color:var(--rule)]" onPointerLeave={() => setHot(null)}>
           {rows.map((r, i) => (
-            <li key={r.slug} className="border-t border-[color:var(--rule)]">
+            <Reveal as="li" key={r.slug} className="cue border-t border-[color:var(--rule)]">
               <CutLink
                 href={pageHref(id, r.slug)}
                 data-cursor="Open"
                 onPointerEnter={() => setHot(i)}
                 onFocus={() => setHot(i)}
-                className="group grid grid-cols-[6ch_1fr] items-baseline gap-x-6 py-7 md:grid-cols-[6ch_auto_1fr_auto] md:items-center md:gap-x-10 md:py-8"
+                className="group relative grid grid-cols-[6ch_1fr] items-baseline gap-x-6 py-7 md:grid-cols-[6ch_auto_1fr_auto] md:items-center md:gap-x-10 md:py-8"
               >
                 <span className={"mono transition-colors " + (i === shownIndex ? "text-[color:var(--ink)]" : "")}>{pageNumber(id, r.slug)}</span>
                 {r.still ? (
@@ -173,18 +185,23 @@ export function ChapterOverview({
                   <span className="hidden md:block" />
                 )}
                 <span>
-                  <span className="display block text-[clamp(32px,4.4vw,64px)] leading-[0.95] text-[color:var(--ink)] transition-colors group-hover:text-white">{r.title}</span>
+                  <span className="display block text-[clamp(32px,4.4vw,64px)] leading-[0.95] text-[color:var(--ink)] transition-colors group-hover:text-white">
+                    <span className="cut-step">
+                      <Rise text={r.title} cue />
+                    </span>
+                  </span>
                   <span className="mt-2 block max-w-[52ch] text-[16px] leading-[1.45] text-[color:var(--ink-soft)] md:text-[17px]">{r.line}</span>
                 </span>
                 <span className="mono col-start-2 mt-3 md:col-start-3 md:mt-0 md:text-right">
                   {r.readKey && <ReadMark k={r.readKey} />}
                   {r.meta}
-                  <span aria-hidden="true" className="ml-3 text-[color:var(--ink-mid)] transition-colors group-hover:text-[color:var(--ink)]">
+                  <span aria-hidden="true" className="cut-arrow ml-3 text-[color:var(--ink-mid)] group-hover:text-[color:var(--ink)]">
                     &#8599;
                   </span>
                 </span>
+                <span aria-hidden="true" className="cut-sweep" />
               </CutLink>
-            </li>
+            </Reveal>
           ))}
         </ol>
         {children}
@@ -192,16 +209,23 @@ export function ChapterOverview({
 
       {next && (
         <nav className="border-t border-[color:var(--rule)] bg-[color:var(--stage-2)]" aria-label="The next room">
-          <CutLink href={next.href} className="group block" data-cursor="Cut">
-            <div className="mx-auto max-w-[1600px] px-6 py-14 md:px-14 md:py-20">
+          <CutLink href={next.href} className="group relative block" data-cursor="Cut">
+            <Reveal className="mx-auto max-w-[1600px] px-6 py-14 md:px-14 md:py-20">
               <p className="mono">
                 Next <span className="text-[color:var(--ink-mid)]">/</span> {next.n}
               </p>
               <p className="display display-light mt-3 text-[clamp(48px,5.5vw,88px)] transition-colors duration-300 group-hover:text-white">
-                {next.title} <span aria-hidden="true" className="text-[color:var(--ink-mid)] transition-colors group-hover:text-[color:var(--ink)]">&#8599;</span>
+                <span className="cut-step">
+                  <Rise text={next.title} cue />
+                  &nbsp;
+                  <span aria-hidden="true" className="cut-arrow text-[color:var(--ink-mid)] group-hover:text-[color:var(--ink)]">
+                    &#8599;
+                  </span>
+                </span>
               </p>
               <p className="mt-3 max-w-[48ch] text-[17px] leading-[1.45] text-[color:var(--ink-soft)]">{next.blurb}</p>
-            </div>
+            </Reveal>
+            <span aria-hidden="true" className="cut-sweep" />
           </CutLink>
         </nav>
       )}

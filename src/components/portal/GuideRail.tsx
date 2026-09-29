@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useClient } from "@/components/portal/ClientContext";
 import { lastKey, positionKey } from "@/components/portal/Resume";
 
@@ -11,6 +11,11 @@ import { lastKey, positionKey } from "@/components/portal/Resume";
  * scrolled past get a tick for the rest of the visit; nothing is stored.
  * Below the large breakpoint it folds into a cue sheet at the top of the
  * page.
+ *
+ * On the wide rail a tally playhead rides the margin and slides from row to
+ * row as the reading moves on, the way the playhead moves down a running
+ * order. It is placed by writing its style directly, so following the
+ * reader never re-renders the list.
  */
 export function GuideRail({ items, minutes = 0, k }: { items: { id: string; n?: string; title: string }[]; minutes?: number; k?: string }) {
   const me = useClient();
@@ -18,6 +23,31 @@ export function GuideRail({ items, minutes = 0, k }: { items: { id: string; n?: 
   const [read, setRead] = useState<string>("");
   // Whole minutes still to read, from how far down the page the reader is.
   const [left, setLeft] = useState<number>(minutes);
+  const rail = useRef<HTMLOListElement>(null);
+  const head = useRef<HTMLSpanElement>(null);
+
+  // The playhead goes to the row being read, and back to it whenever the
+  // rows reflow (a late web font changes every row's height).
+  useLayoutEffect(() => {
+    const ol = rail.current;
+    const mark = head.current;
+    if (!ol || !mark) return;
+    const place = () => {
+      const row = ol.querySelector<HTMLElement>('a[aria-current="location"]');
+      if (!row) {
+        mark.style.opacity = "0";
+        return;
+      }
+      mark.style.transform = "translateY(" + row.offsetTop + "px)";
+      mark.style.height = row.offsetHeight + "px";
+      mark.style.opacity = "1";
+    };
+    place();
+    if (typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(place);
+    ro.observe(ol);
+    return () => ro.disconnect();
+  }, [active]);
 
   useEffect(() => {
     const els = items.map((it) => document.getElementById(it.id)).filter((el): el is HTMLElement => !!el);
@@ -82,8 +112,9 @@ export function GuideRail({ items, minutes = 0, k }: { items: { id: string; n?: 
     };
   }, [items, minutes, k, me.slug]);
 
-  const list = (
-    <ol className="flex flex-col">
+  const list = (wide: boolean) => (
+    <ol ref={wide ? rail : undefined} className="relative flex flex-col">
+      {wide && <span ref={head} aria-hidden="true" className="rail-head" />}
       {items.map((it) => {
         const on = it.id === active;
         const done = !on && read.split(" ").includes(it.id);
@@ -118,7 +149,7 @@ export function GuideRail({ items, minutes = 0, k }: { items: { id: string; n?: 
             <span>On this page</span>
             {minutes > 0 && <span className="text-[color:var(--ink-mid)]">{left > 0 ? "≈ " + left + " min left" : "Read through"}</span>}
           </p>
-          {list}
+          {list(true)}
         </div>
       </aside>
       {/* narrow: a cue sheet */}
@@ -126,7 +157,7 @@ export function GuideRail({ items, minutes = 0, k }: { items: { id: string; n?: 
         <summary className="mono cursor-pointer list-none text-[color:var(--ink)]">
           On this page <span className="text-[color:var(--ink-mid)]">/ {items.length}</span>
         </summary>
-        <div className="mt-4">{list}</div>
+        <div className="mt-4">{list(false)}</div>
       </details>
     </>
   );

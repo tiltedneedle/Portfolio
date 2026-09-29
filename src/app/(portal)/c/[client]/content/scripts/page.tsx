@@ -1,3 +1,4 @@
+import { Focus, Rise } from "@/components/portal/Scene";
 import type { Metadata } from "next";
 import { ScriptsRail } from "@/components/portal/ScriptsRail";
 import { NextCut } from "@/components/portal/NextCut";
@@ -20,7 +21,7 @@ export default async function ScriptsPage({ params }: { params: Promise<{ client
   return (
     <article className="bg-[color:var(--stage)]">
       <header className="mx-auto max-w-[1600px] px-6 pb-14 pt-28 md:px-14 md:pt-36">
-        <p className="mono flex flex-wrap items-center gap-x-4">
+        <p className="mono scene-slate flex flex-wrap items-center gap-x-4">
           <span>
             {c.n} &mdash; {c.title} <span className="text-[color:var(--ink-mid)]">/</span> {pageNumber("content", "scripts")}
           </span>
@@ -30,9 +31,11 @@ export default async function ScriptsPage({ params }: { params: Promise<{ client
           </span>
           <FilmedCount ns={sys.scripts.filter((s) => s.body?.length).map((s) => s.n)} className="text-[color:var(--ink-mid)]" />
         </p>
-        <h1 className="display mt-6 max-w-[10ch] text-[clamp(52px,8.5vw,140px)]">20 personalised scripts</h1>
+        <h1 className="display mt-6 max-w-[10ch] text-[clamp(52px,8.5vw,140px)]">
+          <Rise text="20 personalised scripts" />
+        </h1>
         <p className="em-serif statement mt-6 max-w-[40ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">
-          {SCRIPTS_INTRO}
+          <Focus text={SCRIPTS_INTRO} />
         </p>
       </header>
 

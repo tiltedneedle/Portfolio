@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import type { AuditReport as Report, AuditSection, PublicIdentity, Verdict } from "@/content/clients/types";
 import { firstMoves, shortName, writtenSections } from "@/content/clients/types";
 import { chapter, pageNumber } from "@/content/chapters";
@@ -10,6 +11,8 @@ import { CompetitorBoard, PositionMap } from "@/components/portal/competitors";
 import { Reveal } from "@/components/portal/Reveal";
 import { PrintButton } from "@/components/portal/PrintButton";
 import { Anchor } from "@/components/portal/Anchor";
+import { Odometer } from "@/components/portal/Odometer";
+import { Focus, Rise, delay } from "@/components/portal/Scene";
 
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
@@ -23,7 +26,7 @@ function Lamp({ verdict, written }: { verdict?: Verdict; written: boolean }) {
   return <span aria-hidden="true" className="inline-block h-2 w-2 rounded-full bg-[color:var(--ink)]" />;
 }
 
-/** A score out of ten as a small arc. */
+/** A score out of ten as a small arc, drawn round as its finding comes on. */
 function Dial({ score, verdict }: { score: number; verdict?: Verdict }) {
   const r = 17;
   const c = 2 * Math.PI * r;
@@ -39,6 +42,8 @@ function Dial({ score, verdict }: { score: number; verdict?: Verdict }) {
         stroke={verdict === "weak" ? "var(--tally)" : "var(--ink)"}
         strokeWidth="2"
         strokeDasharray={(c * v) / 10 + " " + c}
+        className="dial-arc"
+        style={{ "--len": ((c * v) / 10).toFixed(2) } as CSSProperties}
         transform="rotate(-90 22 22)"
         strokeLinecap="butt"
       />
@@ -81,13 +86,15 @@ function Finding({ s, i, who }: { s: AuditSection; i: number; who: string }) {
     s.change?.length ? { label: "We would change", items: s.change, tone: "change" as const } : null,
   ].filter((c): c is NonNullable<typeof c> => !!c);
   return (
-    <section id={"a-" + pad(i)} className="group/section grid scroll-mt-28 gap-x-8 border-t border-[color:var(--rule)] py-12 md:grid-cols-[96px_1fr] md:py-16">
-      <span className="numeral mb-4 text-[56px] md:mb-0 md:text-[72px]" data-n={pad(i)} aria-hidden="true" />
+    <Reveal as="section" id={"a-" + pad(i)} className="cue group/section grid scroll-mt-28 gap-x-8 border-t border-[color:var(--rule)] py-12 md:grid-cols-[96px_1fr] md:py-16">
+      <span className="numeral cue-num mb-4 text-[56px] md:mb-0 md:text-[72px]" data-n={pad(i)} aria-hidden="true" />
       <span className="sr-only">Heading {pad(i)}</span>
       <div className="min-w-0">
         <div className="mb-8 flex flex-wrap items-start justify-between gap-x-8 gap-y-4">
           <div className="flex flex-wrap items-baseline gap-x-3">
-            <h2 className="display max-w-[16ch] text-[clamp(30px,3.6vw,52px)]">{s.title}</h2>
+            <h2 className="display max-w-[16ch] text-[clamp(30px,3.6vw,52px)]">
+              <Rise text={s.title} cue />
+            </h2>
             <Anchor id={"a-" + pad(i)} label={s.title} />
           </div>
           {written && (s.verdict || typeof s.score === "number") && (
@@ -151,7 +158,7 @@ function Finding({ s, i, who }: { s: AuditSection; i: number; who: string }) {
           </div>
         )}
       </div>
-    </section>
+    </Reveal>
   );
 }
 
@@ -178,7 +185,7 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
     <article className="audit-page bg-[color:var(--stage)]">
       <ReadingProgress />
       <header className="mx-auto max-w-[1600px] px-6 pb-14 pt-28 md:px-14 md:pt-36">
-        <p className="mono flex flex-wrap items-center gap-x-4">
+        <p className="mono scene-slate flex flex-wrap items-center gap-x-4">
           <span>
             {c.n} &mdash; {c.title} <span className="text-[color:var(--ink-mid)]">/</span> {n}
           </span>
@@ -192,12 +199,16 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
             </span>
           )}
         </p>
-        <h1 className="display mt-6 max-w-[10ch] text-[clamp(52px,8.5vw,140px)]">{title}</h1>
-        <p className="em-serif statement mt-6 max-w-[40ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">{report.intro}</p>
+        <h1 className="display mt-6 max-w-[10ch] text-[clamp(52px,8.5vw,140px)]">
+          <Rise text={title} />
+        </h1>
+        <p className="em-serif statement mt-6 max-w-[40ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">
+          <Focus text={report.intro} />
+        </p>
 
         <div className="mt-12 grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
           <div className="min-w-0">
-            <p className="mono">
+            <p className="mono scene-up" style={delay(0.5)}>
               {sections.length} headings <span className="text-[color:var(--ink-mid)]">/</span> {written.length} written
             </p>
             {/* the scan: one lamp per heading */}
@@ -244,7 +255,11 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
           </div>
           {average !== null && (
             <div className="desk-avg flex items-end gap-4">
-              <span className="display text-[clamp(56px,7vw,96px)] leading-none text-[color:var(--ink)]">{average}</span>
+              {/* The average lands on its reels as the desk powers up. */}
+              <span className="display text-[clamp(56px,7vw,96px)] leading-none text-[color:var(--ink)]" style={delay(1.3)}>
+                <span className="sr-only">{average}</span>
+                <Odometer value={average} now />
+              </span>
               <span className="mono pb-2 leading-relaxed">
                 out of 10 today
                 <br />

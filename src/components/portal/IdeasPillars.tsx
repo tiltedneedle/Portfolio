@@ -5,10 +5,15 @@ import { pillars } from "@/content/system/pillars";
 import { shortName, type Idea, type Pillar, type PublicIdentity, type Script } from "@/content/clients/types";
 import { CutLink } from "@/components/room/CutLink";
 import { askHref } from "@/lib/ask";
+import { Reveal } from "@/components/portal/Reveal";
+import { Rise } from "@/components/portal/Scene";
 
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
-/** Four pillars, each a rail of twenty-five cards. */
+/**
+ * Four pillars, each a rail of twenty-five cards. A pillar's name rises
+ * into place as the reader reaches it, the way a guide's sections do.
+ */
 export function IdeasPillars({ ideas, identity, scripts = [] }: { ideas: Record<Pillar, Idea[]>; identity: PublicIdentity; scripts?: Script[] }) {
   const who = shortName(identity);
   // The script an idea became, if a written script names it.
@@ -21,13 +26,15 @@ export function IdeasPillars({ ideas, identity, scripts = [] }: { ideas: Record<
         // One full promise per pillar, then spines. See ScriptsRail.
         const firstEmpty = list.findIndex((x) => !x.text);
         return (
-          <section key={p.id} id={p.id} className="scroll-mt-28">
+          <Reveal as="section" key={p.id} id={p.id} className="scroll-mt-28">
             <div className="mb-8 grid gap-6 md:grid-cols-[1fr_minmax(0,44ch)] md:items-end">
               <div>
                 <p className="mono">
                   Pillar {pad(pi)} <span className="text-[color:var(--ink-mid)]">/</span> {list.length} ideas
                 </p>
-                <h2 className="display mt-3 text-[clamp(48px,7vw,120px)]">{p.title}</h2>
+                <h2 className="display mt-3 text-[clamp(48px,7vw,120px)]">
+                  <Rise text={p.title} cue />
+                </h2>
               </div>
               <p className="em-serif text-[19px] leading-snug text-[color:var(--ink-soft)] md:text-[21px]">{p.definition}</p>
             </div>
@@ -82,7 +89,7 @@ export function IdeasPillars({ ideas, identity, scripts = [] }: { ideas: Record<
                 )
               )}
             </Rail>
-          </section>
+          </Reveal>
         );
       })}
     </div>

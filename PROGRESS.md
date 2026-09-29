@@ -213,6 +213,60 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 66 (2026-09-29): every other page opens as a scene.
+      The user asked for "the same for the other pages too". One grammar,
+      shorter than the home's cold open, plus a signature moment where
+      each page type has a natural one. All CSS or reveal-driven, all on
+      top of a page that reads at rest.
+      1. Scene titles (Scene.tsx + globals "scene titles"): the slate wipes
+         on like a lower third (.scene-slate), the title rises word by word
+         through clip-path masks (<Rise>), the line under it is pulled into
+         focus word by word in a fixed ~0.7s however long (<Focus>), the
+         readouts come up (.scene-up, delay()). On guides, rooms, audit
+         reports, ideas, scripts, a script, the door, the 404 and both
+         error pages. The mask is clip-path, not overflow: an overflow
+         inline-block takes its baseline from its bottom edge and opened
+         the leading of every wrapped title. Measured masks: serif
+         descenders need 0.1em, accented capitals 0.2em; .rise gives 0.32
+         and 0.45.
+      2. Held for the frame in front: paused while the slate is up (only
+         when scripts run) AND while a cut's black frame is up
+         (body.is-cutting), so a page reached by a cut plays its titles as
+         the frame lifts. Verified paused during, running after.
+      3. Guide: the poster pushes in out of the dark (.scene-frame, on a
+         wrapper so its own dimming is what it lands on); each numbered
+         section is cued as it arrives (Reveal as="section", .cue): a tally
+         playhead runs its rule and fades, the numeral rises, the heading
+         surfaces word by word; the rail has a tally playhead that glides
+         to the row being read (measured: same top and height as the
+         row); the rule is a closing card: one lamp strikes over the black
+         band and the statements pull into focus a paragraph at a time.
+      4. NextCut: the next page's title rises in as the foot comes on, its
+         film still sits in a small monitor (guides only; stillFor on the
+         server) and runs on hover, a playhead sweeps the foot toward the
+         cut (.cut-sweep/.cut-step/.cut-arrow). The arrow is held to the
+         last word by a no-break space: alone on a line it read as a stray.
+      5. Rooms: the preview monitor powers on like a CRT (a bright line,
+         then the picture opening from it, .monitor-on); each row is cued
+         as it arrives and runs the same hover sweep. Cued words fade as
+         they rise, since the line under a row title is already showing.
+      6. Audit: the desk powers on after the title; the average lands on
+         odometer reels (Odometer `now`: a CSS spin from the same digit two
+         turns back, pausable like the titles); each finding is cued and
+         its score dial draws round from twelve o'clock.
+      7. 404: the monitor shows colour bars and NO SIGNAL, powering on,
+         now and then losing its vertical hold. The one place colour
+         outside the tally belongs.
+      8. Fixed on the way: under reduced motion the home tagline and lead
+         were hidden for ~1s then popped in (the duration rule left the
+         delay; they now take animation: none). Without scripts the slate
+         never came down and covered the whole portal: @media (scripting:
+         none) now hides it.
+      Print shows unrevealed cues landed; keyboard focus lands them too.
+      Verified: contact sheets of every sequence, reduced motion (all 54
+      pieces landed at once, nothing waiting), scripts off, phone widths
+      (no horizontal overflow), smoke and a11y on both servers.
+
 - [x] Wave 65 (2026-09-29): the home page moves like an edit suite.
       The user asked for more creative design, "animations and motion
       specially". Six motions, each an action an edit makes, all running on

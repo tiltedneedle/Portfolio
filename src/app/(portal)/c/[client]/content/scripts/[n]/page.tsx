@@ -1,3 +1,4 @@
+import { Rise, delay } from "@/components/portal/Scene";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CutLink } from "@/components/room/CutLink";
@@ -52,7 +53,7 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
   return (
     <article className="script-page bg-[color:var(--stage)]">
       <header className="mx-auto max-w-[1600px] px-6 pb-12 pt-28 md:px-14 md:pt-36">
-        <p className="mono flex flex-wrap items-center gap-x-4">
+        <p className="mono scene-slate flex flex-wrap items-center gap-x-4">
           <span>
             {c.n} &mdash; {c.title} <span className="text-[color:var(--ink-mid)]">/</span> {pageNumber("content", "scripts")}{" "}
             <span className="text-[color:var(--ink-mid)]">/</span> Script {pad(s.n)} of {pad(sys.scripts.length)}
@@ -61,9 +62,11 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
         </p>
         <div className="mt-6 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <div>
-            <h1 className="display max-w-[14ch] text-[clamp(48px,7.5vw,120px)]">{s.title || "Script " + pad(s.n)}</h1>
+            <h1 className="display max-w-[14ch] text-[clamp(48px,7.5vw,120px)]">
+              <Rise text={s.title || "Script " + pad(s.n)} />
+            </h1>
             {(s.location || s.onCamera || origin) && (
-              <dl className="mono mt-6 flex flex-wrap gap-x-10 gap-y-2">
+              <dl className="mono scene-up mt-6 flex flex-wrap gap-x-10 gap-y-2" style={delay(0.55)}>
                 {s.location && (
                   <div className="flex gap-3">
                     <dt className="text-[color:var(--ink-mid)]">Location</dt>
@@ -89,7 +92,7 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
               </dl>
             )}
           </div>
-          <div className="no-print flex flex-wrap items-center gap-4">
+          <div className="no-print scene-up flex flex-wrap items-center gap-4" style={delay(0.7)}>
             <CopyScript text={scriptAsText(s)} disabled={!written} />
             {written && <Prompter title={"Script " + pad(s.n) + " \u2014 " + s.title} hook={s.hook} body={s.body!} cta={s.cta} spoken={spoken} />}
             {written && <PrintButton />}

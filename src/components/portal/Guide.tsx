@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import type { Guide as GuideT } from "@/content/types";
 import type { GuideNote } from "@/content/clients/types";
 import { ForYou } from "@/components/portal/ForYou";
@@ -14,6 +15,8 @@ import { NextCut } from "@/components/portal/NextCut";
 import { Rich } from "@/components/portal/Rich";
 import { ReadingProgress } from "@/components/portal/ReadingProgress";
 import { ReadToggle } from "@/components/portal/ReadToggle";
+import { Reveal } from "@/components/portal/Reveal";
+import { Focus, Rise, delay } from "@/components/portal/Scene";
 
 /**
  * A guide page: the slate (chapter, number, title, kicker, intro), the
@@ -43,21 +46,25 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
             {/* The width lives on a wrapper, not on the image: `fill` writes its own
                 inline width and would take the poster full-bleed on desktop. Transform,
                 opacity and filter are untouched by it, so they stay put. */}
-            <div className="absolute right-0 top-0 h-full w-full md:w-[58%]">
+            <div className="scene-frame absolute right-0 top-0 h-full w-full md:w-[58%]">
               <Still src={stillFor(guide.poster)} sizes="(min-width:768px) 58vw, 100vw" className="scale-105 object-cover opacity-[0.16] blur-[3px]" />
             </div>
             <div className="absolute inset-0 bg-gradient-to-r from-[color:var(--stage)] via-[rgba(11,11,12,0.82)] to-[rgba(11,11,12,0.45)]" />
             <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-[color:var(--stage)]" />
           </div>
         )}
-        <p className="mono relative">
+        <p className="mono scene-slate relative">
           {ch.n} &mdash; {ch.title} <span className="text-[color:var(--ink-mid)]">/</span> {n}
         </p>
-        <h1 className="display relative mt-6 max-w-[12ch] text-[clamp(52px,8.5vw,140px)]">{guide.title}</h1>
-        <p className="em-serif statement relative mt-6 max-w-[34ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">{guide.kicker}</p>
+        <h1 className="display relative mt-6 max-w-[12ch] text-[clamp(52px,8.5vw,140px)]">
+          <Rise text={guide.title} />
+        </h1>
+        <p className="em-serif statement relative mt-6 max-w-[34ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">
+          <Focus text={guide.kicker} />
+        </p>
 
         <div className="relative mt-12 grid gap-10 md:grid-cols-[1fr_minmax(0,60ch)] md:gap-16">
-          <div className="md:pt-2">
+          <div className="scene-up md:pt-2" style={delay(0.75)}>
             <p className="mono flex flex-col gap-2">
               {numbered > 0 && <span>{numbered} principles</span>}
               <span>{minutes} min read</span>
@@ -94,7 +101,7 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
               </nav>
             )}
           </div>
-          <div className="flex flex-col gap-5">
+          <div className="scene-up flex flex-col gap-5" style={delay(0.62)}>
             {guide.intro.map((p) => (
               <p key={p} className="text-[19px] leading-[1.6] text-[color:var(--ink)] md:text-[21px]">
                 <Rich text={p} />
@@ -130,15 +137,16 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
 
         <div>
           {guide.sections.map((s, i) => (
-            <section
+            <Reveal
+              as="section"
               key={s.title}
               id={sectionId(i)}
-              className="group/section grid scroll-mt-28 gap-x-8 border-t border-[color:var(--rule)] py-12 md:grid-cols-[96px_1fr] md:py-16"
+              className="cue group/section grid scroll-mt-28 gap-x-8 border-t border-[color:var(--rule)] py-12 md:grid-cols-[96px_1fr] md:py-16"
             >
               <div className="mb-4 md:mb-0">
                 {s.n ? (
                   <>
-                    <span className="numeral text-[56px] md:text-[72px]" data-n={s.n} aria-hidden="true" />
+                    <span className="numeral cue-num text-[56px] md:text-[72px]" data-n={s.n} aria-hidden="true" />
                     <span className="sr-only">Section {s.n}</span>
                   </>
                 ) : (
@@ -149,7 +157,9 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
               </div>
               <div className="min-w-0">
                 <div className="mb-8 flex flex-wrap items-baseline gap-x-3">
-                  <h2 className="display max-w-[16ch] text-[clamp(30px,3.6vw,52px)]">{s.title}</h2>
+                  <h2 className="display max-w-[16ch] text-[clamp(30px,3.6vw,52px)]">
+                    <Rise text={s.title} cue />
+                  </h2>
                   <Anchor id={sectionId(i)} label={s.title} />
                 </div>
                 <Blocks blocks={s.blocks} />
@@ -159,14 +169,19 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
                   </div>
                 )}
               </div>
-            </section>
+            </Reveal>
           ))}
         </div>
       </div>
 
-      <section id="rule" className="scroll-mt-28 border-t border-[color:var(--rule)] bg-black py-24 md:py-32">
-        <div className="mx-auto max-w-[1600px] px-6 md:px-14">
-          <p className="mono">The rule</p>
+      <Reveal as="section" id="rule" className="relative scroll-mt-28 border-t border-[color:var(--rule)] bg-black py-24 md:py-32">
+        {/* One lamp over the statement, struck as the band comes on. */}
+        <div aria-hidden="true" className="rule-wash pointer-events-none absolute inset-0" />
+        <div className="relative mx-auto max-w-[1600px] px-6 md:px-14">
+          <p className="mono flex items-center gap-2.5">
+            <span aria-hidden="true" className="lamp rule-lamp" />
+            The rule
+          </p>
           <div className="mt-8 md:ml-[96px] md:max-w-[52ch]">
             <RuleBlocks blocks={guide.rule.filter((r) => r.kind !== "figure")} />
           </div>
@@ -182,7 +197,7 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
             </div>
           )}
         </div>
-      </section>
+      </Reveal>
 
       <ReadToggle k={guide.chapter + "/" + guide.slug} ask="Got the rule?" />
       <NextCut chapter={guide.chapter} slug={guide.slug} client={client} />
@@ -190,13 +205,17 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
   );
 }
 
-/** The rule is set larger than the body: paragraphs become statements. */
+/**
+ * The rule is set larger than the body: paragraphs become statements,
+ * pulled into focus one after another as the band comes on.
+ */
 function RuleBlocks({ blocks }: { blocks: GuideT["rule"] }) {
+  let line = 0;
   return (
     <div className="flex flex-col gap-8">
       {blocks.map((b, i) =>
         b.kind === "p" ? (
-          <p key={i} className="em-serif statement text-[clamp(26px,3.4vw,44px)] leading-[1.2] text-[color:var(--ink)]">
+          <p key={i} className="em-serif statement rule-line text-[clamp(26px,3.4vw,44px)] leading-[1.2] text-[color:var(--ink)]" style={{ "--i": line++ } as CSSProperties}>
             <Rich text={b.text} />
           </p>
         ) : (

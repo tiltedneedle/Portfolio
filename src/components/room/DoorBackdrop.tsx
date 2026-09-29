@@ -10,6 +10,8 @@ import { reel } from "@/content/system/reel";
  * the one page a stranger can reach, so the work gives it depth without
  * telling anyone whose work it is: no names, no counts, nothing legible.
  * Each row is doubled so the drift meets itself; reduced motion holds it.
+ * The work comes up out of the dark as the door opens (.scene-frame, on a
+ * wrapper so the rows' own dimming is what it lands on).
  */
 const FRAMES = 12;
 
@@ -40,9 +42,11 @@ export function DoorBackdrop() {
 
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-      <div className="absolute inset-0 flex flex-col justify-center gap-4 opacity-[0.17] blur-[5px]">
-        {row(take(0), "drift")}
-        {row(take(4), "drift-back")}
+      <div className="scene-frame absolute inset-0">
+        <div className="absolute inset-0 flex flex-col justify-center gap-4 opacity-[0.17] blur-[5px]">
+          {row(take(0), "drift")}
+          {row(take(4), "drift-back")}
+        </div>
       </div>
       {/* the form reads on the left, so the stage is heaviest there */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--stage)_0%,rgba(11,11,12,0.88)_42%,rgba(11,11,12,0.62)_100%)]" />

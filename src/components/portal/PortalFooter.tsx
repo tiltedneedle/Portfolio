@@ -43,9 +43,10 @@ const link = linkBase + " text-[color:var(--ink-soft)]";
  * 132px, narrower than its own email address, so on a tablet the sign-off
  * runs across the top and the other two share the row under it.
  *
- * The room you are in is lit in the list, as it is in the nav: ink, and the
- * tally lamp, held still (the playhead in the timeline above is the one that
- * breathes). On a phone the list is two short columns, read down.
+ * The room you are in is lit in the list in ink and tally red, as it is in
+ * the nav (the line under its name in the bar, the lamp in the menu); the
+ * lamp is held still here, since the playhead in the timeline above is the
+ * one that breathes. On a phone the list is two short columns, read down.
  */
 export function PortalFooter({ rooms = chapters, clips }: { rooms?: Room[]; clips?: Clip[] }) {
   const who = useClient();

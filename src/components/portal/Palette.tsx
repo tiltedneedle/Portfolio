@@ -342,6 +342,7 @@ export function Palette({ items }: { items: PaletteItem[] }) {
         className="mono no-print fixed bottom-6 left-6 z-40 hidden items-center gap-3 border border-[color:var(--rule-strong)] bg-[rgba(11,11,12,0.7)] px-3 py-2 backdrop-blur-md transition-colors hover:text-[color:var(--ink)] md:flex"
         aria-label="Open the contents"
         data-cursor="Open"
+        data-float=""
       >
         Contents <span className="text-[color:var(--ink-mid)]">{KEYS}</span>
       </button>

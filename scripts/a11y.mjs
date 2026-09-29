@@ -174,6 +174,43 @@ for (const w of widths) {
       "desktop  commission open" + (shown ? "" : "  (did not open, or focus is outside it)") + (closed ? "" : "  (Escape left it open or the page locked)") + (com.violations.length ? "  axe: " + com.violations.join("; ") : "")
     );
   }
+
+  // The nav: a room's panel, opened from the keyboard, is a list of its own;
+  // Escape closes it and hands focus back to the room without reopening it.
+  await page.setViewportSize({ width: widths[0].width, height: widths[0].height });
+  await visit(page, base + "/create/hooks");
+  await page.focus("[data-nav] a[aria-label='Home']");
+  await page.keyboard.press("Tab");
+  await page.waitForTimeout(400);
+  await page.addScriptTag({ content: axeSource });
+  const pan = await audit();
+  const panelShown = await page.evaluate(() => !!document.querySelector("[data-nav] .panel"));
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(300);
+  const panelBack = await page.evaluate(() => !document.querySelector("[data-nav] .panel") && !!document.activeElement?.closest("[data-room]"));
+  say(
+    panelShown && panelBack && pan.violations.length === 0,
+    "desktop  room panel open" + (panelShown ? "" : "  (did not open on focus)") + (panelBack ? "" : "  (Escape left it open, or dropped focus)") + (pan.violations.length ? "  axe: " + pan.violations.join("; ") : "")
+  );
+
+  // The menu on a phone fills the screen: the page behind it is inert while
+  // it is open, and Escape closes it and hands focus back to its button.
+  await page.setViewportSize({ width: widths[1].width, height: widths[1].height });
+  await visit(page, base + "/create/hooks");
+  await page.click("[data-nav] button[aria-controls='system-menu']");
+  await page.waitForTimeout(800);
+  await page.addScriptTag({ content: axeSource });
+  const men = await audit();
+  const menuShown = await page.evaluate(() => !!document.querySelector("#system-menu") && !!document.querySelector("main")?.hasAttribute("inert"));
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(500);
+  const menuBack = await page.evaluate(
+    () => !document.querySelector("#system-menu") && !document.querySelector("main")?.hasAttribute("inert") && document.activeElement?.getAttribute("aria-controls") === "system-menu"
+  );
+  say(
+    menuShown && menuBack && men.violations.length === 0,
+    "phone    menu open" + (menuShown ? "" : "  (did not open, or the page behind is not inert)") + (menuBack ? "" : "  (Escape left it open, or dropped focus)") + (men.violations.length ? "  axe: " + men.violations.join("; ") : "")
+  );
 } finally {
   await browser.close();
 }

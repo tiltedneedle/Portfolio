@@ -30,6 +30,10 @@ export function TopMark() {
       type="button"
       onClick={() => window.scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" })}
       aria-label="Back to top"
+      // Out of the tab order while it is faded out at the top of the page.
+      tabIndex={shown ? undefined : -1}
+      aria-hidden={shown ? undefined : true}
+      data-float=""
       className={
         "slate-link no-print fixed bottom-6 right-6 z-40 border border-[color:var(--rule-strong)] bg-[rgba(11,11,12,0.7)] px-3 py-2 backdrop-blur-md transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] md:right-14 " +
         (shown ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0")

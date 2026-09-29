@@ -213,6 +213,51 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 73 (2026-09-30): the navbar, looped the same way.
+      "Now do the same for the navbar if applicable." Measured at eleven
+      widths on both clients, with every panel opened and the menu open.
+      Found and fixed:
+      - The room you are in was never marked on a fresh load: the server
+        renders these pages at their rewritten path, so it lit nothing, and
+        React keeps the server's class through hydration. "Here" is now
+        read in the browser only (as the footer and the reel do), and the
+        room carries aria-current and a tally line along the foot of the
+        bar. Going to another room, the line slides along the bar to it.
+      - Lighting a room (the hover grammar: the italic drop and the grow)
+        reflowed the row, so the rooms left of the pointer moved about 65px
+        out from under it. Each name is now set twice in one grid cell, mono
+        and italic, as wide as the wider, and the faces cross-fade: nothing
+        moves (0px, measured at every width).
+      - On a wide screen the bar ran edge to edge while the page kept its
+        1600px measure (the mark at 56px, the page at 200px at 1895): the
+        bar's contents now keep the measure.
+      - The inline rooms needed about 660px beside the mark: at 900 the
+        template's padlocked names broke in two and the mark touched the
+        first room (0px apart). The rooms go inline from lg, the menu below;
+        the mark and rooms can never touch (gap-8), and the client's name
+        joins the mark from lg if short, xl if long.
+      - Panels hung 3px into the bar; they now hang from its foot, the cue
+        running straight into the open panel's edge.
+      - The room names' capitals sat 1.6px under the wordmark's (by cap
+        height); lined up.
+      - The menu (below lg): the floating Contents and Top buttons showed
+        through it and could be tabbed to under it; the page behind was
+        tabbable; Escape dropped focus. Now the page, footer and skip link
+        are inert while it is open, the floating buttons stand down, and
+        Escape hands focus back to the Menu button (or, from a panel, to its
+        room, without reopening it). On a tablet it is two columns; each
+        room's pages start where its name does (they had sat 5px off); and
+        the red lamp means one thing everywhere, you are here (it had also
+        marked the personalised rooms).
+      - The Top button, faded out at the top of a page, was still in the tab
+        order: out of it until it shows.
+      The a11y run now opens a room's panel from the keyboard and the menu on
+      a phone, runs axe on each, and checks Escape.
+      Verified: nav audit (alignment, gaps, wraps, cap heights, hover shift,
+      panels, cue) at 390-1895 on both clients; keyboard walk of the menu
+      and panels; the cue sampled mid-slide; collisions and overflow site
+      wide; smoke, a11y, vitest (137) and the brief guard.
+
 - [x] Wave 72 (2026-09-30): evenness, and the footer looped until it held.
       "Isn't this a bit uneven?" (the home objective in eleven ragged
       lines), "look for more uneven sections like this on all pages", and

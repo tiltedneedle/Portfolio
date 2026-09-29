@@ -830,12 +830,34 @@ a:focus-visible > .wm {
    to the serif italic, and the hovered one grows */
 .room-link {
   display: inline-block;
+  /* Measured by cap height, the mono names sat 1.6px under the wordmark's
+     middle (the italic face sharing their cell sets the baseline); this
+     lines their capitals up with its. */
+  position: relative;
+  top: -1.5px;
   transition:
     transform var(--dur-fast) var(--ease-out-expo),
     color var(--dur-fast) var(--ease-out-expo);
   transform-origin: center;
 }
-.room-link.is-lit {
+/* A room's name is set twice in one cell (PortalNav.tsx, RoomLabel): the
+   mono label it rests as and the serif italic it drops to when lit. The cell
+   takes the wider of the two, so lighting changes the face and moves
+   nothing; the faces cross-fade. Opacity, not visibility, so the resting
+   name stays in the accessibility tree while the pointer is on it. */
+.room-label {
+  display: inline-grid;
+  align-items: baseline;
+  /* Each face centred in the cell: left-set, the narrower italic left its
+     slack all on one side and the lit rooms stood 29 to 43px apart. */
+  justify-items: center;
+}
+.room-face {
+  grid-area: 1 / 1;
+  white-space: nowrap;
+  transition: opacity var(--dur-fast) var(--ease-out-expo);
+}
+.room-face-lit {
   font-family: var(--font-serif-face), Georgia, serif;
   font-style: italic;
   font-weight: 400;
@@ -843,9 +865,34 @@ a:focus-visible > .wm {
   letter-spacing: 0;
   font-size: 17px;
   color: var(--ink);
+  opacity: 0;
+}
+.room-link.is-lit .room-face:not(.room-face-lit) {
+  opacity: 0;
+}
+.room-link.is-lit .room-face-lit {
+  opacity: 1;
 }
 .room-link.is-hot {
   transform: scale(1.22);
+}
+/* The room you are in: the tally line along the foot of the bar, under its
+   name. It draws in from the left as the first page opens and slides to
+   the next room after (PortalNav.tsx, by script, so reduced motion holds
+   it still there). */
+.room-cue {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--tally);
+  box-shadow: 0 0 10px var(--tally-glow);
+}
+/* While the menu fills the screen the floating Contents and Top buttons
+   stand down: they sat over it, and could be tabbed to under it. */
+body.menu-open [data-float] {
+  visibility: hidden;
 }
 
 /* ============================================================== the system
@@ -2781,6 +2828,9 @@ body.is-cutting
 }
 @media (prefers-reduced-motion: reduce) {
   .flashcard-face {
+    transition: none;
+  }
+  .room-face {
     transition: none;
   }
   .tw-caret {

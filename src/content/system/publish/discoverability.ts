@@ -4,11 +4,11 @@ export const discoverability: Guide = {
   chapter: "publish",
   slug: "discoverability",
   title: "Discoverability",
-  kicker: "Help the platforms understand what your content is about, and who it is for.",
+  kicker: "Creating strong content is the first objective.",
   example: { client: "The Jet Business", handle: "thejetbusiness" },
   poster: "WtFrrO8SvTE",
   intro: [
-    "Creating strong content is the first objective. The second is helping the platforms understand what that content is about and who might be interested in it.",
+    "The second is helping the platforms understand what that content is about and who might be interested in it.",
     "This matters because social platforms are increasingly becoming search engines as well as entertainment platforms.",
     "The examples here are from *The Jet Business*, a client whose films are on the showreel. Read them as a worked example: the principle is the same in your field, the specifics are yours.",
   ],
@@ -75,15 +75,16 @@ export const discoverability: Guide = {
         { kind: "p", text: "Think about how someone unfamiliar with your company would search for the information. A private aviation professional may naturally use technical terminology. The audience might not." },
         {
           kind: "swaps",
-          fromLabel: "A professional might say",
-          toLabel: "A customer might search",
+          title: "For example:",
+          fromLabel: "An industry professional might talk about:",
+          toLabel: "A potential customer might search:",
           pairs: [{ from: "Ultra long range business aircraft.", to: "Which private jet can fly from London to Los Angeles?" }],
         },
         { kind: "p", text: "Both describe a similar subject. When planning educational content, think about the question the audience would actually type." },
         {
           kind: "swaps",
-          fromLabel: "Instead of creating",
-          toLabel: "You could create",
+          fromLabel: "Instead of creating:",
+          toLabel: "you could create:",
           pairs: [
             { from: "Aircraft Range Explained", to: "How Far Can A Private Jet Fly Without Stopping?" },
             { from: "Cabin Configuration Differences", to: "Which Private Jet Has The Biggest Cabin?" },
@@ -112,11 +113,11 @@ export const discoverability: Guide = {
         {
           kind: "keyed",
           items: [
-            { label: "The spoken hook", lines: ["“This is one of the biggest misconceptions about flying private.”", "Good curiosity. But the platform still needs context."] },
-            { label: "The title", lines: ["Do Private Jets Really Save That Much Time?"] },
-            { label: "The caption", lines: ["Discusses private aviation, airport access and travel time."] },
+            { label: "Imagine the spoken hook is:", lines: ["“This is one of the biggest misconceptions about flying private.”", "Good curiosity. But the platform still needs context."] },
+            { label: "Your title could be:", lines: ["Do Private Jets Really Save That Much Time?"] },
           ],
         },
+        { kind: "p", text: "Your caption could discuss private aviation, airport access and travel time." },
         { kind: "p", text: "Now you retain the curiosity of the hook while still clearly communicating the subject. You do not need to repeat the exact same sentence everywhere. Different parts of the post can contribute different pieces of information." },
       ],
     },
@@ -142,12 +143,11 @@ export const discoverability: Guide = {
         { kind: "p", text: "Do not assume the visual alone communicates everything." },
         {
           kind: "pairs",
-          aLabel: "If you are",
-          bLabel: "Say",
+          // The brief's three sentences, each split where it turns to what to say.
           items: [
-            { a: "Standing inside a Gulfstream G700", b: "“We are inside the Gulfstream G700.”" },
-            { a: "Discussing an empty leg", b: "“Empty leg flight.”" },
-            { a: "Comparing Gulfstream and Bombardier", b: "Both manufacturers, by name." },
+            { a: "If you are standing inside a Gulfstream G700, say:", b: "“We are inside the Gulfstream G700.”" },
+            { a: "If you are discussing an empty leg, use the phrase:", b: "“empty leg flight.”" },
+            { a: "If you are comparing Gulfstream and Bombardier,", b: "name both manufacturers." },
           ],
         },
         { kind: "p", text: "TikTok specifically confirms that voiceover can be used as a relevance signal through automatic speech recognition. This gives you another reason to communicate subjects clearly rather than relying only on captions." },

@@ -4,13 +4,13 @@ export const videoStyle: Guide = {
   chapter: "create",
   slug: "video-style",
   title: "Choose your video style",
-  kicker: "The idea comes first. Then the format that makes it most interesting to watch.",
+  kicker: "Once you have the idea, the next step is deciding how that idea should be presented.",
   example: { client: "The Jet Business", handle: "thejetbusiness" },
   poster: "93f2iVn6rIc",
   intro: [
-    "Once you have the idea, the next step is deciding how that idea should be presented.",
-    "In aviation, you often have access to highly visual environments: aircraft, hangars, cabins, airports, clients and experiences that most people never get to see. The format you choose should take advantage of that access.",
+    "In aviation, you often have access to highly visual environments, aircraft, hangars, cabins, airports, clients and experiences that most people never get to see. The format you choose should take advantage of that access.",
     "The same topic could be filmed as a Q&A inside a Gulfstream, a Day In The Life at an FBO, a reaction to a new Bombardier launch or a short documentary following an aircraft delivery.",
+    "The idea comes first. Then you choose the format that makes it most interesting to watch.",
     "The examples here are from *The Jet Business*, a client whose films are on the showreel. Read them as a worked example: the principle is the same in your field, the specifics are yours.",
   ],
   film: { title: "Choose your video style", youtubeId: "i3i4QBWSFPg" },
@@ -258,14 +258,14 @@ export const videoStyle: Guide = {
         {
           kind: "pairs",
           title: "For example",
-          aLabel: "If you are explaining",
-          bLabel: "Show",
+          // The brief's five sentences, each split at its comma across the
+          // two columns: the words are the brief's, only the line is broken.
           items: [
-            { a: "The difference between a Gulfstream and a Bombardier", b: "The aircraft, cabin, windows, cockpit or features you are discussing." },
-            { a: "Aircraft range", b: "The aircraft alongside maps or relevant journey footage." },
-            { a: "Cabin configuration", b: "The different areas of the cabin." },
-            { a: "Charter operations", b: "The terminal, crew preparation and aircraft turnaround." },
-            { a: "Aircraft maintenance", b: "The hangar, engineering environment or relevant components where appropriate." },
+            { a: "If you are explaining the difference between a Gulfstream and a Bombardier,", b: "show the aircraft, cabin, windows, cockpit or features you are discussing." },
+            { a: "If you are explaining aircraft range,", b: "show the aircraft alongside maps or relevant journey footage." },
+            { a: "If you are discussing cabin configuration,", b: "show the different areas of the cabin." },
+            { a: "If you are explaining charter operations,", b: "show the terminal, crew preparation and aircraft turnaround." },
+            { a: "If you are discussing aircraft maintenance,", b: "show the hangar, engineering environment or relevant components where appropriate." },
           ],
         },
         { kind: "aside", text: "The B roll should help the viewer understand what you are saying. It should not simply fill the screen." },

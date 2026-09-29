@@ -102,10 +102,10 @@ export const ideation: Guide = {
           fromLabel: "Original idea",
           from: "The biggest mistake people make when buying a private jet.",
           to: [
-            { text: "The biggest mistake first time buyers make." },
-            { text: "The most expensive mistake buyers make." },
-            { text: "A mistake even experienced buyers still make." },
-            { text: "A mistake nobody warns buyers about." },
+            { label: "Angle 01", text: "The biggest mistake first time buyers make." },
+            { label: "Angle 02", text: "The most expensive mistake buyers make." },
+            { label: "Angle 03", text: "A mistake even experienced buyers still make." },
+            { label: "Angle 04", text: "A mistake nobody warns buyers about." },
           ],
         },
         { kind: "p", text: "You can also change the perspective." },
@@ -170,7 +170,7 @@ export const ideation: Guide = {
         { kind: "p", text: "AI can be useful for taking an idea you already have and expanding it." },
         {
           kind: "list",
-          title: "Ask it to",
+          title: "For example, you can ask it to:",
           items: [
             "Find alternative angles",
             "Generate follow up questions",
@@ -181,7 +181,7 @@ export const ideation: Guide = {
         },
         {
           kind: "aside",
-          text: "AI should support the process rather than replace your judgement. You understand your business, experiences and audience better than any AI tool does. Use it to accelerate your thinking, not replace it.",
+          text: "But AI should support the process rather than replace your judgement. You understand your business, experiences and audience better than any AI tool does. Use it to accelerate your thinking, not replace it.",
         },
       ],
     },

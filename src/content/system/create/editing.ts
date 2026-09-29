@@ -4,11 +4,11 @@ export const editing: Guide = {
   chapter: "create",
   slug: "editing",
   title: "Retention editing blueprint",
-  kicker: "Control what the viewer sees, hears and feels from the first second until the last.",
+  kicker: "Editing is not about adding as many effects as possible.",
   example: { client: "The Jet Business", handle: "thejetbusiness" },
   poster: "KGVOiwba6gA",
   intro: [
-    "Editing is not about adding as many effects as possible. The editor's job is to control what the viewer sees, hears and feels from the first second until the last.",
+    "The editor's job is to control what the viewer sees, hears and feels from the first second until the last.",
     "The examples here are from *The Jet Business*, a client whose films are on the showreel. Read them as a worked example: the principle is the same in your field, the specifics are yours.",
   ],
   opener: [
@@ -71,10 +71,8 @@ export const editing: Guide = {
         {
           kind: "keyed",
           items: [
-            { label: "If the hook is", lines: ["“Can you identify this private jet from the windows alone?”"] },
-            { label: "Then", lines: ["Do not open with a generic shot of an airport. Open with a close shot of the windows. Let the visual reinforce the question immediately."] },
-            { label: "If the video begins", lines: ["“We nearly lost this aircraft deal 24 hours before completion.”"] },
-            { label: "Then", lines: ["Consider opening with footage from the deal, the aircraft, the inspection or a reaction from the person telling the story."] },
+            { label: "If the hook is:", lines: ["“Can you identify this private jet from the windows alone?”", "Do not open with a generic shot of an airport. Open with a close shot of the windows. Let the visual reinforce the question immediately."] },
+            { label: "If the video begins:", lines: ["“We nearly lost this aircraft deal 24 hours before completion.”", "Consider opening with footage from the deal, the aircraft, the inspection or a reaction from the person telling the story."] },
           ],
         },
         { kind: "p", text: "The viewer should immediately feel like something is happening." },
@@ -85,8 +83,8 @@ export const editing: Guide = {
             {
               kind: "steps",
               items: [
-                { title: "Pause on the first frame", text: "Would that image make someone curious?" },
-                { title: "Listen to only the first sentence", text: "Would that sentence make someone curious?" },
+                { title: "Pause the video on the first frame.", text: "Would that image make someone curious?" },
+                { title: "Then listen to only the first sentence.", text: "Would that sentence make someone curious?" },
               ],
             },
             { kind: "p", text: "The strongest videos usually have both working together." },
@@ -105,11 +103,11 @@ export const editing: Guide = {
         {
           kind: "split",
           a: {
-            label: "Speed up when",
+            label: "Speed up when:",
             items: ["The information is simple", "The viewer already understands the context", "You are moving between features", "You are showing several visual examples", "You are building excitement"],
           },
           b: {
-            label: "Slow down when",
+            label: "Slow down when:",
             items: ["Something important is being revealed", "The viewer needs time to understand a point", "There is an emotional moment", "You are showing something visually impressive", "You are building tension"],
           },
         },
@@ -120,8 +118,8 @@ export const editing: Guide = {
             { kind: "p", text: "Watch the speaker closely. If there is a long breath, pause or unnecessary word, ask whether it needs to remain." },
             {
               kind: "swaps",
-              fromLabel: "Before",
-              toLabel: "After",
+              fromLabel: "For example:",
+              toLabel: "Could become:",
               pairs: [{ from: "So basically what you have to understand is that this aircraft has a range of...", to: "This aircraft has a range of..." }],
             },
             { kind: "p", text: "You have not removed any value. You have simply made the information arrive faster." },
@@ -149,9 +147,8 @@ export const editing: Guide = {
             { kind: "p", text: "Match movement between two shots." },
             {
               kind: "pairs",
-              aLabel: "Shot one",
-              bLabel: "Shot two",
-              items: [{ a: "Someone walking towards one aircraft.", b: "Them continuing the movement beside another aircraft." }],
+              title: "For example:",
+              items: [{ a: "Someone walking towards one aircraft", b: "Cut to them continuing the movement beside another aircraft" }],
             },
             { kind: "p", text: "This can make comparisons feel much more polished." },
           ],
@@ -180,14 +177,13 @@ export const editing: Guide = {
         { kind: "p", text: "This is one of the biggest advantages you have when creating aviation content. The subject itself is extremely visual. Use that." },
         {
           kind: "pairs",
-          aLabel: "If someone says",
-          bLabel: "Show",
+          // The brief's five, each "if" and its "show" on one row.
           items: [
-            { a: "“The windows on this Gulfstream are significantly larger.”", b: "The windows." },
-            { a: "“This aircraft has a separate crew rest area.”", b: "The crew rest area." },
-            { a: "A flight route", b: "A map." },
-            { a: "The luggage compartment", b: "The compartment." },
-            { a: "The cabin layout", b: "The layout, while they speak." },
+            { a: "If someone says: “The windows on this Gulfstream are significantly larger.”", b: "Show the windows." },
+            { a: "If they say: “This aircraft has a separate crew rest area.”", b: "Show it." },
+            { a: "If they explain a flight route:", b: "Show a map." },
+            { a: "If they discuss the luggage compartment:", b: "Show the compartment." },
+            { a: "If they explain the cabin layout:", b: "Show the layout while they speak." },
           ],
         },
         { kind: "p", text: "This creates what we call visual confirmation. The viewer hears the information and immediately sees evidence of it. That makes the content easier to understand and more satisfying to watch." },
@@ -390,7 +386,7 @@ export const editing: Guide = {
       blocks: [
         {
           kind: "checklist",
-          title: "Every element of the edit should answer at least one of these",
+          title: "Every element of the edit should answer at least one of these questions:",
           items: ["Does this make the story clearer?", "Does this keep the viewer interested?", "Does this make the moment feel stronger?"],
           note: "If the answer is no, remove it.",
         },

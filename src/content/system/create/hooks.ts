@@ -4,7 +4,7 @@ export const hooks: Guide = {
   chapter: "create",
   slug: "hooks",
   title: "Hooks",
-  kicker: "The first few seconds decide whether someone keeps watching or scrolls past.",
+  kicker: "The first few seconds of your video determine whether someone keeps watching or scrolls past.",
   example: { client: "The Jet Business", handle: "thejetbusiness" },
   poster: "R0YRf0nWEw4",
   intro: [
@@ -21,7 +21,7 @@ export const hooks: Guide = {
         { kind: "p", text: "Before someone has even processed what you are saying, they have already seen the first frame of the video. Use something visually interesting to immediately interrupt the feed." },
         {
           kind: "list",
-          title: "This could be",
+          title: "In aviation, this could be:",
           style: "tag",
           items: [
             "Walking onto a Gulfstream",
@@ -231,14 +231,13 @@ export const hooks: Guide = {
       title: "Combine your hooks",
       blocks: [
         { kind: "p", text: "The strongest openings often use more than one type of hook." },
-        {
-          kind: "keyed",
-          title: "For example",
-          items: [
-            { label: "The visual hook", lines: ["A Gulfstream is already taxiing behind you."] },
-            { label: "The verbal hook, and curiosity", lines: ["“This aircraft can fly for more than 14 hours, but range is not the reason I would buy it.”"] },
-          ],
-        },
+        // The brief's worked example, in its own order and words.
+        { kind: "p", text: "For example:" },
+        { kind: "p", text: "A Gulfstream is already taxiing behind you." },
+        { kind: "p", text: "That is the **visual hook**." },
+        { kind: "p", text: "You immediately say:" },
+        { kind: "lines", mode: "spoken", items: ["This aircraft can fly for more than 14 hours, but range is not the reason I would buy it."] },
+        { kind: "p", text: "That creates the **verbal hook** and **curiosity**." },
         { kind: "p", text: "You are giving the viewer several reasons to continue watching at the same time." },
         {
           kind: "clips",
@@ -272,10 +271,9 @@ export const hooks: Guide = {
             { front: "Can you tell which one of these jets costs more to operate?", back: "Challenge" },
             { front: "I will explain empty legs in 30 seconds.", back: "Instant value" },
             { front: "A Gulfstream is already taxiing behind you.", back: "Visual" },
-            { front: "The cabin door closes, and the engines start.", back: "Audio" },
+            { front: "The cabin door closing", back: "Audio" },
             { front: "This aircraft can fly for more than 14 hours, but range is not the reason I would buy it.", back: "Verbal, curiosity and authority" },
           ],
-          note: "If you can name it, you can write it. Now write three of your own before you film.",
         },
       ],
     },

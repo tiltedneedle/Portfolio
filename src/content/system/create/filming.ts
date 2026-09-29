@@ -4,11 +4,11 @@ export const filming: Guide = {
   chapter: "create",
   slug: "filming",
   title: "Viral filming blueprint",
-  kicker: "Every shot should give the viewer a reason to keep watching.",
+  kicker: "Great filming is not simply about making something look cinematic.",
   example: { client: "The Jet Business", handle: "thejetbusiness" },
   poster: "EcAAmQII-9c",
   intro: [
-    "Great filming is not simply about making something look cinematic. Every shot should help keep the viewer engaged, communicate the story clearly and give the editor everything they need to create a strong final video.",
+    "Every shot should help keep the viewer engaged, communicate the story clearly and give the editor everything they need to create a strong final video.",
     "In aviation, you already have access to visually powerful environments.",
     "The examples here are from *The Jet Business*, a client whose films are on the showreel. Read them as a worked example: the principle is the same in your field, the specifics are yours.",
   ],
@@ -275,16 +275,17 @@ export const filming: Guide = {
             "Reactive camera movement",
           ],
         },
+        // Four of the brief's shot types, drawn. Labelled in the brief's
+        // words only: the captions and the "at least three" rule that used
+        // to sit under it were ours, not the brief's.
         {
           kind: "shots",
-          title: "Four sizes, same subject",
           items: [
-            { label: "Wide", size: "wide", text: "The aircraft, the hangar, the person in the space. Establishes where we are." },
-            { label: "Medium", size: "medium", text: "Waist up. The default for someone speaking to camera." },
-            { label: "Close", size: "close", text: "The face. Reactions, emphasis, the important sentence." },
-            { label: "Detail", size: "detail", text: "Hands, controls, materials. The thing you want noticed." },
+            { label: "Wide shots", size: "wide" },
+            { label: "Medium shots", size: "medium" },
+            { label: "Close ups", size: "close" },
+            { label: "Detail shots", size: "detail" },
           ],
-          note: "Grid on. Eyeline on the upper third. Cut between at least three of these in every video.",
         },
         { kind: "p", text: "A viewer should continuously receive new visual information." },
       ],
@@ -315,15 +316,12 @@ export const filming: Guide = {
         { kind: "p", text: "Different lenses create different results." },
         {
           kind: "split",
-          a: { label: "Use wider lenses to show", items: ["The full cabin", "A confined interior", "A large environment", "Someone walking through an aircraft"] },
-          b: { label: "Use tighter lenses for", items: ["Details", "Faces", "Aircraft features", "Hands", "Controls", "Materials", "Small elements you want the audience to notice"] },
+          a: { label: "Use wider lenses when you need to show:", items: ["The full cabin", "A confined interior", "A large environment", "Someone walking through an aircraft"] },
+          b: { label: "Use tighter lenses for:", items: ["Details", "Faces", "Aircraft features", "Hands", "Controls", "Materials", "Small elements you want the audience to notice"] },
         },
-        {
-          kind: "lens",
-          title: "From the same spot",
-          wide: "Takes the whole cabin: every seat, the length of it, the person walking through.",
-          tight: "Takes one control on the panel, and nothing else. The viewer looks where you looked.",
-        },
+        // The two lists above, drawn from one camera position; captioned
+        // with the first item of each list, in the brief's words.
+        { kind: "lens", wide: "The full cabin", tight: "Details" },
         { kind: "p", text: "Avoid unnecessary extreme zooms. Choose the lens based on what the viewer needs to see." },
       ],
     },

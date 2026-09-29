@@ -4,7 +4,7 @@ export const understandingYourAnalytics: Guide = {
   chapter: "analyse",
   slug: "understanding-your-analytics",
   title: "Understanding your analytics",
-  kicker: "Analytics should answer one question.",
+  kicker: "Analytics should answer one question:",
   poster: "BC_ZaHvv01U",
   intro: ["What should we do differently in the next video?"],
   opener: [
@@ -22,19 +22,20 @@ export const understandingYourAnalytics: Guide = {
         {
           kind: "split",
           a: {
-            label: "If viewers leave immediately, look at",
+            label: "If viewers leave immediately, the problem is usually near the beginning. Look at:",
             items: ["The hook", "The first visual", "How quickly you get to the point", "Whether the subject is immediately clear"],
           },
           b: {
-            label: "If they stay through the opening but leave later, look at",
+            label: "If viewers stay through the opening but leave later, the hook probably worked. The problem may instead be:",
             items: ["Slow pacing", "Too much explanation", "Repetition", "Not enough visual change", "The answer becoming obvious too early", "The story drifting away from the original hook"],
           },
         },
-        { kind: "retention", title: "Where attention is lost", note: "Every retention graph has the same two exits. Read yours for which one is open." },
+        // The two exits the section describes, drawn. No caption of our own.
+        { kind: "retention" },
         {
           kind: "aside",
           label: "Action point",
-          text: "If viewers leave early, improve the opening. If they leave halfway through, improve the structure and pacing. If retention remains strong, reuse that structure on another topic in your field.",
+          text: "If viewers leave early, improve the opening. If they leave halfway through, improve the structure and pacing. If retention remains strong, reuse that structure with another aviation topic.",
         },
       ],
     },
@@ -45,15 +46,15 @@ export const understandingYourAnalytics: Guide = {
         { kind: "p", text: "Pay close attention when a video performs significantly better than your usual content. Do not simply celebrate the views and move on. Ask what changed." },
         {
           kind: "list",
-          title: "Was it",
+          title: "Was it:",
           style: "tag",
-          items: ["The topic", "The subject", "The hook", "The person on camera", "The format", "The story", "The access", "The title"],
+          items: ["The topic", "The aircraft", "The hook", "The person on camera", "The format", "The story", "The access", "The title"],
         },
-        { kind: "p", text: "For example, if videos comparing two of the things you sell repeatedly outperform a straight tour of one, the lesson may be that your audience responds strongly to comparisons." },
+        { kind: "p", text: "For example, if Gulfstream versus Bombardier videos repeatedly outperform standard aircraft tours, the lesson may be that your audience responds strongly to comparisons." },
         {
           kind: "aside",
           label: "Action point",
-          text: "Take the strongest element from the video and test it again. Create another comparison. Use the same hook structure on another topic. Use the same person on camera. Put another subject through the same format. The goal is to discover whether the success can be repeated.",
+          text: "Take the strongest element from the video and test it again. Create another comparison. Use the same hook structure on another topic. Use the same person on camera. Test another aircraft using the same format. The goal is to discover whether the success can be repeated.",
         },
       ],
     },
@@ -65,11 +66,11 @@ export const understandingYourAnalytics: Guide = {
         {
           kind: "keyed",
           items: [
-            { label: "A high number of shares often means", lines: ["“Someone else needs to see this.”"] },
-            { label: "A high number of saves often means", lines: ["“I want to come back to this.”"] },
+            { label: "A high number of shares often means:", lines: ["“Someone else needs to see this.”"] },
+            { label: "A high number of saves often means:", lines: ["“I want to come back to this.”"] },
           ],
         },
-        { kind: "p", text: "An unusual detail may generate shares. A guide explaining what to check before buying may generate saves." },
+        { kind: "p", text: "For example: An unusual aircraft feature may generate shares. A guide explaining what to check before purchasing an aircraft may generate saves." },
         {
           kind: "aside",
           label: "Action point",
@@ -84,10 +85,10 @@ export const understandingYourAnalytics: Guide = {
         { kind: "p", text: "Do not simply count comments. Read them." },
         {
           kind: "list",
-          title: "Look for",
-          items: ["Repeated questions", "Disagreements", "Misconceptions", "Requests for comparisons", "Names people repeatedly mention", "Subjects people want explained further"],
+          title: "Look for:",
+          items: ["Repeated questions", "Disagreements", "Misconceptions", "Requests for comparisons", "Aircraft people repeatedly mention", "Subjects people want explained further"],
         },
-        { kind: "p", text: "If you publish a comparison of two options and the comments repeatedly ask about a third, your audience has already given you another idea." },
+        { kind: "p", text: "If you publish a Gulfstream versus Bombardier comparison and the comments repeatedly ask about Dassault Falcon, your audience has already given you another idea." },
         {
           kind: "aside",
           label: "Action point",
@@ -100,7 +101,7 @@ export const understandingYourAnalytics: Guide = {
       title: "Look at followers and profile visits",
       blocks: [
         { kind: "p", text: "Some videos get attention. Other videos make people want to know more about you. That difference matters." },
-        { kind: "p", text: "You may find that cinematic content generates the largest reach while educational videos generate more followers and profile visits. One attracts attention. The other builds the audience." },
+        { kind: "p", text: "You may find that cinematic aircraft content generates the largest reach while educational aviation videos generate more followers and profile visits. One attracts attention. The other builds the audience." },
         {
           kind: "aside",
           label: "Action point",
@@ -115,7 +116,7 @@ export const understandingYourAnalytics: Guide = {
         { kind: "p", text: "When a video performs badly, do not immediately assume the idea was bad. Work through the video in order." },
         {
           kind: "questions",
-          title: "Ask",
+          title: "Ask:",
           items: [
             "Did the idea give people a reason to care?",
             "Was the hook strong enough?",
@@ -127,18 +128,6 @@ export const understandingYourAnalytics: Guide = {
             "Did the ending deliver the promised payoff?",
             "Was the title and cover strong enough?",
           ],
-        },
-        {
-          kind: "flow",
-          title: "Diagnose a video",
-          steps: [
-            { q: "Did they leave in the first three seconds?", yes: "The hook and the first visual. Nothing else yet." },
-            { q: "Did they leave before the point was made?", yes: "Get to the point sooner. Cut the introduction." },
-            { q: "Did they drift away through the middle?", yes: "Pacing: more visual change, less repetition, hold the answer back." },
-            { q: "Did they watch to the end and do nothing?", yes: "The payoff, or the call to action." },
-            { q: "Did few people start it at all?", yes: "The title and the cover, not the video." },
-          ],
-          end: "Then, and only then, the idea.",
         },
         {
           kind: "aside",
@@ -155,11 +144,11 @@ export const understandingYourAnalytics: Guide = {
         {
           kind: "questions",
           items: [
-            "Do comparisons repeatedly outperform tours?",
+            "Do aircraft comparisons repeatedly outperform tours?",
             "Do founder stories hold attention longer?",
             "Do Q&A videos generate more saves?",
             "Does one person consistently perform better on camera?",
-            "Do videos filmed on location outperform office based content?",
+            "Do videos filmed inside aircraft outperform office based content?",
             "Do certain manufacturers create significantly more interest?",
           ],
         },

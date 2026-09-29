@@ -4,11 +4,11 @@ export const strategy: Guide = {
   chapter: "publish",
   slug: "strategy",
   title: "Publishing strategy",
-  kicker: "Do not make a video, post it once and hope.",
+  kicker: "Once your content has been created, you need a consistent publishing system.",
   example: { client: "The Jet Business", handle: "thejetbusiness" },
   poster: "iMqGv-W5DhY",
   intro: [
-    "Once your content has been created, you need a consistent publishing system.",
+    "The objective is not to make a video, post it once and hope it performs.",
     "You want to build a bank of strong content, publish it consistently across every relevant platform and give yourself enough data to understand what your audience actually responds to.",
     "The examples here are from *The Jet Business*, a client whose films are on the showreel. Read them as a worked example: the principle is the same in your field, the specifics are yours.",
   ],
@@ -22,7 +22,7 @@ export const strategy: Guide = {
         { kind: "p", text: "This gives you enough content to post every other day for approximately one month without constantly rushing to create the next video. It also allows you to be more strategic." },
         {
           kind: "list",
-          title: "Make sure your content bank contains a mixture of",
+          title: "You can make sure your content bank contains a mixture of:",
           style: "tag",
           items: ["Authority", "Education", "Entertainment", "Personal content", "Different video formats", "Different people on camera", "Different aircraft", "Different subjects"],
         },
@@ -36,7 +36,9 @@ export const strategy: Guide = {
       blocks: [
         { kind: "p", text: "Once your initial content bank is ready, start publishing consistently. A strong starting point is:" },
         { kind: "aside", text: "**One video every other day.**" },
-        { kind: "cadence", title: "A month, at that pace", note: "Fifteen posts. Enough to see a pattern; not so many that quality slips." },
+        // A month at one video every other day, drawn. No caption of its own:
+        // the brief's sentence about it follows directly.
+        { kind: "cadence" },
         { kind: "p", text: "That gives you roughly 15 posts across a month. This is enough volume to begin identifying patterns without sacrificing the quality of the content." },
         { kind: "p", text: "Do not publish all 15 videos in one week. You want to create a consistent flow of content and give each video an opportunity to reach its audience." },
         { kind: "p", text: "After the first month, review what performed and use those results to influence the next content bank. Over time, the process becomes:" },
@@ -59,27 +61,25 @@ export const strategy: Guide = {
         { kind: "p", text: "A strong piece of content should not only have one opportunity to perform." },
         {
           kind: "list",
-          title: "For most aviation businesses, short form content should be published across",
+          title: "For most aviation businesses, your short form content should be published across:",
           style: "tag",
-          items: ["Instagram Reels", "TikTok", "YouTube Shorts", "Facebook Reels", "LinkedIn, where relevant"],
+          items: ["Instagram Reels", "TikTok", "YouTube Shorts", "Facebook Reels", "LinkedIn where relevant"],
         },
+        { kind: "p", text: "The same video may perform completely differently on each platform." },
+        // The brief's three examples, drawn as one video fanning out. Only the
+        // platforms the brief says something about, in its words; the five
+        // per-platform notes this used to carry were ours.
         {
           kind: "fan",
-          title: "One video, five chances",
-          fromLabel: "The finished video",
-          from: "A Gulfstream and a Bombardier, side by side: which one would we buy, and why.",
+          from: "The same video",
           to: [
-            { label: "YouTube Shorts", text: "Where the educational comparison tends to do its best work." },
-            { label: "Instagram Reels", text: "Where the look of the aircraft carries it." },
-            { label: "TikTok", text: "Where the opinion in the first line does the work." },
-            { label: "Facebook Reels", text: "A broader, older audience; the same video, a plainer caption." },
-            { label: "LinkedIn", text: "Where the industry argument becomes a discussion." },
+            { label: "YouTube Shorts", text: "An educational video comparing a Gulfstream with a Bombardier may perform exceptionally well on YouTube Shorts." },
+            { label: "Instagram", text: "A visually impressive aircraft tour may perform better on Instagram." },
+            { label: "LinkedIn", text: "An industry opinion may generate stronger discussion on LinkedIn." },
           ],
-          note: "The same video, packaged five ways. Judge it after all five, not after the first.",
         },
-        { kind: "p", text: "The same video may perform completely differently on each platform. An educational video comparing a Gulfstream with a Bombardier may perform exceptionally well on YouTube Shorts. A visually impressive aircraft tour may perform better on Instagram. An industry opinion may generate stronger discussion on LinkedIn." },
         { kind: "p", text: "Do not decide whether an idea worked based on one platform. Give the content multiple opportunities to find the right audience." },
-        { kind: "p", text: "The core video can remain the same. The way it is packaged can change depending on the platform, which the next guide covers." },
+        { kind: "p", text: "The core video can remain the same. The way it is packaged can change depending on the platform, which we cover in the next section." },
       ],
     },
     {
@@ -87,7 +87,7 @@ export const strategy: Guide = {
       title: "Test posting times",
       blocks: [
         { kind: "p", text: "Do not assume there is one perfect posting time for every account. Test different times and use your own analytics to identify when your audience is most responsive." },
-        { kind: "aside", text: "From our experience, **early morning or late evening** tends to perform best. Start by testing those windows." },
+        { kind: "aside", text: "From our experience, we have found that **early morning or late evening** tends to perform best. Start by testing those windows." },
         { kind: "p", text: "Then look at your own results over time. If your strongest videos repeatedly perform better at a particular time, adjust your schedule accordingly. The goal is to find the posting windows that work best for your specific audience." },
       ],
     },
@@ -95,7 +95,7 @@ export const strategy: Guide = {
       n: "05",
       title: "Create a repeatable publishing process",
       blocks: [
-        { kind: "p", text: "Publishing should eventually become routine for whoever manages your social media. Once a video is approved, the process should be simple." },
+        { kind: "p", text: "Publishing should eventually become routine for whoever manages your social media. Once a video is approved, the process should be simple:" },
         {
           kind: "steps",
           items: [
@@ -114,6 +114,7 @@ export const strategy: Guide = {
     {
       title: "The monthly system",
       blocks: [
+        { kind: "p", text: "A simple monthly structure could look like this:" },
         {
           kind: "keyed",
           items: [

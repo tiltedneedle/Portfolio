@@ -55,14 +55,14 @@ export const coreMessage: Guide = {
         { kind: "p", text: "Think about what the viewer needs to know first. Then what they need to know next. Then what they need to understand the conclusion. Avoid jumping between different points." },
         {
           kind: "structure",
-          title: "A simple structure",
+          title: "A simple structure is:",
           seconds: 45,
           parts: [
             { label: "Hook", share: 8, text: "Give them a reason to watch." },
-            { label: "Context", share: 14, text: "Only what is needed to understand the subject." },
-            { label: "Core message", share: 52, text: "The main information, explanation or story." },
+            { label: "Context", share: 14, text: "Give them only the information required to understand the subject." },
+            { label: "Core message", share: 52, text: "Deliver the main information, explanation or story." },
             { label: "Payoff", share: 18, text: "Answer the question or complete the story." },
-            { label: "Action", share: 8, text: "Where relevant, what to do next." },
+            { label: "Action", share: 8, text: "Where relevant, tell the viewer what to do next." },
           ],
         },
       ],
@@ -93,14 +93,13 @@ export const coreMessage: Guide = {
         { kind: "p", text: "Aviation gives you a major advantage because many of the subjects you discuss can be shown visually." },
         {
           kind: "pairs",
-          aLabel: "If you are talking about",
-          bLabel: "Show",
+          // The brief's five sentences, each split at its comma.
           items: [
-            { a: "Cabin space", b: "The cabin." },
-            { a: "Window size", b: "The windows." },
-            { a: "Luggage capacity", b: "The compartment." },
-            { a: "Two aircraft", b: "Both aircraft, where possible." },
-            { a: "A process at an FBO", b: "The process." },
+            { a: "If you are talking about cabin space,", b: "show the cabin." },
+            { a: "If you are explaining window size,", b: "show the windows." },
+            { a: "If you are discussing luggage capacity,", b: "show the compartment." },
+            { a: "If you are comparing aircraft,", b: "show both aircraft where possible." },
+            { a: "If you are explaining a process at an FBO,", b: "show the process." },
           ],
         },
         { kind: "p", text: "Let the visuals carry part of the explanation." },
@@ -122,12 +121,12 @@ export const coreMessage: Guide = {
         { kind: "p", text: "Specific information makes content more credible and interesting." },
         {
           kind: "swaps",
-          fromLabel: "Instead of",
-          toLabel: "Say",
+          fromLabel: "Instead of:",
+          toLabel: "",
           pairs: [
-            { from: "This jet has a very long range.", to: "What that range allows someone to do." },
-            { from: "This cabin is very large.", to: "What makes it different." },
-            { from: "Buying an aircraft is complicated.", to: "The specific part buyers often underestimate." },
+            { from: "This jet has a very long range.", to: "Explain what that range allows someone to do." },
+            { from: "This cabin is very large.", to: "Explain what makes it different." },
+            { from: "Buying an aircraft is complicated.", to: "Explain the specific part buyers often underestimate." },
           ],
         },
         { kind: "p", text: "Specificity makes the information feel real." },
@@ -140,7 +139,7 @@ export const coreMessage: Guide = {
         { kind: "p", text: "Once the script is written, go through it again." },
         {
           kind: "questions",
-          title: "For every sentence, ask",
+          title: "Ask:",
           items: [
             "Does this sentence teach something?",
             "Does it progress the story?",

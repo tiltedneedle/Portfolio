@@ -169,7 +169,7 @@ function Swaps({
         {pairs.map((p) => (
           <div key={p.from} className="grid gap-y-3 border-t border-[color:var(--rule)] py-5 md:grid-cols-[1fr_auto_1fr] md:gap-x-8">
             <div>
-              <p className="mono mb-2 text-[color:var(--ink-mid)]">{fromLabel}</p>
+              {fromLabel && <p className="mono mb-2 text-[color:var(--ink-mid)]">{fromLabel}</p>}
               <p className="text-[17px] leading-snug text-[color:var(--ink-mid)]">
                 <Rich text={p.from} />
               </p>
@@ -178,7 +178,10 @@ function Swaps({
               &rarr;
             </span>
             <div>
-              <p className="mono mb-2">{toLabel}</p>
+              {/* An empty label is a choice: where the brief gives the second
+                  half as an instruction ("Explain what makes it different."),
+                  there is no word to put above it. */}
+              {toLabel && <p className="mono mb-2">{toLabel}</p>}
               <p className="em-serif text-[21px] leading-snug text-[color:var(--ink)] md:text-[23px]">
                 <Rich text={p.to} />
               </p>

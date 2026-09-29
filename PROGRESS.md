@@ -213,6 +213,47 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 63 (2026-09-29): the twelve guide tabs say what the brief says.
+      Asked to check the other tabs after the home page. Measured, not read:
+      every sentence of each brief tab matched against every word its page
+      renders (text dumped from the guide objects), nearest-line search for
+      misses. Before: 83-99% word for word (1,592 of 1,774 sentences). Kinds
+      of drift found and fixed:
+      - kickers paraphrased or invented (Hooks "decide" for "determine";
+        Film, Discoverability, Monthly invented) -> every kicker is now the
+        tab's own opening line, lifted from the intro so it is said once;
+      - lead-ins folded into labels ("Save interesting hooks." -> "Interesting
+        hooks"; "The idea might be:" -> "The idea") -> the brief's lines;
+      - "If you are X, show Y" sentences split into cut-down columns (Style of
+        video, Core message, Edit, Discoverability) -> the full sentences,
+        split at their comma; three dropped from Core message restored;
+      - Packaging: commentary merged or dropped between its comparisons
+        ("The second version creates a question... What is the reason?") ->
+        the brief's order, examples in bold within its own sentences;
+      - Publishing: "The objective is not to make a video, post it once and
+        hope it performs." had become the kicker "Do not make a video..."; the
+        platform fan's five invented per-platform notes -> the brief's three;
+      - Analyse: wave 59's neutralised aviation examples reverted to the
+        brief's (Gulfstream v Bombardier, Dassault Falcon, "The aircraft");
+        the invented "Diagnose a video" flow removed (the brief's nine
+        questions stay); Monthly process rebuilt from the brief alone.
+      - Diagram captions that were ours (shot sizes, lens, cadence, retention,
+        "cut between at least three of these") -> the brief's labels only.
+      After: every sentence present; the only differences left are drawn by
+      components (the rule label, step numbers, tab names vs H1s) and one
+      image in Discoverability the .md export does not contain.
+      **Guard:** src/content/system/brief.test.ts re-runs the match, one test
+      per tab; skipped unless BRIEF_PATH points at the brief (it lives outside
+      the repo). Proved by mutation: one word changed in Hooks fails it, with
+      the sentence named.
+      Kept and flagged, not the brief's: clip rails from the published library
+      (real titles), "The examples here are from The Jet Business..." on eight
+      guides, the Hooks flashcards (all twelve fronts now the brief's lines),
+      and the view-count note on Study your niche (not verifiable from the
+      repo: published.json has no views). **Profile optimisation has no tab
+      in the .md** (only a planning note, lines 776-803): that page is ours
+      end to end and needs the user's text.
+
 - [x] Wave 62 (2026-09-28): the home page says what the brief says.
       **The user asked "is this being followed?" of the brief's Home Page
       tab, and it was not**: the structure was, but a writing pass (wave 53)

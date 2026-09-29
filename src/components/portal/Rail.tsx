@@ -30,6 +30,15 @@ export function Rail({ children, count, label }: { children: ReactNode; count: n
       }
       setFirst(i);
       setAtEnd(left + el.clientWidth >= el.scrollWidth - 4);
+      // Depth: where each card's middle sits across the rail (-1 left edge,
+      // 0 middle, 1 right edge), for its numeral to move against it
+      // (.rail > li .numeral). Never under reduced motion.
+      if (reduced) return;
+      const mid = left + el.clientWidth / 2;
+      for (const kid of kids) {
+        const c = kid.offsetLeft - el.offsetLeft + kid.offsetWidth / 2;
+        kid.style.setProperty("--par", ((c - mid) / el.clientWidth).toFixed(3));
+      }
     };
     update();
     el.addEventListener("scroll", update, { passive: true });
@@ -38,7 +47,7 @@ export function Rail({ children, count, label }: { children: ReactNode; count: n
       el.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };
-  }, []);
+  }, [reduced]);
 
   const by = (dir: 1 | -1) => {
     const el = ref.current;

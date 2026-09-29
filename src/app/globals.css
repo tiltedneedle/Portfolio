@@ -2009,7 +2009,7 @@ body.is-cutting
 }
 .reveal-wait.reveal-in .flap {
   animation: flap-drop 0.85s cubic-bezier(0.25, 1.45, 0.45, 1) both;
-  animation-delay: calc(0.08s + var(--i, 0) * 0.13s);
+  animation-delay: calc(0.08s + var(--i, 0) * var(--flap-step, 0.13s));
 }
 @keyframes flap-drop {
   from {
@@ -2081,6 +2081,11 @@ body.is-cutting
 }
 .par-num {
   transform: translateX(calc(var(--par, 0) * -90px));
+}
+/* The same depth for the cards on a rail (Rail.tsx): the numeral moves a
+   little against its card as the rail is scrolled. */
+.rail > li .numeral {
+  transform: translateX(calc(var(--par, 0) * -46px));
 }
 
 /* TILTED's letters are needles (Tilt.tsx), pinned at the foot: as the
@@ -2273,9 +2278,10 @@ body.is-cutting
   .word-run {
     transform: none !important;
   }
-  /* Nothing inside the access cards moves against them. */
+  /* Nothing inside the access cards, or a rail's cards, moves against them. */
   .par-img,
-  .par-num {
+  .par-num,
+  .rail > li .numeral {
     transform: none !important;
   }
   /* The first three seconds is a moving playhead or nothing at all. */
@@ -2635,7 +2641,8 @@ body.is-cutting
    reader, and leave its controls under the page. */
 .reveal-wait:has(.film-player),
 .reveal-wait:has(.reel-on),
-.reveal-wait:has(.flap) {
+.reveal-wait:has(.flap),
+.reveal-wait:has(.caption-track) {
   clip-path: none;
   transition: none;
 }

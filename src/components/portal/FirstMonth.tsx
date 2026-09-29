@@ -7,6 +7,8 @@ import { PrintButton } from "@/components/portal/PrintButton";
 import { useClient } from "@/components/portal/ClientContext";
 import { usePinned } from "@/lib/read";
 import { monthSlots, type IdeaRef } from "@/lib/month";
+import type { CSSProperties } from "react";
+import { Reveal } from "@/components/portal/Reveal";
 
 /**
  * Your first month. The publishing strategy says one video every other
@@ -53,13 +55,18 @@ export function FirstMonth({ scripts, ideas }: { scripts: Script[]; ideas: IdeaR
         </p>
       </div>
 
-      <ol className="mt-8 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5 md:gap-3" aria-label={DAYS + " days"}>
+      {/* A departure board of thirty days: each day's flap drops in turn as
+          the month comes on (.flap, a quicker step than the call sheet's). */}
+      <Reveal className="mt-8" style={{ "--flap-step": "0.045s" } as CSSProperties}>
+      <ol className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5 md:gap-3" aria-label={DAYS + " days"}>
         {days.map((day) => {
           const s = byDay.get(day);
           if (!s) {
             return (
               <li key={day} className="hidden min-h-[64px] border border-[color:var(--rule)] p-3 md:block">
-                <span className="mono text-[color:var(--ink-mid)]">Day {pad(day)}</span>
+                <span className="flap mono block text-[color:var(--ink-mid)]" style={{ "--i": day - 1 } as CSSProperties}>
+                  Day {pad(day)}
+                </span>
               </li>
             );
           }
@@ -95,16 +102,19 @@ export function FirstMonth({ scripts, ideas }: { scripts: Script[]; ideas: IdeaR
           return (
             <li key={day} className={"min-h-[120px] border " + (s.kind === "script" ? "border-[color:var(--rule-strong)] bg-[color:var(--stage-2)]" : "border-[color:var(--rule)]")}>
               {s.kind !== "open" ? (
-                <CutLink href={s.href} className="block h-full p-3 transition-colors hover:bg-[color:var(--stage-3)]" data-cursor="Open">
+                <CutLink href={s.href} className="flap block h-full p-3 transition-colors hover:bg-[color:var(--stage-3)]" style={{ "--i": day - 1 } as CSSProperties} data-cursor="Open">
                   {inner}
                 </CutLink>
               ) : (
-                <div className="h-full p-3">{inner}</div>
+                <div className="flap h-full p-3" style={{ "--i": day - 1 } as CSSProperties}>
+                  {inner}
+                </div>
               )}
             </li>
           );
         })}
       </ol>
+      </Reveal>
       <p className="mono mt-4 text-[color:var(--ink-mid)]">Even days are for filming the next bank. On a phone only the posting days are shown.</p>
     </section>
   );

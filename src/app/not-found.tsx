@@ -1,5 +1,6 @@
 import { CutLink } from "@/components/room/CutLink";
 import { Rise, delay } from "@/components/portal/Scene";
+import { HeroDust } from "@/components/portal/HeroDust";
 
 /**
  * A page that is not there. Said in the suite's own terms: the reel is
@@ -11,8 +12,10 @@ import { Rise, delay } from "@/components/portal/Scene";
  */
 export default function NotFound() {
   return (
-    <main className="flex min-h-screen items-center bg-[color:var(--stage)]">
-      <div className="mx-auto grid w-full max-w-[1600px] items-center gap-14 px-6 py-32 md:grid-cols-[minmax(0,1fr)_auto] md:gap-16 md:px-14">
+    <main className="relative flex min-h-screen items-center overflow-hidden bg-[color:var(--stage)]">
+      {/* The projector still running, its beam and its dust, with no reel on it. */}
+      <HeroDust />
+      <div className="relative mx-auto grid w-full max-w-[1600px] items-center gap-14 px-6 py-32 md:grid-cols-[minmax(0,1fr)_auto] md:gap-16 md:px-14">
         <div className="min-w-0">
           <p className="mono scene-slate mb-8">
             404 <span className="text-[color:var(--ink-mid)]">/</span> Missing reel

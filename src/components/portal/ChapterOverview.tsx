@@ -12,6 +12,7 @@ import { useRead } from "@/lib/read";
 import { Reveal } from "@/components/portal/Reveal";
 import { Focus, Rise, delay } from "@/components/portal/Scene";
 import { numberWord } from "@/lib/words";
+import { HeroDust } from "@/components/portal/HeroDust";
 
 export type OverviewRow = {
   slug: string;
@@ -83,8 +84,10 @@ export function ChapterOverview({
 
   return (
     <div className="bg-[color:var(--stage)]">
-      <header className="mx-auto max-w-[1600px] px-6 pb-14 pt-28 md:px-14 md:pt-36">
-        <div className="grid gap-12 md:grid-cols-[1fr_auto] md:items-end md:gap-20">
+      <header className="relative mx-auto max-w-[1600px] overflow-hidden px-6 pb-14 pt-28 md:px-14 md:pt-36">
+        {/* A room has air in it: the projector's beam and its dust. */}
+        <HeroDust />
+        <div className="relative grid gap-12 md:grid-cols-[1fr_auto] md:items-end md:gap-20">
           <div className="min-w-0">
             <p className="mono scene-slate flex flex-wrap items-center gap-x-4">
               <span>

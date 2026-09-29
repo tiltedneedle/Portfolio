@@ -213,6 +213,31 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 71 (2026-09-29): the other pages get the same hand.
+      "Now do the same for the other pages too", after wave 70. Each of the
+      new motions went only where it means something on that page:
+      - The projector's beam and its dust (HeroDust, now filling whatever
+        positioned container it is put in) on the door ("Private
+        screening"), every room's header and the 404 ("the projector still
+        running, with no reel on it"). The door's rows are film stock too.
+      - Every guide's closing rule is a caption track: consecutive
+        paragraphs read as one track, the line running on from one into the
+        next, and the brief's *emphasis* set as Rich sets it (upright in the
+        italic). CaptionTrack now takes lines, not one text.
+      - Departure boards: the scripts page's first month (thirty days,
+        each flap dropping in turn at a quicker step, --flap-step 0.045s)
+        and the competitor report's board of accounts.
+      - Headings not yet written type what they will cover (TypeOn): the
+        promise types itself while the reader looks.
+      - Monitors power on: a guide's clip rails and a script's storyboard.
+      - Depth on every rail (Rail.tsx): a card's numeral moves against it
+        as the rail is scrolled.
+      Verified: dust drawing on the door, a room and the 404 (no overflow);
+      the packaging rule read across both paragraphs with its emphasis; the
+      month, the board and the storyboard sampled mid-flight; a heading
+      typed to the end; rail offsets from +36 to -23px; smoke, a11y and the
+      brief guard on both servers.
+
 - [x] Wave 70 (2026-09-29): the room the reel runs in.
       The user asked a third time for a more creative home page, motion
       especially. Four new kinds of motion, each tied to what its section

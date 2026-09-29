@@ -13,6 +13,7 @@ import { PrintButton } from "@/components/portal/PrintButton";
 import { Anchor } from "@/components/portal/Anchor";
 import { Odometer } from "@/components/portal/Odometer";
 import { Focus, Rise, delay } from "@/components/portal/Scene";
+import { TypeOn } from "@/components/portal/TypeOn";
 
 const pad = (i: number) => String(i + 1).padStart(2, "0");
 
@@ -154,7 +155,9 @@ function Finding({ s, i, who }: { s: AuditSection; i: number; who: string }) {
               <span className="lamp-off" aria-hidden="true" />
               To be written for {who}
             </p>
-            <p className="em-serif mt-4 text-[19px] leading-snug text-[color:var(--ink-mid)] md:text-[21px]">{s.covers}</p>
+            <p className="em-serif mt-4 text-[19px] leading-snug text-[color:var(--ink-mid)] md:text-[21px]">
+              <TypeOn text={s.covers} />
+            </p>
           </div>
         )}
       </div>

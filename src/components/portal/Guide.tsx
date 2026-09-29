@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import type { Guide as GuideT } from "@/content/types";
 import type { GuideNote } from "@/content/clients/types";
 import { ForYou } from "@/components/portal/ForYou";
@@ -17,6 +16,7 @@ import { ReadingProgress } from "@/components/portal/ReadingProgress";
 import { ReadToggle } from "@/components/portal/ReadToggle";
 import { Reveal } from "@/components/portal/Reveal";
 import { Focus, Rise, delay } from "@/components/portal/Scene";
+import { CaptionTrack } from "@/components/portal/CaptionTrack";
 
 /**
  * A guide page: the slate (chapter, number, title, kicker, intro), the
@@ -206,20 +206,34 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
 }
 
 /**
- * The rule is set larger than the body: paragraphs become statements,
- * pulled into focus one after another as the band comes on.
+ * The rule is set larger than the body: paragraphs become statements, and
+ * the statements are read as a caption track (CaptionTrack.tsx) -- the
+ * scroll plays them, one tally line following the read through every
+ * paragraph in turn. Anything else the rule holds (a swap, a figure) stands
+ * between the runs of statements as it always did.
  */
 function RuleBlocks({ blocks }: { blocks: GuideT["rule"] }) {
-  let line = 0;
+  // Consecutive paragraphs read as one track.
+  const runs: (string[] | GuideT["rule"][number])[] = [];
+  for (const b of blocks) {
+    const last = runs[runs.length - 1];
+    if (b.kind === "p") {
+      if (Array.isArray(last)) last.push(b.text);
+      else runs.push([b.text]);
+    } else runs.push(b);
+  }
   return (
     <div className="flex flex-col gap-8">
-      {blocks.map((b, i) =>
-        b.kind === "p" ? (
-          <p key={i} className="em-serif statement rule-line text-[clamp(26px,3.4vw,44px)] leading-[1.2] text-[color:var(--ink)]" style={{ "--i": line++ } as CSSProperties}>
-            <Rich text={b.text} />
-          </p>
+      {runs.map((r, i) =>
+        Array.isArray(r) ? (
+          <CaptionTrack
+            key={i}
+            lines={r}
+            className="flex flex-col gap-8"
+            lineClassName="em-serif statement text-[clamp(26px,3.4vw,44px)] leading-[1.2] text-[color:var(--ink)]"
+          />
         ) : (
-          <Blocks key={i} blocks={[b]} />
+          <Blocks key={i} blocks={[r]} />
         )
       )}
     </div>

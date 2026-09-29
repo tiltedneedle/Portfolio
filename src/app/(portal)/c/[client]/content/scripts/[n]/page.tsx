@@ -11,6 +11,8 @@ import { requireClient } from "@/content/clients/registry";
 import { scriptAsText, shortName } from "@/content/clients/types";
 import { SPOKEN_WPM, mmss, runningTimes, spokenSeconds, wordCount } from "@/lib/words";
 import { pillars } from "@/content/system/pillars";
+import type { CSSProperties } from "react";
+import { Reveal } from "@/components/portal/Reveal";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -176,9 +178,15 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
                 {s.shots.length} shots <span className="text-[color:var(--ink-mid)]">/</span> in order
               </p>
             </div>
-            <ol className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4">
+            {/* The frames power on in shooting order as the board comes on. */}
+            <Reveal className="mt-6">
+            <ol className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4">
               {s.shots.map((shot, i) => (
-                <li key={shot} className="relative flex aspect-[9/16] flex-col justify-between overflow-hidden border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-4">
+                <li
+                  key={shot}
+                  className="reel-on relative flex aspect-[9/16] flex-col justify-between overflow-hidden border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-4"
+                  style={{ "--i": i } as CSSProperties}
+                >
                   <span aria-hidden="true" className="numeral pointer-events-none absolute -right-1 top-6 text-[112px] opacity-40" data-n={pad(i + 1)} />
                   <span className="mono relative flex items-center justify-between">
                     <span>{pad(i + 1)}</span>
@@ -190,6 +198,7 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
                 </li>
               ))}
             </ol>
+            </Reveal>
           </div>
         </section>
       ) : null}

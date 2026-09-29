@@ -11,7 +11,8 @@ import { reel } from "@/content/system/reel";
  * telling anyone whose work it is: no names, no counts, nothing legible.
  * Each row is doubled so the drift meets itself; reduced motion holds it.
  * The work comes up out of the dark as the door opens (.scene-frame, on a
- * wrapper so the rows' own dimming is what it lands on).
+ * wrapper so the rows' own dimming is what it lands on). The rows are film
+ * stock, like the strip behind the name on the home page (.film-frame).
  */
 const FRAMES = 12;
 
@@ -29,10 +30,12 @@ export function DoorBackdrop() {
   const row = (srcs: string[], drift: string) => (
     <div className={"flex w-max " + drift}>
       {[0, 1].map((copy) => (
-        <div key={copy} className="flex shrink-0 gap-4 pr-4">
+        <div key={copy} className="flex shrink-0">
           {srcs.map((src, i) => (
-            <span key={copy + "-" + i} className="well w-[132px] shrink-0 border border-[color:var(--rule)] md:w-[172px]">
-              <Still src={src} sizes="(min-width:768px) 172px, 132px" className="object-cover" />
+            <span key={copy + "-" + i} className="film-frame">
+              <span className="well block w-[132px] md:w-[172px]">
+                <Still src={src} sizes="(min-width:768px) 172px, 132px" className="object-cover" />
+              </span>
             </span>
           ))}
         </div>

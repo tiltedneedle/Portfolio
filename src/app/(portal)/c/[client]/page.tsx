@@ -257,8 +257,9 @@ export default async function Home({ params }: { params: Promise<{ client: strin
             {/* Read as a caption track: each word lights as the scroll
                 reaches it, a tally bar under the word being read. */}
             <CaptionTrack
-              text={home.objective.text}
-              className="em-serif statement mt-4 max-w-[30ch] text-[clamp(26px,2.6vw,40px)] leading-[1.2] text-[color:var(--ink)]"
+              lines={[home.objective.text]}
+              className="mt-4 max-w-[30ch]"
+              lineClassName="em-serif statement text-[clamp(26px,2.6vw,40px)] leading-[1.2] text-[color:var(--ink)]"
             />
           </div>
         </div>

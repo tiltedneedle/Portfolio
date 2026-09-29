@@ -4,17 +4,19 @@ import { useEffect, useRef } from "react";
 
 /**
  * The air in the room the reel is running in: a shaft of light across the
- * hero, the way a projector's beam cuts across a dark room, and dust
- * drifting through it -- lit inside the beam, barely there outside it.
- * Move the pointer through it and the dust swirls away from it, as it does
- * when a hand is waved in a beam, then settles back into its drift.
+ * space it is placed in, the way a projector's beam cuts across a dark
+ * room, and dust drifting through it -- lit inside the beam, barely there
+ * outside it. Move the pointer through it and the dust swirls away from it,
+ * as it does when a hand is waved in a beam, then settles back into its
+ * drift. On the home page's hero, the door, the rooms' headers and the 404.
  *
- * Decoration only: aria-hidden, behind everything in the hero, and faint
- * enough that the name reads over it as it did (the beam is at most 6.5%
- * ink over the stage). The beam is CSS (.hero-beam), so it is there with no
- * script and under reduced motion; the dust is a canvas drawn only while
- * the hero is on screen and the tab is in front, and not at all for a
- * reader who asked for stillness.
+ * It fills its container (which must be positioned) and listens for the
+ * pointer across all of it. Decoration only: aria-hidden, behind everything
+ * in the container, and faint enough that type reads over it as it did
+ * (the beam is at most 6.5% ink over the stage). The beam is CSS
+ * (.hero-beam), so it is there with no script and under reduced motion;
+ * the dust is a canvas drawn only while its container is on screen and the
+ * tab is in front, and not at all for a reader who asked for stillness.
  */
 const COUNT = 90;
 const PUSH = 150; // px: how near the pointer has to come to move the dust
@@ -31,7 +33,8 @@ export function HeroDust() {
 
   useEffect(() => {
     const cv = canvas.current;
-    const zone = cv?.closest("section");
+    // The container this is placed in: the root's parent.
+    const zone = cv?.parentElement?.parentElement;
     if (!cv || !zone) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const ctx = cv.getContext("2d");

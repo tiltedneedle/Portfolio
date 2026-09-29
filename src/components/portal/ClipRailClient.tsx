@@ -1,8 +1,9 @@
 "use client";
 
 import { Still } from "@/components/portal/Still";
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { EmbedModal } from "@/components/room/EmbedModal";
+import { Reveal } from "@/components/portal/Reveal";
 
 type Clip = { id: string; title: string; caption?: string; thumb: string; handle: string; src?: string; platform?: "youtube" | "tiktok" | "instagram" };
 
@@ -15,8 +16,10 @@ export function ClipRailClient({ title, note, clips }: { title?: string; note?: 
         <p className="mono text-[color:var(--ink)]">{title ?? "From the library"}</p>
         {note && <p className="em-serif max-w-[44ch] text-[17px] text-[color:var(--ink-soft)]">{note}</p>}
       </div>
+      {/* The clips power on like monitors as the rail comes on (.reel-on). */}
+      <Reveal>
       <ul className="rail -mx-6 gap-4 px-6 md:mx-0 md:px-0">
-        {clips.map((c) => (
+        {clips.map((c, i) => (
           <li key={c.id} className="w-[168px] md:w-[196px]">
             <button
               type="button"
@@ -25,7 +28,7 @@ export function ClipRailClient({ title, note, clips }: { title?: string; note?: 
               aria-label={"Play " + c.title}
               data-cursor="Play"
             >
-              <span className="well block border border-[color:var(--rule)] transition-colors duration-300 group-hover:border-[color:var(--rule-strong)]">
+              <span className="reel-on well block border border-[color:var(--rule)] transition-colors duration-300 group-hover:border-[color:var(--rule-strong)]" style={{ "--i": i } as CSSProperties}>
                 <Still src={c.thumb} sizes="196px" className="object-cover" />
                 <span className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[rgba(0,0,0,0.7)] to-transparent" />
                 <span className="mono absolute bottom-3 left-3 flex items-center gap-2 text-[color:var(--ink)]">
@@ -39,6 +42,7 @@ export function ClipRailClient({ title, note, clips }: { title?: string; note?: 
           </li>
         ))}
       </ul>
+      </Reveal>
       <EmbedModal videoId={open?.id ?? null} src={open?.src ?? null} platform={open?.platform ?? "youtube"} title={open?.title ?? ""} open={!!open} onClose={() => setOpen(null)} />
     </div>
   );

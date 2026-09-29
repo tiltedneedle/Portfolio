@@ -1,9 +1,10 @@
 "use client";
 
-import { Fragment, useEffect, useRef, type CSSProperties } from "react";
+import { Fragment, useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { useMotionValueEvent, useReducedMotion, useScroll } from "framer-motion";
 
 type Box = { l: number; r: number; t: number; b: number };
+type Word = { w: string; em: boolean; line: number };
 
 /**
  * A statement read the way the work it is about is read: as a caption
@@ -11,24 +12,26 @@ type Box = { l: number; r: number; t: number; b: number };
  * them, the words ahead wait dimmed, and one tally line -- the one thing on
  * the page that is "playing" -- runs under the line being read, from its
  * first letter to the read's exact point, and starts again at the head of
- * the next line when it wraps.
+ * the next line when it wraps. The home page's objective reads this way,
+ * and so does the rule every guide closes on.
  *
- * The read moves through the sentence at an even pace per letter, not per
+ * Several paragraphs read as one track: the read runs through the first
+ * and on into the next. A paragraph may carry the brief's *emphasis*, which
+ * is set the way Rich sets it (upright inside the italic).
+ *
+ * The read moves through the text at an even pace per letter, not per
  * word: a long word takes longer to cross than a short one, and the line
  * glides across the spaces between words rather than jumping from word to
- * word. (It used to jump, with a bar under each word that handed over to
- * the next, which showed two short bars at once.)
- *
- * --p is how far the scroll has carried the reader through the block, 0 to
- * 1; each word carries its own span of it (--a, where it starts, and --w,
- * one over its length), so the lighting is CSS (.cap-w) and the scroll
+ * word. --p is how far the scroll has carried the reader through the block,
+ * 0 to 1; each word carries its own span of it (--a, where it starts, and
+ * --w, one over its length), so the lighting is CSS (.cap-w) and the scroll
  * re-renders nothing. The line is placed by script from the words' own
  * boxes, measured once and again whenever the block reflows. Served whole:
  * before hydration, under reduced motion and in print every word is lit and
- * there is no line. A screen reader is given the sentence once, plain.
+ * there is no line. A screen reader is given each paragraph once, plain.
  */
-export function CaptionTrack({ text, className = "" }: { text: string; className?: string }) {
-  const ref = useRef<HTMLParagraphElement>(null);
+export function CaptionTrack({ lines, className = "", lineClassName = "" }: { lines: string[]; className?: string; lineClassName?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
   const line = useRef<HTMLSpanElement>(null);
   const boxes = useRef<Box[]>([]);
   const reduced = useReducedMotion();
@@ -36,14 +39,29 @@ export function CaptionTrack({ text, className = "" }: { text: string; className
   // a third of the way down: long enough to read along with.
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.85", "end 0.35"] });
 
-  const words = text.split(/\s+/).filter(Boolean);
-  // Each word's share of the sentence, spaces counted, as [start, end).
-  const total = Math.max(1, words.reduce((s, w) => s + w.length, 0) + words.length - 1);
+  // The words, paragraph by paragraph, with *emphasis* marked and dropped.
+  const words: Word[] = [];
+  const plain: string[] = [];
+  lines.forEach((text, li) => {
+    let em = false;
+    let out = "";
+    for (const part of text.split(/(\*)/)) {
+      if (part === "*") {
+        em = !em;
+        continue;
+      }
+      out += part;
+      for (const w of part.split(/\s+/).filter(Boolean)) words.push({ w, em, line: li });
+    }
+    plain.push(out.replace(/\s+/g, " ").trim());
+  });
+  // Each word's share of the whole, spaces counted, as [start, end).
+  const total = Math.max(1, words.reduce((s, x) => s + x.w.length, 0) + words.length - 1);
   const spans: { a: number; b: number }[] = [];
   let at = 0;
-  for (const w of words) {
+  for (const x of words) {
     const a = at / total;
-    at += w.length;
+    at += x.w.length;
     spans.push({ a, b: at / total });
     at += 1;
   }
@@ -89,6 +107,7 @@ export function CaptionTrack({ text, className = "" }: { text: string; className
     if (!reduced) place(v);
   });
 
+  const key = lines.join("\n");
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -97,8 +116,8 @@ export function CaptionTrack({ text, className = "" }: { text: string; className
       if (line.current) line.current.style.opacity = "0";
       return;
     }
-    // The words' boxes, relative to the block (its offsetParent), measured
-    // now and again whenever the block reflows or a late font lands.
+    // The words' boxes, relative to the block (their offsetParent),
+    // measured now and again whenever it reflows or a late font lands.
     const measure = () => {
       boxes.current = Array.from(el.querySelectorAll<HTMLElement>(".cap-w")).map((w) => ({
         l: w.offsetLeft,
@@ -116,22 +135,40 @@ export function CaptionTrack({ text, className = "" }: { text: string; className
     return () => ro.disconnect();
     // place reads only refs and the text-derived spans, which are stable for a given text.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reduced, scrollYProgress, text]);
+  }, [reduced, scrollYProgress, key]);
 
+  let i = 0;
   return (
-    <p ref={ref} className={"caption-track relative " + className}>
-      <span className="sr-only">{text}</span>
-      <span aria-hidden="true">
-        {words.map((w, i) => (
-          <Fragment key={i}>
-            {i > 0 && " "}
-            <span className="cap-w" style={{ "--a": spans[i].a.toFixed(4), "--w": (1 / (spans[i].b - spans[i].a)).toFixed(3) } as CSSProperties}>
-              {w}
-            </span>
-          </Fragment>
-        ))}
-      </span>
+    <div ref={ref} className={"caption-track relative " + className}>
+      {lines.map((_, li) => (
+        <p key={li} className={lineClassName}>
+          <span className="sr-only">{plain[li]}</span>
+          <span aria-hidden="true">
+            {words
+              .filter((x) => x.line === li)
+              .map((x, k) => {
+                const n = i++;
+                const style = { "--a": spans[n].a.toFixed(4), "--w": (1 / (spans[n].b - spans[n].a)).toFixed(3) } as CSSProperties;
+                const word: ReactNode = x.em ? (
+                  <em className="em-serif cap-w" style={style}>
+                    {x.w}
+                  </em>
+                ) : (
+                  <span className="cap-w" style={style}>
+                    {x.w}
+                  </span>
+                );
+                return (
+                  <Fragment key={k}>
+                    {k > 0 && " "}
+                    {word}
+                  </Fragment>
+                );
+              })}
+          </span>
+        </p>
+      ))}
       <span ref={line} aria-hidden="true" className="cap-line" />
-    </p>
+    </div>
   );
 }

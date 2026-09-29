@@ -1,5 +1,7 @@
 import type { Competitor, PositionMap as PositionMapT } from "@/content/clients/types";
 import { Rich } from "@/components/portal/Rich";
+import type { CSSProperties } from "react";
+import { Reveal } from "@/components/portal/Reveal";
 
 /**
  * The competitor report's two pictures: the board of accounts studied, and
@@ -30,11 +32,16 @@ function addressOf(c: Competitor) {
   }
 }
 
+/**
+ * The accounts studied, as a board. It comes on the way a departure board
+ * updates: each card's flap drops from its top edge in turn (.flap).
+ */
 export function CompetitorBoard({ items }: { items: Competitor[] }) {
   return (
+    <Reveal>
     <ol className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {items.map((c, i) => (
-        <li key={c.handle} className="flex flex-col border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-5 md:p-6">
+        <li key={c.handle} className="flap flex flex-col border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-5 md:p-6" style={{ "--i": i } as CSSProperties}>
           <p className="mono flex items-center justify-between gap-3">
             <span>
               {String(i + 1).padStart(2, "0")} <span className="text-[color:var(--ink-mid)]">/ {PLATFORM[c.platform]}</span>
@@ -80,6 +87,7 @@ export function CompetitorBoard({ items }: { items: Competitor[] }) {
         </li>
       ))}
     </ol>
+    </Reveal>
   );
 }
 

@@ -6,6 +6,7 @@ import { publicIdentity } from "@/content/clients/types";
 import { doorOpen, safeNext } from "@/lib/session";
 import { enter } from "./actions";
 import { Rise, delay } from "@/components/portal/Scene";
+import { HeroDust } from "@/components/portal/HeroDust";
 
 export const metadata: Metadata = { title: "Enter" };
 
@@ -38,6 +39,9 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   return (
     <main className="relative flex min-h-screen items-center overflow-hidden bg-[color:var(--stage)] px-6 py-24 md:px-14">
       <DoorBackdrop />
+      {/* A private screening: the projector's beam across the room, and the
+          dust in it, which a hand through the beam scatters. */}
+      <HeroDust />
       <form action={enter} className="relative w-full max-w-[560px]">
         {/* Sanitised here as well as in the action: the field should never
             carry a value we would refuse to redirect to. */}

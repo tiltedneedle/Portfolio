@@ -1801,37 +1801,37 @@ body.is-cutting
   clip-path: none;
 }
 
-/* A caption track (CaptionTrack.tsx). --p is the scroll's progress through
-   the block, set by script; --n the words, --i each word's place. x is how
-   far the read has got past this word, in words: under 0 it waits at 30%,
-   from 0 to 1 it lights and the tally bar grows under it, from 1 to 2 the
-   bar hands on to the next word. Scaled by n + 1 so at the end of the read
-   (and unset, --p defaults to 1) every word is lit and no bar is left
-   standing under the last. */
+/* A caption track (CaptionTrack.tsx). --p is how far the scroll has carried
+   the reader through the block, set by script. Each word's --a is where it
+   starts in the sentence and --w one over its length, both as shares of the
+   sentence's letters, so the read crosses a long word more slowly than a
+   short one. A word waits at 30% until the read reaches it and is lit by
+   the time the read leaves it. Unset (before hydration, reduced motion,
+   print), --p is 1 and every word is lit. */
 .cap-w {
-  position: relative;
   display: inline-block;
-  --x: calc(var(--p, 1) * (var(--n, 1) + 1) - var(--i, 0));
-  opacity: clamp(0.3, var(--x), 1);
+  opacity: clamp(0.3, calc((var(--p, 1) - var(--a, 0)) * var(--w, 1) + 0.3), 1);
 }
-.cap-w::after {
-  content: "";
+/* The one tally line under the line being read, from its head to the
+   read's exact point; placed by script, hidden until it is. */
+.cap-line {
   position: absolute;
   left: 0;
-  right: 0;
-  bottom: -0.04em;
+  top: 0;
+  width: 0;
   height: max(0.06em, 2px);
+  margin-top: -0.02em;
   background: var(--tally);
   box-shadow: 0 0 8px var(--tally-glow);
-  transform-origin: left center;
-  transform: scaleX(calc(clamp(0, var(--x), 1) - clamp(0, var(--x) - 1, 1)));
+  opacity: 0;
   pointer-events: none;
+  transition: opacity 0.25s;
 }
 @media print {
   .cap-w {
     opacity: 1 !important;
   }
-  .cap-w::after {
+  .cap-line {
     display: none;
   }
 }

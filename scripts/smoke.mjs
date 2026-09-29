@@ -62,6 +62,9 @@ if (!gated) {
   await expect("/", 200, { contains: "Training film" });
   await expect("/", 200, { contains: "From our clients" });
   await expect("/clips/tiktok-7283257299626511649.jpg", 200);
+  // The brief's figure, served as a file, and on the page the brief puts it.
+  await expect("/guides/bad-and-good-profile.webp", 200);
+  await expect("/publish/discoverability", 200, { contains: "/guides/bad-and-good-profile.webp" });
   await expect("/", 200, { contains: "Call sheet" });
   await expect("/", 200, { contains: "Recently added" });
   await expect("/search-index.json", 200, { contains: "Verbal hooks" });
@@ -117,6 +120,8 @@ if (!gated) {
 } else {
   await expect("/login", 200, { header: ["x-robots-tag", "noindex"] });
   await expect("/login", 200, { header: ["x-frame-options", "SAMEORIGIN"] });
+  // Static files are served past the door, like the clips: not rewritten into a tree.
+  await expect("/guides/bad-and-good-profile.webp", 200);
   await expect("/", 307, { location: "/login" });
   await expect("/create/hooks", 307, { location: "/login?next=%2Fcreate%2Fhooks" });
   await expect("/search-index.json", 307, { location: "/login?next=%2Fsearch-index.json" });

@@ -215,5 +215,14 @@ export const discoverability: Guide = {
   rule: [
     { kind: "p", text: "Do not try to trick the algorithm." },
     { kind: "p", text: "Make it extremely easy for both the viewer and the platform to understand exactly what your content is about." },
+    // The image the brief sets after this tab's rule (its "![][image1]"; the
+    // markdown export dropped it, the client supplied it). Where the brief
+    // puts it, with no caption, because the brief gives it none.
+    {
+      kind: "figure",
+      src: "/guides/bad-and-good-profile.webp",
+      ratio: "3/2",
+      alt: "Two Instagram profiles side by side. Bad example, unclear, unprofessional and doesn't build trust: skyaviation_, with an unclear profile image that doesn't look like a brand, a vague bio that doesn't explain what the business does, no useful contact information, no pinned content and inconsistent content. Good example, clear, professional and easy to take the next step: horizonaviation, with a clear brand image, an informative bio saying what they do and where they operate, relevant contact options, helpful story highlights, strong pinned content and consistent, high quality content.",
+    },
   ],
 };

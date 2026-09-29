@@ -213,6 +213,18 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 64 (2026-09-29): the brief's missing image, and one note out.
+      The user supplied the image the .md export had dropped from the end of
+      Discoverability (its "![][image1]", after THE RULE): a bad/good
+      Instagram profile comparison. Placed where the brief puts it, after the
+      rule, at its own 975px measure (the 52ch rule column would have set its
+      labels at 5px) and opening full size on tap (333px wide on a phone).
+      public/guides/ had to be added to proxy.ts's static exclusions: every
+      file in an unlisted folder is rewritten into a client tree and 404s.
+      Smoke now fetches it on both servers. At the user's word, the unverified
+      view-count note on Study your niche is gone (the three clip captions,
+      1.8M / 1.3M / 1.3M, remain).
+
 - [x] Wave 63 (2026-09-29): the twelve guide tabs say what the brief says.
       Asked to check the other tabs after the home page. Measured, not read:
       every sentence of each brief tab matched against every word its page

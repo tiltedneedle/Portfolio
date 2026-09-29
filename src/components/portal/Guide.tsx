@@ -168,8 +168,19 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
         <div className="mx-auto max-w-[1600px] px-6 md:px-14">
           <p className="mono">The rule</p>
           <div className="mt-8 md:ml-[96px] md:max-w-[52ch]">
-            <RuleBlocks guide={guide} />
+            <RuleBlocks blocks={guide.rule.filter((r) => r.kind !== "figure")} />
           </div>
+          {/* A picture the brief sets after its rule gets a measure of its
+              own. The statement column is 52 characters wide, about 440px,
+              and at that size the labels inside an infographic (the bad and
+              good profile after Discoverability's rule) come out at 5px. */}
+          {guide.rule.some((r) => r.kind === "figure") && (
+            // 975px: the brief's image is 975 wide, and a raster set wider than
+            // itself goes soft exactly where its small labels are.
+            <div className="mt-16 md:ml-[96px] md:max-w-[975px]">
+              <Blocks blocks={guide.rule.filter((r) => r.kind === "figure")} />
+            </div>
+          )}
         </div>
       </section>
 
@@ -180,10 +191,10 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
 }
 
 /** The rule is set larger than the body: paragraphs become statements. */
-function RuleBlocks({ guide }: { guide: GuideT }) {
+function RuleBlocks({ blocks }: { blocks: GuideT["rule"] }) {
   return (
     <div className="flex flex-col gap-8">
-      {guide.rule.map((b, i) =>
+      {blocks.map((b, i) =>
         b.kind === "p" ? (
           <p key={i} className="em-serif statement text-[clamp(26px,3.4vw,44px)] leading-[1.2] text-[color:var(--ink)]">
             <Rich text={b.text} />

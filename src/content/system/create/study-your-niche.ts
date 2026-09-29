@@ -60,7 +60,6 @@ export const studyYourNiche: Guide = {
         {
           kind: "clips",
           title: "Outliers, from the library",
-          note: "Most of this account's clips land between fifty thousand and three hundred thousand views. These three passed a million. Work out why.",
           items: [
             { id: "kgexit7JaUA", caption: "1.8 million views" },
             { id: "BC_ZaHvv01U", caption: "1.3 million views" },

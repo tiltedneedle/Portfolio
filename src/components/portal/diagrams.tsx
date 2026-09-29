@@ -530,10 +530,15 @@ export function Figure({ src, alt, caption, ratio = "16/9" }: { src: string; alt
   const narrow = ratio === "9/16" || ratio === "4/5";
   return (
     <figure className={narrow ? "max-w-[360px]" : ""}>
-      <div className="overflow-hidden border border-[color:var(--rule)] bg-[color:var(--stage-2)]" style={{ aspectRatio: ratios[ratio] }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} alt={alt} loading="lazy" className="h-full w-full object-cover" />
-      </div>
+      {/* The picture opens at full size. An infographic set in a column is
+          a thumbnail on a phone (the brief's profile comparison is 333px wide
+          at 390), and its labels only read at the size it was drawn. */}
+      <a href={src} target="_blank" rel="noopener" title="Open full size" data-cursor="Open" className="block">
+        <div className="overflow-hidden border border-[color:var(--rule)] bg-[color:var(--stage-2)] transition-colors hover:border-[color:var(--rule-strong)]" style={{ aspectRatio: ratios[ratio] }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={src} alt={alt} loading="lazy" className="h-full w-full object-cover" />
+        </div>
+      </a>
       {caption && (
         <figcaption className="mono mt-3 text-[color:var(--ink-mid)]">
           <Rich text={caption} />

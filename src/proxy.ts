@@ -52,6 +52,9 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!login|_next/static|_next/image|favicon.ico|white-logo.png|black-logo.png|logos/|clips/|client/|manifest.webmanifest|robots.txt|opengraph-image).*)",
+    // Static files under public/ are served as they are, never rewritten into
+    // a client's tree: a folder missing here answers 404 for everything in it
+    // (guides/ did, the day the brief's first figure arrived).
+    "/((?!login|_next/static|_next/image|favicon.ico|white-logo.png|black-logo.png|logos/|clips/|client/|guides/|manifest.webmanifest|robots.txt|opengraph-image).*)",
   ],
 };

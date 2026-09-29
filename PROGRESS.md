@@ -213,6 +213,40 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 68 (2026-09-29): the home page as a reel on a projector.
+      The user asked again for the home page to be "more creative", motion
+      especially. Six additions, one idea:
+      1. Film stock (Backdrop.tsx, .film-frame): the strip behind the name
+         is film -- frames on a film base, backlit sprocket holes along both
+         edges, four to a frame. The band's top fade is shortened (20% to 7%)
+         so the upper row reads; the tops of the frames at full strength cost
+         the name nothing, since 0.5 is the band's ceiling everywhere. The
+         holes brush the tops of line one's capitals: measured, the name
+         keeps about 10:1 over them. The strip threads in from the right on
+         load (.band-in now translates as it fades up).
+      2. TILTED's letters are needles (Tilt.tsx, .tilt-l): they swing past
+         upright and settle as the title lands, then lean toward the pointer
+         (to about 6 degrees, full when level with the word, none past
+         900px). Fine pointers only, never under reduced motion; the word is
+         read once by a screen reader (sr-only), the letters are hidden.
+      3. The objective is a caption track (CaptionTrack.tsx, .cap-w): the
+         scroll plays it -- words read so far lit, a tally bar under the word
+         being read, the words ahead at 30%. One custom property drives it
+         in CSS; unset (before hydration, reduced motion, print) it is all
+         lit with no bar.
+      4. Training films open like a picture in a cinema (.letterbox,
+         .film-push): black bars draw back and the frame settles as the film
+         comes on. Guides get it too (same component).
+      5. The showreel is a wall of monitors: the cards power on one after
+         another as the rail arrives (.reel-on, the room monitors' crt-on).
+      6. The footer's words are on the jog shuttle too (WordStrip.tsx):
+         crawl on their own, run with the scroll, back on an upward flick,
+         and lean into it. Still under reduced motion by CSS (.word-run).
+      Verified: frame sheets of the opening, the lean both ways, the caption
+      at five scroll positions, the letterbox and the monitor wall; reduced
+      motion (26 caption words lit, no bars, letters still, words still,
+      nothing waiting); phone (no overflow); smoke and a11y on both servers.
+
 - [x] Wave 67 (2026-09-29): the deck and the stack.
       A review of the demo's ideas and scripts pages found both headers
       half empty on the right, the complaint the home page had drawn. Each

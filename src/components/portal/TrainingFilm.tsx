@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { TrainingFilm as Film } from "@/content/types";
 import { Still } from "@/components/portal/Still";
 import { embedUrl } from "@/lib/embed";
+import { Reveal } from "@/components/portal/Reveal";
 
 /**
  * The training film for a guide. With a YouTube id it fills a 16:9 well,
@@ -14,6 +15,11 @@ import { embedUrl } from "@/lib/embed";
  * has shot as a slot on the timeline with the playhead parked at zero: the
  * title, the state, and a strip of frame marks with nothing on them. The
  * page reads finished, and the slot is waiting rather than broken.
+ *
+ * A shot film opens the way a picture opens in a cinema: as it comes on,
+ * the black bars at its top and foot draw back and the frame settles from a
+ * slight push-in (.letterbox, .film-push; reveal-driven, so it is served
+ * open and a reader who asked for stillness never sees the bars).
  */
 export function TrainingFilm({ film, number }: { film: Film; number: string }) {
   const [playing, setPlaying] = useState(false);
@@ -38,7 +44,7 @@ export function TrainingFilm({ film, number }: { film: Film; number: string }) {
     );
 
   return (
-    <figure className="relative aspect-video w-full overflow-hidden border border-[color:var(--rule)] bg-[color:var(--stage-2)]">
+    <Reveal as="figure" className="relative aspect-video w-full overflow-hidden border border-[color:var(--rule)] bg-[color:var(--stage-2)]">
       {playing ? (
         <iframe
           src={embedUrl(id)}
@@ -49,7 +55,9 @@ export function TrainingFilm({ film, number }: { film: Film; number: string }) {
         />
       ) : (
         <>
-          <Still src={"https://i.ytimg.com/vi/" + id + "/maxresdefault.jpg"} eager sizes="(min-width:1600px) 1600px, 100vw" className="object-cover opacity-70" />
+          <span className="film-push absolute inset-0">
+            <Still src={"https://i.ytimg.com/vi/" + id + "/maxresdefault.jpg"} eager sizes="(min-width:1600px) 1600px, 100vw" className="object-cover opacity-70" />
+          </span>
           {/* The slate line and the title are ink on whatever frame YouTube
               chose, and these films open on a bright room. Two scrims, so the
               type is legible on a light frame and the frame still reads. */}
@@ -76,8 +84,10 @@ export function TrainingFilm({ film, number }: { film: Film; number: string }) {
               <span className="pill pill-outline px-6 py-3 text-[13px] backdrop-blur-md">Play &#9654;</span>
             </button>
           )}
+          <span aria-hidden="true" className="letterbox letterbox-top" />
+          <span aria-hidden="true" className="letterbox letterbox-foot" />
         </>
       )}
-    </figure>
+    </Reveal>
   );
 }

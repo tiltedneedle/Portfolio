@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { Still } from "@/components/portal/Still";
 import { Rail } from "@/components/portal/Rail";
 import { Odometer } from "@/components/portal/Odometer";
+import { Reveal } from "@/components/portal/Reveal";
 import { EmbedModal } from "@/components/room/EmbedModal";
 import { PLATFORM, STUDIO_VIEWS, embedFor, reel, reelTotal, viewsLabel, type Reel } from "@/content/system/reel";
 import { numberWord } from "@/lib/words";
@@ -24,6 +25,9 @@ const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
  * the film in the platform's own player, inside the lightbox. The same
  * section on every client's home: the proof is the studio's, the system is
  * theirs.
+ *
+ * As the rail comes on, the cards power on one after another like a wall
+ * of monitors (.reel-on: a bright line, then the picture opening from it).
  */
 export function Showreel() {
   const [open, setOpen] = useState<Reel | null>(null);
@@ -68,7 +72,7 @@ export function Showreel() {
           </div>
         </div>
 
-        <div className="mt-14 md:mt-16">
+        <Reveal className="mt-14 md:mt-16">
           <Rail count={n} label={"Top " + numberWord(n) + " · " + viewsLabel(total) + " views"}>
             {ranked.map((r, i) => {
               // A restricted film opens on the platform; the rest play here.
@@ -84,7 +88,10 @@ export function Showreel() {
                   aria-label={"Number " + (i + 1) + ". " + (r.restricted ? "Watch on " + PLATFORM[r.platform] + ": " : "Play ") + r.client + ": " + r.title + ", " + viewsLabel(r.views) + " views on " + PLATFORM[r.platform]}
                   data-cursor={r.restricted ? "Open" : "Play"}
                 >
-                  <span className="well block border border-[color:var(--rule)] transition-colors duration-300 group-hover:border-[color:var(--rule-strong)]">
+                  <span
+                    className="reel-on well block border border-[color:var(--rule)] transition-colors duration-300 group-hover:border-[color:var(--rule-strong)]"
+                    style={{ "--i": i } as CSSProperties}
+                  >
                     <Still src={r.thumb} sizes="248px" className="first3-push object-cover" />
                     {/* The first three seconds, made literal: on hover a playhead
                         runs the foot of the clip for exactly three seconds and a
@@ -116,7 +123,7 @@ export function Showreel() {
               );
             })}
           </Rail>
-        </div>
+        </Reveal>
       </div>
       <EmbedModal src={open ? embedFor(open) : null} platform={open?.platform} title={open ? open.client + ": " + open.title : ""} open={!!open} onClose={() => setOpen(null)} />
     </section>

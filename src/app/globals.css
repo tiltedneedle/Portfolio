@@ -1060,8 +1060,39 @@ a:focus-visible > .wm {
    gone by the lower edge, which is where the small text below the name
    starts on a short screen. The numbers behind the 58% are in Backdrop.tsx. */
 .hero-band {
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 58%, transparent 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, #000 20%, #000 58%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 7%, #000 58%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 7%, #000 58%, transparent 100%);
+}
+/* The strip is film stock (Backdrop.tsx): each frame on a film base, the
+   frame line either side of it, and four sprocket holes to a frame along
+   each edge, lit from behind. The top fade above is short so the upper row
+   of holes reads; making the tops of the frames full strength costs the
+   name nothing, because 0.5 is already the band's ceiling everywhere (see
+   Backdrop.tsx), and the holes sit above the capitals and below the
+   baseline, clear of every stroke. The lower row fades out with the frames,
+   as the whole band dissolves downward. */
+.film-frame {
+  position: relative;
+  display: block;
+  flex: none;
+  padding: max(0.16em, 12px) max(0.045em, 4px);
+  background-color: #2a2724;
+}
+.film-frame::before,
+.film-frame::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: max(0.068em, 5px);
+  background: linear-gradient(90deg, transparent 0 22%, rgba(242, 239, 233, 0.55) 22% 78%, transparent 78%) 0 0 / 25% 100% repeat-x;
+  border-radius: 1px;
+}
+.film-frame::before {
+  top: max(0.046em, 3.5px);
+}
+.film-frame::after {
+  bottom: max(0.046em, 3.5px);
 }
 /* The sides fall away to the stage. Clear across the middle 64% of the
    width, where the name is, rather than only at the dead centre. */
@@ -1356,16 +1387,20 @@ a:focus-visible > .wm {
     transform: none;
   }
 }
-/* The work comes up behind the name, from black. */
+/* The work comes up behind the name, from black, threading in from the
+   right the way a reel is laced through the gate and then runs. The
+   translate property is Tailwind's centring; this moves by transform. */
 .band-in {
-  animation: band-in 1.8s ease-out 0.25s both;
+  animation: band-in 2.4s var(--ease-out-expo) 0.2s both;
 }
 @keyframes band-in {
   from {
     opacity: 0;
+    transform: translateX(14%);
   }
   to {
     opacity: 1;
+    transform: none;
   }
 }
 /* ------------------------------------------------------------ scene titles
@@ -1594,6 +1629,7 @@ a:focus-visible > .wm {
       .door-field,
       .hand-card,
       .stack-page,
+      .tilt-l,
       .odo-now .odo-reel,
       .desk-tile,
       .desk-bar,
@@ -1623,6 +1659,7 @@ body.is-cutting
     .door-field,
     .hand-card,
     .stack-page,
+    .tilt-l,
     .odo-now .odo-reel,
     .desk-tile,
     .desk-bar,
@@ -1753,6 +1790,142 @@ body.is-cutting
 }
 .reveal-wait:focus-within .dial-arc {
   stroke-dashoffset: 0;
+}
+.reveal-wait:focus-within :is(.letterbox, .film-push) {
+  transform: none;
+}
+.reveal-wait:focus-within .letterbox {
+  transform: scaleY(0);
+}
+.reveal-wait:focus-within .reel-on {
+  clip-path: none;
+}
+
+/* A caption track (CaptionTrack.tsx). --p is the scroll's progress through
+   the block, set by script; --n the words, --i each word's place. x is how
+   far the read has got past this word, in words: under 0 it waits at 30%,
+   from 0 to 1 it lights and the tally bar grows under it, from 1 to 2 the
+   bar hands on to the next word. Scaled by n + 1 so at the end of the read
+   (and unset, --p defaults to 1) every word is lit and no bar is left
+   standing under the last. */
+.cap-w {
+  position: relative;
+  display: inline-block;
+  --x: calc(var(--p, 1) * (var(--n, 1) + 1) - var(--i, 0));
+  opacity: clamp(0.3, var(--x), 1);
+}
+.cap-w::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.04em;
+  height: max(0.06em, 2px);
+  background: var(--tally);
+  box-shadow: 0 0 8px var(--tally-glow);
+  transform-origin: left center;
+  transform: scaleX(calc(clamp(0, var(--x), 1) - clamp(0, var(--x) - 1, 1)));
+  pointer-events: none;
+}
+@media print {
+  .cap-w {
+    opacity: 1 !important;
+  }
+  .cap-w::after {
+    display: none;
+  }
+}
+
+/* A shot training film opens like a picture in a cinema (TrainingFilm.tsx):
+   as it comes on, the black bars at its top and foot draw back and the
+   frame settles from a slight push-in. Reveal-driven, so it is served open;
+   a reader who asked for stillness never sees the bars. */
+.letterbox {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  height: 14%;
+  background: #000;
+  transform: scaleY(0);
+  pointer-events: none;
+}
+.letterbox-top {
+  top: 0;
+  transform-origin: 50% 0;
+}
+.letterbox-foot {
+  bottom: 0;
+  transform-origin: 50% 100%;
+}
+.reveal-wait .letterbox {
+  transform: scaleY(1);
+}
+.reveal-wait.reveal-in .letterbox {
+  animation: letterbox-open 1.4s var(--ease-out-expo) 0.15s both;
+}
+@keyframes letterbox-open {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
+}
+.reveal-wait .film-push {
+  transform: scale(1.07);
+}
+.reveal-wait.reveal-in .film-push {
+  animation: film-settle 2.4s var(--ease-out-expo) both;
+}
+@keyframes film-settle {
+  from {
+    transform: scale(1.07);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* The showreel's cards power on like a wall of monitors as the rail comes
+   on (Showreel.tsx): the same bright line and opening as a room's monitor,
+   one card after another. */
+.reveal-wait .reel-on {
+  clip-path: inset(50% 0 50% 0);
+}
+.reveal-wait.reveal-in .reel-on {
+  animation: crt-on 0.95s var(--ease-out-expo) both;
+  animation-delay: calc(0.1s + var(--i, 0) * 0.085s);
+}
+
+/* TILTED's letters are needles (Tilt.tsx), pinned at the foot: as the
+   title lands they swing past upright and settle, one after another, and
+   then lean toward the pointer. The lean is the rotate property, written
+   by script; the settle is transform, so the two never fight. */
+.tilt-l {
+  display: inline-block;
+  transform-origin: 50% 92%;
+  rotate: var(--tilt, 0deg);
+  transition: rotate 0.55s var(--ease-out-expo);
+  animation: needle-settle 1.5s var(--ease-out-expo) both;
+  animation-delay: calc(0.8s + var(--k, 0) * 0.07s);
+}
+@keyframes needle-settle {
+  0% {
+    transform: rotate(0deg);
+  }
+  22% {
+    transform: rotate(11deg);
+  }
+  48% {
+    transform: rotate(-6deg);
+  }
+  72% {
+    transform: rotate(2.5deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
 }
 
 /* The door's second row, travelling against the first. */
@@ -1911,6 +2084,10 @@ body.is-cutting
   .hero-band {
     opacity: 1 !important;
   }
+  /* The footer's words hold still (WordStrip.tsx), whatever the scroll does. */
+  .word-run {
+    transform: none !important;
+  }
   /* The first three seconds is a moving playhead or nothing at all. */
   .first3,
   .first3-tc {
@@ -1966,6 +2143,10 @@ body.is-cutting
   .bars,
   .hand-card,
   .stack-page,
+  .tilt-l,
+  .letterbox,
+  .film-push,
+  .reel-on,
   .odo-now .odo-reel,
   .cue::before,
   .rule-wash,
@@ -2253,7 +2434,9 @@ body.is-cutting
 .reveal-wait:has(.journey-draw),
 .reveal-wait:has(.beat),
 .reveal-wait:has(.cue-word),
-.reveal-wait:has(.rule-line) {
+.reveal-wait:has(.rule-line),
+.reveal-wait:has(.letterbox),
+.reveal-wait:has(.reel-on) {
   clip-path: none;
   transition: none;
 }
@@ -2316,6 +2499,14 @@ body.is-cutting
   }
   .reveal-wait .dial-arc {
     stroke-dashoffset: 0 !important;
+  }
+  .reveal-wait .letterbox {
+    display: none !important;
+  }
+  .reveal-wait :is(.film-push, .reel-on) {
+    transform: none !important;
+    clip-path: none !important;
+    animation: none !important;
   }
 }
 

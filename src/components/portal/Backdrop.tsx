@@ -24,6 +24,12 @@ import { Scrub } from "@/components/portal/HeroMotion";
  * and the lead on some screens, and the brief's tagline carries a red word
  * that has no contrast to spare over a picture. It also dissolves downward
  * (.hero-band), gone by its own lower edge.
+ *
+ * And it is film: the frames sit on a film base with a row of sprocket
+ * holes along each edge, four to a frame, lit from behind the way a gate
+ * lights them. The holes sit above the name's capitals and below its
+ * baseline, never behind a stroke. On load the strip threads in from the
+ * right and settles into its drift (.band-in).
  */
 export function Backdrop({ className = "" }: { className?: string }) {
   const own = reel.map((r) => ({ id: r.id, thumb: r.thumb }));
@@ -41,10 +47,12 @@ export function Backdrop({ className = "" }: { className?: string }) {
   stills.splice(16);
   if (!stills.length) return null;
   const row = (key: string, hidden: boolean) => (
-    <div key={key} className="flex shrink-0 gap-3 pr-3" aria-hidden={hidden || undefined}>
+    <div key={key} className="flex shrink-0" aria-hidden={hidden || undefined}>
       {stills.map((s, i) => (
-        <span key={s.id + i} className="well w-[max(0.9em,64px)] border border-[color:var(--rule)]">
-          <Still src={s.thumb} sizes="(min-width:1680px) 152px, (min-width:712px) 9vw, 64px" className="object-cover" />
+        <span key={s.id + i} className="film-frame">
+          <span className="well block w-[max(0.9em,64px)]">
+            <Still src={s.thumb} sizes="(min-width:1680px) 152px, (min-width:712px) 9vw, 64px" className="object-cover" />
+          </span>
         </span>
       ))}
     </div>

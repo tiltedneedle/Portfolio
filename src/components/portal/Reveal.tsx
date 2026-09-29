@@ -24,7 +24,7 @@ export function Reveal({
 }: {
   children: ReactNode;
   className?: string;
-  as?: "div" | "section" | "li" | "nav";
+  as?: "div" | "section" | "li" | "nav" | "figure";
   id?: string;
   style?: CSSProperties;
   "aria-label"?: string;

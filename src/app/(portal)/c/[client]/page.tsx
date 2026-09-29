@@ -4,6 +4,8 @@ import { ReelPosition, StudioClocks } from "@/components/room/Readouts";
 import { CutLink } from "@/components/room/CutLink";
 import { Backdrop } from "@/components/portal/Backdrop";
 import { Lift } from "@/components/portal/HeroMotion";
+import { Tilt } from "@/components/portal/Tilt";
+import { CaptionTrack } from "@/components/portal/CaptionTrack";
 import { RunningOrder } from "@/components/portal/Playheads";
 import { ClientMark } from "@/components/portal/ClientMark";
 import { AccessStrip } from "@/components/portal/AccessStrip";
@@ -175,7 +177,11 @@ export default async function Home({ params }: { params: Promise<{ client: strin
             <Lift>
             <h1 className="display footage-type relative max-w-[15ch] leading-[0.86]">
               <span className="title-line">
-                <span style={{ "--i": 0 } as CSSProperties}>Tilted Needle</span>
+                {/* TILTED's letters are needles: they settle as the line
+                    lands, then lean toward the pointer (Tilt.tsx). */}
+                <span style={{ "--i": 0 } as CSSProperties}>
+                  <Tilt text="Tilted" /> Needle
+                </span>
               </span>
               <span className="title-line md:whitespace-nowrap">
                 <span style={{ "--i": 1 } as CSSProperties}>
@@ -244,7 +250,12 @@ export default async function Home({ params }: { params: Promise<{ client: strin
           </div>
           <div className="md:border-l md:border-[color:var(--rule)] md:pl-20 md:pt-[calc(1.5rem+2.5rem)]">
             <p className="mono text-[color:var(--ink-mid)]">{home.objective.label}</p>
-            <p className="em-serif statement mt-4 max-w-[30ch] text-[clamp(26px,2.6vw,40px)] leading-[1.2] text-[color:var(--ink)]">{home.objective.text}</p>
+            {/* Read as a caption track: each word lights as the scroll
+                reaches it, a tally bar under the word being read. */}
+            <CaptionTrack
+              text={home.objective.text}
+              className="em-serif statement mt-4 max-w-[30ch] text-[clamp(26px,2.6vw,40px)] leading-[1.2] text-[color:var(--ink)]"
+            />
           </div>
         </div>
         <div className="mx-auto mt-16 max-w-[1600px] px-6 md:mt-24 md:px-14">

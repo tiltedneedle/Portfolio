@@ -19,64 +19,86 @@ function Title({ text }: { text?: string }) {
 /* ------------------------------------------------------------ retention */
 
 /**
- * Where attention is lost. A watch-time curve with the two places viewers
- * leave marked: the first seconds (the hook) and the middle (the pacing).
+ * The curve itself, drawn at a given width. The curve and its zones are laid
+ * out on a 584-wide plot and mapped onto this one (k), so the same shape is
+ * drawn at 640 for a tablet or wider and at 360 on a phone -- where SVG text,
+ * which scales with its drawing, would otherwise have set the 640 drawing's
+ * labels at 4px across a 280px column. The phone's drawing has bigger labels,
+ * three ticks rather than five, and no 00:00, which would run into 00:03.
  */
-export function Retention({ title, note }: { title?: string; note?: string }) {
-  const W = 640;
+function RetentionCurve({ W, fs, ticks, start, low = false, className }: { W: number; fs: number; ticks: number[]; start: boolean; low?: boolean; className: string }) {
   const H = 240;
-  const x0 = 44;
+  const x0 = Math.round(fs * 4.4);
   const y0 = 16;
   const x1 = W - 12;
   const y1 = H - 36;
+  const k = (x1 - x0) / 584;
+  const X = (v: number) => x0 + v * k;
   // A believable short-form retention curve: a cliff in the first seconds,
   // a slow slide through the middle, a small lift at the payoff.
   const d = [
     `M ${x0} ${y0}`,
-    `C ${x0 + 30} ${y0 + 10}, ${x0 + 40} ${y0 + 78}, ${x0 + 90} ${y0 + 92}`,
-    `C ${x0 + 200} ${y0 + 122}, ${x0 + 330} ${y0 + 142}, ${x0 + 440} ${y0 + 150}`,
-    `C ${x0 + 500} ${y0 + 154}, ${x0 + 540} ${y0 + 150}, ${x1} ${y0 + 140}`,
+    `C ${X(30)} ${y0 + 10}, ${X(40)} ${y0 + 78}, ${X(90)} ${y0 + 92}`,
+    `C ${X(200)} ${y0 + 122}, ${X(330)} ${y0 + 142}, ${X(440)} ${y0 + 150}`,
+    `C ${X(500)} ${y0 + 154}, ${X(540)} ${y0 + 150}, ${x1} ${y0 + 140}`,
   ].join(" ");
-  const ticks = [0, 0.25, 0.5, 0.75, 1];
+  const label = { fontSize: fs, fontFamily: "var(--font-mono)" };
+  // Where the zones are named: along the top, or (on a phone, where the hook
+  // zone is too narrow to keep its name clear of the curve's first drop)
+  // along the foot of the plot, which the curve never reaches.
+  const zoneY = low ? y1 - fs * 0.6 : y0 + fs + 2;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className={"h-auto w-full " + className} role="img" aria-label="A retention curve: most viewers who leave do so in the first seconds; the rest drift away through the middle.">
+      {/* grid */}
+      {ticks.map((t) => (
+        <line key={"h" + t} x1={x0} x2={x1} y1={y0 + (y1 - y0) * t} y2={y0 + (y1 - y0) * t} stroke="var(--rule)" strokeWidth="1" />
+      ))}
+      {ticks.map((t) => (
+        <text key={"y" + t} x={x0 - 8} y={y0 + (y1 - y0) * t + fs * 0.4} textAnchor="end" {...label} fill="var(--ink-mid)">
+          {Math.round((1 - t) * 100)}%
+        </text>
+      ))}
+      {/* the zones */}
+      <rect x={x0} y={y0} width={90 * k} height={y1 - y0} fill="var(--tally)" opacity="0.07" />
+      <rect x={X(160)} y={y0} width={260 * k} height={y1 - y0} fill="var(--ink)" opacity="0.035" />
+      {/* the curve */}
+      <path d={d} fill="none" stroke="var(--ink)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+      <circle cx={X(90)} cy={y0 + 92} r="3.5" fill="var(--tally)" />
+      <circle cx={X(440)} cy={y0 + 150} r="3.5" fill="var(--ink)" />
+      {/* x axis */}
+      <line x1={x0} x2={x1} y1={y1} y2={y1} stroke="var(--rule-strong)" strokeWidth="1" />
+      {start && (
+        <text x={x0} y={y1 + fs + 8} {...label} fill="var(--ink-mid)">
+          00:00
+        </text>
+      )}
+      <text x={X(90)} y={y1 + fs + 8} {...label} fill="var(--tally)" textAnchor="middle">
+        00:03
+      </text>
+      <text x={x1} y={y1 + fs + 8} {...label} fill="var(--ink-mid)" textAnchor="end">
+        END
+      </text>
+      <text x={X(290)} y={zoneY} {...label} fill="var(--ink-mid)" textAnchor="middle" letterSpacing="1">
+        THE MIDDLE
+      </text>
+      <text x={X(45)} y={zoneY} {...label} fill="var(--tally)" textAnchor="middle" letterSpacing="1">
+        HOOK
+      </text>
+    </svg>
+  );
+}
+
+/**
+ * Where attention is lost. A watch-time curve with the two places viewers
+ * leave marked: the first seconds (the hook) and the middle (the pacing).
+ */
+export function Retention({ title, note }: { title?: string; note?: string }) {
   return (
     <figure>
       <Title text={title} />
       <div className="border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-4 md:p-6">
-        <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label="A retention curve: most viewers who leave do so in the first seconds; the rest drift away through the middle.">
-          {/* grid */}
-          {ticks.map((t) => (
-            <line key={"h" + t} x1={x0} x2={x1} y1={y0 + (y1 - y0) * t} y2={y0 + (y1 - y0) * t} stroke="var(--rule)" strokeWidth="1" />
-          ))}
-          {ticks.map((t) => (
-            <text key={"y" + t} x={x0 - 8} y={y0 + (y1 - y0) * t + 4} textAnchor="end" fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)">
-              {Math.round((1 - t) * 100)}%
-            </text>
-          ))}
-          {/* the zones */}
-          <rect x={x0} y={y0} width={90} height={y1 - y0} fill="var(--tally)" opacity="0.07" />
-          <rect x={x0 + 160} y={y0} width={260} height={y1 - y0} fill="var(--ink)" opacity="0.035" />
-          {/* the curve */}
-          <path d={d} fill="none" stroke="var(--ink)" strokeWidth="2" vectorEffect="non-scaling-stroke" />
-          <circle cx={x0 + 90} cy={y0 + 92} r="3.5" fill="var(--tally)" />
-          <circle cx={x0 + 440} cy={y0 + 150} r="3.5" fill="var(--ink)" />
-          {/* x axis */}
-          <line x1={x0} x2={x1} y1={y1} y2={y1} stroke="var(--rule-strong)" strokeWidth="1" />
-          <text x={x0} y={y1 + 18} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)">
-            00:00
-          </text>
-          <text x={x0 + 90} y={y1 + 18} fontSize="10" fontFamily="var(--font-mono)" fill="var(--tally)" textAnchor="middle">
-            00:03
-          </text>
-          <text x={x1} y={y1 + 18} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)" textAnchor="end">
-            END
-          </text>
-          <text x={x0 + 290} y={y0 + 12} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)" textAnchor="middle" letterSpacing="1">
-            THE MIDDLE
-          </text>
-          <text x={x0 + 45} y={y0 + 12} fontSize="10" fontFamily="var(--font-mono)" fill="var(--tally)" textAnchor="middle" letterSpacing="1">
-            HOOK
-          </text>
-        </svg>
+        <RetentionCurve W={640} fs={10} ticks={[0, 0.25, 0.5, 0.75, 1]} start className="max-sm:hidden" />
+        <RetentionCurve W={360} fs={14} ticks={[0, 0.5, 1]} start={false} low className="sm:hidden" />
         <div className="mt-4 grid gap-4 border-t border-[color:var(--rule)] pt-4 md:grid-cols-2 md:gap-8">
           <p className="text-[15px] leading-snug text-[color:var(--ink-soft)]">
             {/* Tally marks state, never small text: the lamp carries the red, the timecode stays ink. */}
@@ -122,7 +144,7 @@ export function Cadence({ title, note, days = 30, every = 2 }: { title?: string;
                   (on ? "border-[color:var(--rule-strong)] bg-[color:var(--stage-3)]" : "border-[color:var(--rule)]")
                 }
               >
-                <span className="mono absolute left-1 top-0.5 text-[9px] text-[color:var(--ink-mid)]">{pad(i)}</span>
+                <span className="mono absolute left-1 top-0.5 text-[color:var(--ink-mid)]">{pad(i)}</span>
                 {on && <span aria-hidden="true" className="lamp absolute bottom-1.5 right-1.5" />}
               </li>
             );
@@ -218,13 +240,13 @@ export function Structure({ title, parts, seconds = 45, note }: { title?: string
             {marks.map((m, i) => (
               <span
                 key={m.label}
-                className={"tc absolute top-0 -translate-x-1/2 text-[10px] first:translate-x-0 " + (i === 0 ? "" : "hidden sm:inline") + (i % 2 ? " sm:top-4" : "")}
+                className={"tc absolute top-0 -translate-x-1/2 text-[11px] first:translate-x-0 " + (i === 0 ? "" : "hidden sm:inline") + (i % 2 ? " sm:top-4" : "")}
                 style={{ left: (m.start * 100).toFixed(2) + "%" }}
               >
                 {timecode(m.start * seconds).slice(3, 8)}
               </span>
             ))}
-            <span className={"tc absolute right-0 top-0 text-[10px]" + (marks.length % 2 ? " sm:top-4" : "")}>{timecode(seconds).slice(3, 8)}</span>
+            <span className={"tc absolute right-0 top-0 text-[11px]" + (marks.length % 2 ? " sm:top-4" : "")}>{timecode(seconds).slice(3, 8)}</span>
           </div>
         </div>
         <ol className="mt-4 grid gap-x-8 gap-y-4 border-t border-[color:var(--rule)] pt-5 sm:grid-cols-2 lg:grid-cols-5">
@@ -359,7 +381,9 @@ export function Lens({ title, wide, tight, note }: { title?: string; wide: strin
     <figure>
       <Title text={title} />
       <div className="border border-[color:var(--rule)] bg-[color:var(--stage-2)] p-4 md:p-6">
-        <svg viewBox="0 0 340 240" className="h-auto w-full" role="img" aria-label="Two angles of view from one camera position: a wide lens covers the whole space, a tight lens isolates one detail.">
+        {/* Held to 520px: drawn the width of a wide screen's column, a 340-unit
+            schematic came out 858px across with its labels at 25px. */}
+        <svg viewBox="0 0 340 240" className="mx-auto h-auto w-full max-w-[520px]" role="img" aria-label="Two angles of view from one camera position: a wide lens covers the whole space, a tight lens isolates one detail.">
           <path d={wedge(84)} fill="var(--ink)" opacity="0.06" />
           <path d={wedge(84)} fill="none" stroke="var(--rule-strong)" strokeWidth="1" />
           <path d={wedge(22)} fill="var(--tally)" opacity="0.12" />
@@ -376,13 +400,13 @@ export function Lens({ title, wide, tight, note }: { title?: string; wide: strin
           {/* camera */}
           <rect x={cx - 16} y={cy - 9} width="16" height="18" fill="var(--ink)" />
           <rect x={cx - 24} y={cy - 5} width="8" height="10" fill="var(--ink)" />
-          <text x={cx - 12} y={cy + 32} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)" letterSpacing="1">
+          <text x={cx - 12} y={cy + 32} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)" letterSpacing="1" className="chart-label-sm">
             CAMERA
           </text>
-          <text x="196" y="26" fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)" letterSpacing="1">
+          <text x="196" y="26" fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)" letterSpacing="1" className="chart-label-sm">
             WIDE · THE SPACE
           </text>
-          <text x="196" y="226" fontSize="10" fontFamily="var(--font-mono)" fill="var(--tally)" letterSpacing="1">
+          <text x="196" y="226" fontSize="10" fontFamily="var(--font-mono)" fill="var(--tally)" letterSpacing="1" className="chart-label-sm">
             TIGHT · THE DETAIL
           </text>
         </svg>

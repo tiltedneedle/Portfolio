@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import type { Block, Guide as GuideT } from "@/content/types";
+import { longestWordEm } from "@/lib/display-fit";
 import type { GuideNote } from "@/content/clients/types";
 import { ForYou } from "@/components/portal/ForYou";
 import { Resume } from "@/components/portal/Resume";
@@ -89,7 +90,12 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
         <p className="mono scene-slate relative">
           {ch.n} &mdash; {ch.title} <span className="text-[color:var(--ink-mid)]">/</span> {n}
         </p>
-        <h1 className="display relative mt-6 max-w-[12ch] text-[clamp(52px,8.5vw,140px)]">
+        {/* Never larger than lets its longest word fit the screen, margins out:
+            only a long word on a small phone is ever held down by it. */}
+        <h1
+          className="display relative mt-6 max-w-[12ch] text-[min(clamp(52px,8.5vw,140px),calc((100vw_-_48px)/var(--word-em,0.01)))]"
+          style={{ "--word-em": longestWordEm(guide.title) } as CSSProperties}
+        >
           <Rise text={guide.title} />
         </h1>
         <p className="em-serif statement relative mt-6 max-w-[34ch] text-[clamp(22px,2.6vw,34px)] leading-[1.25] text-[color:var(--ink-soft)]">
@@ -152,7 +158,7 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
 
       {guide.film && (
         <div className="mx-auto max-w-[1600px] px-6 md:px-14">
-          <TrainingFilm film={guide.film} number={n} />
+          <TrainingFilm film={guide.film} number={n} eager />
         </div>
       )}
 

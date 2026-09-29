@@ -54,7 +54,7 @@ export function CompetitorBoard({ items }: { items: Competitor[] }) {
           </p>
           <p className="display mt-5 text-[28px] leading-[0.95] text-[color:var(--ink)]">{c.name}</p>
           <p className="mono mt-1">
-            <a href={addressOf(c)} target="_blank" rel="noreferrer" className="text-[color:var(--ink-mid)] transition-colors hover:text-[color:var(--ink)]" data-cursor="Open">
+            <a href={addressOf(c)} target="_blank" rel="noreferrer" className="hit text-[color:var(--ink-mid)] transition-colors hover:text-[color:var(--ink)]" data-cursor="Open">
               {c.handle} <span aria-hidden="true">&#8599;</span>
             </a>
           </p>
@@ -110,16 +110,16 @@ export function PositionMap({ map }: { map: PositionMapT }) {
         <line x1={px(0)} x2={px(1)} y1={py(0.5)} y2={py(0.5)} stroke="var(--rule-strong)" strokeWidth="1" strokeDasharray="3 4" />
         <rect x={px(0)} y={py(1)} width={S - pad * 2} height={S - pad * 2} fill="none" stroke="var(--rule)" strokeWidth="1" />
         {/* axis ends */}
-        <text x={px(0)} y={S - 10} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)" letterSpacing="1">
+        <text x={px(0)} y={S - 10} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)" letterSpacing="1" className="chart-label">
           {map.x[0].toUpperCase()}
         </text>
-        <text x={px(1)} y={S - 10} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)" letterSpacing="1" textAnchor="end">
+        <text x={px(1)} y={S - 10} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)" letterSpacing="1" className="chart-label" textAnchor="end">
           {map.x[1].toUpperCase()}
         </text>
-        <text x={10} y={py(0)} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)" letterSpacing="1" transform={`rotate(-90 10 ${py(0)})`}>
+        <text x={10} y={py(0)} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)" letterSpacing="1" className="chart-label" transform={`rotate(-90 10 ${py(0)})`}>
           {map.y[0].toUpperCase()}
         </text>
-        <text x={10} y={py(1)} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)" letterSpacing="1" transform={`rotate(-90 10 ${py(1)})`} textAnchor="end">
+        <text x={10} y={py(1)} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink-mid)" letterSpacing="1" className="chart-label" transform={`rotate(-90 10 ${py(1)})`} textAnchor="end">
           {map.y[1].toUpperCase()}
         </text>
         {/* the journey: from today to where the moves lead */}
@@ -147,7 +147,7 @@ export function PositionMap({ map }: { map: PositionMapT }) {
                 const label = (parts.length > 1 ? parts.slice(1).join(", ") : to.name).toUpperCase();
                 const left = to.x > 0.5;
                 return (
-                  <text className="journey-label" x={px(to.x) + (left ? -12 : 12)} y={py(to.y) + 4} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink)" textAnchor={left ? "end" : "start"}>
+                  <text className="journey-label chart-label" x={px(to.x) + (left ? -12 : 12)} y={py(to.y) + 4} fontSize="10" fontFamily="var(--font-mono)" fill="var(--ink)" textAnchor={left ? "end" : "start"}>
                     {label}
                   </text>
                 );
@@ -167,6 +167,7 @@ export function PositionMap({ map }: { map: PositionMapT }) {
               fontFamily="var(--font-mono)"
               fill={p.you ? "var(--ink)" : "var(--ink-soft)"}
               textAnchor={p.x > 0.7 ? "end" : "start"}
+              className="chart-label"
             >
               {p.name.toUpperCase()}
             </text>

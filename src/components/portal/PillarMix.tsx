@@ -36,7 +36,7 @@ export function PillarMix({ ideas }: { ideas: Record<Pillar, Idea[]> }) {
         <text x="60" y="57" textAnchor="middle" fontSize="20" fontFamily="var(--font-display)" fontWeight="800" fill="var(--ink)">
           {total}
         </text>
-        <text x="60" y="72" textAnchor="middle" fontSize="9" fontFamily="var(--font-mono)" fill="var(--ink-mid)" letterSpacing="1">
+        <text x="60" y="74" textAnchor="middle" fontSize="11" fontFamily="var(--font-mono)" fill="var(--ink-mid)" letterSpacing="1">
           WRITTEN
         </text>
       </svg>

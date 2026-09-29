@@ -161,7 +161,9 @@ export default async function Home({ params }: { params: Promise<{ client: strin
         {/* The air of the room: a projector's beam across the hero and the
             dust drifting in it, which a hand through the beam scatters. */}
         <HeroDust />
-        <div className="mono relative flex items-center justify-between px-6 pt-20 md:px-14">
+        {/* The frame spans the screen; what is in it keeps the page's 1600px
+            measure, under the nav's mark and over every section below. */}
+        <div className="mono relative mx-auto flex w-full max-w-[1600px] items-center justify-between px-6 pt-[72px] md:px-14 md:pt-20">
           <p className="flex items-center gap-2">
             <span className="lamp lamp-live" aria-hidden="true" />
             <span>Live</span>
@@ -170,14 +172,20 @@ export default async function Home({ params }: { params: Promise<{ client: strin
           <StudioClocks className="max-md:hidden" />
         </div>
 
-        <div className="relative px-6 py-16 md:px-14 md:py-20">
+        {/* The title card is meant to be one screen. Its spacing and the
+            name's size give way to a short screen (svh), so on a 1440x900 or
+            1280x800 laptop the way in ("Start here") is in the first frame:
+            with fixed 80px bands and a 144px name it fell 16 to 130px below
+            it. On a tall screen nothing changes. */}
+        <div className="relative mx-auto w-full max-w-[1600px] px-6 py-[clamp(20px,5svh,64px)] md:px-14 md:py-[clamp(24px,5svh,80px)]">
           <ClientMark size={64} />
           {/* The name sets the size for itself and for the work drifting
               behind it: the band is centred on this box and its frames are
               sized in em, so it sits behind the name at every width and never
               reaches the tagline below. */}
-          <div className="relative mt-10 text-[clamp(56px,10vw,168px)]">
-            <Backdrop className="band-in -inset-x-6 top-1/2 -translate-y-1/2 md:-inset-x-14" />
+          <div className="relative mt-[clamp(16px,4svh,40px)] text-[clamp(56px,min(10vw,16svh),168px)]">
+            {/* The band runs the full width of the screen, whatever the measure. */}
+            <Backdrop className="band-in inset-x-[calc(50%_-_50vw)] top-1/2 -translate-y-1/2" />
             {/* Each line rises through its own mask (.title-line), the second
                 a beat after the first: the opening titles. */}
             <Lift>
@@ -212,7 +220,7 @@ export default async function Home({ params }: { params: Promise<{ client: strin
               client's own document asks for the red, and the client wins. */}
           {/* Word by word, each pulled into focus; the brief's red word
               lands in ink and then catches, like a tally lamp. */}
-          <p className="display footage-type mt-8 text-[clamp(24px,2.8vw,44px)] leading-[1] text-[color:var(--ink)]">
+          <p className="display footage-type mt-[clamp(16px,3.5svh,32px)] text-[clamp(24px,min(2.8vw,4.6svh),44px)] leading-[1] text-[color:var(--ink)]">
             {home.kicker.split(" ").map((w, i) => (
               <Fragment key={i}>
                 {i > 0 && " "}
@@ -222,12 +230,12 @@ export default async function Home({ params }: { params: Promise<{ client: strin
               </Fragment>
             ))}
           </p>
-          <p className="footage-type title-lead mt-6 max-w-[48ch] text-[19px] leading-[1.5] text-[color:var(--ink-soft)] md:text-[22px]">{home.lead(identity.name)}</p>
+          <p className="footage-type title-lead mt-[clamp(12px,2.6svh,24px)] max-w-[48ch] text-[19px] leading-[1.5] text-[color:var(--ink-soft)] md:text-[22px]">{home.lead(identity.name)}</p>
           {/* A client with nothing marked and nothing written has nothing to
               read out, and an empty labelled list is a promise the page does
               not keep. */}
           {readout.length > 0 && (
-            <dl className="mono mt-8 flex flex-wrap gap-x-8 gap-y-2" aria-label="Where the system stands">
+            <dl className="mono mt-[clamp(16px,3.5svh,32px)] flex flex-wrap gap-x-8 gap-y-2" aria-label="Where the system stands">
               {readout.map((r) => (
                 <div key={r.k} className="flex gap-2">
                   <dt className="text-[color:var(--ink-mid)]">{r.k}</dt>
@@ -238,11 +246,14 @@ export default async function Home({ params }: { params: Promise<{ client: strin
           )}
         </div>
 
-        <div className="mono relative flex flex-col gap-3 border-t border-[color:var(--rule)] px-6 py-6 md:flex-row md:items-center md:justify-between md:px-14 md:pb-20">
-          <p className="text-[color:var(--ink-soft)]">{home.access_note}</p>
-          <a href="#objective" className="slate-link text-[13px] text-[color:var(--ink)]" data-cursor="Cut">
-            Start here &darr;
-          </a>
+        {/* The rule runs the width of the screen; the line on it keeps the measure. */}
+        <div className="relative border-t border-[color:var(--rule)]">
+          <div className="mono mx-auto flex max-w-[1600px] flex-col gap-3 px-6 py-6 md:flex-row md:items-center md:justify-between md:px-14 md:pb-[clamp(24px,5.5svh,80px)]">
+            <p className="text-[color:var(--ink-soft)]">{home.access_note}</p>
+            <a href="#objective" className="slate-link text-[13px] text-[color:var(--ink)]" data-cursor="Cut">
+              Start here &darr;
+            </a>
+          </div>
         </div>
       </section>
 

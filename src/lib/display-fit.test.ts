@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { displayEm, titleFit } from "./display-fit";
+import { displayEm, longestWordEm, titleFit } from "./display-fit";
 
 // The client's line as the browser set it in the home title at 1440 (144px
 // type), in em: the inner span's width over its font size.
@@ -40,5 +40,19 @@ describe("displayEm", () => {
   it("gives a character outside the table an average width", () => {
     expect(displayEm("É")).toBeGreaterThan(0.4);
     expect(displayEm("É")).toBeLessThan(0.5);
+  });
+});
+
+describe("longestWordEm", () => {
+  it("measures the widest word, the part of a title that cannot wrap", () => {
+    // Rendered: 310px at the guide title's 52px floor.
+    const em = longestWordEm("Discoverability");
+    expect(em * 52).toBeGreaterThanOrEqual(308);
+    expect(em * 52).toBeLessThanOrEqual(316);
+    expect(longestWordEm("Understanding your analytics")).toBe(longestWordEm("Understanding"));
+  });
+
+  it("is nothing for nothing", () => {
+    expect(longestWordEm("   ")).toBe(0);
   });
 });

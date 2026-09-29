@@ -38,6 +38,17 @@ export function displayEm(text: string): number {
 }
 
 /**
+ * The widest single word of `text` in the display face, in em: the part of a
+ * title that cannot wrap. A guide's title is set at 52px at the least, and
+ * "Discoverability" is six of its own em wide, 310px -- more than a 320px
+ * phone has once its margins are out (and the phone then zooms the whole
+ * page out to fit it). The title's size is capped by this (Guide.tsx).
+ */
+export function longestWordEm(text: string): number {
+  return round(Math.max(0, ...text.trim().split(/\s+/).filter(Boolean).map(displayEm)));
+}
+
+/**
  * The client's line in the home title -- the times sign, a space, the name
  * -- as the two widths its fit needs (globals.css, .title-fit): the whole
  * line, to scale it onto one line, and its longest word, the one thing that

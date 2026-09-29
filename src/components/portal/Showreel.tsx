@@ -114,7 +114,7 @@ export function Showreel() {
                     </span>
                   </span>
                   <span className="mt-3 block text-[15px] leading-snug text-[color:var(--ink)]">{r.client}</span>
-                  <span className="mono mt-1 block text-[10px]">
+                  <span className="mono mt-1 block">
                     {PLATFORM[r.platform]} &middot; @{r.handle}
                     {r.restricted && <span className="text-[color:var(--ink-mid)]"> &middot; opens on {PLATFORM[r.platform]}</span>}
                   </span>

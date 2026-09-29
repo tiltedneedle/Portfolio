@@ -11,9 +11,11 @@ import { numberWord } from "@/lib/words";
 
 /**
  * What you have access to: the parts of the system racked on a strip.
- * On desktop the section pins and vertical scroll shuttles the strip
- * sideways, with a ruler underneath reading where you are. On a phone the
- * cards stack. Lifted from the studio site's film sequence, which is the
+ * From lg the section pins and vertical scroll shuttles the strip
+ * sideways, with a ruler underneath reading where you are. Below it the
+ * cards stack: on a portrait tablet the shuttle's cards, sized from the
+ * screen's height, ran off its right edge beside the title, and the pinned
+ * section asked for 5000px of scroll to show seven cards. Lifted from the studio site's film sequence, which is the
  * move the client liked most.
  *
  * Every part of the system is on the strip from the first day, so a client
@@ -63,7 +65,7 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
     if (!el) return;
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     const measure = () => {
-      const isMobile = !window.matchMedia("(min-width: 768px)").matches;
+      const isMobile = !window.matchMedia("(min-width: 1024px)").matches;
       // A reader who asked for stillness is not shuttled 400vw sideways off
       // their vertical scroll. With no range the section has no extra
       // height, the track does not transform, and focusCard no-ops.
@@ -138,13 +140,13 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
       className="shuttle relative scroll-mt-16 bg-[color:var(--stage)]"
       style={{ height: range > 0 ? "calc(100svh + " + range + "px)" : undefined }}
     >
-      <div className="shuttle-pin md:sticky md:top-0 md:flex md:h-[100svh] md:flex-col md:justify-center md:overflow-clip">
+      <div className="shuttle-pin lg:sticky lg:top-0 lg:flex lg:h-[100svh] lg:flex-col lg:justify-center lg:overflow-clip">
         <motion.div
           ref={track}
           style={mobile ? undefined : { x }}
-          className="shuttle-track flex flex-col md:w-max md:flex-row md:items-stretch md:gap-5 md:px-[8vw]"
+          className="shuttle-track flex flex-col lg:w-max lg:flex-row lg:items-stretch lg:gap-5 lg:px-[8vw]"
         >
-          <div className="w-full shrink-0 px-6 py-20 md:flex md:w-[34vw] md:flex-col md:justify-center md:py-0 md:pr-14">
+          <div className="w-full shrink-0 px-6 py-20 md:px-14 lg:flex lg:w-[34vw] lg:flex-col lg:justify-center lg:py-0 lg:pl-6 lg:pr-14">
             <p className="mono">
               02 &mdash; {numberWord(n)} {n === 1 ? "part" : "parts"}
             </p>
@@ -153,12 +155,12 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
             <h2 className="display mt-4 text-[clamp(48px,5.4vw,96px)] leading-[0.9]">
               What you have <span className="em-serif">access to.</span>
             </h2>
-            <p className="shuttle-hint mono mt-8 max-md:hidden">Scroll to shuttle &middot; click to open</p>
+            <p className="shuttle-hint mono mt-8 max-lg:hidden">Scroll to shuttle &middot; click to open</p>
           </div>
 
           {items.map((it, i) => {
             const shell =
-              "shuttle-card group relative flex min-h-[380px] w-full flex-col overflow-hidden border bg-[color:var(--stage-2)] p-6 text-left transition-colors duration-500 md:h-[74svh] md:w-[calc(74svh*0.8)] md:p-8 " +
+              "shuttle-card group relative flex min-h-[380px] w-full flex-col overflow-hidden border bg-[color:var(--stage-2)] p-6 text-left transition-colors duration-500 lg:h-[min(74svh,60vw)] lg:w-[calc(min(74svh,60vw)*0.8)] lg:p-8 " +
               (active === i && !mobile && range > 0 ? "border-[color:var(--rule-strong)]" : "border-[color:var(--rule)] hover:border-[color:var(--rule-strong)]");
             const face = (
               <>
@@ -175,24 +177,24 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
                     than 400px for its text. At 1366x650 the Create card, with
                     all eight of the brief's steps, ran 26px off its own foot. */}
                 {it.still && !it.locked ? (
-                  <span aria-hidden="true" className="pointer-events-none relative -mx-6 -mt-6 mb-6 block h-[168px] shrink-0 overflow-hidden md:-mx-8 md:-mt-8 md:mb-7 md:h-[max(40px,min(21svh,calc(74svh_-_400px)))]">
+                  <span aria-hidden="true" className="pointer-events-none relative -mx-6 -mt-6 mb-6 block h-[168px] shrink-0 overflow-hidden lg:-mx-8 lg:-mt-8 lg:mb-7 lg:h-[max(40px,min(21svh,calc(min(74svh,60vw)_-_400px)))]">
                     {/* A wide slice of a 9:16 still, taken at 22% of its height.
                         The very top is ceiling and sky once the frame is this
                         short (the slice is a fifth of the picture); the middle
                         is where the burnt-in captions run. A fifth of the way
                         down is where a vertical video keeps its face. */}
-                    <Still src={it.still} sizes="(min-width:768px) 600px, 100vw" className="par-img object-cover object-[center_22%] opacity-70" />
+                    <Still src={it.still} sizes="(min-width:1024px) 600px, 100vw" className="par-img object-cover object-[center_22%] opacity-70" />
                     <span className="absolute inset-0 bg-gradient-to-b from-[rgba(11,11,12,0.6)] via-[rgba(11,11,12,0.1)] to-[color:var(--stage-2)]" />
                     {/* The slate rides on the frame, so it takes full ink:
                         --ink-mid has no contrast headroom over a picture. */}
-                    <span className="mono absolute inset-x-6 top-6 flex items-baseline justify-between gap-4 text-[color:var(--ink)] md:inset-x-8 md:top-8">
+                    <span className="mono absolute inset-x-6 top-6 flex items-baseline justify-between gap-4 text-[color:var(--ink)] lg:inset-x-8 lg:top-8">
                       <span>{it.n}</span>
                       {it.meta && <span>{it.meta}</span>}
                     </span>
                   </span>
                 ) : (
                   <>
-                    <span aria-hidden="true" className="numeral par-num pointer-events-none absolute -right-2 top-1/2 -translate-y-1/2 text-[200px] opacity-50 md:text-[240px]" data-n={it.n} />
+                    <span aria-hidden="true" className="numeral par-num pointer-events-none absolute -right-2 top-1/2 -translate-y-1/2 text-[200px] opacity-50 lg:text-[240px]" data-n={it.n} />
                     <span className="mono relative flex items-baseline justify-between gap-4">
                       <span>{it.n}</span>
                       {it.locked ? (
@@ -230,7 +232,7 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
               </>
             );
             return (
-              <div key={it.n} className="shuttle-cell w-full shrink-0 px-6 py-3 md:w-auto md:px-0 md:py-0">
+              <div key={it.n} className="shuttle-cell w-full shrink-0 px-6 py-3 md:px-14 lg:w-auto lg:px-0 lg:py-0">
                 {it.href ? (
                   <CutLink href={it.href} onFocus={() => focusCard(i)} data-cursor="Open" className={shell}>
                     {face}
@@ -245,7 +247,7 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
           })}
         </motion.div>
 
-        <div className="shuttle-ruler mx-[8vw] mt-8 max-md:hidden">
+        <div className="shuttle-ruler mx-[8vw] mt-8 max-lg:hidden">
           <div className="relative h-6 border-t border-[color:var(--rule-strong)]">
             {items.map((it, i) => (
               <span

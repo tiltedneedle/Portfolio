@@ -11,11 +11,26 @@ import { shortName } from "@/content/clients/types";
  * then one black frame, then the cold open is simply there.
  *
  * Rendered by the server so there is never a flash of the page beneath it;
- * a layout effect removes it before first paint for anyone who has seen it,
- * and for anyone who prefers reduced motion. Escape, click or SKIP cut early.
+ * an inline script beside it removes it before first paint for anyone who
+ * has seen it, and for anyone who prefers reduced motion (HIDE_IF_SEEN), and
+ * the layout effect unmounts it once the scripts run. Escape, click or SKIP
+ * cut early.
  */
 const KEY = "tn-slate-seen";
 const RUN_MS = 2200;
+/**
+ * The server cannot know who has seen the slate, so it serves it to
+ * everyone, and the layout effect only takes it down once the scripts have
+ * arrived and run. On a slow phone that was a black screen for as long as
+ * they took, on every visit to the home page, with the titles behind it
+ * held (they wait while a .slate-open is up). This runs where the slate is,
+ * as the page is read, before its first paint: for anyone who has seen it,
+ * or asked for stillness, the slate is gone and the titles play at once.
+ */
+const HIDE_IF_SEEN =
+  'try{var s=document.currentScript.previousElementSibling;if(localStorage.getItem("' +
+  KEY +
+  '")||matchMedia("(prefers-reduced-motion: reduce)").matches){s.classList.remove("slate-open");s.style.display="none"}}catch(e){}';
 const BLACK_MS = 160;
 
 type Phase = "slate" | "black" | "done";
@@ -75,6 +90,7 @@ export function Slate() {
   if (phase === "done") return null;
 
   return (
+    <>
     <div
       className="slate-open fixed inset-0 z-[9996] bg-black text-[color:var(--ink)]"
       onClick={() => setPhase("black")}
@@ -136,5 +152,7 @@ export function Slate() {
         </div>
       )}
     </div>
+    <script dangerouslySetInnerHTML={{ __html: HIDE_IF_SEEN }} />
+    </>
   );
 }

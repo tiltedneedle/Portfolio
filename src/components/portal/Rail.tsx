@@ -64,10 +64,11 @@ export function Rail({ children, count, label }: { children: ReactNode; count: n
           <span>
             {String(first + 1).padStart(2, "0")} <span className="text-[color:var(--ink-mid)]">/</span> {String(count).padStart(2, "0")}
           </span>
-          <button type="button" onClick={() => by(-1)} className="slate-link disabled:opacity-30" aria-label="Scroll back" disabled={first === 0}>
+          {/* A 40px target around a 16px arrow; the negative margin keeps the row as it was. */}
+          <button type="button" onClick={() => by(-1)} className="slate-link -m-3 inline-flex h-10 w-10 items-center justify-center disabled:opacity-30" aria-label="Scroll back" disabled={first === 0}>
             &larr;
           </button>
-          <button type="button" onClick={() => by(1)} className="slate-link disabled:opacity-30" aria-label="Scroll forward" disabled={atEnd}>
+          <button type="button" onClick={() => by(1)} className="slate-link -m-3 inline-flex h-10 w-10 items-center justify-center disabled:opacity-30" aria-label="Scroll forward" disabled={atEnd}>
             &rarr;
           </button>
         </span>

@@ -60,7 +60,7 @@ export default async function IdeasPage({ params }: { params: Promise<{ client: 
           <ul className="mono flex flex-wrap gap-x-8 gap-y-3">
             {pillars.map((p, i) => (
               <li key={p.id}>
-                <a href={"#" + p.id} className="hover:text-[color:var(--ink)]">
+                <a href={"#" + p.id} className="hit hover:text-[color:var(--ink)]">
                   <span className="text-[color:var(--ink-mid)]">{String(i + 1).padStart(2, "0")}</span> {p.title}
                 </a>
               </li>

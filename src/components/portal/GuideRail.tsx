@@ -154,7 +154,9 @@ export function GuideRail({ items, minutes = 0, k }: { items: { id: string; n?: 
       </aside>
       {/* narrow: a cue sheet */}
       <details className="mb-10 border border-[color:var(--rule)] p-4 lg:hidden">
-        <summary className="mono cursor-pointer list-none text-[color:var(--ink)]">
+        {/* The toggle is the whole top of the box, padding and all: a 17px line
+            of mono was the target, on the one screen that is all touch. */}
+        <summary className="mono -m-4 block cursor-pointer list-none p-4 text-[color:var(--ink)]">
           On this page <span className="text-[color:var(--ink-mid)]">/ {items.length}</span>
         </summary>
         <div className="mt-4">{list(false)}</div>

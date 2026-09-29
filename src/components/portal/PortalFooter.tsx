@@ -26,7 +26,7 @@ const liveYear = () => new Date().getFullYear();
 const builtYear = () => BUILD_YEAR;
 
 const heading = "mono mb-5 block";
-const linkBase = "underline-draw w-fit text-[15px] transition-colors duration-300 hover:text-[color:var(--ink)]";
+const linkBase = "underline-draw hit w-fit text-[15px] transition-colors duration-300 hover:text-[color:var(--ink)]";
 const link = linkBase + " text-[color:var(--ink-soft)]";
 
 /**

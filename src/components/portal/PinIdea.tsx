@@ -12,7 +12,7 @@ export function PinIdea({ k }: { k: string }) {
   const { pinned, toggle } = usePinned(me.slug);
   const on = pinned.has(k);
   return (
-    <button type="button" onClick={() => toggle(k)} aria-pressed={on} className={"slate-link text-[11px]" + (on ? " text-[color:var(--ink)]" : "")} data-cursor={on ? "Unpin" : "Pin"}>
+    <button type="button" onClick={() => toggle(k)} aria-pressed={on} className={"slate-link hit text-[11px]" + (on ? " text-[color:var(--ink)]" : "")} data-cursor={on ? "Unpin" : "Pin"}>
       {on ? (
         <span className="inline-flex items-center gap-1.5">
           <span aria-hidden="true" className="pop inline-block h-1.5 w-1.5 rounded-full bg-[color:var(--ink)]" />

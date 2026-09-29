@@ -37,7 +37,7 @@ export function ClipRailClient({ title, note, clips }: { title?: string; note?: 
                 </span>
               </span>
               <span className="mt-3 block text-[13px] leading-snug text-[color:var(--ink)]">{c.caption ?? c.title}</span>
-              {c.handle && <span className="mono mt-1 block text-[10px]">@{c.handle}</span>}
+              {c.handle && <span className="mono mt-1 block">@{c.handle}</span>}
             </button>
           </li>
         ))}

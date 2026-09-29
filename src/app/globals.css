@@ -272,6 +272,18 @@ body {
    a mark, and a mark that pulses is motion without meaning -- there were
    thirty of them, fifteen on one grid alone. */
 .lamp-live {
+  position: relative;
+  box-shadow: 0 0 4px 1px var(--tally-glow);
+}
+/* The breath is the outer glow fading, on its own layer: opacity runs on the
+   compositor, where the box-shadow it used to animate repainted the lamp on
+   the main thread every frame, ten lamps down the home page. */
+.lamp-live::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: 0 0 10px 2px var(--tally-glow);
   animation: lamp-breathe 2.4s ease-in-out infinite;
 }
 .lamp-off {
@@ -474,6 +486,34 @@ body {
     padding-block: 7px;
   }
 }
+/* Labels drawn inside an SVG scale with the drawing, so on a phone, where a
+   chart is drawn smaller than it was designed, they are set larger in its
+   own units to come out near 10 to 11px (.chart-label on the competitor map,
+   drawn at 87%; .chart-label-sm on the camera diagram, at 82%, whose longest
+   label has less room). */
+@media (max-width: 639px) {
+  .chart-label {
+    font-size: 12px;
+  }
+  .chart-label-sm {
+    font-size: 11.5px;
+  }
+}
+
+/* The same for any small link that is not a slate-link: on a touch screen
+   an unseen margin of 6px above and below, which fills the usual 12px gap
+   between stacked links without the two targets overlapping. A 14px line of
+   mono became a 26px target; the footer's rooms, 35px. */
+.hit {
+  position: relative;
+}
+@media (pointer: coarse) {
+  .hit::before {
+    content: "";
+    position: absolute;
+    inset: -6px -4px;
+  }
+}
 
 /* ============================================================== media wells */
 
@@ -552,11 +592,14 @@ body {
    low; grain should be felt rather than seen.
    ====================================================================== */
 
+/* A fifth larger than the screen, not four times it: the jitter only ever
+   moves it about 5%, and on a phone at 3x a layer four screens big, blended
+   over everything, is a lot of memory to push for a texture at 8.5%. */
 .grain {
   position: fixed;
-  inset: -50%;
-  width: 200%;
-  height: 200%;
+  inset: -10%;
+  width: 120%;
+  height: 120%;
   pointer-events: none;
   z-index: 9990;
   opacity: 0.085;
@@ -743,11 +786,15 @@ a:focus-visible > .wm {
   line-height: 1;
   white-space: nowrap;
 }
+/* The stitch runs once each time Wordmark.tsx sets .is-stitching -- every
+   seven seconds while the page is showing -- and nothing animates between.
+   As seven-second loops that idled 94% of the time, the 38 letter
+   animations kept the nav's letters on layers of their own on every page,
+   all the time. The windows are the loops' own: 0.14s to 0.42s of each
+   letter's turn, 60ms apart; the figure leans over its first second. */
 .wm-l {
   position: relative;
   display: inline-block;
-  animation: wm-stitch 7s linear infinite;
-  animation-delay: calc(var(--i) * 60ms);
 }
 .wm-a,
 .wm-b {
@@ -763,67 +810,65 @@ a:focus-visible > .wm {
   transform: rotate(12deg) translateY(-2%);
   color: var(--tally);
 }
-/* the needle pass: letter out, stroke in, letter back — 4% of the loop each */
-.wm-l .wm-a {
-  animation: wm-letter 7s linear infinite;
+/* the needle pass: letter out, stroke in, letter back */
+.is-stitching .wm-l {
+  animation: wm-stitch 0.42s linear both;
   animation-delay: calc(var(--i) * 60ms);
 }
-.wm-l .wm-b {
-  animation: wm-needle 7s linear infinite;
+.is-stitching .wm-l .wm-a {
+  animation: wm-letter 0.42s linear both;
+  animation-delay: calc(var(--i) * 60ms);
+}
+.is-stitching .wm-l .wm-b {
+  animation: wm-needle 0.42s linear both;
   animation-delay: calc(var(--i) * 60ms);
 }
 @keyframes wm-stitch {
   0%,
-  2%,
-  6%,
+  33%,
   100% {
     transform: translateY(0);
   }
-  4% {
+  67% {
     transform: translateY(-8%);
   }
 }
 @keyframes wm-letter {
   0%,
-  2%,
-  6%,
+  33%,
   100% {
     opacity: 1;
   }
-  3%,
-  5% {
+  50%,
+  83% {
     opacity: 0;
   }
 }
 @keyframes wm-needle {
   0%,
-  2%,
-  6%,
+  33%,
   100% {
     opacity: 0;
   }
-  3%,
-  5% {
+  50%,
+  83% {
     opacity: 1;
   }
 }
 .wm-mark {
-  animation: wm-lean 7s linear infinite;
   transform-origin: 50% 90%;
+}
+.is-stitching .wm-mark {
+  animation: wm-lean 0.98s linear both;
 }
 @keyframes wm-lean {
   0%,
+  7%,
   100% {
     transform: rotate(0deg);
   }
-  1% {
-    transform: rotate(0deg);
-  }
-  5% {
+  36% {
     transform: rotate(-14deg);
-  }
-  14% {
-    transform: rotate(0deg);
   }
 }
 /* the nav's hover grammar: the hovered room and every room to its left drop
@@ -2268,12 +2313,8 @@ body.is-cutting
 
 /* The lamp breathes while something is live. */
 @keyframes lamp-breathe {
-  0%,
-  100% {
-    box-shadow: 0 0 10px 2px var(--tally-glow);
-  }
   50% {
-    box-shadow: 0 0 4px 1px var(--tally-glow);
+    opacity: 0;
   }
 }
 
@@ -2404,11 +2445,8 @@ body.is-cutting
 
   .grain,
   .skeleton,
-  .lamp-live,
-  .wm-l,
-  .wm-a,
-  .wm-b,
-  .wm-mark,
+  .lamp-live::after,
+  .is-stitching :is(.wm-l, .wm-a, .wm-b, .wm-mark),
   .loop-dash,
   .drift,
   .drift-back,
@@ -2489,6 +2527,12 @@ body.is-cutting
     padding-inline: 1.5rem !important;
     padding-block: 0.75rem !important;
   }
+  /* The page's own margin from md, as every other section keeps it. */
+  @media (min-width: 768px) {
+    .shuttle-cell {
+      padding-inline: 3.5rem !important;
+    }
+  }
   .shuttle-card {
     width: 100% !important;
     height: auto !important;
@@ -2551,7 +2595,7 @@ body.is-cutting
     stroke-dashoffset: 0 !important;
     animation: none !important;
   }
-  .lamp-live {
+  .lamp-live::after {
     animation: none !important;
   }
   .journey-ring,

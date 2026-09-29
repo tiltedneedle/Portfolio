@@ -43,7 +43,13 @@ const RUN = 420; // px of scroll over which it travels into the corner
  * slight push-in (.letterbox, .film-push; reveal-driven, so it is served
  * open and a reader who asked for stillness never sees the bars).
  */
-export function TrainingFilm({ film, number, dock = "always" }: { film: Film; number: string; dock?: "always" | "playing" }) {
+/**
+ * `eager` preloads the poster: only for a film at the top of a page, where it
+ * is the largest thing in the first frame. Below the fold (the home page's
+ * two) a preload spent a slow connection's first seconds on pictures nobody
+ * could see yet, ahead of the stylesheet's fonts.
+ */
+export function TrainingFilm({ film, number, dock = "always", eager = false }: { film: Film; number: string; dock?: "always" | "playing"; eager?: boolean }) {
   const [playing, setPlaying] = useState(false);
   const me = useId();
   const player = useRef<HTMLDivElement>(null);
@@ -175,7 +181,7 @@ export function TrainingFilm({ film, number, dock = "always" }: { film: Film; nu
         ) : (
           <>
             <span className="film-push absolute inset-0">
-              <Still src={"https://i.ytimg.com/vi/" + id + "/maxresdefault.jpg"} eager sizes="(min-width:1024px) 1040px, 100vw" className="object-cover opacity-70" />
+              <Still src={"https://i.ytimg.com/vi/" + id + "/maxresdefault.jpg"} eager={eager} sizes="(min-width:1024px) 1040px, 100vw" className="object-cover opacity-70" />
             </span>
             {/* The slate line and the title are ink on whatever frame YouTube
                 chose, and these films open on a bright room. Two scrims, so the

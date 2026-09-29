@@ -85,7 +85,7 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
                   <div className="flex gap-3">
                     <dt className="text-[color:var(--ink-mid)]">From</dt>
                     <dd className="text-[color:var(--ink)]">
-                      <CutLink href={origin.href} className="transition-colors hover:text-[color:var(--ink-mid)]" data-cursor="Open">
+                      <CutLink href={origin.href} className="hit transition-colors hover:text-[color:var(--ink-mid)]" data-cursor="Open">
                         {origin.title} {pad(origin.n)} &#8599;
                       </CutLink>
                     </dd>

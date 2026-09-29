@@ -228,7 +228,7 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
                         (isWritten ? "border-[color:var(--rule-strong)] bg-[color:var(--stage-2)]" : "border-[color:var(--rule)]")
                       }
                     >
-                      <span className="mono text-[10px] leading-none">{pad(i)}</span>
+                      <span className="mono leading-none">{pad(i)}</span>
                       <Lamp verdict={s.verdict} written={isWritten} />
                     </a>
                   </li>

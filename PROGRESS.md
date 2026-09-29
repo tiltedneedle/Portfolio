@@ -213,6 +213,59 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 74 (2026-09-30): the home page looped, then phones and speed.
+      "Now do the same for the home page too", then "work on
+      responsiveness, mobile view, and website speed optimization".
+      Home page:
+      - The hero keeps the 1600px measure: at 1895 it started at 56px under
+        a nav that now starts at 200. Its spacing and the name's size give
+        way to a short screen (svh), so "Start here" is in the first frame
+        from 360x740 up; at 1440x900, 1280x800 and 1366x768 it had fallen
+        16 to 130px below it. The backdrop band still runs the full width.
+      - The access strip is a shuttle from lg only. At 768 its cards, sized
+        from the screen's height, ran off the right edge beside the title,
+        and the pinned section asked for 5000px of scroll; stacked, the
+        cards keep the 56px margin from md, under reduced motion too, and a
+        shuttle card is capped by the width as well as the height.
+      - The reel's arrows are 40px targets; its labels 11px.
+      Phones, every page, 320 and 360 wide with touch:
+      - Guide titles are capped so the longest word fits the screen
+        (lib/display-fit, longestWordEm): "Discoverability" ran 14px wide at
+        320, and a phone then zooms the whole page out to fit it.
+      - .hit: an unseen 6px above and below small links, on a touch screen;
+        the guide's cue toggle is the whole top row of its box.
+      - Small text to 11px: clip handles, audit numbers, calendar days,
+        timecodes, the donut's caption. The retention curve has a phone
+        drawing (its labels rendered at 4px across a 280px column); the
+        competitor map and the camera diagram set their labels larger on a
+        phone; the camera diagram is held to 520px on a wide screen, where
+        it drew 858px across with 25px labels.
+      Speed:
+      - The slate was served to everyone and taken down only when the
+        scripts ran, so on a slow phone a returning visitor saw black for
+        the whole load, with the titles held behind it. An inline script
+        beside it now takes it down before the first paint: the home page's
+        first paint on an emulated slow phone went from 7.0s to 2.1s.
+      - Training-film posters are preloaded only at the top of a guide, not
+        below the fold on the home page.
+      - The lamps breathe by opacity on a layer of their own instead of
+        repainting a box-shadow every frame; the grain layer is 1.2 screens,
+        not 4.
+      - The wordmark's stitch is struck by script every seven seconds: 38
+        infinite animations, idle 94% of the time, had kept its letters on
+        layers of their own on every page. On a throttled phone trace, style
+        work fell 45% and layer work 30%.
+      Measured and left: 247kB of script on the home page (React 72kB,
+      Next 84kB, framer-motion about 50kB). LazyMotion would save 10-15kB
+      with the layout feature the nav's cue needs; not worth the churn.
+      This browser renders in software and barely makes frames, so paint
+      timings from it swing between runs; the changes above are the ones
+      that hold whatever the device.
+      Verified: phone audit (overflow, targets, text) clean at 320 and 360
+      on both clients, bar the profile guide's miniature phone mock (8px,
+      an illustration); collisions, overflow at seven widths, the evenness
+      audits; smoke, a11y, vitest (139) and the brief guard.
+
 - [x] Wave 73 (2026-09-30): the navbar, looped the same way.
       "Now do the same for the navbar if applicable." Measured at eleven
       widths on both clients, with every panel opened and the menu open.

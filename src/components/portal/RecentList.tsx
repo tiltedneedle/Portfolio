@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { CutLink } from "@/components/room/CutLink";
 import type { Change } from "@/content/clients/types";
 
@@ -9,7 +9,17 @@ import type { Change } from "@/content/clients/types";
  * marked with a lamp. The visit is stamped when the page is left, so the
  * marks last the whole visit and are gone on the next. A first visit marks
  * nothing: everything is new, and the section already says so.
+ *
+ * "Still being written", so it writes itself: as the list comes on, each
+ * entry's date is stamped and its line types out behind a tally caret, one
+ * entry after another. Served at rest -- the whole list is in the HTML --
+ * and set to wait only when it is still below the fold after hydration,
+ * never under reduced motion. The typing is a picture of the line: a screen
+ * reader is given each line whole, once.
  */
+const STEP = 3; // characters a tick
+const TICK = 24; // ms a tick
+const BEAT = 220; // ms between one entry and the next
 type Item = Change & { own?: boolean };
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -39,6 +49,40 @@ function lastSeen(slug: string) {
 
 export function RecentList({ slug, items }: { slug: string; items: Item[] }) {
   const seen = useSyncExternalStore(noop, () => lastSeen(slug), () => "");
+  const list = useRef<HTMLOListElement>(null);
+  // null: at rest, every line shown. "wait": below the fold, lines held
+  // back. Otherwise the entry being typed and how much of it is out.
+  const [type, setType] = useState<"wait" | { row: number; n: number } | null>(null);
+
+  useEffect(() => {
+    const ol = list.current;
+    if (!ol || !items.length) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // Already on screen, or above it: leave it be.
+    if (ol.getBoundingClientRect().top < window.innerHeight) return;
+    // Held back only once it is known the list is below the fold, after hydration.
+    setType("wait");
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        setType({ row: 0, n: 0 });
+      },
+      { rootMargin: "0px 0px -15% 0px" }
+    );
+    io.observe(ol);
+    return () => io.disconnect();
+  }, [items.length]);
+
+  useEffect(() => {
+    if (!type || type === "wait") return;
+    const text = items[type.row]?.text ?? "";
+    const t =
+      type.n < text.length
+        ? setTimeout(() => setType({ row: type.row, n: Math.min(text.length, type.n + STEP) }), TICK)
+        : setTimeout(() => setType(type.row + 1 < items.length ? { row: type.row + 1, n: 0 } : null), BEAT);
+    return () => clearTimeout(t);
+  }, [type, items]);
 
   useEffect(() => {
     const stamp = () => {
@@ -67,19 +111,39 @@ export function RecentList({ slug, items }: { slug: string; items: Item[] }) {
           {fresh === 1 ? "One addition" : fresh + " additions"} since your last visit
         </p>
       )}
-      <ol className="border-b border-[color:var(--rule)]">
-        {items.map((c) => {
+      <ol ref={list} className="border-b border-[color:var(--rule)]">
+        {items.map((c, k) => {
           const mark = isNew(c);
+          // Where this entry is in the typing: shown whole, held back, or being typed.
+          const phase = type === null ? "whole" : type === "wait" || k > type.row ? "held" : k < type.row ? "whole" : "typing";
           return (
-            <li key={c.date + c.text} className="grid gap-x-8 gap-y-2 border-t border-[color:var(--rule)] py-5 md:grid-cols-[14ch_1fr_auto] md:items-baseline">
-              <span className={"mono flex items-center gap-2 " + (mark ? "text-[color:var(--ink)]" : "text-[color:var(--ink-mid)]")}>
+            // A held entry fades out whole, not hidden: its link stays in the
+            // tab order and in reach of a screen reader (.row-held).
+            <li
+              key={c.date + c.text}
+              className={"grid gap-x-8 gap-y-2 border-t border-[color:var(--rule)] py-5 md:grid-cols-[14ch_1fr_auto] md:items-baseline" + (phase === "held" ? " row-held" : "")}
+            >
+              <span className={"mono flex items-center gap-2 " + (mark ? "text-[color:var(--ink)]" : "text-[color:var(--ink-mid)]") + (phase === "typing" ? " stamp-in" : "")}>
                 {mark && <span className="lamp" aria-hidden="true" />}
                 {printed(c.date)}
                 {mark && <span className="sr-only">, new since your last visit</span>}
               </span>
               <span className="text-[17px] leading-snug text-[color:var(--ink)]">
                 {c.own && <span className="mono mr-3 inline-block border border-[color:var(--rule-strong)] px-2 py-0.5 align-middle text-[11px] text-[color:var(--ink)]">For you</span>}
-                {c.text}
+                {phase === "typing" && typeof type === "object" && type ? (
+                  <>
+                    <span className="sr-only">{c.text}</span>
+                    {/* The rest of the line is laid out but unseen, so the
+                        line does not reflow as it types. */}
+                    <span aria-hidden="true">
+                      {c.text.slice(0, type.n)}
+                      <span className="type-caret" />
+                      <span className="invisible">{c.text.slice(type.n)}</span>
+                    </span>
+                  </>
+                ) : (
+                  c.text
+                )}
               </span>
               {c.href ? (
                 <CutLink href={c.href} className="slate-link" data-cursor="Cut">

@@ -100,6 +100,25 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
     setActive((prev) => (prev === i ? prev : i));
   });
 
+  // Depth: as the strip shuttles, what is inside each card -- its frame, its
+  // numeral -- moves a little against the card, as a scene does behind a
+  // window moving past it. --par is where the card's middle is across the
+  // screen (-1 left, 0 centre, 1 right); the CSS does the rest (.par-img,
+  // .par-num). Written straight to the cards, so the shuttle re-renders
+  // nothing; only while the strip is shuttling at all.
+  const depth = () => {
+    const el = track.current;
+    if (!el || mobile || range === 0) return;
+    const vw = window.innerWidth;
+    el.style.setProperty("--par-zoom", "1.14");
+    el.querySelectorAll<HTMLElement>(".shuttle-card").forEach((c) => {
+      const r = c.getBoundingClientRect();
+      c.style.setProperty("--par", ((r.left + r.width / 2 - vw / 2) / vw).toFixed(3));
+    });
+  };
+  useMotionValueEvent(x, "change", depth);
+  useEffect(depth, [mobile, range]);
+
   const focusCard = (i: number) => {
     const el = section.current;
     if (!el || mobile || range === 0) return;
@@ -162,7 +181,7 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
                         short (the slice is a fifth of the picture); the middle
                         is where the burnt-in captions run. A fifth of the way
                         down is where a vertical video keeps its face. */}
-                    <Still src={it.still} sizes="(min-width:768px) 600px, 100vw" className="object-cover object-[center_22%] opacity-70" />
+                    <Still src={it.still} sizes="(min-width:768px) 600px, 100vw" className="par-img object-cover object-[center_22%] opacity-70" />
                     <span className="absolute inset-0 bg-gradient-to-b from-[rgba(11,11,12,0.6)] via-[rgba(11,11,12,0.1)] to-[color:var(--stage-2)]" />
                     {/* The slate rides on the frame, so it takes full ink:
                         --ink-mid has no contrast headroom over a picture. */}
@@ -173,7 +192,7 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
                   </span>
                 ) : (
                   <>
-                    <span aria-hidden="true" className="numeral pointer-events-none absolute -right-2 top-1/2 -translate-y-1/2 text-[200px] opacity-50 md:text-[240px]" data-n={it.n} />
+                    <span aria-hidden="true" className="numeral par-num pointer-events-none absolute -right-2 top-1/2 -translate-y-1/2 text-[200px] opacity-50 md:text-[240px]" data-n={it.n} />
                     <span className="mono relative flex items-baseline justify-between gap-4">
                       <span>{it.n}</span>
                       {it.locked ? (

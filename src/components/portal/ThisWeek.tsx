@@ -1,12 +1,13 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore, type CSSProperties } from "react";
 import { CutLink } from "@/components/room/CutLink";
 import { weekOf } from "@/lib/week";
 import { numberWord } from "@/lib/words";
 import { useClient } from "@/components/portal/ClientContext";
 import { useFilmed, usePinned, useRead } from "@/lib/read";
 import { lastKey } from "@/components/portal/Resume";
+import { Reveal } from "@/components/portal/Reveal";
 
 /**
  * The call sheet for this week. One idea to film, one script to say, one
@@ -15,6 +16,10 @@ import { lastKey } from "@/components/portal/Resume";
  * changes on Monday. The date is only known in the browser (the page is
  * built once), so the server draws the frame and the browser fills it.
  * The week arithmetic lives in lib/week.ts, where it is tested.
+ *
+ * It arrives like a departure board updating: as the sheet comes on, each
+ * cell's flap drops from its top edge in turn and settles with a knock
+ * (.flap; reveal-driven, so it is served at rest).
  */
 type Idea = { pillar: string; n: number; text: string; k?: string };
 type ScriptRef = { n: number; title: string };
@@ -108,9 +113,11 @@ export function ThisWeek({ ideas, scripts, guides }: { ideas: Idea[]; scripts: S
         <h2 className="display mt-4 text-[clamp(40px,5.5vw,88px)]">
           This week, <span className="em-serif">{numberWord(cells.length)} {cells.length === 1 ? "thing." : "things."}</span>
         </h2>
-        <ol className="mt-10 grid border-t border-[color:var(--rule-strong)] md:grid-cols-4">
+        <Reveal className="board mt-10">
+        <ol className="grid border-t border-[color:var(--rule-strong)] md:grid-cols-4">
           {cells.map((c, i) => (
-            <li key={c.label} className={"flex flex-col justify-between border-b border-[color:var(--rule)] py-6 md:border-b-0 md:py-8 " + (i > 0 ? "md:border-l md:border-[color:var(--rule)] md:pl-8" : "") + (i < 3 ? " md:pr-8" : "")}>
+            <li key={c.label} className={"flex flex-col border-b border-[color:var(--rule)] py-6 md:border-b-0 md:py-8 " + (i > 0 ? "md:border-l md:border-[color:var(--rule)] md:pl-8" : "") + (i < 3 ? " md:pr-8" : "")}>
+              <div className="flap flex flex-1 flex-col justify-between" style={{ "--i": i } as CSSProperties}>
               <div>
                 <p className="mono flex items-center justify-between">
                   <span className="text-[color:var(--ink)]">{c.label}</span>
@@ -122,9 +129,11 @@ export function ThisWeek({ ideas, scripts, guides }: { ideas: Idea[]; scripts: S
               <CutLink href={c.href} className="slate-link mt-6 inline-block self-start" data-cursor="Cut">
                 {c.cta} &#8599;
               </CutLink>
+              </div>
             </li>
           ))}
         </ol>
+        </Reveal>
       </div>
     </section>
   );

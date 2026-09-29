@@ -1800,6 +1800,10 @@ body.is-cutting
 .reveal-wait:focus-within .reel-on {
   clip-path: none;
 }
+.reveal-wait:focus-within .flap {
+  opacity: 1;
+  transform: none;
+}
 
 /* A caption track (CaptionTrack.tsx). --p is how far the scroll has carried
    the reader through the block, set by script. Each word's --a is where it
@@ -1964,6 +1968,119 @@ body.is-cutting
 .reveal-wait.reveal-in .reel-on {
   animation: crt-on 0.95s var(--ease-out-expo) both;
   animation-delay: calc(0.1s + var(--i, 0) * 0.085s);
+}
+
+/* The projector's beam across the hero (HeroDust.tsx), whose dust lights up
+   inside it: a band at 144deg through the middle, brightest just past
+   centre, at most 6.5% ink over the stage. It breathes, slowly, the way a
+   lamp's output wanders. The canvas uses the same geometry to light the
+   dust, so the two always agree. */
+.hero-beam {
+  background: linear-gradient(
+    144deg,
+    transparent 37%,
+    rgba(242, 239, 233, 0.025) 44%,
+    rgba(242, 239, 233, 0.065) 52%,
+    rgba(242, 239, 233, 0.025) 60%,
+    transparent 67%
+  );
+  animation: beam-breathe 7s ease-in-out infinite;
+}
+@keyframes beam-breathe {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* The call sheet arrives like a departure board updating (ThisWeek.tsx):
+   each cell's flap drops from its top edge in turn and knocks past flat
+   before it settles (the bezier overshoots). Reveal-driven. */
+.flap {
+  transform-origin: 50% 0;
+  backface-visibility: hidden;
+}
+.reveal-wait .flap {
+  opacity: 0;
+  transform: perspective(900px) rotateX(-92deg);
+}
+.reveal-wait.reveal-in .flap {
+  animation: flap-drop 0.85s cubic-bezier(0.25, 1.45, 0.45, 1) both;
+  animation-delay: calc(0.08s + var(--i, 0) * 0.13s);
+}
+@keyframes flap-drop {
+  from {
+    opacity: 0;
+    transform: perspective(900px) rotateX(-92deg);
+  }
+  35% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: perspective(900px) rotateX(0deg);
+  }
+}
+
+/* "Still being written" writes itself (RecentList.tsx): an entry waiting
+   its turn is faded whole -- its link still in reach -- then its date is
+   stamped and its line typed out behind a tally caret. */
+.row-held > * {
+  opacity: 0;
+}
+.row-held:focus-within > * {
+  opacity: 1;
+}
+.stamp-in {
+  transform-origin: 0 50%;
+  animation: stamp 0.42s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+}
+@keyframes stamp {
+  from {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+  55% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.type-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.05em;
+  margin: 0 1px;
+  vertical-align: -0.15em;
+  background: var(--tally);
+  box-shadow: 0 0 6px var(--tally-glow);
+  animation: caret-blink 0.8s steps(2, jump-none) infinite;
+}
+@keyframes caret-blink {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Depth in the access strip (AccessStrip.tsx): the frame and the numeral
+   inside a card move a little against the card as the strip shuttles.
+   --par is set by script only while the strip shuttles; unset, nothing
+   moves and nothing is zoomed. */
+/* The frame is zoomed 14%, which leaves about 37px of picture beyond each
+   side of a card; its travel is held to 34px so no edge ever shows. */
+.par-img {
+  transform: translateX(clamp(-34px, calc(var(--par, 0) * -40px), 34px)) scale(var(--par-zoom, 1));
+}
+.par-num {
+  transform: translateX(calc(var(--par, 0) * -90px));
 }
 
 /* TILTED's letters are needles (Tilt.tsx), pinned at the foot: as the
@@ -2156,6 +2273,11 @@ body.is-cutting
   .word-run {
     transform: none !important;
   }
+  /* Nothing inside the access cards moves against them. */
+  .par-img,
+  .par-num {
+    transform: none !important;
+  }
   /* The first three seconds is a moving playhead or nothing at all. */
   .first3,
   .first3-tc {
@@ -2215,6 +2337,10 @@ body.is-cutting
   .letterbox,
   .film-push,
   .reel-on,
+  .hero-beam,
+  .flap,
+  .stamp-in,
+  .type-caret,
   .odo-now .odo-reel,
   .cue::before,
   .rule-wash,
@@ -2508,7 +2634,8 @@ body.is-cutting
    would then clip the player too, out in the corner where it follows the
    reader, and leave its controls under the page. */
 .reveal-wait:has(.film-player),
-.reveal-wait:has(.reel-on) {
+.reveal-wait:has(.reel-on),
+.reveal-wait:has(.flap) {
   clip-path: none;
   transition: none;
 }
@@ -2575,10 +2702,14 @@ body.is-cutting
   .reveal-wait .letterbox {
     display: none !important;
   }
-  .reveal-wait :is(.film-push, .reel-on) {
+  .reveal-wait :is(.film-push, .reel-on, .flap) {
     transform: none !important;
     clip-path: none !important;
+    opacity: 1 !important;
     animation: none !important;
+  }
+  .row-held > * {
+    opacity: 1 !important;
   }
 }
 

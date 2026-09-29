@@ -6,6 +6,7 @@ import { Backdrop } from "@/components/portal/Backdrop";
 import { Lift } from "@/components/portal/HeroMotion";
 import { Tilt } from "@/components/portal/Tilt";
 import { CaptionTrack } from "@/components/portal/CaptionTrack";
+import { HeroDust } from "@/components/portal/HeroDust";
 import { RunningOrder } from "@/components/portal/Playheads";
 import { ClientMark } from "@/components/portal/ClientMark";
 import { AccessStrip } from "@/components/portal/AccessStrip";
@@ -155,6 +156,9 @@ export default async function Home({ params }: { params: Promise<{ client: strin
       <Slate />
 
       <section id="welcome" className="relative flex min-h-[100svh] flex-col justify-between overflow-hidden bg-[color:var(--stage)] scroll-mt-0">
+        {/* The air of the room: a projector's beam across the hero and the
+            dust drifting in it, which a hand through the beam scatters. */}
+        <HeroDust />
         <div className="mono relative flex items-center justify-between px-6 pt-20 md:px-14">
           <p className="flex items-center gap-2">
             <span className="lamp lamp-live" aria-hidden="true" />

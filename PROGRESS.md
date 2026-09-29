@@ -213,6 +213,36 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 70 (2026-09-29): the room the reel runs in.
+      The user asked a third time for a more creative home page, motion
+      especially. Four new kinds of motion, each tied to what its section
+      says, none a repeat of an earlier wave:
+      1. The projector's beam and its dust (HeroDust.tsx, .hero-beam): a
+         faint shaft across the hero at 144deg (at most 6.5% ink, breathing
+         slowly) and ninety motes drifting in the room's air, lit inside the
+         beam (the canvas uses the gradient's own geometry). A pointer through
+         the beam scatters the dust, which settles back in about a second:
+         measured, 98 lit pixels within 90px of a spot before the pointer
+         came, none while it rested there. Drawn only while the hero is on
+         screen and the tab in front; no canvas at all under reduced motion.
+      2. The call sheet is a departure board (ThisWeek.tsx, .flap): each
+         cell's flap drops from its top edge in turn and knocks past flat
+         (an overshooting bezier) as the sheet comes on.
+      3. "Still being written" writes itself (RecentList.tsx): each entry's
+         date is stamped and its line typed out behind a tally caret, one
+         after another. Entries waiting their turn fade whole (.row-held) --
+         never hidden, so their links stay in the tab order -- and a screen
+         reader gets each typed line whole. Only when the list is below the
+         fold after hydration; never under reduced motion.
+      4. Depth in the access strip (AccessStrip.tsx, .par-img, .par-num):
+         as the strip shuttles, each card's frame and numeral move against
+         the card. The frame's travel is clamped to 34px inside its 14% zoom
+         so no edge ever shows.
+      Verified: frames of the beam and dust, the flaps, the typing and the
+      depth values; reduced motion (dust blank, beam still, nothing held or
+      typing, no offsets); scripts off (all five entries shown); smoke and
+      a11y on both servers.
+
 - [x] Wave 69 (2026-09-29): the caption line, and films that follow you.
       At the user's word, on screenshots:
       - The caption track's line "follows fully": one tally line under the

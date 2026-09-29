@@ -1887,6 +1887,74 @@ body.is-cutting
   }
 }
 
+/* A training film's player (TrainingFilm.tsx) follows the reader into the
+   top right corner once its place has scrolled away, shrinking to a corner
+   monitor. Its type is sized by its own width, so the title that reads at
+   64px across a full frame is still a title at 360px, and the slate line
+   gives way on a monitor too narrow for it. */
+.film-player {
+  container-type: inline-size;
+}
+/* Laid out here rather than with utilities: Tailwind's display utilities
+   sit in a later layer and would beat the rules below that take the line
+   away. */
+.film-slate {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(10px, 2.3cqw, 24px);
+}
+.film-title {
+  padding: clamp(10px, 2.3cqw, 24px);
+}
+.film-title > p {
+  font-size: clamp(20px, 6.2cqw, 64px);
+}
+@container (max-width: 300px) {
+  .film-slate {
+    display: none;
+  }
+}
+.film-player.is-docked {
+  z-index: 35;
+  outline: 1px solid var(--rule-strong);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+}
+/* In the corner the slate line would sit under the close button. */
+.film-player.is-docked .film-slate {
+  display: none;
+}
+.film-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 3;
+  display: none;
+  width: 30px;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--rule-strong);
+  background: rgba(11, 11, 12, 0.85);
+  color: var(--ink);
+  font-size: 18px;
+  line-height: 1;
+}
+.film-close:hover {
+  background: var(--stage-3);
+}
+.film-player.is-docked .film-close {
+  display: flex;
+}
+@media print {
+  .film-player.is-docked {
+    position: absolute !important;
+    inset: 0 !important;
+    width: auto !important;
+    height: auto !important;
+  }
+}
+
 /* The showreel's cards power on like a wall of monitors as the rail comes
    on (Showreel.tsx): the same bright line and opening as a room's monitor,
    one card after another. */
@@ -2435,7 +2503,11 @@ body.is-cutting
 .reveal-wait:has(.beat),
 .reveal-wait:has(.cue-word),
 .reveal-wait:has(.rule-line),
-.reveal-wait:has(.letterbox),
+/* A film's slot: keyed on the player, which is always there, not on the
+   letterbox, which goes when the film plays -- a wipe's clip on the slot
+   would then clip the player too, out in the corner where it follows the
+   reader, and leave its controls under the page. */
+.reveal-wait:has(.film-player),
 .reveal-wait:has(.reel-on) {
   clip-path: none;
   transition: none;

@@ -200,6 +200,7 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
   return (
     <>
       <header
+        data-nav=""
         className={cn(
           "fixed inset-x-0 top-0 z-50 transition-colors duration-500",
           scrolled && !open ? "border-b border-[color:var(--rule)] bg-[rgba(11,11,12,0.82)] backdrop-blur-xl" : "border-b border-transparent bg-transparent"

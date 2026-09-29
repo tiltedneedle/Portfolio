@@ -259,7 +259,7 @@ export default async function Home({ params }: { params: Promise<{ client: strin
           </div>
         </div>
         <div className="mx-auto mt-16 max-w-[1600px] px-6 md:mt-24 md:px-14">
-          <TrainingFilm film={home.films.intro} number="Intro" />
+          <TrainingFilm film={home.films.intro} number="Intro" dock="playing" />
         </div>
       </section>
 
@@ -282,7 +282,7 @@ export default async function Home({ params }: { params: Promise<{ client: strin
             <Loop paths={paths} />
           </div>
           <div className="mt-20 md:mt-28">
-            <TrainingFilm film={home.films.outro} number="Outro" />
+            <TrainingFilm film={home.films.outro} number="Outro" dock="playing" />
           </div>
         </div>
       </section>

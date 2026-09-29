@@ -213,6 +213,39 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 69 (2026-09-29): the caption line, and films that follow you.
+      At the user's word, on screenshots:
+      - The caption track's line "follows fully": one tally line under the
+        line being read, from its head to the read's exact point, restarting
+        at the head of the next line when it wraps. The read moves at an
+        even pace per letter (each word carries its share, --a and --w), so
+        the line glides across words and spaces and the lighting keeps pace.
+        It had been a bar per word handing over to the next (two short bars
+        at once). Committed as e52f2ab.
+      - Training films are medium: min(1040px, 76%) of the page on a wide
+        screen (they had filled 1768px of a 1917px screen), full width on a
+        phone; their type is sized by the player's own width (container
+        units), so the title still reads when small.
+      - Scroll past a film and it follows: it slides up to the top right
+        under the nav, shrinking as it goes, and stops at a corner monitor
+        (360px, or 46% of a phone), where it stays while the page is read;
+        scrolling back to its place brings it home at full size. The x sends
+        it home and stops it until the reader revisits its place. One player
+        element changes position -- never a moved one -- so a playing film
+        does not reload (verified: the same iframe across home and back).
+        Guides' films always follow; the home's two follow only while
+        playing, and starting one stops the other. Its place shows "In the
+        corner, top right" while it is away.
+      - Found on the way: the reveal wipe's opt-out keyed on the letterbox,
+        which goes when a film plays, so a playing film's slot got its clip
+        back and the clip swallowed the corner player and its controls. Now
+        keyed on the player, which is always there. Also the slate line's
+        display moved out of utilities so the corner can hide it.
+      Verified at 1917 (the user's width), 1440 and a phone: the travel
+      (1040, 707, 459, then 360 held), clicks landing on the corner's
+      controls (elementFromPoint), close and re-arm, the home rules; smoke
+      and a11y on both servers.
+
 - [x] Wave 68 (2026-09-29): the home page as a reel on a projector.
       The user asked again for the home page to be "more creative", motion
       especially. Six additions, one idea:

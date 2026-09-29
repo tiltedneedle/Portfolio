@@ -28,6 +28,7 @@ import { home } from "@/content/system/home";
 import { requireClient } from "@/content/clients/registry";
 import { firstRoom, liveChapters, livePaths, writtenPages } from "@/lib/rooms";
 import { sequence } from "@/lib/sequence";
+import { titleFit } from "@/lib/display-fit";
 
 // The home page, in running order: the slate (once), the welcome, the
 // objective, what you have access to, how to use the system, the approach.
@@ -35,6 +36,7 @@ export default async function Home({ params }: { params: Promise<{ client: strin
   const { client } = await params;
   const sys = requireClient(client);
   const { identity } = sys;
+  const fit = titleFit(identity.name);
   // The personalised pages the studio has written for this client. Everything
   // else stays off the website until it exists.
   const written = writtenPages(sys);
@@ -179,7 +181,9 @@ export default async function Home({ params }: { params: Promise<{ client: strin
             {/* Each line rises through its own mask (.title-line), the second
                 a beat after the first: the opening titles. */}
             <Lift>
-            <h1 className="display footage-type relative max-w-[15ch] leading-[0.86]">
+            {/* A size container, so the client's line can fit itself to the
+                title's measure (.title-fit). */}
+            <h1 className="display footage-type @container relative max-w-[15ch] leading-[0.86]">
               <span className="title-line">
                 {/* TILTED's letters are needles: they settle as the line
                     lands, then lean toward the pointer (Tilt.tsx). */}
@@ -187,8 +191,13 @@ export default async function Home({ params }: { params: Promise<{ client: strin
                   <Tilt text="Tilted" /> Needle
                 </span>
               </span>
-              <span className="title-line md:whitespace-nowrap">
-                <span style={{ "--i": 1 } as CSSProperties}>
+              {/* The client's line is fitted, not wrapped: a name that fits is
+                  set full size, a longer one a little smaller until it does,
+                  and only past the floor does it wrap. Held to one line it had
+                  run past the mask on a wide screen; wrapped, a short last word
+                  dropped onto a line alone. */}
+              <span className="title-line">
+                <span className="title-fit" style={{ "--i": 1, "--line-em": fit.line, "--word-em": fit.word } as CSSProperties}>
                   {/* --ink-soft, not --ink-mid: the × sits over the drift at
                       full strength, and measured against real frames --ink-mid
                       fell to 1.96:1 on a phone. */}
@@ -256,10 +265,13 @@ export default async function Home({ params }: { params: Promise<{ client: strin
             <p className="mono text-[color:var(--ink-mid)]">{home.objective.label}</p>
             {/* Read as a caption track: each word lights as the scroll
                 reaches it, a tally bar under the word being read. */}
+            {/* The measure goes on the line, where the type is: a ch on the
+                wrapper is a body-text ch, and at that width the statement
+                broke into eleven ragged lines of two words. */}
             <CaptionTrack
               lines={[home.objective.text]}
-              className="mt-4 max-w-[30ch]"
-              lineClassName="em-serif statement text-[clamp(26px,2.6vw,40px)] leading-[1.2] text-[color:var(--ink)]"
+              className="mt-4"
+              lineClassName="em-serif statement max-w-[30ch] text-[clamp(26px,2.6vw,40px)] leading-[1.2] text-[color:var(--ink)]"
             />
           </div>
         </div>

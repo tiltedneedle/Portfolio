@@ -156,7 +156,7 @@ export function Fan({ title, from, fromLabel, to, note }: { title?: string; from
       <div className="grid md:grid-cols-[minmax(0,1fr)_48px_minmax(0,1.5fr)]">
         <div className="fan-root relative flex flex-col justify-center border border-[color:var(--rule-strong)] bg-[color:var(--stage-2)] p-5 md:p-6">
           {fromLabel && <p className="mono mb-3">{fromLabel}</p>}
-          <p className="em-serif text-[21px] leading-snug text-[color:var(--ink)] md:text-[23px]">
+          <p className="em-serif statement text-[21px] leading-snug text-[color:var(--ink)] md:text-[23px]">
             <Rich text={from} />
           </p>
         </div>
@@ -417,7 +417,7 @@ export function Flow({ title, steps, end, note }: { title?: string; steps: { q: 
           <li key={s.q} className="flow-step">
             <div className="flow-q">
               <p className="mono mb-2">{pad(i)}</p>
-              <p className="em-serif text-[21px] leading-snug text-[color:var(--ink)] md:text-[23px]">
+              <p className="em-serif statement text-[21px] leading-snug text-[color:var(--ink)] md:text-[23px]">
                 <Rich text={s.q} />
               </p>
               <p className="mono mt-3 text-[color:var(--ink-mid)]">
@@ -436,7 +436,7 @@ export function Flow({ title, steps, end, note }: { title?: string; steps: { q: 
         ))}
         <li className="flow-end">
           <p className="mono mb-2">Then</p>
-          <p className="em-serif text-[21px] leading-snug text-[color:var(--ink)] md:text-[23px]">
+          <p className="em-serif statement text-[21px] leading-snug text-[color:var(--ink)] md:text-[23px]">
             <Rich text={end} />
           </p>
         </li>

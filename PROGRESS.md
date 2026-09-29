@@ -213,6 +213,65 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 72 (2026-09-30): evenness, and the footer looped until it held.
+      "Isn't this a bit uneven?" (the home objective in eleven ragged
+      lines), "look for more uneven sections like this on all pages", and
+      "loop on footer multiple times to improve it completely".
+      Evenness:
+      - The objective's measure sat on its wrapper, in the body's ch: it is
+        on the line itself now (the ch of 40px italic, not of 17px sans).
+      - A guide's header puts its contents where the two columns come out
+        nearest in height (under the facts, under them in two columns, or
+        as a strip below both), estimated from the content at build.
+      - Section headings capped at 22ch; an unwritten scripts page has a
+        blank stack slated "In production" instead of an empty right half.
+      - Serif lines: the before/after answer, a fan's root, a flow's
+        question, a question list and a quoted line are statements
+        (balanced); every other serif line is pretty (the text-wrap-style
+        longhand, so a nowrap above it still holds). Search-term chips
+        balance.
+      - The home title fits the client's name to its measure
+        (lib/display-fit.ts: a width table measured from the face, within
+        2% of the render, on the wide side): full size when it fits,
+        smaller until it does, wrapping (balanced) only below 0.62em.
+        Wrapped, "x Company / Name" dropped a word; held to one line on a
+        wide screen, a 34-character name lost 1053px to the line's mask.
+      - Audits, run from .playwright-mcp (not committed): column balance,
+        narrow large type, orphan cards, empty-sided headers, widows (one
+        word under 45% of the longest line), ragged card bottoms, near-miss
+        left edges, sideways overflow, and every control hit-tested where
+        it sits. All clean on both clients (1895/1440/390; overflow at
+        seven widths from 390 to 1895).
+      Footer, five loops:
+      1. The credits summed to 13 of 12 columns, so the team fell under
+         the sign-off: 5 + 3 + 3 now. They roll up a column at a time; the
+         studio's name spans the foot at every width (19.4cqw) and settles
+         as they come on.
+      2. The timeline started 56px left of the credits on a wide screen
+         (its padding sat outside the 1600px measure); its readout moved
+         into the header row.
+      3. At the end of a page the floating Contents and Top buttons sat on
+         the copyright: room under the last line.
+      4. On a phone the timeline keeps no line for a hover title a touch
+         screen never shows (rooms 36px apart, the footer 186px shorter),
+         the readout and the copyright break between phrases, and the
+         system list is two short columns. The room you are in is lit in
+         the list as it is in the nav: aria-current and a lamp, held still.
+      5. Two faults found by measuring, not looking. The name's text, at
+         leading 0.8, runs a fifth of its size below its own line,
+         invisibly, over the copyright, and its box (container-type) is a
+         stacking context, so it took the pointer there: the last line is
+         lifted over it. And loop 2's fixed 216px floor under every
+         timeline room had flattened the duration scale and, from 1024 to
+         1279 wide, pushed the last room off the page, where the body's
+         overflow-x: hidden hid it. The rooms are grid columns now, sharing
+         the width by minutes but never narrower than their name
+         (minmax(min-content, Nfr)), a short room's minutes wrapping under
+         its name, the strips held on one line by subgrid rows. At 1440,
+         Create is 3.6 times Audit again, as 36 minutes is to 10.
+      Verified: every audit above on both clients; smoke and a11y on both
+      servers, vitest (137) and the brief guard.
+
 - [x] Wave 71 (2026-09-29): the other pages get the same hand.
       "Now do the same for the other pages too", after wave 70. Each of the
       new motions went only where it means something on that page:

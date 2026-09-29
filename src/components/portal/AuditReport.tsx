@@ -93,7 +93,7 @@ function Finding({ s, i, who }: { s: AuditSection; i: number; who: string }) {
       <div className="min-w-0">
         <div className="mb-8 flex flex-wrap items-start justify-between gap-x-8 gap-y-4">
           <div className="flex flex-wrap items-baseline gap-x-3">
-            <h2 className="display max-w-[16ch] text-[clamp(30px,3.6vw,52px)]">
+            <h2 className="display max-w-[22ch] text-[clamp(30px,3.6vw,52px)]">
               <Rise text={s.title} cue />
             </h2>
             <Anchor id={"a-" + pad(i)} label={s.title} />

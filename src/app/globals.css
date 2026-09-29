@@ -174,6 +174,15 @@ body {
   letter-spacing: 0;
   line-height: inherit;
 }
+/* The serif at reading sizes, where it is not a .statement: still the
+   second voice, and a lone word dropped under a line of it reads as the same
+   fault. Pretty rather than balance, since these run to several lines in
+   wide columns. The longhand, so it never undoes a nowrap set on or above it
+   (the crawl's words are serif too). */
+.em-serif:not(.statement) {
+  text-wrap-style: pretty;
+}
+
 /* Emphasis inside an italic passage inverts. The mark cannot be the same
    face as what surrounds it, and no roman serif is vendored, so it goes
    upright sans: the reverse-italic convention. */
@@ -973,6 +982,8 @@ a:focus-visible > .wm {
   background: var(--ink);
   color: var(--stage);
   border-radius: var(--r-sharp);
+  /* A search term that wraps on a phone breaks evenly, not "... to / Dubai". */
+  text-wrap: balance;
 }
 
 /* the opening quote mark on a spoken line */
@@ -1321,6 +1332,16 @@ a:focus-visible > .wm {
   to {
     transform: none;
   }
+}
+/* The client's line in the home title, fitted to the title's measure
+   (page.tsx, lib/display-fit.ts). --line-em is the line's width in em,
+   worked out from the name, and the title is the container, so 100cqw is
+   the room: full size when it fits, scaled until it does, and never below
+   0.62em, past which it wraps (balanced, as .display is) -- unless its
+   longest word needs smaller to fit at all (--word-em). The 0.98 is the
+   margin for a face whose table runs a hair wide. */
+.title-fit {
+  font-size: clamp(min(0.62em, 100cqw * 0.98 / var(--word-em, 1)), 100cqw * 0.98 / var(--line-em, 1), 1em);
 }
 .title-x {
   display: inline-block;
@@ -2118,6 +2139,36 @@ body.is-cutting
   }
 }
 
+/* The credits roll up as they come on (PortalFooter.tsx), a column at a
+   time, the way end credits rise. Reveal-driven: served in place. */
+.reveal-wait .credit {
+  opacity: 0;
+  transform: translateY(28px);
+}
+.reveal-wait.reveal-in .credit {
+  animation: lead-up 1s var(--ease-out-expo) both;
+  animation-delay: calc(0.08s + var(--i, 0) * 0.14s);
+}
+.reveal-wait:focus-within .credit {
+  opacity: 1;
+  transform: none;
+}
+
+/* The studio's name across the foot of every page (PortalFooter.tsx). Sized
+   by its own box, not the window: at 14.2% of the window it ran past a
+   1600px page on a wide screen. Its needles settle when the credits come
+   on, not at load, when they are far below the fold. */
+.foot-mark {
+  container-type: inline-size;
+}
+.foot-mark .tilt-l {
+  animation: none;
+}
+.foot-mark.reveal-wait.reveal-in .tilt-l {
+  animation: needle-settle 1.5s var(--ease-out-expo) both;
+  animation-delay: calc(0.35s + var(--k, 0) * 0.07s);
+}
+
 /* The door's second row, travelling against the first. */
 .drift-back {
   animation: drift-left 190s linear infinite reverse;
@@ -2642,7 +2693,8 @@ body.is-cutting
 .reveal-wait:has(.film-player),
 .reveal-wait:has(.reel-on),
 .reveal-wait:has(.flap),
-.reveal-wait:has(.caption-track) {
+.reveal-wait:has(.caption-track),
+.reveal-wait:has(.credit) {
   clip-path: none;
   transition: none;
 }
@@ -2709,7 +2761,7 @@ body.is-cutting
   .reveal-wait .letterbox {
     display: none !important;
   }
-  .reveal-wait :is(.film-push, .reel-on, .flap) {
+  .reveal-wait :is(.film-push, .reel-on, .flap, .credit) {
     transform: none !important;
     clip-path: none !important;
     opacity: 1 !important;

@@ -12,9 +12,11 @@ const noop = () => () => {};
 
 /**
  * The conform: the whole system laid out as one reel, at the foot of every
- * page. Each page is a clip whose width is its reading time, so the strip is
- * a true duration scale end to end and within each room. Read pages are a
- * step up in luminance, and the playhead sits on the page you are on.
+ * page. Each page is a clip whose width is its reading time: exactly so
+ * within a room, and across the rooms too, except that no room is ever
+ * narrower than its own name -- a five-minute room at true scale is too
+ * short to be labelled. Read pages are a step up in luminance, and the
+ * playhead sits on the page you are on.
  *
  * The timecodes are set as text. That is deliberate and consistent with the
  * other readouts in the room (Slate, Readouts, TrainingFilm): the
@@ -60,8 +62,8 @@ export function MasterTimeline({ clips }: { clips: Clip[] }) {
   }
 
   return (
-    <section aria-labelledby="reel-h" className="border-t border-[color:var(--rule)] bg-[color:var(--stage)] px-6 pb-12 pt-14 md:px-14 md:pt-16">
-      <div className="mx-auto max-w-[1600px]">
+    <section aria-labelledby="reel-h" className="border-t border-[color:var(--rule)] bg-[color:var(--stage)] pb-12 pt-14 md:pt-16">
+      <div className="mx-auto max-w-[1600px] px-6 md:px-14">
         {/* The heading is a heading, not another mono label: set as .mono it
             was the same typographic object as the caption beside it, which is
             the exact fault .subhead exists to fix. */}
@@ -69,24 +71,42 @@ export function MasterTimeline({ clips }: { clips: Clip[] }) {
           <h2 id="reel-h" className="subhead">
             The whole system, end to end
           </h2>
-          <p className="mono text-[color:var(--ink-mid)]">Read on this device</p>
+          <p className="mono text-[color:var(--ink-mid)]">
+            {/* On a phone the first phrase takes its own line: wrapped anywhere
+                else, a line ended on a dangling separator. */}
+            <span className="block whitespace-nowrap sm:inline">Read on this device</span>{" "}
+            <span className="hidden text-[color:var(--ink-faint)] sm:inline">&middot;</span>{" "}
+            <span className="whitespace-nowrap text-[color:var(--ink-soft)]">
+              {done.length} of {clips.length} pages
+            </span>{" "}
+            <span className="text-[color:var(--ink-faint)]">&middot;</span> <span className="whitespace-nowrap">{left > 0 ? left + " min left" : "Read through"}</span>
+          </p>
         </div>
         <p className="tc mt-5 text-[clamp(38px,7vw,92px)] leading-none">
           {hhmm(readMin)}
           <span className="text-[color:var(--ink-mid)]"> / {hhmm(totalMin)}</span>
         </p>
 
-        {/* Side by side only where a room can be wide enough to read as a strip.
-            Below that each room is its own full-width row, which is a truer
-            picture than three squeezed columns. */}
-        <ol className="mt-9 flex flex-col gap-7 lg:flex-row lg:items-start lg:gap-6">
+        {/* Side by side on a wide screen, as columns that share the width by
+            minutes but never go narrower than their name (minmax: a room's
+            name is its min-content, since its minutes wrap under it when the
+            room is short). Each room spans three rows of the list -- label,
+            strip, hover title -- as a subgrid, so the strips stay on one line
+            when one label takes two. A fixed floor under every room had
+            flattened the scale and, from 1024 to 1300 wide, pushed the last
+            room off the page. Below lg each room is its own full-width row,
+            which is a truer picture than five squeezed columns. */}
+        <ol
+          className="mt-9 flex flex-col gap-7 max-lg:pointer-coarse:gap-9 lg:grid lg:gap-x-6 lg:gap-y-0"
+          style={{ gridTemplateColumns: groups.map((g) => "minmax(min-content, " + g.minutes + "fr)").join(" ") }}
+        >
           {groups.map((g) => (
-            <li key={g.chapterN} style={{ flex: g.minutes + " 1 0" }} className="min-w-0 lg:min-w-[172px]">
-              <p className="mono flex items-baseline justify-between gap-3 border-b border-[color:var(--rule-strong)] pb-2">
-                <span>
+            <li key={g.chapterN} className="min-w-0 lg:row-span-3 lg:grid lg:grid-rows-subgrid">
+              <p className="mono flex flex-wrap items-baseline justify-between gap-x-3 border-b border-[color:var(--rule-strong)] pb-2">
+                <span className="whitespace-nowrap">
                   {g.chapterN} &mdash; {g.chapterTitle}
                 </span>
-                <span className="text-[color:var(--ink-mid)]">{g.minutes} min</span>
+                <span className="ml-auto whitespace-nowrap text-[color:var(--ink-mid)]">{g.minutes} min</span>
               </p>
               <ol className="mt-2 flex gap-[2px]" onPointerLeave={() => setHot(null)}>
                 {g.clips.map((c) => {
@@ -115,16 +135,13 @@ export function MasterTimeline({ clips }: { clips: Clip[] }) {
                   );
                 })}
               </ol>
-              <p aria-hidden="true" className="mono mt-2.5 min-h-[1.3em] truncate text-[color:var(--ink-soft)]">
+              <p aria-hidden="true" className="mono mt-2.5 min-h-[1.3em] truncate text-[color:var(--ink-soft)] pointer-coarse:hidden">
                 {g.clips.some((c) => c.href === hot) ? hotTitle : ""}
               </p>
             </li>
           ))}
         </ol>
 
-        <p className="mono mt-9 border-t border-[color:var(--rule)] pt-4 text-[color:var(--ink-mid)]">
-          {done.length} of {clips.length} pages <span className="text-[color:var(--ink-faint)]">&middot;</span> {left > 0 ? left + " min left" : "Read through"}
-        </p>
       </div>
     </section>
   );

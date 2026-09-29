@@ -94,7 +94,7 @@ function Questions({ title, items }: { title?: string; items: string[] }) {
       <Title text={title} />
       <ul className="border-b border-[color:var(--rule)]">
         {items.map((it) => (
-          <li key={it} className="em-serif border-t border-[color:var(--rule)] py-3.5 text-[21px] leading-snug text-[color:var(--ink)] md:text-[23px]">
+          <li key={it} className="em-serif statement border-t border-[color:var(--rule)] py-3.5 text-[21px] leading-snug text-[color:var(--ink)] md:text-[23px]">
             <Rich text={it} />
           </li>
         ))}
@@ -182,7 +182,7 @@ function Swaps({
                   half as an instruction ("Explain what makes it different."),
                   there is no word to put above it. */}
               {toLabel && <p className="mono mb-2">{toLabel}</p>}
-              <p className="em-serif text-[21px] leading-snug text-[color:var(--ink)] md:text-[23px]">
+              <p className="em-serif statement text-[21px] leading-snug text-[color:var(--ink)] md:text-[23px]">
                 <Rich text={p.to} />
               </p>
             </div>
@@ -242,7 +242,7 @@ function Keyed({ title, items }: { title?: string; items: { label: string; lines
             <div className="flex flex-col gap-2">
               {it.lines.map((l) =>
                 l.startsWith("“") ? (
-                  <p key={l} className="em-serif text-[21px] leading-snug text-[color:var(--ink)]">
+                  <p key={l} className="em-serif statement text-[21px] leading-snug text-[color:var(--ink)]">
                     <Rich text={l} />
                   </p>
                 ) : (

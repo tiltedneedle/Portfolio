@@ -1,4 +1,5 @@
-import type { Guide as GuideT } from "@/content/types";
+import type { CSSProperties } from "react";
+import type { Block, Guide as GuideT } from "@/content/types";
 import type { GuideNote } from "@/content/clients/types";
 import { ForYou } from "@/components/portal/ForYou";
 import { Resume } from "@/components/portal/Resume";
@@ -32,6 +33,38 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
   const minutes = readingMinutes(guide);
   const sectionId = (i: number) => "s-" + String(i + 1).padStart(2, "0");
   const railItems = guide.sections.map((s, i) => ({ id: sectionId(i), n: s.n, title: s.title }));
+  // Comparisons and clip rails need the page's full width; anything else in an opener reads with the intro.
+  const wideOpener = !!guide.opener?.some((b) => b.kind === "profile" || b.kind === "clips");
+  // Where the contents go: under the facts in one column, under the facts
+  // in two (on a wide screen the facts column is 470-800px wide), or as a
+  // strip across the page under both -- whichever leaves the two columns
+  // nearest in height. A long list beside a short intro left a hole under
+  // the intro; a long intro beside the facts alone left one under the
+  // facts. Estimated from the content, since the page is built once: the
+  // intro column is 60ch of 21px type, about 66 characters to a 33.6px line
+  // with 20px between paragraphs; a listed block is about 44px a row; a
+  // contents row is 41px; a note about 170px. Measured against the render
+  // at 1440, the estimates land within a line or two.
+  const LINE = 33.6;
+  const CPL = 66;
+  const blockHeight = (b: Block) =>
+    "items" in b && Array.isArray(b.items)
+      ? 48 + b.items.length * 44
+      : "text" in b && typeof b.text === "string"
+        ? Math.ceil(b.text.length / CPL) * LINE + 24
+        : Math.ceil((JSON.stringify(b).length * 0.8) / CPL) * LINE + 36;
+  const introHeight =
+    guide.intro.reduce((h, t) => h + Math.ceil(t.length / CPL) * LINE + 20, 0) +
+    (guide.opener && !wideOpener ? guide.opener.reduce((h, b) => h + blockHeight(b), 16) : 0) +
+    introNotes.length * 170;
+  const factsHeight = 70 + (guide.example ? 110 : 0);
+  const list = (rows: number) => 84 + rows * 41;
+  const layouts = [
+    { at: "below" as const, gap: Math.abs(factsHeight - introHeight) },
+    { at: "beside" as const, gap: Math.abs(factsHeight + list(railItems.length) - introHeight) },
+    { at: "beside-2" as const, gap: Math.abs(factsHeight + list(Math.ceil(railItems.length / 2)) - introHeight) },
+  ];
+  const contentsAt = railItems.length > 1 ? layouts.reduce((best, l) => (l.gap < best.gap ? l : best)).at : "none";
 
   return (
     <article className="bg-[color:var(--stage)]">
@@ -80,26 +113,7 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
                 <p className="mono mt-1 text-[color:var(--ink-mid)]">@{guide.example.handle}</p>
               </div>
             )}
-            {railItems.length > 1 && (
-              // The shape of the page before you commit to it. The rail in the
-              // margin does this once you are reading; this is the contents.
-              <nav aria-labelledby="in-this-guide" className="mt-10 hidden border-t border-[color:var(--rule)] md:block">
-                {/* Labelled BY the visible heading, not with a copy of it. */}
-                <p id="in-this-guide" className="mono py-3 text-[color:var(--ink-mid)]">
-                  In this guide
-                </p>
-                <ol className="flex flex-col border-t border-[color:var(--rule)]">
-                  {railItems.map((it) => (
-                    <li key={it.id} className="border-b border-[color:var(--rule)] last:border-b-0">
-                      <a href={"#" + it.id} className="flex items-baseline gap-3 py-2 text-[15px] leading-snug text-[color:var(--ink-soft)] transition-colors hover:text-[color:var(--ink)]">
-                        <span className="mono w-[3ch] shrink-0 text-[color:var(--ink-mid)]">{it.n ?? "\u2014"}</span>
-                        <span className="min-w-0 flex-1">{it.title}</span>
-                      </a>
-                    </li>
-                  ))}
-                </ol>
-              </nav>
-            )}
+            {(contentsAt === "beside" || contentsAt === "beside-2") && <Contents items={railItems} twoUp={contentsAt === "beside-2"} className="mt-10" />}
           </div>
           <div className="scene-up flex flex-col gap-5" style={delay(0.62)}>
             {guide.intro.map((p) => (
@@ -107,20 +121,30 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
                 <Rich text={p} />
               </p>
             ))}
+            {/* What reads with the intro stays in its column: a text opener
+                and this client's notes. Beside a long contents list they had
+                been set below the whole header, which left a hole under a
+                short intro and hung the opener at the foot of the page. */}
+            {guide.opener && !wideOpener && (
+              <div className="mt-4">
+                <Blocks blocks={guide.opener} />
+              </div>
+            )}
+            {introNotes.length > 0 && (
+              <div className="mt-6">
+                <ForYou who={who} notes={introNotes} />
+              </div>
+            )}
           </div>
         </div>
 
         <Resume k={guide.chapter + "/" + guide.slug} items={railItems} />
 
-        {introNotes.length > 0 && (
-          <div className="mt-12 md:ml-[calc(100%-60ch)] md:max-w-[60ch]">
-            <ForYou who={who} notes={introNotes} />
-          </div>
-        )}
+        {contentsAt === "below" && <Contents items={railItems} strip className="scene-up relative mt-14" style={delay(0.85)} />}
 
-        {guide.opener && (
-          // Comparisons and clip rails need the full width; text stays in the reading column.
-          <div className={"mt-12 " + (guide.opener.some((b) => b.kind === "profile" || b.kind === "clips") ? "md:mt-20" : "md:ml-[calc(100%-60ch)] md:max-w-[60ch]")}>
+        {guide.opener && wideOpener && (
+          // Comparisons and clip rails need the full width.
+          <div className="relative mt-12 md:mt-20">
             <Blocks blocks={guide.opener} />
           </div>
         )}
@@ -157,7 +181,7 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
               </div>
               <div className="min-w-0">
                 <div className="mb-8 flex flex-wrap items-baseline gap-x-3">
-                  <h2 className="display max-w-[16ch] text-[clamp(30px,3.6vw,52px)]">
+                  <h2 className="display max-w-[22ch] text-[clamp(30px,3.6vw,52px)]">
                     <Rise text={s.title} cue />
                   </h2>
                   <Anchor id={sectionId(i)} label={s.title} />
@@ -202,6 +226,47 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
       <ReadToggle k={guide.chapter + "/" + guide.slug} ask="Got the rule?" />
       <NextCut chapter={guide.chapter} slug={guide.slug} client={client} />
     </article>
+  );
+}
+
+/**
+ * The shape of the page before you commit to it. Beside the intro it runs
+ * down under the facts; as a strip it runs across the page, read down each
+ * column, then across. The rail in the margin does this once you are
+ * reading, and folds into a cue sheet on a phone, so this is for wider
+ * screens only.
+ */
+function Contents({
+  items,
+  strip = false,
+  twoUp = false,
+  className = "",
+  style,
+}: {
+  items: { id: string; n?: string; title: string }[];
+  strip?: boolean;
+  /** Beside the intro in two columns, where the facts column is wide enough (xl and up). */
+  twoUp?: boolean;
+  className?: string;
+  style?: CSSProperties;
+}) {
+  return (
+    <nav aria-labelledby="in-this-guide" className={"hidden md:block " + className} style={style}>
+      {/* Labelled BY the visible heading, not with a copy of it. */}
+      <p id="in-this-guide" className="mono border-t border-[color:var(--rule)] py-3 text-[color:var(--ink-mid)]">
+        In this guide
+      </p>
+      <ol className={"border-t border-[color:var(--rule)] " + (strip ? "gap-x-12 md:columns-2 xl:columns-3" : twoUp ? "gap-x-10 xl:columns-2" : "flex flex-col")}>
+        {items.map((it) => (
+          <li key={it.id} className="break-inside-avoid border-b border-[color:var(--rule)]">
+            <a href={"#" + it.id} className="flex items-baseline gap-3 py-2.5 text-[15px] leading-snug text-[color:var(--ink-soft)] transition-colors hover:text-[color:var(--ink)]">
+              <span className="mono w-[3ch] shrink-0 text-[color:var(--ink-mid)]">{it.n ?? "\u2014"}</span>
+              <span className="min-w-0 flex-1">{it.title}</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
   );
 }
 

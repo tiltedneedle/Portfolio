@@ -1,8 +1,10 @@
-import type { ReactNode } from "react";
+import { Fragment, type CSSProperties, type ReactNode } from "react";
 import { Slate } from "@/components/room/Slate";
 import { ReelPosition, StudioClocks } from "@/components/room/Readouts";
 import { CutLink } from "@/components/room/CutLink";
 import { Backdrop } from "@/components/portal/Backdrop";
+import { Lift } from "@/components/portal/HeroMotion";
+import { RunningOrder } from "@/components/portal/Playheads";
 import { ClientMark } from "@/components/portal/ClientMark";
 import { AccessStrip } from "@/components/portal/AccessStrip";
 import { Loop } from "@/components/portal/Loop";
@@ -167,27 +169,41 @@ export default async function Home({ params }: { params: Promise<{ client: strin
               sized in em, so it sits behind the name at every width and never
               reaches the tagline below. */}
           <div className="relative mt-10 text-[clamp(56px,10vw,168px)]">
-            <Backdrop className="-inset-x-6 top-1/2 -translate-y-1/2 md:-inset-x-14" />
+            <Backdrop className="band-in -inset-x-6 top-1/2 -translate-y-1/2 md:-inset-x-14" />
+            {/* Each line rises through its own mask (.title-line), the second
+                a beat after the first: the opening titles. */}
+            <Lift>
             <h1 className="display footage-type relative max-w-[15ch] leading-[0.86]">
-              Tilted Needle
-              <br />
-              <span className="md:whitespace-nowrap">
-                {/* --ink-soft, not --ink-mid: the × sits over the drift at
-                    full strength, and measured against real frames --ink-mid
-                    fell to 1.96:1 on a phone. */}
-                <span className="em-serif text-[0.7em] text-[color:var(--ink-soft)]">&times;</span> {identity.name}
+              <span className="title-line">
+                <span style={{ "--i": 0 } as CSSProperties}>Tilted Needle</span>
+              </span>
+              <span className="title-line md:whitespace-nowrap">
+                <span style={{ "--i": 1 } as CSSProperties}>
+                  {/* --ink-soft, not --ink-mid: the × sits over the drift at
+                      full strength, and measured against real frames --ink-mid
+                      fell to 1.96:1 on a phone. */}
+                  <span className="em-serif title-x text-[0.7em] text-[color:var(--ink-soft)]">&times;</span> {identity.name}
+                </span>
               </span>
             </h1>
+            </Lift>
           </div>
           {/* The brief's tagline, as the brief sets it: a heading under the
               name, VIRAL in red. The system keeps --tally for state; the
               client's own document asks for the red, and the client wins. */}
+          {/* Word by word, each pulled into focus; the brief's red word
+              lands in ink and then catches, like a tally lamp. */}
           <p className="display footage-type mt-8 text-[clamp(24px,2.8vw,44px)] leading-[1] text-[color:var(--ink)]">
-            {home.kicker.split(home.accent)[0]}
-            <span className="text-[color:var(--tally)]">{home.accent}</span>
-            {home.kicker.split(home.accent)[1]}
+            {home.kicker.split(" ").map((w, i) => (
+              <Fragment key={i}>
+                {i > 0 && " "}
+                <span className={w === home.accent ? "burn burn-tally text-[color:var(--tally)]" : "burn"} style={{ "--i": i } as CSSProperties}>
+                  {w}
+                </span>
+              </Fragment>
+            ))}
           </p>
-          <p className="footage-type mt-6 max-w-[48ch] text-[19px] leading-[1.5] text-[color:var(--ink-soft)] md:text-[22px]">{home.lead(identity.name)}</p>
+          <p className="footage-type title-lead mt-6 max-w-[48ch] text-[19px] leading-[1.5] text-[color:var(--ink-soft)] md:text-[22px]">{home.lead(identity.name)}</p>
           {/* A client with nothing marked and nothing written has nothing to
               read out, and an empty labelled list is a promise the page does
               not keep. */}
@@ -290,24 +306,9 @@ export default async function Home({ params }: { params: Promise<{ client: strin
             </div>
           </div>
 
-          <ol className="md:pt-1">
-            {home.approach.beats.map((b, i) => {
-              // The last beat is not a sixth step, it is the instruction to
-              // run the five again, so it carries the loop mark, not a number.
-              const loops = i === home.approach.beats.length - 1;
-              return (
-                <li
-                  key={b}
-                  className="grid grid-cols-[3.5ch_1fr] items-baseline gap-x-5 border-t border-[color:var(--rule)] py-3 last:border-b last:border-[color:var(--rule)] md:gap-x-8 md:py-4"
-                >
-                  <span aria-hidden="true" className={"mono " + (loops ? "text-[color:var(--ink-mid)]" : "text-[color:var(--ink-mid)]")}>
-                    {loops ? "↻" : String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span className={"display leading-[0.95] " + (loops ? "text-[clamp(28px,3.8vw,52px)] text-[color:var(--ink-soft)]" : "text-[clamp(32px,4.6vw,64px)] text-[color:var(--ink)]")}>{b}</span>
-                </li>
-              );
-            })}
-          </ol>
+          {/* The running order plays: a playhead steps down the beats and
+              lights each in turn (Playheads.tsx). At rest, all of them lit. */}
+          <RunningOrder beats={home.approach.beats} />
         </div>
       </section>
     </>

@@ -1,5 +1,6 @@
 import { CutLink } from "@/components/room/CutLink";
 import { home } from "@/content/system/home";
+import { LoopRunner } from "@/components/portal/Playheads";
 
 /**
  * How to use the system: five stations on one rail, and a dashed return
@@ -22,7 +23,7 @@ export function Loop({ paths }: { paths?: Set<string> }) {
         <ol className="grid grid-cols-5 border-t border-[color:var(--rule-strong)]" style={{ marginTop: 72 }}>
           {steps.map((s, i) => (
             <li key={s.title} className="relative flex flex-col px-4 pt-8 first:pl-0 last:pr-0">
-              <span aria-hidden="true" className="absolute -top-[5px] left-1/2 h-[9px] w-[9px] -translate-x-1/2 rounded-full bg-[color:var(--ink)]" />
+              <span aria-hidden="true" data-station="" className="station absolute -top-[5px] left-1/2 h-[9px] w-[9px] -translate-x-1/2 rounded-full bg-[color:var(--ink)]" />
               <p className="mono mb-3">{String(i + 1).padStart(2, "0")}</p>
               <h3 className="display text-[clamp(28px,3vw,44px)] leading-[0.95] text-[color:var(--ink)]">{s.title}</h3>
               <p className="mt-4 text-[15px] leading-relaxed text-[color:var(--ink-mid)]">{s.text}</p>
@@ -34,6 +35,7 @@ export function Loop({ paths }: { paths?: Set<string> }) {
             </li>
           ))}
         </ol>
+        <LoopRunner stations={n} />
       </div>
 
       {/* narrow: a column */}

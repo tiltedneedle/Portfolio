@@ -85,7 +85,14 @@ export function Showreel() {
                   data-cursor={r.restricted ? "Open" : "Play"}
                 >
                   <span className="well block border border-[color:var(--rule)] transition-colors duration-300 group-hover:border-[color:var(--rule-strong)]">
-                    <Still src={r.thumb} sizes="248px" className="object-cover" />
+                    <Still src={r.thumb} sizes="248px" className="first3-push object-cover" />
+                    {/* The first three seconds, made literal: on hover a playhead
+                        runs the foot of the clip for exactly three seconds and a
+                        counter reads them off. The section's own instruction. */}
+                    <span aria-hidden="true" className="first3" />
+                    <span aria-hidden="true" className="first3-tc mono absolute right-3 top-3 flex items-center gap-1.5 bg-[rgba(11,11,12,0.8)] px-2 py-1 text-[color:var(--ink)] backdrop-blur-sm">
+                      <span className="lamp lamp-live" />
+                    </span>
                     {/* The rank, on its own plate so it reads over any frame. */}
                     <span aria-hidden="true" className="mono absolute left-3 top-3 bg-[rgba(11,11,12,0.8)] px-2 py-1 text-[color:var(--ink)] backdrop-blur-sm">
                       No. {i + 1}

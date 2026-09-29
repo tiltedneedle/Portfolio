@@ -1116,6 +1116,208 @@ a:focus-visible > .wm {
   transition: none;
 }
 
+/* ------------------------------------------------------------- the playheads
+   The loop's stations light as the runner reaches them (Playheads.tsx); the
+   approach's ring turns once each time the running order comes round. */
+.station {
+  transition:
+    background-color 0.4s,
+    box-shadow 0.4s,
+    scale 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.station.is-lit {
+  background-color: var(--tally);
+  box-shadow: 0 0 12px 2px var(--tally-glow);
+  scale: 1.6;
+}
+.repeat-turn {
+  animation: repeat-turn 1.3s var(--ease-out-expo);
+}
+@keyframes repeat-turn {
+  from {
+    rotate: -360deg;
+  }
+  to {
+    rotate: 0deg;
+  }
+}
+
+/* ------------------------------------------------------ the first three seconds
+   The showreel says "watch the first three seconds of each; the hook is the
+   lesson". Hovering (or focusing) a clip makes it literal: a tally playhead
+   runs the foot of the still for exactly three seconds, a counter reads them
+   off beside a lit lamp, and the still pushes in slowly as if it were
+   playing. The counter is a registered integer stepped 0 to 3 in CSS. */
+@property --first3 {
+  syntax: "<integer>";
+  initial-value: 0;
+  inherits: false;
+}
+.first3 {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 3px;
+  background: rgba(242, 239, 233, 0.16);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.first3::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--tally);
+  box-shadow: 0 0 10px var(--tally-glow);
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+.first3-tc {
+  opacity: 0;
+  transition: opacity 0.3s;
+  counter-reset: first3 var(--first3);
+}
+.first3-tc::after {
+  content: "0:0" counter(first3);
+}
+.group:is(:hover, :focus-visible) .first3,
+.group:is(:hover, :focus-visible) .first3-tc {
+  opacity: 1;
+}
+.group:is(:hover, :focus-visible) .first3::after {
+  animation: first3-run 3s linear forwards;
+}
+.group:is(:hover, :focus-visible) .first3-tc {
+  animation: first3-count 3s steps(3, end) forwards;
+}
+@keyframes first3-run {
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes first3-count {
+  from {
+    --first3: 0;
+  }
+  to {
+    --first3: 3;
+  }
+}
+.first3-push {
+  transition: transform 3.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.group:is(:hover, :focus-visible) .first3-push {
+  transform: scale(1.07);
+}
+
+/* ------------------------------------------------------------ opening titles
+   The hero sets itself like a title sequence. The name rises line by line
+   through its own mask; the x turns in; the tagline pulls into focus word by
+   word and VIRAL strikes red like a tally lamp catching; the lead comes up;
+   the work fades in behind. About a second and a half.
+   CSS, not script: it needs no hydration, and the reduced-motion block below
+   lands every piece at its end state at once. Held while the slate is up, so
+   a first visit sees it after the slate rather than spent behind it. */
+.title-line {
+  display: block;
+  overflow: hidden;
+  /* The mask is padded by the halo's reach (.footage-type runs 0.3em past a
+     glyph), so at rest it clips nothing it should not. */
+  padding: 0.3em 0.35em;
+  margin: -0.3em -0.35em;
+}
+.title-line > span {
+  display: inline-block;
+  animation: title-rise 1.15s var(--ease-out-expo) both;
+  animation-delay: calc(0.1s + var(--i, 0) * 0.13s);
+}
+@keyframes title-rise {
+  from {
+    transform: translateY(calc(100% + 0.35em));
+  }
+  to {
+    transform: none;
+  }
+}
+.title-x {
+  display: inline-block;
+  animation: x-turn 1.1s var(--ease-out-expo) 0.42s both;
+}
+@keyframes x-turn {
+  from {
+    transform: rotate(-135deg) scale(0.3);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+.burn {
+  display: inline-block;
+  animation: burn-in 0.95s var(--ease-out-expo) both;
+  animation-delay: calc(0.62s + var(--i, 0) * 0.075s);
+}
+/* A word pulled into focus, not faded: it arrives soft and sharpens. */
+@keyframes burn-in {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(0.14em);
+  }
+  to {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}
+/* VIRAL lands in ink, then the tally catches: a flare, then the red holds. */
+.burn-tally {
+  animation-name: burn-in, tally-strike;
+  animation-duration: 0.95s, 1.3s;
+  animation-delay: calc(0.62s + var(--i, 0) * 0.075s), calc(0.95s + var(--i, 0) * 0.075s);
+  animation-fill-mode: both, both;
+}
+@keyframes tally-strike {
+  0%,
+  25% {
+    color: var(--ink);
+  }
+  40% {
+    color: #ff7a5c;
+    text-shadow: 0 0 0.45em rgba(226, 66, 43, 0.85);
+  }
+  100% {
+    color: var(--tally);
+  }
+}
+.title-lead {
+  animation: lead-up 1.1s var(--ease-out-expo) 1.1s both;
+}
+@keyframes lead-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* The work comes up behind the name, from black. */
+.band-in {
+  animation: band-in 1.8s ease-out 0.25s both;
+}
+@keyframes band-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+:root:has(.slate-open) :is(.title-line > span, .title-x, .burn, .title-lead, .band-in) {
+  animation-play-state: paused;
+}
+
 /* The door's second row, travelling against the first. */
 .drift-back {
   animation: drift-left 190s linear infinite reverse;
@@ -1258,6 +1460,27 @@ a:focus-visible > .wm {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  /* The hero's scrub, pull focus and lift are driven by script. Stillness is
+     held here rather than by rendering a different tree, so the server's
+     markup and the client's never differ. */
+  .hero-band,
+  .hero-band > *,
+  .lift {
+    transform: none !important;
+    filter: none !important;
+  }
+  .hero-band {
+    opacity: 1 !important;
+  }
+  /* The first three seconds is a moving playhead or nothing at all. */
+  .first3,
+  .first3-tc {
+    display: none;
+  }
+  .first3-push {
+    transform: none !important;
   }
 
   *,

@@ -213,6 +213,38 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 65 (2026-09-29): the home page moves like an edit suite.
+      The user asked for more creative design, "animations and motion
+      specially". Six motions, each an action an edit makes, all running on
+      top of a page that already reads at rest:
+      1. Opening titles (CSS, globals "opening titles"): the name rises line
+         by line through padded masks (.title-line), the x turns in, the
+         tagline pulls into focus word by word (.burn: blur to sharp), VIRAL
+         lands in ink then catches red like a tally (.burn-tally), the lead
+         comes up, the work fades in behind. Held while the slate is up
+         (:root:has(.slate-open) pauses them), so a first visit sees it after
+         the slate. Proof: a six-frame contact sheet at 0.15 to 2.4s.
+      2. Jog shuttle (HeroMotion Scrub): the strip drifts at the old CSS rate;
+         scroll velocity (spring-smoothed) scrubs it, down forward, up back,
+         and it leans into its travel. Only while on screen.
+      3. Pull focus (Scrub + Lift): over the first screen of scroll the strip
+         falls 120px behind and blurs to 9px; the name lifts 12% faster than
+         the page. Measured at 540px: lift -64.8px, band +72px, blur 5.4px.
+      4. The first three seconds (Showreel): hover or focus runs a tally
+         playhead across the clip's foot for exactly 3s, a counter steps
+         0:00 to 0:03 (registered integer @property), the still pushes in.
+         The section's own instruction, made literal.
+      5. Running order (Playheads RunningOrder): a playhead steps down the
+         approach's beats lighting each; the ring turns on "Then repeat."
+         Fixed an off-by-one (the playhead was the list's first child).
+      6. The loop runs (Playheads LoopRunner): a light travels the five
+         stations of "how to use the system", lighting each (data-station,
+         .is-lit), then rides the dashed arc home on the SVG's own cubic.
+      Reduced motion: every piece held still by CSS, never by a different
+      tree (so no hydration mismatch); verified none moves, all beats lit.
+      Verification note: this test browser barely produces frames; driving
+      it with screenshots forces them (see reference_visual_verification).
+
 - [x] Wave 64 (2026-09-29): the brief's missing image, and one note out.
       The user supplied the image the .md export had dropped from the end of
       Discoverability (its "![][image1]", after THE RULE): a bad/good

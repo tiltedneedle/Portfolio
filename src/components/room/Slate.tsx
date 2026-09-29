@@ -76,7 +76,7 @@ export function Slate() {
 
   return (
     <div
-      className="fixed inset-0 z-[9996] bg-black text-[color:var(--ink)]"
+      className="slate-open fixed inset-0 z-[9996] bg-black text-[color:var(--ink)]"
       onClick={() => setPhase("black")}
       aria-hidden={phase === "black"}
     >

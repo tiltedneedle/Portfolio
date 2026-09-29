@@ -1,6 +1,7 @@
 import { published } from "@/lib/published";
 import { reel } from "@/content/system/reel";
 import { Still } from "@/components/portal/Still";
+import { Scrub } from "@/components/portal/HeroMotion";
 
 /**
  * Behind the home hero: a row of stills from the studio's work, the
@@ -50,15 +51,13 @@ export function Backdrop({ className = "" }: { className?: string }) {
   );
   return (
     <div aria-hidden="true" className={"pointer-events-none absolute " + className}>
-      {/* The band holds still and carries the fade; the row moves inside it,
-          so the fade stays where the type is instead of travelling with the
-          frames. */}
-      <div className="hero-band">
-        <div className="drift flex w-max opacity-50">
-          {row("a", false)}
-          {row("b", true)}
-        </div>
-      </div>
+      {/* The band carries the fade and the pull focus; the row moves inside
+          it, drifting and scrubbed by the scroll (HeroMotion's Scrub), so the
+          fade stays where the type is instead of travelling with the frames. */}
+      <Scrub>
+        {row("a", false)}
+        {row("b", true)}
+      </Scrub>
       <div className="hero-vignette absolute inset-0" />
     </div>
   );

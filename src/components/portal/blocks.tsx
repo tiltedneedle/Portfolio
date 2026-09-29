@@ -282,10 +282,14 @@ function Steps({ title, items }: { title?: string; items: { title: string; text?
 }
 
 function Cards({ title, items }: { title?: string; items: { title: string; text: string }[] }) {
+  // Across by the room the cards have, not the screen's: beside a guide's
+  // rail at 1024 four columns were 99px, "Entertainment" ran 84px into
+  // "Personal" and the text beneath went three words to a line. Two from
+  // 448px of their own, four from 896px, where a 32px title fits.
   return (
-    <div>
+    <div className="@container">
       <Title text={title} />
-      <ul className="grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
+      <ul className="grid gap-x-8 gap-y-8 @md:grid-cols-2 @4xl:grid-cols-4">
         {items.map((it, i) => (
           <li key={it.title} className="border-t border-[color:var(--rule-strong)] pt-4">
             <p className="mono mb-3">{pad(i)}</p>

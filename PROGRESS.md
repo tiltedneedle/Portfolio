@@ -269,8 +269,24 @@ The marketing site this grew out of is on the `marketing-site` branch.
          (minmax(min-content, Nfr)), a short room's minutes wrapping under
          its name, the strips held on one line by subgrid rows. At 1440,
          Create is 3.6 times Audit again, as 36 minutes is to 10.
-      Verified: every audit above on both clients; smoke and a11y on both
-      servers, vitest (137) and the brief guard.
+      6. Tablet widths, looked at last: twelve columns and their gutters
+         left the team 132px at 768, narrower than its own email address
+         (23px past the measure), and "Leave the room" broke from its
+         arrow. Below lg the sign-off runs across the top and the other
+         two share the row under it (304px each at 768).
+      Collisions: an audit of every line of every text node, as the glyphs
+      fall and clipped where an ancestor clips, found three. The top nav
+      from 768 to about 880px (two room names broke in two and the
+      squeezed wordmark ran over "01 Home"): the rooms go inline from
+      900px, the menu below. The ideation pillars beside the rail at 1024
+      (four 99px columns, "Entertainment" 84px into "Personal"): cards go
+      across by their own width now, two from 448px, four from 896px,
+      and a title that ever outgrows its column hyphenates. And the
+      structure strip's timecodes where a part is a twelfth of it
+      ("00:0003"): two staggered rows from sm.
+      Verified: every audit above on both clients (collisions at
+      390/768/820/1024/1440); smoke and a11y on both servers, vitest (137)
+      and the brief guard.
 
 - [x] Wave 71 (2026-09-29): the other pages get the same hand.
       "Now do the same for the other pages too", after wave 70. Each of the

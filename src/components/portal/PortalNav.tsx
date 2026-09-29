@@ -215,8 +215,12 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
             </span>
           </CutLink>
 
+          {/* The rooms inline from 900px, where the six fit with their names on
+              one line each: from 768, where they had shown, two names broke
+              in two and the wordmark, squeezed, ran over "01 Home". Below
+              that, the menu. */}
           <div
-            className="hidden items-center gap-7 md:flex"
+            className="hidden items-center gap-7 min-[900px]:flex"
             onPointerLeave={() => {
               setHot(null);
               hide();
@@ -289,7 +293,7 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
 
           <button
             type="button"
-            className="slate-link text-[color:var(--ink)] md:hidden"
+            className="slate-link text-[color:var(--ink)] min-[900px]:hidden"
             onClick={() => setOpen((o) => !o)}
             aria-expanded={open}
             aria-controls="system-menu"
@@ -307,7 +311,7 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: reduced ? 0 : 0.25 }}
-            className="fixed inset-0 z-40 overflow-y-auto bg-[color:var(--stage)] md:hidden"
+            className="fixed inset-0 z-40 overflow-y-auto bg-[color:var(--stage)] min-[900px]:hidden"
           >
             <nav className="px-6 pb-16 pt-24" aria-label="Menu">
               <div className="mb-6 flex items-baseline justify-between gap-4">

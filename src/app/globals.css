@@ -906,6 +906,9 @@ a:focus-visible > .wm {
 }
 .card-title {
   font-size: 32px;
+  /* The last resort, if a title ever outgrows its column: a hyphen, not a
+     collision with the title beside it. */
+  hyphens: auto;
 }
 .sub-body .step-title {
   font-size: clamp(18px, 1.8vw, 24px);

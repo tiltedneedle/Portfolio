@@ -39,6 +39,9 @@ const link = linkBase + " text-[color:var(--ink-soft)]";
  * The credits are three columns that sum to the grid (5 + 3 + 3 of 12, with
  * one between): they had summed to 13, so the team dropped onto a second
  * row under the sign-off and left the right third of every footer empty.
+ * Twelve columns only from lg: at 768 their eleven gutters left the team
+ * 132px, narrower than its own email address, so on a tablet the sign-off
+ * runs across the top and the other two share the row under it.
  *
  * The room you are in is lit in the list, as it is in the nav: ink, and the
  * tally lamp, held still (the playhead in the timeline above is the one that
@@ -60,8 +63,8 @@ export function PortalFooter({ rooms = chapters, clips }: { rooms?: Room[]; clip
       {clips && clips.length > 0 ? <MasterTimeline clips={clips} /> : null}
       <WordStrip words="research. create. publish. analyse. improve. repeat. " />
       <div className="mx-auto max-w-[1600px] px-6 pt-16 md:px-14 md:pt-24">
-        <Reveal className="grid grid-cols-1 gap-x-10 gap-y-12 md:grid-cols-12">
-          <div className="credit md:col-span-5" style={{ "--i": 0 } as CSSProperties}>
+        <Reveal className="grid grid-cols-1 gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-12">
+          <div className="credit sm:col-span-2 lg:col-span-5" style={{ "--i": 0 } as CSSProperties}>
             <ClientMark size={28} />
             {/* The sign-off, set as the closing line it is. */}
             <p className="em-serif statement mt-8 max-w-[18ch] text-[clamp(30px,3vw,46px)] leading-[1.1] text-[color:var(--ink)]">
@@ -70,7 +73,7 @@ export function PortalFooter({ rooms = chapters, clips }: { rooms?: Room[]; clip
             <p className="mono mt-6">Reel {who.since}</p>
           </div>
 
-          <div className="credit md:col-span-3 md:col-start-7" style={{ "--i": 1 } as CSSProperties}>
+          <div className="credit lg:col-span-3 lg:col-start-7" style={{ "--i": 1 } as CSSProperties}>
             <p className={heading}>The system</p>
             <nav
               className="grid grid-flow-col gap-x-6 gap-y-3 md:flex md:flex-col"
@@ -102,7 +105,7 @@ export function PortalFooter({ rooms = chapters, clips }: { rooms?: Room[]; clip
             </nav>
           </div>
 
-          <div className="credit md:col-span-3" style={{ "--i": 2 } as CSSProperties}>
+          <div className="credit lg:col-span-3" style={{ "--i": 2 } as CSSProperties}>
             <p className={heading}>Your team</p>
             <div className="flex flex-col gap-3">
               <a href={"mailto:" + who.contact} className={link}>

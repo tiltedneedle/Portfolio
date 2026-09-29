@@ -209,18 +209,22 @@ export function Structure({ title, parts, seconds = 45, note }: { title?: string
               </div>
             ))}
           </div>
-          <div className="relative mt-1 h-5">
+          {/* On a phone the strip is too short for every timecode; the first
+              and the total stay. Wider, every one shows, on two staggered
+              rows: a hook or a payoff is a twelfth of the strip, narrower
+              than a timecode, so on one row its two ends ran together
+              ("00:0003"). Neighbours are always on different rows now. */}
+          <div className="relative mt-1 h-5 sm:h-9">
             {marks.map((m, i) => (
-              // On a phone the strip is too short for every timecode; the first and the total stay.
               <span
                 key={m.label}
-                className={"tc absolute -translate-x-1/2 text-[10px] first:translate-x-0 " + (i === 0 ? "" : "hidden sm:inline")}
+                className={"tc absolute top-0 -translate-x-1/2 text-[10px] first:translate-x-0 " + (i === 0 ? "" : "hidden sm:inline") + (i % 2 ? " sm:top-4" : "")}
                 style={{ left: (m.start * 100).toFixed(2) + "%" }}
               >
                 {timecode(m.start * seconds).slice(3, 8)}
               </span>
             ))}
-            <span className="tc absolute right-0 text-[10px]">{timecode(seconds).slice(3, 8)}</span>
+            <span className={"tc absolute right-0 top-0 text-[10px]" + (marks.length % 2 ? " sm:top-4" : "")}>{timecode(seconds).slice(3, 8)}</span>
           </div>
         </div>
         <ol className="mt-4 grid gap-x-8 gap-y-4 border-t border-[color:var(--rule)] pt-5 sm:grid-cols-2 lg:grid-cols-5">

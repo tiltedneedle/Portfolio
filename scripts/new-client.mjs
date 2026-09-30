@@ -41,11 +41,23 @@ const short = opt("short");
 const since = opt("since", String(new Date().getFullYear()));
 const contact = opt("contact", "info@tiltedneedle.com");
 const logo = opt("logo");
+// A code whose hash sits in a public repository can be tried offline, at any
+// speed, with no rate limit: three words and a number falls in minutes. Say
+// so when a code is that short (README, The door).
+function warnIfShort(code) {
+  const words = code.trim().split(/[\s-]+/).filter(Boolean).length;
+  if (code.length < 30 || words < 6)
+    console.warn(
+      "warning  this code is short enough to be guessed offline from its hash while the repository is public. " +
+        "Make the repository private, or use six or more random words (README, The door)."
+    );
+}
 const code = opt("code");
 if (logo && !existsSync(join(root, "public", logo.replace(/^\//, "")))) fail("logo " + logo + " is not under public/");
 
 let accessHash = "";
 if (code) {
+  warnIfShort(code);
   const data = new TextEncoder().encode("tn:" + slug + ":" + code);
   const hash = await crypto.subtle.digest("SHA-256", data);
   accessHash = Array.from(new Uint8Array(hash))

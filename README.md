@@ -158,8 +158,23 @@ exit) and, on a match, sets the session cookie and a readable `tn-in`
 presence cookie that the static footer uses to show "Leave the room".
 Twelve attempts per ten minutes per IP. No accounts, no database.
 
-Set `PORTAL_SECRET` on the deployment to any long random string. Rotating
-it logs everyone out.
+Set `PORTAL_SECRET` on the deployment to a long random string (the
+`.env.example` shows how to make one). Rotating it logs everyone out.
+
+A Vercel production build refuses to go out without a proper door
+(`next.config.ts`): with no `PORTAL_SECRET` (the template, every guide in
+it, to anyone), with one shorter than 32 characters (a client holding one
+valid cookie of their own could guess it offline, then sign a cookie for
+another client), or with `PORTAL_DEMO` set (the demo's published code opens
+a room). The deploy fails where it is seen and the last good one stays up.
+Preview deployments, CI and `next start` are not affected.
+
+Access codes are stored as a plain sha256, and this repository is public:
+anyone can take a client's `accessHash` and try codes against it offline,
+at whatever speed their hardware allows, with no rate limit. Three words
+and a number falls in minutes that way. Before a real client's code is
+committed, either make the repository private or give the code real
+length (six or more random words).
 
 A shared link previews as the slate of a private screening
 (`src/app/opengraph-image.tsx`), whatever the path: no client name ever

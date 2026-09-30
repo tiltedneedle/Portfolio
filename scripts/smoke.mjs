@@ -9,7 +9,13 @@ let failed = 0;
 
 async function expect(path, want, opts = {}) {
   const res = await fetch(base + path, { redirect: "manual", headers: { connection: "close", ...(opts.headers || {}) } });
-  const body = opts.contains || opts.lacks ? await res.text() : "";
+  // Every body is read, even where only the status is checked. Left unread,
+  // it holds Node's HTTP client paused, and when the server then closes the
+  // connection the client dies on an internal assertion (undici's
+  // assert(!this.paused)): that, not the site, failed CI's smoke step on
+  // most pushes, open door or gated at random.
+  const text = await res.text();
+  const body = opts.contains || opts.lacks ? text : "";
   const okStatus = res.status === want;
   const okBody = !opts.contains || (opts.contains instanceof RegExp ? opts.contains.test(body) : body.includes(opts.contains));
   // opts.lacks: a string the page must not carry.

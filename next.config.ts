@@ -7,6 +7,27 @@ const build = Date.now().toString(36);
 const dev = process.env.NODE_ENV === "development";
 
 /**
+ * A production deployment must have a door, and a strong one. Without
+ * PORTAL_SECRET the site serves the template to anyone, every guide in it,
+ * with nothing to say so; with PORTAL_DEMO the demo's code, printed in the
+ * README of a public repo, opens a room; and a short secret can be guessed
+ * offline by anyone holding one valid cookie of their own, then used to
+ * sign a cookie for another client. So a Vercel production build refuses
+ * all three: the deploy fails where it is seen, and the last good one stays
+ * up. Local `next start` and CI are not Vercel production and keep their
+ * open door and demo.
+ */
+if (process.env.VERCEL_ENV === "production") {
+  const secret = process.env.PORTAL_SECRET ?? "";
+  const refuse = (why: string) => {
+    throw new Error("Refusing to build for production: " + why + " See README, The door.");
+  };
+  if (!secret) refuse("PORTAL_SECRET is not set, which would open the door to everyone.");
+  if (secret.length < 32) refuse("PORTAL_SECRET is shorter than 32 characters; use a long random string (the README shows how to make one).");
+  if (process.env.PORTAL_DEMO === "1") refuse("PORTAL_DEMO is set, which opens the demo room to its published code.");
+}
+
+/**
  * Security headers, applied to every response.
  *
  * The content security policy is deliberately narrow: the site is static
@@ -54,6 +75,9 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   env: { NEXT_PUBLIC_BUILD: build },
+  // No "X-Powered-By: Next.js" on every response: it tells a visitor nothing
+  // they need and an attacker which exploits to try.
+  poweredByHeader: false,
   images: {
     remotePatterns: [
       // stills for the published work: YouTube's, and the studio's own cache

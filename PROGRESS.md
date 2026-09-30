@@ -213,6 +213,52 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 77 (2026-09-30): production readiness, first pass.
+      "Start with production readiness checks."
+      Found and fixed:
+      - CI had been red on most pushes since 2026-09-29, the smoke step
+        failing at random, open door or gated. Not the site: Node's HTTP
+        client dies on an internal assertion (undici's assert(!this.paused))
+        when a response body is left unread and the server closes the
+        connection, and the smoke script read bodies only where it checked
+        their text. It reads every body now.
+      - A Vercel production build now refuses to go out without a proper
+        door (next.config.ts): no PORTAL_SECRET (the template, every guide,
+        to anyone), one shorter than 32 characters (a client with one valid
+        cookie could guess it offline and sign a cookie for another client),
+        or PORTAL_DEMO set (the demo's published code opens a room). The
+        deploy fails where it is seen; the last good one stays up.
+      - No "X-Powered-By: Next.js"; metadataBase is set (Next's own
+        fallback, said aloud): the build has no warnings.
+      - The scripts no longer call three words and a number "plenty": they
+        warn when a code is short enough to be cracked from its public hash.
+      - A dev-only advisory (brace-expansion, CPU denial of service) fixed
+        through the lockfile.
+      Checked and sound: the headers (CSP, which allows the inline scripts
+      Next and the deferred sections need; HSTS with preload; frame, sniff,
+      referrer and permissions policies; noindex on every response and in
+      robots); the session (HMAC-SHA256, httpOnly, Secure in production,
+      SameSite=Lax, 30 days, constant-time checks, stale cookies cleared,
+      the next= guard); the throttle (12 tries in 10 minutes per address
+      per instance, 400ms for every wrong code on every instance); error
+      pages show only a reference; images only from YouTube and the
+      studio's own storage; production dependencies with no known
+      vulnerabilities; no secret in any file or anywhere in history.
+      For the user (the site is deployed, Vercel builds main to Production
+      on every push):
+      - The address on the GitHub repo, portfolio-beta-mauve-64.vercel.app,
+        is dead (Vercel: DEPLOYMENT_NOT_FOUND). The project's own addresses
+        answer with Vercel's login (deployment protection), so no client can
+        reach the door. Add a domain, or change the protection, and update
+        the repo's address.
+      - Check the Production environment on Vercel: PORTAL_SECRET set, 32+
+        random characters; PORTAL_DEMO not set. The next deploy will fail,
+        by design, if not.
+      - Decision A above, now with the access-hash point.
+      - Later, deliberately: vitest 3 to 4 (a moderate advisory in its
+        mocker, dev only); pin Node (CI runs 22; add "engines" or match it
+        on Vercel); error reporting beyond Vercel's logs.
+
 - [x] Wave 76 (2026-09-30): hydration in pieces, and the hero's jump.
       Same measure as wave 75 (4x CPU phone, script-bound tasks, three
       loads), now over a window three times as long, so work pushed later
@@ -1592,12 +1638,15 @@ The marketing site this grew out of is on the `marketing-site` branch.
    at the step itself. Related and already fixed: the demo door needed
    `PORTAL_DEMO=1` because its code is printed in the public README and the
    access hash is unsalted, so rotating PORTAL_SECRET does not revoke a code.
+   Sharper, found 2026-09-30: a client's accessHash in a public repo can be
+   attacked offline with no rate limit, and "three words and a number" (what
+   the scripts used to recommend) falls in minutes. Private repo, or codes of
+   six or more random words; access.mjs and new-client.mjs now warn.
 
 
-0. Performance option, not taken: framer-motion could load through
-   `LazyMotion` + `m` (nine files import `motion`) to cut the largest
-   client chunk; the site is private and static, so it was left. Take it
-   only if a real client reports slow first loads.
+0. Done in wave 75: framer-motion loads through `LazyMotion` + `m`
+   (room/Motion); it had also been giving every animated element a
+   layout-projection node.
 1. Awaiting from the user (do not block): the first real client's content,
    images for `figure` blocks, and a real client logo to test `--logo`.
    The training films ARRIVED on 2026-09-28 and are in: nine of them, and

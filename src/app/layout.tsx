@@ -47,7 +47,14 @@ const mono = localFont({
 });
 
 // A private system for one client: nothing here is for search engines.
+// Where a link preview's image is fetched from: the production domain on
+// Vercel (a preview deployment still uses its own URL, which Next prefers),
+// this machine otherwise. The same as Next's own fallback, said aloud so the
+// build stops warning about it.
+const production = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+
 export const metadata: Metadata = {
+  metadataBase: new URL(production ? "https://" + production : "http://localhost:" + (process.env.PORT || 3000)),
   title: { default: "Tilted Needle", template: "%s · Tilted Needle" },
   description: "Your content system, in full.",
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },

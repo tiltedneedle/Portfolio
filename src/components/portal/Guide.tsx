@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import { Suspense, type CSSProperties, type ReactNode } from "react";
 import type { Block, Guide as GuideT } from "@/content/types";
 import { longestWordEm } from "@/lib/display-fit";
 import type { GuideNote } from "@/content/clients/types";
@@ -166,71 +166,84 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
         <GuideRail items={railItems} minutes={minutes} k={guide.chapter + "/" + guide.slug} />
 
         <div>
+          {/* From the third section on, the sections, the rule and the way
+              on hydrate after the top of the page, at low priority and in
+              slices React can interrupt (a server-rendered Suspense boundary
+              is left for later): hydrated in one piece, a guide held a slow
+              phone's main thread for half a second at a time. They are sent
+              after the rest of the page, in order, and set in place as it is
+              read. The first two can be on a phone's first screen, so they
+              come with the page. */}
           {guide.sections.map((s, i) => (
-            <Reveal
-              as="section"
-              key={s.title}
-              id={sectionId(i)}
-              className="cue group/section grid scroll-mt-28 gap-x-8 border-t border-[color:var(--rule)] py-12 md:grid-cols-[96px_1fr] md:py-16"
-            >
-              <div className="mb-4 md:mb-0">
-                {s.n ? (
-                  <>
-                    <span className="numeral cue-num text-[56px] md:text-[72px]" data-n={s.n} aria-hidden="true" />
-                    <span className="sr-only">Section {s.n}</span>
-                  </>
-                ) : (
-                  <span aria-hidden="true" className="mono text-[color:var(--ink-mid)]">
-                    &mdash;
-                  </span>
-                )}
-              </div>
-              <div className="min-w-0">
-                <div className="mb-8 flex flex-wrap items-baseline gap-x-3">
-                  <h2 className="display max-w-[22ch] text-[clamp(30px,3.6vw,52px)]">
-                    <Rise text={s.title} cue />
-                  </h2>
-                  <Anchor id={sectionId(i)} label={s.title} />
+            <Deferred key={s.title} when={i >= 2}>
+              <Reveal
+                as="section"
+                id={sectionId(i)}
+                className="cue group/section grid scroll-mt-28 gap-x-8 border-t border-[color:var(--rule)] py-12 md:grid-cols-[96px_1fr] md:py-16"
+              >
+                <div className="mb-4 md:mb-0">
+                  {s.n ? (
+                    <>
+                      <span className="numeral cue-num text-[56px] md:text-[72px]" data-n={s.n} aria-hidden="true" />
+                      <span className="sr-only">Section {s.n}</span>
+                    </>
+                  ) : (
+                    <span aria-hidden="true" className="mono text-[color:var(--ink-mid)]">
+                      &mdash;
+                    </span>
+                  )}
                 </div>
-                <Blocks blocks={s.blocks} />
-                {notesAt(i).length > 0 && (
-                  <div className="mt-9">
-                    <ForYou who={who} notes={notesAt(i)} under={s.title} />
+                <div className="min-w-0">
+                  <div className="mb-8 flex flex-wrap items-baseline gap-x-3">
+                    <h2 className="display max-w-[22ch] text-[clamp(30px,3.6vw,52px)]">
+                      <Rise text={s.title} cue />
+                    </h2>
+                    <Anchor id={sectionId(i)} label={s.title} />
                   </div>
-                )}
-              </div>
-            </Reveal>
+                  <Blocks blocks={s.blocks} />
+                  {notesAt(i).length > 0 && (
+                    <div className="mt-9">
+                      <ForYou who={who} notes={notesAt(i)} under={s.title} />
+                    </div>
+                  )}
+                </div>
+              </Reveal>
+            </Deferred>
           ))}
         </div>
       </div>
 
-      <Reveal as="section" id="rule" className="relative scroll-mt-28 border-t border-[color:var(--rule)] bg-black py-24 md:py-32">
-        {/* One lamp over the statement, struck as the band comes on. */}
-        <div aria-hidden="true" className="rule-wash pointer-events-none absolute inset-0" />
-        <div className="relative mx-auto max-w-[1600px] px-6 md:px-14">
-          <p className="mono flex items-center gap-2.5">
-            <span aria-hidden="true" className="lamp rule-lamp" />
-            The rule
-          </p>
-          <div className="mt-8 md:ml-[96px] md:max-w-[52ch]">
-            <RuleBlocks blocks={guide.rule.filter((r) => r.kind !== "figure")} />
-          </div>
-          {/* A picture the brief sets after its rule gets a measure of its
-              own. The statement column is 52 characters wide, about 440px,
-              and at that size the labels inside an infographic (the bad and
-              good profile after Discoverability's rule) come out at 5px. */}
-          {guide.rule.some((r) => r.kind === "figure") && (
-            // 975px: the brief's image is 975 wide, and a raster set wider than
-            // itself goes soft exactly where its small labels are.
-            <div className="mt-16 md:ml-[96px] md:max-w-[975px]">
-              <Blocks blocks={guide.rule.filter((r) => r.kind === "figure")} />
+      <Suspense>
+        <Reveal as="section" id="rule" className="relative scroll-mt-28 border-t border-[color:var(--rule)] bg-black py-24 md:py-32">
+          {/* One lamp over the statement, struck as the band comes on. */}
+          <div aria-hidden="true" className="rule-wash pointer-events-none absolute inset-0" />
+          <div className="relative mx-auto max-w-[1600px] px-6 md:px-14">
+            <p className="mono flex items-center gap-2.5">
+              <span aria-hidden="true" className="lamp rule-lamp" />
+              The rule
+            </p>
+            <div className="mt-8 md:ml-[96px] md:max-w-[52ch]">
+              <RuleBlocks blocks={guide.rule.filter((r) => r.kind !== "figure")} />
             </div>
-          )}
-        </div>
-      </Reveal>
+            {/* A picture the brief sets after its rule gets a measure of its
+                own. The statement column is 52 characters wide, about 440px,
+                and at that size the labels inside an infographic (the bad and
+                good profile after Discoverability's rule) come out at 5px. */}
+            {guide.rule.some((r) => r.kind === "figure") && (
+              // 975px: the brief's image is 975 wide, and a raster set wider than
+              // itself goes soft exactly where its small labels are.
+              <div className="mt-16 md:ml-[96px] md:max-w-[975px]">
+                <Blocks blocks={guide.rule.filter((r) => r.kind === "figure")} />
+              </div>
+            )}
+          </div>
+        </Reveal>
+      </Suspense>
 
-      <ReadToggle k={guide.chapter + "/" + guide.slug} ask="Got the rule?" />
-      <NextCut chapter={guide.chapter} slug={guide.slug} client={client} />
+      <Suspense>
+        <ReadToggle k={guide.chapter + "/" + guide.slug} ask="Got the rule?" />
+        <NextCut chapter={guide.chapter} slug={guide.slug} client={client} />
+      </Suspense>
     </article>
   );
 }
@@ -309,4 +322,9 @@ function RuleBlocks({ blocks }: { blocks: GuideT["rule"] }) {
       )}
     </div>
   );
+}
+
+/** Children in a Suspense boundary of their own, or not. */
+function Deferred({ when, children }: { when: boolean; children: ReactNode }) {
+  return when ? <Suspense>{children}</Suspense> : <>{children}</>;
 }

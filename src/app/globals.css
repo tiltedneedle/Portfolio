@@ -8,6 +8,21 @@
   --font-mono: var(--font-mono-face), "SFMono-Regular", Consolas, monospace;
 }
 
+/* Sections React sent after the page, to set in place once its script
+   runs (a deferred Suspense boundary: the home page below the hero, a
+   guide from its third section). Without scripts they stay where they were
+   sent -- after the rest of the page, in their order -- and are shown
+   there. Here, in the base layer and not in components: the preflight
+   hides [hidden] in base with !important, and an important rule in a
+   later layer loses to it. */
+@layer base {
+  @media (scripting: none) {
+    div[hidden][id^="S:"] {
+      display: block !important;
+    }
+  }
+}
+
 /* ------------------------------------------------------------ the cascade
    Everything below lives in Tailwind's `components` layer so that a
    utility on the same element wins: `mono text-[color:var(--ink)]` is
@@ -1268,16 +1283,14 @@ body.menu-open [data-float] {
 .odo-col {
   overflow: hidden;
 }
+/* One digit a line, each line one em: the reel's text, not an element each. */
 .odo-reel {
-  display: flex;
-  flex-direction: column;
+  display: block;
+  white-space: pre;
+  line-height: 1em;
   text-align: center;
   transform: translateY(calc(var(--odo-land) * -1em));
   transition: transform calc(1.8s + var(--odo-i) * 110ms) cubic-bezier(0.16, 1, 0.3, 1) calc(var(--odo-i) * 60ms);
-}
-.odo-reel > span {
-  height: 1em;
-  line-height: 1em;
 }
 .odo-wait .odo-reel {
   transform: translateY(calc(var(--odo-d) * -1em));

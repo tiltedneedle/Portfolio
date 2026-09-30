@@ -213,6 +213,54 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 76 (2026-09-30): hydration in pieces, and the hero's jump.
+      Same measure as wave 75 (4x CPU phone, script-bound tasks, three
+      loads), now over a window three times as long, so work pushed later
+      is counted: home, script blocking 5,435ms at wave 74 to 1,110ms and
+      the longest script task 3,982ms to 441ms; a guide 3,699 to 771ms and
+      2,191 to 235ms. The longer window barely moved either (home 1,056 to
+      1,110): the deferred work runs in short slices.
+      - Hydration in pieces. React leaves a server-rendered Suspense
+        boundary dehydrated and hydrates it later at OffscreenLane, in
+        slices it can interrupt (react-dom 19.3's own source, lane
+        536870912). The home page below the hero, and a guide from its
+        third section, the rule and the way on, and the footer, are each a
+        boundary: the page used to hydrate in one piece. Past 12.8KB React
+        sends a boundary after the rest of the page, in a hidden div moved
+        into place by script; without scripts those are shown where they
+        were sent, in order (globals.css, (scripting: none), in the base
+        layer: Tailwind's preflight hides [hidden] there with !important,
+        which beats an important rule in any later layer). A guide's first
+        two sections, which can be on a phone's first screen, come with
+        the page. The palette and the locked-room card stay in the first
+        pass: the menu and the rooms open them by events.
+      - The odometer's reels are a line of text each, not 30 spans: on the
+        home page they were a fifth of everything hydrated.
+      - The hero jumped. A slow phone paints while the page is still being
+        parsed, and with justify-between the title, the last row in, sat
+        at the foot of the screen, then leapt 550px up when the bar arrived
+        (a layout shift of 0.56 on every slow load, 0.37 on a desktop about
+        half the time; it predates this wave). The title is now anchored
+        under the top row and the bar held to the foot by its own margin:
+        layout shift 0 on both. Where the title fills the screen nothing
+        visible changed (5px at 1440x900); on an upright tablet it is let
+        down by half of what is spare, reckoned from the screen's height
+        alone (163 above and 169 below at 768x1024).
+      - The floating Contents button sat on the hero bar's note in the
+        first frame; on a short laptop no padding kept it clear. It stands
+        down while that bar is on screen (an IntersectionObserver), and is
+        back as soon as the page moves on.
+      Measured and left: the palette's hidden entries (a client's ideas and
+      scripts, searchable once something is typed) are 8KB of every page
+      for the demo client, about 3KB gzipped; moving them into the fetched
+      index would delay idea matches for little.
+      Verified: layout shift 0 (one 0.002 blip) on phone and desktop, home
+      and guide; every section present and in order with scripts off; the
+      hero's balance and "Start here" in view at ten screen sizes; the
+      Contents button hidden over the bar and back after a scroll or a
+      move to another room; overflow at seven widths, collisions, the
+      phone audit, smoke, a11y, vitest (148) and the brief guard.
+
 - [x] Wave 75 (2026-09-30): speed, continued: what blocks a slow phone.
       Measured on an emulated slow phone (4x CPU), three loads a page, the
       previous commit against this one, counting only tasks that are mostly

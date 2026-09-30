@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { ClientProvider } from "@/components/portal/ClientContext";
 import { PortalNav } from "@/components/portal/PortalNav";
 import { PortalFooter } from "@/components/portal/PortalFooter";
@@ -67,7 +68,15 @@ export default async function ClientLayout({ children, params }: { children: Rea
       <main id="main" tabIndex={-1} className="outline-none">
         {children}
       </main>
-      <PortalFooter rooms={rooms} clips={clips} />
+      {/* The footer hydrates after the page, at low priority (see the home
+          page): it is never on screen as a page opens, and a click on it
+          before then is not lost -- React hydrates what was clicked first
+          and replays it. The palette and the locked-room card stay in the
+          first pass: the menu and the rooms open them by events, which
+          would find nothing listening. */}
+      <Suspense>
+        <PortalFooter rooms={rooms} clips={clips} />
+      </Suspense>
       <Palette items={index} />
       {locked.length > 0 && (
         <LockedModal

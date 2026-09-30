@@ -1,4 +1,4 @@
-import { Fragment, type CSSProperties, type ReactNode } from "react";
+import { Fragment, Suspense, type CSSProperties, type ReactNode } from "react";
 import { Slate } from "@/components/room/Slate";
 import { ReelPosition, StudioClocks } from "@/components/room/Readouts";
 import { CutLink } from "@/components/room/CutLink";
@@ -157,7 +157,15 @@ export default async function Home({ params }: { params: Promise<{ client: strin
     <>
       <Slate />
 
-      <section id="welcome" className="relative flex min-h-[100svh] flex-col justify-between overflow-hidden bg-[color:var(--stage)] scroll-mt-0">
+      {/* The title block is anchored under the top row, and the bar is held
+          to the foot by its own margin: nothing is centred. A slow phone
+          paints the hero while it is still being parsed, and a centred title,
+          growing as its lines arrived and pushed down by the bar arriving
+          after it, jumped 550px up the screen -- a layout shift of 0.56 on
+          every slow load. Anchored, what has been painted stays put. Where
+          the title fills the screen, as it is sized to, there was little
+          space to centre in anyway (5px at 1440x900). */}
+      <section id="welcome" className="relative flex min-h-[100svh] flex-col overflow-hidden bg-[color:var(--stage)] scroll-mt-0">
         {/* The air of the room: a projector's beam across the hero and the
             dust drifting in it, which a hand through the beam scatters. */}
         <HeroDust />
@@ -177,7 +185,12 @@ export default async function Home({ params }: { params: Promise<{ client: strin
             1280x800 laptop the way in ("Start here") is in the first frame:
             with fixed 80px bands and a 144px name it fell 16 to 130px below
             it. On a tall screen nothing changes. */}
-        <div className="relative mx-auto w-full max-w-[1600px] px-6 py-[clamp(20px,5svh,64px)] md:px-14 md:py-[clamp(24px,5svh,80px)]">
+        {/* On a tablet stood upright the title fills much less of the screen
+            (223px spare at 768x1024, nearly 500 on a 12.9" iPad), so it is
+            let down by half of what is spare, reckoned from the screen alone:
+            anything reckoned from the title's own height would move it as its
+            lines arrive. */}
+        <div className="relative mx-auto w-full max-w-[1600px] px-6 py-[clamp(20px,5svh,64px)] md:px-14 md:py-[clamp(24px,5svh,80px)] md:portrait:pt-[calc(clamp(24px,5svh,80px)_+_max(0px,(100svh_-_800px)/2))]">
           <ClientMark size={64} />
           {/* The name sets the size for itself and for the work drifting
               behind it: the band is centred on this box and its frames are
@@ -246,8 +259,10 @@ export default async function Home({ params }: { params: Promise<{ client: strin
           )}
         </div>
 
-        {/* The rule runs the width of the screen; the line on it keeps the measure. */}
-        <div className="relative border-t border-[color:var(--rule)]">
+        {/* The rule runs the width of the screen; the line on it keeps the
+            measure. The floating Contents button stands down while it is on
+            screen (data-hero-bar, Palette.tsx): it sat on the note. */}
+        <div data-hero-bar="" className="relative mt-auto border-t border-[color:var(--rule)]">
           <div className="mono mx-auto flex max-w-[1600px] flex-col gap-3 px-6 py-6 md:flex-row md:items-center md:justify-between md:px-14 md:pb-[clamp(24px,5.5svh,80px)]">
             <p className="text-[color:var(--ink-soft)]">{home.access_note}</p>
             <a href="#objective" className="slate-link text-[13px] text-[color:var(--ink)]" data-cursor="Cut">
@@ -257,99 +272,122 @@ export default async function Home({ params }: { params: Promise<{ client: strin
         </div>
       </section>
 
-      <section id="objective" className="scroll-mt-16 border-t border-[color:var(--rule)] bg-[color:var(--stage-2)] py-24 md:py-36">
-        {/* The brief's order, read left to right: what the portal gives you,
-            then the objective. (It used to open on the objective, in words
-            the brief never used.) */}
-        <div className="mx-auto grid max-w-[1600px] gap-12 px-6 md:grid-cols-2 md:gap-20 md:px-14">
-          <div>
-            <p className="mono">01 &mdash; Welcome</p>
-            <div className="mt-10 flex flex-col gap-6">
-              {home.intro.map((p) => (
-                <p key={p} className="max-w-[40ch] text-[20px] leading-[1.55] text-[color:var(--ink-soft)] md:text-[24px] [text-wrap:pretty]">
-                  {p}
-                </p>
-              ))}
+      {/* Below the hero, each section hydrates on its own, after the hero
+          and at low priority: React leaves a server-rendered Suspense
+          boundary for later and works through it in slices it can
+          interrupt. Hydrated in one piece, the page held a slow phone's main
+          thread for two seconds. Nothing here waits on data. The sections
+          are sent after the hero, in order, and set in place as the page
+          is read; the hero fills the first screen, so none of them is ever
+          seen arriving. Without scripts, globals.css shows them where they
+          were sent (scripting: none). */}
+      <Suspense>
+        <section id="objective" className="scroll-mt-16 border-t border-[color:var(--rule)] bg-[color:var(--stage-2)] py-24 md:py-36">
+          {/* The brief's order, read left to right: what the portal gives you,
+              then the objective. (It used to open on the objective, in words
+              the brief never used.) */}
+          <div className="mx-auto grid max-w-[1600px] gap-12 px-6 md:grid-cols-2 md:gap-20 md:px-14">
+            <div>
+              <p className="mono">01 &mdash; Welcome</p>
+              <div className="mt-10 flex flex-col gap-6">
+                {home.intro.map((p) => (
+                  <p key={p} className="max-w-[40ch] text-[20px] leading-[1.55] text-[color:var(--ink-soft)] md:text-[24px] [text-wrap:pretty]">
+                    {p}
+                  </p>
+                ))}
+              </div>
+            </div>
+            <div className="md:border-l md:border-[color:var(--rule)] md:pl-20 md:pt-[calc(1.5rem+2.5rem)]">
+              <p className="mono text-[color:var(--ink-mid)]">{home.objective.label}</p>
+              {/* Read as a caption track: each word lights as the scroll
+                  reaches it, a tally bar under the word being read. */}
+              {/* The measure goes on the line, where the type is: a ch on the
+                  wrapper is a body-text ch, and at that width the statement
+                  broke into eleven ragged lines of two words. */}
+              <CaptionTrack
+                lines={[home.objective.text]}
+                className="mt-4"
+                lineClassName="em-serif statement max-w-[30ch] text-[clamp(26px,2.6vw,40px)] leading-[1.2] text-[color:var(--ink)]"
+              />
             </div>
           </div>
-          <div className="md:border-l md:border-[color:var(--rule)] md:pl-20 md:pt-[calc(1.5rem+2.5rem)]">
-            <p className="mono text-[color:var(--ink-mid)]">{home.objective.label}</p>
-            {/* Read as a caption track: each word lights as the scroll
-                reaches it, a tally bar under the word being read. */}
-            {/* The measure goes on the line, where the type is: a ch on the
-                wrapper is a body-text ch, and at that width the statement
-                broke into eleven ragged lines of two words. */}
-            <CaptionTrack
-              lines={[home.objective.text]}
-              className="mt-4"
-              lineClassName="em-serif statement max-w-[30ch] text-[clamp(26px,2.6vw,40px)] leading-[1.2] text-[color:var(--ink)]"
-            />
+          <div className="mx-auto mt-16 max-w-[1600px] px-6 md:mt-24 md:px-14">
+            <TrainingFilm film={home.films.intro} number="Intro" dock="playing" />
           </div>
-        </div>
-        <div className="mx-auto mt-16 max-w-[1600px] px-6 md:mt-24 md:px-14">
-          <TrainingFilm film={home.films.intro} number="Intro" dock="playing" />
-        </div>
-      </section>
+        </section>
+      </Suspense>
 
-      <Showreel />
+      <Suspense>
+        <Showreel />
+      </Suspense>
 
-      <AccessStrip items={access} counts={liveCounts} readKeys={readKeys} />
+      <Suspense>
+        <AccessStrip items={access} counts={liveCounts} readKeys={readKeys} />
+      </Suspense>
 
-      <ThisWeek ideas={weekIdeas} scripts={weekScripts} guides={weekGuides} />
+      <Suspense>
+        <ThisWeek ideas={weekIdeas} scripts={weekScripts} guides={weekGuides} />
+      </Suspense>
 
-      <RecentChanges slug={identity.slug} mine={sys.changes} paths={paths} />
+      <Suspense>
+        <RecentChanges slug={identity.slug} mine={sys.changes} paths={paths} />
+      </Suspense>
 
-      <section id="how" className="scroll-mt-16 border-t border-[color:var(--rule)] bg-[color:var(--stage)] py-24 md:py-36">
-        <div className="mx-auto max-w-[1600px] px-6 md:px-14">
-          <p className="mono">03 &mdash; Five steps, on a loop</p>
-          {/* The brief's heading. */}
-          <h2 className="display mt-6 max-w-[14ch] text-[clamp(52px,7vw,120px)]">
-            How to use the <span className="em-serif">system.</span>
-          </h2>
-          <div className="mt-16 md:mt-24">
-            <Loop paths={paths} />
+      <Suspense>
+        <section id="how" className="scroll-mt-16 border-t border-[color:var(--rule)] bg-[color:var(--stage)] py-24 md:py-36">
+          <div className="mx-auto max-w-[1600px] px-6 md:px-14">
+            <p className="mono">03 &mdash; Five steps, on a loop</p>
+            {/* The brief's heading. */}
+            <h2 className="display mt-6 max-w-[14ch] text-[clamp(52px,7vw,120px)]">
+              How to use the <span className="em-serif">system.</span>
+            </h2>
+            <div className="mt-16 md:mt-24">
+              <Loop paths={paths} />
+            </div>
+            <div className="mt-20 md:mt-28">
+              <TrainingFilm film={home.films.outro} number="Outro" dock="playing" />
+            </div>
           </div>
-          <div className="mt-20 md:mt-28">
-            <TrainingFilm film={home.films.outro} number="Outro" dock="playing" />
-          </div>
-        </div>
-      </section>
+        </section>
+      </Suspense>
 
       {/* The statement and the loop stand side by side. Set one under the
           other they left two thirds of a wide screen empty, and the beats
           ran as a wall of display type with no order in it. As a running
           order they read as what they are: five steps, then go again. */}
-      <section className="border-t border-[color:var(--rule)] bg-black py-20 md:py-28">
-        {/* A narrower measure than the rest of the page on purpose. This block
-            is a statement and a running order, not a data surface: stretched
-            to 1600px the two halves sat on opposite edges of a wide screen
-            with a void between them. Composed at 1200 they read as one
-            object, and the margins either side are even. */}
-        <div className="mx-auto grid max-w-[1200px] gap-x-14 gap-y-12 px-6 md:grid-cols-[minmax(0,34ch)_minmax(0,1fr)] md:items-stretch md:px-14">
-          <div className="flex flex-col">
-            <p className="mono">{home.approach.title}</p>
-            <div className="mt-8 flex flex-col gap-6">
-              {home.approach.lines.map((l) => (
-                <p key={l} className="em-serif statement text-[clamp(26px,2.6vw,40px)] leading-[1.2] text-[color:var(--ink)]">
-                  {l}
-                </p>
-              ))}
+      <Suspense>
+        <section className="border-t border-[color:var(--rule)] bg-black py-20 md:py-28">
+          {/* A narrower measure than the rest of the page on purpose. This block
+              is a statement and a running order, not a data surface: stretched
+              to 1600px the two halves sat on opposite edges of a wide screen
+              with a void between them. Composed at 1200 they read as one
+              object, and the margins either side are even. */}
+          <div className="mx-auto grid max-w-[1200px] gap-x-14 gap-y-12 px-6 md:grid-cols-[minmax(0,34ch)_minmax(0,1fr)] md:items-stretch md:px-14">
+            <div className="flex flex-col">
+              <p className="mono">{home.approach.title}</p>
+              <div className="mt-8 flex flex-col gap-6">
+                {home.approach.lines.map((l) => (
+                  <p key={l} className="em-serif statement text-[clamp(26px,2.6vw,40px)] leading-[1.2] text-[color:var(--ink)]">
+                    {l}
+                  </p>
+                ))}
+              </div>
+              {/* mt-auto: the way in sits on the foot of the running order
+                  beside it, rather than leaving a band of nothing under the
+                  statement. */}
+              <div className="mt-10 border-t border-[color:var(--rule)] pt-6 md:mt-auto">
+                <CutLink href={first.href} className="slate-link text-[13px]" data-cursor="Cut">
+                  Begin with {home.begin[first.id]} &#8599;
+                </CutLink>
+              </div>
             </div>
-            {/* mt-auto: the way in sits on the foot of the running order
-                beside it, rather than leaving a band of nothing under the
-                statement. */}
-            <div className="mt-10 border-t border-[color:var(--rule)] pt-6 md:mt-auto">
-              <CutLink href={first.href} className="slate-link text-[13px]" data-cursor="Cut">
-                Begin with {home.begin[first.id]} &#8599;
-              </CutLink>
-            </div>
-          </div>
 
-          {/* The running order plays: a playhead steps down the beats and
-              lights each in turn (Playheads.tsx). At rest, all of them lit. */}
-          <RunningOrder beats={home.approach.beats} />
-        </div>
-      </section>
+            {/* The running order plays: a playhead steps down the beats and
+                lights each in turn (Playheads.tsx). At rest, all of them lit. */}
+            <RunningOrder beats={home.approach.beats} />
+          </div>
+        </section>
+      </Suspense>
     </>
   );
 }

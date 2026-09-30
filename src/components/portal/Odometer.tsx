@@ -28,7 +28,9 @@ import { groupDigits } from "@/lib/digits";
  * caller says the number in words.
  */
 const TURNS = 3;
-const REEL = Array.from({ length: TURNS * 10 }, (_, i) => i % 10);
+// A reel is one line of text a digit deep, not thirty elements: on the home
+// page thirty spans a digit were a fifth of everything the page hydrated.
+const REEL = Array.from({ length: TURNS * 10 }, (_, i) => i % 10).join("\n");
 
 export function Odometer({ value, className = "", now = false }: { value: number; className?: string; now?: boolean }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -72,9 +74,7 @@ export function Odometer({ value, className = "", now = false }: { value: number
         return (
           <span key={i} className="odo-col">
             <span className="odo-reel" style={style}>
-              {REEL.map((d, k) => (
-                <span key={k}>{d}</span>
-              ))}
+              {REEL}
             </span>
           </span>
         );

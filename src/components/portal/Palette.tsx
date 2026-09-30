@@ -138,6 +138,20 @@ export function Palette({ items }: { items: PaletteItem[] }) {
   const me = useClient();
   const [recentTick, setRecentTick] = useState(0);
 
+  // The floating button stands down while the home page's hero bar is on
+  // screen: in the first frame it sat on the bar's note, and on a short
+  // laptop screen no padding kept it clear. Keyed by the page, so it is
+  // never left hidden on the next one.
+  const [bar, setBar] = useState<{ path: string; on: boolean } | null>(null);
+  const overBar = bar?.path === pathname && bar.on;
+  useEffect(() => {
+    const el = document.querySelector("[data-hero-bar]");
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver((entries) => setBar({ path: pathname, on: entries.some((e) => e.isIntersecting) }));
+    io.observe(el);
+    return () => io.disconnect();
+  }, [pathname]);
+
   // The page order for [ and ]: every distinct path, home first.
   const order = useMemo(() => {
     const seen = new Set<string>();
@@ -339,7 +353,10 @@ export function Palette({ items }: { items: PaletteItem[] }) {
       <button
         type="button"
         onClick={show}
-        className="mono no-print fixed bottom-6 left-6 z-40 hidden items-center gap-3 border border-[color:var(--rule-strong)] bg-[rgba(11,11,12,0.7)] px-3 py-2 backdrop-blur-md transition-colors hover:text-[color:var(--ink)] md:flex"
+        className={
+          "mono no-print fixed bottom-6 left-6 z-40 hidden items-center gap-3 border border-[color:var(--rule-strong)] bg-[rgba(11,11,12,0.7)] px-3 py-2 backdrop-blur-md transition-[color,opacity,visibility] duration-300 hover:text-[color:var(--ink)] md:flex" +
+          (overBar ? " invisible opacity-0" : "")
+        }
         aria-label="Open the contents"
         data-cursor="Open"
         data-float=""

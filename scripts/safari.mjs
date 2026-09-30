@@ -153,27 +153,34 @@ async function walk(browser, shape) {
     if (!ok) failed++;
     lines.push((ok ? "ok    " : "FAIL  ") + msg);
   };
-  const context = await browser.newContext({ ...shape.device });
-  if (session) await context.addCookies([session]);
-  // The slate plays once, on a first visit, over everything; it is not what
-  // is measured here.
-  await context.addInitScript(() => {
-    try {
-      localStorage.setItem("tn-slate-seen", "1");
-    } catch {}
-  });
-  const page = await context.newPage();
-  const errors = [];
-  page.on("pageerror", (e) => errors.push(String(e)));
-  page.on("console", (m) => {
-    if (m.type() === "error") errors.push(m.text());
-  });
   const label = shape.name.padEnd(8);
+  const errors = [];
+  let context = null;
+  let page = null;
+  let crashed = false;
+  // A fresh context and page, with the session and past the slate (which
+  // plays once, on a first visit, over everything, and is not what is
+  // measured here). If WebKit loses a page, the walk goes on in a new one.
+  const open = async () => {
+    if (context) await context.close().catch(() => {});
+    context = await browser.newContext({ ...shape.device });
+    if (session) await context.addCookies([session]);
+    await context.addInitScript(() => {
+      try {
+        localStorage.setItem("tn-slate-seen", "1");
+      } catch {}
+    });
+    page = await context.newPage();
+    crashed = false;
+    page.on("crash", () => (crashed = true));
+    page.on("pageerror", (e) => errors.push(String(e)));
+    page.on("console", (m) => {
+      if (m.type() === "error") errors.push(m.text());
+    });
+  };
 
-  const queue = ["/"];
-  const queued = new Set(queue);
-  while (queue.length) {
-    const path = queue.shift();
+  // One page: what is wrong with it, and the pages it leads to.
+  const check = async (path) => {
     errors.length = 0;
     const resp = await visit(page, base + path);
     // Alive: React has taken over every part of the page, each section and
@@ -199,16 +206,14 @@ async function walk(browser, shape) {
       over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
       links: [...document.querySelectorAll("a[href^='/']")].map((a) => a.getAttribute("href")),
     }));
+    const links = [];
     for (const href of at.links) {
       const clean = href.split("#")[0].split("?")[0] || "/";
       // Written scripts are twenty pages of one template: the first three
       // stand for the rest here (the accessibility pass visits every one).
       const n = /\/(\d+)$/.exec(clean);
       if (n && Number(n[1]) > 3) continue;
-      if (!queued.has(clean) && !FILE.test(clean) && !clean.startsWith("/_next") && !clean.startsWith("/login")) {
-        queued.add(clean);
-        queue.push(clean);
-      }
+      if (!FILE.test(clean) && !clean.startsWith("/_next") && !clean.startsWith("/login")) links.push(clean);
     }
     const run = await scrollThrough(page);
     const status = resp ? resp.status() : 0;
@@ -223,44 +228,89 @@ async function walk(browser, shape) {
       run.worst > 0 ? run.worst + "px wider than the screen while scrolled through" + (run.culprit ? " (" + run.culprit + ")" : "") : "",
       errors.length ? "console: " + errors[0].slice(0, 140) : "",
     ].filter(Boolean);
-    note(problems.length === 0, label + path.padEnd(44) + problems.join("  "));
+    return { problems, links };
+  };
+
+  await open();
+  const queue = ["/"];
+  const queued = new Set(queue);
+  while (queue.length) {
+    const path = queue.shift();
+    // A page WebKit loses (its process crashes, or the page goes) is tried
+    // once more in a fresh one: lost twice is a failure, lost once is said.
+    let result = null;
+    let lost = "";
+    for (let attempt = 0; attempt < 2 && !result; attempt++) {
+      try {
+        result = await check(path);
+      } catch (e) {
+        lost = (crashed ? "crashed" : "gone") + ": " + String(e?.message || e).split("\n")[0].slice(0, 100);
+        await open();
+      }
+    }
+    if (!result) {
+      note(false, label + path.padEnd(44) + "WebKit lost the page twice (" + lost + ")");
+      continue;
+    }
+    for (const next of result.links) {
+      if (queued.has(next)) continue;
+      queued.add(next);
+      queue.push(next);
+    }
+    note(result.problems.length === 0, label + path.padEnd(44) + result.problems.join("  ") + (lost ? "  (WebKit lost the page once, " + lost + "; this is the second try)" : ""));
   }
   lines.push("      " + label + queued.size + " pages");
 
   // The phone menu fills the screen and is no wider than it (it was 12px
   // wider in Safari once, from a flap waiting on the page behind it).
   if (shape.name === "iphone") {
-    await visit(page, base + "/");
-    await page.click("[data-nav] button[aria-controls='system-menu']");
-    await page.waitForTimeout(800);
-    const menu = await page.evaluate(() => ({
-      open: !!document.querySelector("#system-menu"),
-      over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
-    }));
-    note(menu.open && menu.over <= 0, label + "menu open" + (menu.open ? "" : "  (did not open)") + (menu.over > 0 ? "  " + menu.over + "px wider than the screen" : ""));
+    try {
+      await visit(page, base + "/");
+      await page.click("[data-nav] button[aria-controls='system-menu']");
+      await page.waitForTimeout(800);
+      const menu = await page.evaluate(() => ({
+        open: !!document.querySelector("#system-menu"),
+        over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      }));
+      note(menu.open && menu.over <= 0, label + "menu open" + (menu.open ? "" : "  (did not open)") + (menu.over > 0 ? "  " + menu.over + "px wider than the screen" : ""));
+    } catch (e) {
+      note(false, label + "menu open  (" + String(e?.message || e).split("\n")[0].slice(0, 100) + ")");
+    }
   }
-  await context.close();
+  await context.close().catch(() => {});
   return lines;
 }
 
 const browser = await webkit.launch();
 try {
   // The door, as a client meets it on a phone: the code typed into the form
-  // lets them through, and the door hands them a session.
+  // is sent, and the door answers with a session. Read off the door's
+  // answer, not the browser's cookie jar, which says nothing over plain
+  // http: WebKit on Linux (CI) does not keep the Secure cookie at all, and
+  // on Windows keeps it but never sends it back.
   if (code) {
     const context = await browser.newContext({ ...devices["iPhone 15"] });
     const page = await context.newPage();
+    let handed = false;
+    page.on("response", async (r) => {
+      if (r.request().method() !== "POST") return;
+      const set = (await r.headerValue("set-cookie").catch(() => null)) || "";
+      if (/(^|\n)\s*tn-room=/.test(set)) handed = true;
+    });
     await visit(page, base + "/login");
     await page.fill("#code", code);
-    await Promise.all([page.waitForURL((u) => !u.pathname.startsWith("/login"), { timeout: 30000 }).catch(() => {}), page.press("#code", "Enter")]);
-    const inside = !new URL(page.url()).pathname.startsWith("/login");
-    const given = (await context.cookies()).some((c) => c.name === "tn-room");
-    say(inside && given, "iphone  the door opens to the code" + (inside ? "" : "  (still at the door)") + (given ? "" : "  (no session given)"));
+    await page.press("#code", "Enter");
+    for (let i = 0; i < 150 && !handed; i++) await page.waitForTimeout(100);
+    say(handed, "iphone  the door opens to the code" + (handed ? "" : "  (no session in the door's answer)"));
     await context.close();
   }
-  // Both shapes at once, each in its own context.
-  const walks = await Promise.all(SHAPES.map((shape) => walk(browser, shape)));
-  for (const lines of walks) for (const line of lines) console.log(line);
+  // Both shapes at once, each in its own context. A walk that cannot go on
+  // at all (WebKit itself gone) is a failure to report, not a crash here.
+  const walks = await Promise.allSettled(SHAPES.map((shape) => walk(browser, shape)));
+  walks.forEach((w, i) => {
+    if (w.status === "fulfilled") for (const line of w.value) console.log(line);
+    else say(false, SHAPES[i].name.padEnd(8) + "the walk could not go on (" + String(w.reason?.message || w.reason).split("\n")[0].slice(0, 120) + ")");
+  });
 } finally {
   await browser.close();
 }

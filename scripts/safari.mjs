@@ -36,6 +36,22 @@ if (process.argv.includes("--gated")) {
   session = { name: "tn-room", value, domain: new URL(base).hostname, path: "/", httpOnly: true, secure: false, sameSite: "Lax" };
 }
 const FILE = /\.(png|jpe?g|webp|avif|gif|svg|mp4|ico|json|txt|webmanifest|pdf)$/;
+// WebKit's own stderr, when DEBUG=pw:browser is set (CI sets it): kept
+// rather than printed, and its last complaints said when a page is lost.
+const lastWords = [];
+if (/pw:browser/.test(process.env.DEBUG || "")) {
+  const write = process.stderr.write.bind(process.stderr);
+  process.stderr.write = (chunk, ...rest) => {
+    const text = String(chunk);
+    if (!text.includes("pw:browser")) return write(chunk, ...rest);
+    for (const line of text.split("\n")) {
+      if (!line.trim()) continue;
+      lastWords.push(line.trim());
+      if (lastWords.length > 400) lastWords.shift();
+    }
+    return true;
+  };
+}
 // The iPhone drawn at 1x, not its own 3x: nine times fewer pixels, and what
 // is measured here is CSS pixels, which do not change with it. At 3x, WebKit
 // on Linux (CI) lost three pages of the phone's walk and none of desktop's.
@@ -258,15 +274,21 @@ async function walk(browser, shape) {
     const path = queue.shift();
     const t0 = Date.now();
     // A page WebKit loses (its process crashes, the page goes, or it stops
-    // answering for two minutes) is tried once more in a fresh one: lost
-    // twice is a failure, lost once is said.
+    // answering for two minutes) is tried again in a fresh one, up to three
+    // times in all: lost every time is a failure, lost and then walked is
+    // said. Each loss is followed by WebKit's own last words from its log,
+    // for whatever made it fall over.
     let result = null;
     let lost = "";
-    for (let attempt = 0; attempt < 2 && !result; attempt++) {
+    let losses = 0;
+    for (let attempt = 0; attempt < 3 && !result; attempt++) {
       try {
         result = await within(check(path), 120000, "the page");
       } catch (e) {
+        losses++;
         lost = (crashed ? "crashed" : "lost") + ": " + String(e?.message || e).split("\n")[0].slice(0, 100);
+        const words = lastWords.filter((l) => /err|crash|signal|abort|assert|fatal|kill|memory|segv/i.test(l)).slice(-8);
+        console.log("      " + label + path + " lost (" + lost + ")" + (words.length ? ":\n" + words.map((l) => "        | " + l.slice(0, 200)).join("\n") : ", WebKit said nothing"));
         await open();
       }
     }
@@ -278,7 +300,7 @@ async function walk(browser, shape) {
       console.log("      " + label + "WebKit " + browser.version() + ", " + how);
     }
     if (!result) {
-      note(false, label + path.padEnd(44) + "WebKit lost the page twice (" + lost + ")" + took);
+      note(false, label + path.padEnd(44) + "WebKit lost the page every time (" + lost + ")" + took);
       continue;
     }
     for (const next of result.links) {
@@ -286,7 +308,7 @@ async function walk(browser, shape) {
       queued.add(next);
       queue.push(next);
     }
-    note(result.problems.length === 0, label + path.padEnd(44) + result.problems.join("  ") + (lost ? "  (WebKit lost the page once, " + lost + "; this is the second try)" : "") + took);
+    note(result.problems.length === 0, label + path.padEnd(44) + result.problems.join("  ") + (losses ? "  (WebKit lost the page " + (losses === 1 ? "once" : losses + " times") + " first)" : "") + took);
   }
   console.log("      " + label + queued.size + " pages");
 

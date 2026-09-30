@@ -75,7 +75,7 @@ jobs:
           npm run door -- http://localhost:3401
           npm run links -- http://localhost:3401 --gated
           npm run a11y -- http://localhost:3401 --code horizon-2026
-          npm run safari -- http://localhost:3401 --gated --code horizon-2026
+          DEBUG=pw:browser npm run safari -- http://localhost:3401 --gated --code horizon-2026
           kill %1 || true
 
       - name: Server logs on failure

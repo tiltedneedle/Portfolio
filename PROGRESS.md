@@ -265,6 +265,13 @@ The marketing site this grew out of is on the `marketing-site` branch.
       rail, caption track and dust canvas; overflow at seven widths,
       collisions, the phone audit (unchanged: the profile guide's 8px
       phone mock); smoke, a11y, vitest (148) and the brief guard.
+      Correction to wave 74: its "style work fell 45% and layer work 30%"
+      came from a trace that took the busiest renderer to be the page's,
+      and tracing records every tab: the Playwright session's own page can
+      out-work the page under test. Those two figures are not reliable. The
+      wordmark change stands on what it removed (38 infinite animations,
+      idle 94% of the time); the traces now find the page by the renderer
+      that parsed its HTML.
 
 - [x] Wave 74 (2026-09-30): the home page looped, then phones and speed.
       "Now do the same for the home page too", then "work on

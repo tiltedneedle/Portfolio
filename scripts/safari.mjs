@@ -192,9 +192,12 @@ async function walk(browser, shape) {
   const note = say;
   const label = shape.name.padEnd(8);
   const errors = [];
+  let cancelled = 0;
   let context = null;
   let page = null;
   let crashed = false;
+  // Which step of a page was under way, for a page WebKit loses.
+  let phase = "";
   // A fresh context and page, with the session and past the slate (which
   // plays once, on a first visit, over everything, and is not what is
   // measured here). If WebKit loses a page, the walk goes on in a new one.
@@ -212,14 +215,25 @@ async function walk(browser, shape) {
     page.on("crash", () => (crashed = true));
     page.on("pageerror", (e) => errors.push(String(e)));
     page.on("console", (m) => {
-      if (m.type() === "error") errors.push(m.text());
+      if (m.type() !== "error") return;
+      // WebKit reports a fetch that was called off as one refused "due to
+      // access control checks". Next calls off its own prefetches of linked
+      // pages (?_rsc=) as their links leave the screen, which a walk
+      // scrolling at speed makes happen; Chromium says nothing, and a reader
+      // sees nothing (the page loads in full when its link is followed).
+      // Counted and said, never a failure. Seen once in CI, never locally.
+      if (/^Fetch API cannot load .*[?&]_rsc=.* due to access control checks/.test(m.text())) cancelled++;
+      else errors.push(m.text());
     });
   };
 
   // One page: what is wrong with it, and the pages it leads to.
   const check = async (path) => {
     errors.length = 0;
+    cancelled = 0;
+    phase = "opening";
     const resp = await visit(page, base + path);
+    phase = "coming alive";
     // Alive: React has taken over every part of the page, each section and
     // the footer, which hydrate on their own and late (its fiber is on the
     // element once it has). Waited for, since a part sets up its reveals as
@@ -239,6 +253,7 @@ async function walk(browser, shape) {
         () => true,
         () => false
       );
+    phase = "measuring";
     const at = await page.evaluate(() => ({
       over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
       links: [...document.querySelectorAll("a[href^='/']")].map((a) => a.getAttribute("href")),
@@ -252,6 +267,7 @@ async function walk(browser, shape) {
       if (n && Number(n[1]) > 3) continue;
       if (!FILE.test(clean) && !clean.startsWith("/_next") && !clean.startsWith("/login")) links.push(clean);
     }
+    phase = "scrolling through";
     const run = await scrollThrough(page);
     const status = resp ? resp.status() : 0;
     // A page that bounces to the door answers 200 and passes everything
@@ -266,7 +282,7 @@ async function walk(browser, shape) {
       run.cut ? "too long to walk through in 30s" : "",
       errors.length ? "console: " + errors[0].slice(0, 140) : "",
     ].filter(Boolean);
-    return { problems, links };
+    return { problems, links, cancelled };
   };
 
   await open();
@@ -276,21 +292,24 @@ async function walk(browser, shape) {
     const path = queue.shift();
     const t0 = Date.now();
     // A page WebKit loses (its process crashes, the page goes, or it stops
-    // answering for two minutes) is tried again in a fresh one, up to three
+    // answering for two minutes) is tried again in a fresh one, up to four
     // times in all: lost every time is a failure, lost and then walked is
     // said. On Linux (CI) the page's own process dies now and then, a
-    // different page each run, while the browser lives on; each loss says
-    // what WebKit logged during that try, which so far has been nothing.
+    // different page each run and up to seven of fifty-two, while the
+    // browser lives on; each loss says the step it happened in and what
+    // WebKit logged during that try, which so far has been nothing. What a
+    // page is found to have wrong is never retried: a fault in the site
+    // shows the same way every time (the three wave 80 fixed did).
     let result = null;
     let lost = "";
     let losses = 0;
-    for (let attempt = 0; attempt < 3 && !result; attempt++) {
+    for (let attempt = 0; attempt < 4 && !result; attempt++) {
       const from = logged;
       try {
         result = await within(check(path), 120000, "the page");
       } catch (e) {
         losses++;
-        lost = (crashed ? "crashed" : "lost") + ": " + String(e?.message || e).split("\n")[0].slice(0, 100);
+        lost = (crashed ? "crashed" : "lost") + " while " + phase + ": " + String(e?.message || e).split("\n")[0].slice(0, 100);
         // Not the notice every new context prints on Linux ("automation is
         // not allowed in the context, falling back"), nor empty lines.
         const words = lastWords.filter((l) => l.n >= from && !/is-controlled-by-automation/.test(l.text) && !/\[err\]\s*$/.test(l.text)).slice(-12);
@@ -314,25 +333,41 @@ async function walk(browser, shape) {
       queued.add(next);
       queue.push(next);
     }
-    note(result.problems.length === 0, label + path.padEnd(44) + result.problems.join("  ") + (losses ? "  (WebKit lost the page " + (losses === 1 ? "once" : losses + " times") + " first)" : "") + took);
+    const said = [losses ? "WebKit lost the page " + (losses === 1 ? "once" : losses + " times") + " first" : "", result.cancelled ? result.cancelled + " prefetch" + (result.cancelled === 1 ? "" : "es") + " called off" : ""].filter(Boolean);
+    note(result.problems.length === 0, label + path.padEnd(44) + result.problems.join("  ") + (said.length ? "  (" + said.join("; ") + ")" : "") + took);
   }
   console.log("      " + label + queued.size + " pages");
 
   // The phone menu fills the screen and is no wider than it (it was 12px
-  // wider in Safari once, from a flap waiting on the page behind it).
+  // wider in Safari once, from a flap waiting on the page behind it). Tried
+  // like a page: in CI a click once waited out its thirty seconds on a page
+  // WebKit had stopped answering.
   if (shape.name === "iphone") {
-    try {
-      await visit(page, base + "/");
-      await page.click("[data-nav] button[aria-controls='system-menu']");
-      await page.waitForTimeout(800);
-      const menu = await page.evaluate(() => ({
-        open: !!document.querySelector("#system-menu"),
-        over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
-      }));
-      note(menu.open && menu.over <= 0, label + "menu open" + (menu.open ? "" : "  (did not open)") + (menu.over > 0 ? "  " + menu.over + "px wider than the screen" : ""));
-    } catch (e) {
-      note(false, label + "menu open  (" + String(e?.message || e).split("\n")[0].slice(0, 100) + ")");
+    let menu = null;
+    let lost = "";
+    for (let attempt = 0; attempt < 4 && !menu; attempt++) {
+      try {
+        menu = await within(
+          (async () => {
+            await visit(page, base + "/");
+            await page.click("[data-nav] button[aria-controls='system-menu']", { timeout: 15000 });
+            await page.waitForTimeout(800);
+            return page.evaluate(() => ({
+              open: !!document.querySelector("#system-menu"),
+              over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+            }));
+          })(),
+          60000,
+          "the menu"
+        );
+      } catch (e) {
+        lost = (crashed ? "crashed" : "lost") + ": " + String(e?.message || e).split("\n")[0].slice(0, 100);
+        console.log("      " + label + "menu lost (" + lost + ")");
+        await open();
+      }
     }
+    if (!menu) note(false, label + "menu open  (WebKit lost it every time: " + lost + ")");
+    else note(menu.open && menu.over <= 0, label + "menu open" + (menu.open ? "" : "  (did not open)") + (menu.over > 0 ? "  " + menu.over + "px wider than the screen" : ""));
   }
   await context.close().catch(() => {});
 }

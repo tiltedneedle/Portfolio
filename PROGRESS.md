@@ -258,9 +258,19 @@ The marketing site this grew out of is on the `marketing-site` branch.
         process dies (Playwright's crash event), and a fresh page in the
         same browser walks on. A clean process exit that had looked like a
         clue was only the door check's browser closing. The cause is not
-        known. With the retries CI is green (8cf8a6a two pages lost once,
-        37852d0 three, all walked on the next try), and a page lost three
-        times in a row still fails the run; re-running it is the remedy.
+        known. With the retries CI went green (8cf8a6a two pages lost once,
+        37852d0 three, all walked on the next try), then 26b3e89 failed on
+        two things the retries did not cover: the menu check, which had
+        none (its click waited out 30s on a page WebKit had stopped
+        answering), and a console error, "Fetch API cannot load
+        /analyse?_rsc=... due to access control checks": WebKit's words for
+        a prefetch Next called off as its link left the screen. Now a page
+        gets four tries and the menu the same; a called-off prefetch is
+        counted and said, not failed (the pattern matches only ?_rsc=
+        fetches); each loss names the step it happened in. Proved again
+        against the build with wave 80's faults put back: the same four
+        failures. A page lost four times in a row still fails the run, and
+        re-running it is the remedy.
 
 - [x] Wave 82 (2026-09-30): the site on a phone, page by page. "Also make
       sure everything looks right on mobile."

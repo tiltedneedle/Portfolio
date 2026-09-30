@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { useFocusTrap } from "@/lib/use-focus-trap";
 import { embedUrl } from "@/lib/embed";
 
@@ -47,7 +47,7 @@ export function EmbedModal({
   return (
     <AnimatePresence>
       {open && url && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -91,7 +91,7 @@ export function EmbedModal({
             </div>
             <p className="mono mt-3 text-[color:var(--ink-mid)]">{title}</p>
           </div>
-        </motion.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

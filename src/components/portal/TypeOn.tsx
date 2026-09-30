@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { belowFold } from "@/lib/below-fold";
 
 const STEP = 2; // characters a tick
 const TICK = 22; // ms a tick
@@ -25,18 +26,10 @@ export function TypeOn({ text }: { text: string }) {
     const el = ref.current;
     if (!el || !text) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (el.getBoundingClientRect().top < window.innerHeight) return;
-    setAt({ n: 0, go: false });
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((e) => e.isIntersecting)) return;
-        io.disconnect();
-        setAt({ n: 0, go: true });
-      },
-      { rootMargin: "0px 0px -15% 0px" }
-    );
-    io.observe(el);
-    return () => io.disconnect();
+    return belowFold(el, "0px 0px -15% 0px", {
+      hold: () => setAt({ n: 0, go: false }),
+      release: () => setAt({ n: 0, go: true }),
+    });
   }, [text]);
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, m, useReducedMotion } from "framer-motion";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 import { useFocusTrap } from "@/lib/use-focus-trap";
 import { Lock } from "@/components/portal/Lock";
@@ -86,7 +86,7 @@ export function LockedModal({ parts, needs, ask, contact, lead, kicker }: Props)
   return (
     <AnimatePresence>
       {open && (
-        <motion.div
+        <m.div
           key="locked"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -95,7 +95,7 @@ export function LockedModal({ parts, needs, ask, contact, lead, kicker }: Props)
           className="fixed inset-0 z-[95] flex items-end justify-center bg-[rgba(6,6,7,0.84)] backdrop-blur-md md:items-center md:p-6"
           onClick={close}
         >
-          <motion.div
+          <m.div
             ref={box}
             role="dialog"
             aria-modal="true"
@@ -141,7 +141,7 @@ export function LockedModal({ parts, needs, ask, contact, lead, kicker }: Props)
                   <p className="statement em-serif mt-6 max-w-[36ch] text-[clamp(19px,1.9vw,25px)] leading-[1.22] text-[color:var(--ink-soft)]">{lead}</p>
                 </div>
 
-                <motion.div
+                <m.div
                   initial={reduced ? false : { opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: reduced ? 0 : 0.34, duration: 0.6, ease: EASE_OUT_EXPO }}
@@ -164,7 +164,7 @@ export function LockedModal({ parts, needs, ask, contact, lead, kicker }: Props)
                     <span className="mt-5 block text-[14px] leading-relaxed text-[color:var(--ink-soft)]">{ask.text}</span>
                   </a>
                   <p className="mt-4 text-[13px] leading-relaxed text-[color:var(--ink-mid)]">{ask.time}</p>
-                </motion.div>
+                </m.div>
               </div>
 
               {/* Band two: the parts still to come, as frames on one strip.
@@ -173,7 +173,7 @@ export function LockedModal({ parts, needs, ask, contact, lead, kicker }: Props)
                 {parts.map((p, i) => {
                   const here = marked(p);
                   return (
-                    <motion.li
+                    <m.li
                       key={p.anchor}
                       initial={reduced ? false : { opacity: 0, y: 12 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -190,7 +190,7 @@ export function LockedModal({ parts, needs, ask, contact, lead, kicker }: Props)
                       </span>
                       <span className={"subhead " + (here ? "text-[color:var(--ink)]" : "text-[color:var(--ink-soft)]")}>{p.title}</span>
                       <p className="text-[14px] leading-relaxed text-[color:var(--ink-mid)]">{p.text}</p>
-                    </motion.li>
+                    </m.li>
                   );
                 })}
               </ol>
@@ -200,7 +200,7 @@ export function LockedModal({ parts, needs, ask, contact, lead, kicker }: Props)
                 <p className="mono text-[color:var(--ink-mid)] md:col-span-3">{needs.title}</p>
                 <ul className="grid gap-x-10 gap-y-3.5 sm:grid-cols-2 md:col-span-9">
                   {needs.items.map((item, i) => (
-                    <motion.li
+                    <m.li
                       key={item}
                       initial={reduced ? false : { opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -209,13 +209,13 @@ export function LockedModal({ parts, needs, ask, contact, lead, kicker }: Props)
                     >
                       <span className="box" aria-hidden="true" />
                       {item}
-                    </motion.li>
+                    </m.li>
                   ))}
                 </ul>
               </div>
             </div>
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

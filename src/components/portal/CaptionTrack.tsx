@@ -117,7 +117,7 @@ export function CaptionTrack({ lines, className = "", lineClassName = "" }: { li
       return;
     }
     // The words' boxes, relative to the block (their offsetParent),
-    // measured now and again whenever it reflows or a late font lands.
+    // measured whenever it reflows or a late font lands.
     const measure = () => {
       boxes.current = Array.from(el.querySelectorAll<HTMLElement>(".cap-w")).map((w) => ({
         l: w.offsetLeft,
@@ -127,12 +127,29 @@ export function CaptionTrack({ lines, className = "", lineClassName = "" }: { li
       }));
       place(scrollYProgress.get());
     };
-    measure();
-    document.fonts?.ready.then(measure).catch(() => {});
-    if (typeof ResizeObserver === "undefined") return;
+    if (typeof ResizeObserver === "undefined") {
+      measure();
+      document.fonts?.addEventListener("loadingdone", measure);
+      return () => document.fonts?.removeEventListener("loadingdone", measure);
+    }
+    // Measured by a ResizeObserver's calls, which come once the browser has
+    // laid the block out itself: measured as the page hydrates, the words
+    // forced a layout of the whole page. A late font can move the words
+    // without resizing the block, so when one lands the observer is asked
+    // to look again (observing afresh always reports). Not
+    // document.fonts.ready: once the fonts are in, merely reading it lays
+    // the whole page out on the spot.
     const ro = new ResizeObserver(measure);
     ro.observe(el);
-    return () => ro.disconnect();
+    const again = () => {
+      ro.unobserve(el);
+      ro.observe(el);
+    };
+    document.fonts?.addEventListener("loadingdone", again);
+    return () => {
+      document.fonts?.removeEventListener("loadingdone", again);
+      ro.disconnect();
+    };
     // place reads only refs and the text-derived spans, which are stable for a given text.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reduced, scrollYProgress, key]);

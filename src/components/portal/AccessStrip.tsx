@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { motion, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
+import { m, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { ReadCount } from "@/components/portal/ReadMark";
 import { Still } from "@/components/portal/Still";
@@ -73,21 +73,24 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
       setMobile(isMobile);
       setRange(isMobile || still ? 0 : Math.max(0, el.scrollWidth - window.innerWidth));
     };
-    measure();
-    let live = true;
-    // A font that never loads must not leave an unhandled rejection behind.
-    document.fonts?.ready
-      .then(() => {
-        if (live) measure();
-      })
-      .catch(() => {});
+    // First measured by the ResizeObserver's first call, which comes once
+    // the browser has laid the track out itself: measured as the page
+    // hydrates, it forced a layout of the whole page. A late font can widen
+    // the track; when one lands the observer is asked to look again
+    // (observing afresh always reports). Not document.fonts.ready: once the
+    // fonts are in, merely reading it lays the whole page out on the spot.
     const ro = new ResizeObserver(measure);
     ro.observe(el);
+    const again = () => {
+      ro.unobserve(el);
+      ro.observe(el);
+    };
+    document.fonts?.addEventListener("loadingdone", again);
     window.addEventListener("resize", measure);
     mq.addEventListener("change", measure);
     return () => {
-      live = false;
       ro.disconnect();
+      document.fonts?.removeEventListener("loadingdone", again);
       window.removeEventListener("resize", measure);
       mq.removeEventListener("change", measure);
     };
@@ -107,16 +110,20 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
   // window moving past it. --par is where the card's middle is across the
   // screen (-1 left, 0 centre, 1 right); the CSS does the rest (.par-img,
   // .par-num). Written straight to the cards, so the shuttle re-renders
-  // nothing; only while the strip is shuttling at all.
+  // nothing; only while the strip is shuttling at all. Every card is
+  // measured before any is written, so a frame lays the page out once, not
+  // once a card.
   const depth = () => {
     const el = track.current;
     if (!el || mobile || range === 0) return;
     const vw = window.innerWidth;
-    el.style.setProperty("--par-zoom", "1.14");
-    el.querySelectorAll<HTMLElement>(".shuttle-card").forEach((c) => {
+    const cards = Array.from(el.querySelectorAll<HTMLElement>(".shuttle-card"));
+    const mids = cards.map((c) => {
       const r = c.getBoundingClientRect();
-      c.style.setProperty("--par", ((r.left + r.width / 2 - vw / 2) / vw).toFixed(3));
+      return r.left + r.width / 2;
     });
+    el.style.setProperty("--par-zoom", "1.14");
+    cards.forEach((c, i) => c.style.setProperty("--par", ((mids[i] - vw / 2) / vw).toFixed(3)));
   };
   useMotionValueEvent(x, "change", depth);
   useEffect(depth, [mobile, range]);
@@ -141,7 +148,7 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
       style={{ height: range > 0 ? "calc(100svh + " + range + "px)" : undefined }}
     >
       <div className="shuttle-pin lg:sticky lg:top-0 lg:flex lg:h-[100svh] lg:flex-col lg:justify-center lg:overflow-clip">
-        <motion.div
+        <m.div
           ref={track}
           style={mobile ? undefined : { x }}
           className="shuttle-track flex flex-col lg:w-max lg:flex-row lg:items-stretch lg:gap-5 lg:px-[8vw]"
@@ -245,7 +252,7 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
               </div>
             );
           })}
-        </motion.div>
+        </m.div>
 
         <div className="shuttle-ruler mx-[8vw] mt-8 max-lg:hidden">
           <div className="relative h-6 border-t border-[color:var(--rule-strong)]">
@@ -260,7 +267,7 @@ export function AccessStrip({ items, counts = {}, readKeys = {} }: { items: Acce
                 <span className="mt-1 block">{it.n}</span>
               </span>
             ))}
-            <motion.span
+            <m.span
               aria-hidden="true"
               style={{ left: playhead }}
               className="absolute -top-px h-4 w-[2px] -translate-x-1/2 bg-[color:var(--tally)] shadow-[0_0_8px_var(--tally-glow)]"

@@ -19,8 +19,15 @@ export type Week = {
 const DAY = 86400000;
 const utcDay = (y: number, m: number, d: number) => Date.UTC(y, m, d);
 
+// en-GB's short months, as the call sheet prints them. Not
+// toLocaleDateString: a page's first Intl call loads the locale's data (a
+// quarter of a second on a slow phone, as the page hydrates), and the
+// server's ICU and a browser's can disagree ("Sep" or "Sept"), which
+// hydration would trip on.
+export const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
+
 function shortMonth(y: number, m: number, d: number) {
-  return new Date(Date.UTC(y, m, d)).toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" });
+  return MONTHS[new Date(Date.UTC(y, m, d)).getUTCMonth()];
 }
 
 export function weekOf(date: Date): Week {

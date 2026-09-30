@@ -2,7 +2,7 @@
 
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, m, useReducedMotion } from "framer-motion";
 import { beginCut } from "@/lib/cut";
 import { chapterOfPath } from "@/content/chapters";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
@@ -349,7 +349,7 @@ export function Palette({ items }: { items: PaletteItem[] }) {
 
       <AnimatePresence>
         {help && !open && (
-          <motion.div
+          <m.div
             key="help"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -379,10 +379,10 @@ export function Palette({ items }: { items: PaletteItem[] }) {
                 ))}
               </dl>
             </div>
-          </motion.div>
+          </m.div>
         )}
         {open && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -390,7 +390,7 @@ export function Palette({ items }: { items: PaletteItem[] }) {
             className="fixed inset-0 z-[90] flex items-start justify-center bg-black/70 px-4 pt-[12vh] backdrop-blur-sm"
             onClick={() => close()}
           >
-            <motion.div
+            <m.div
               initial={reduced ? false : { opacity: 0, y: 8, scale: 0.99 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 6 }}
@@ -468,8 +468,8 @@ export function Palette({ items }: { items: PaletteItem[] }) {
                 <span>[ ] previous / next page</span>
                 <span>/ search</span>
               </div>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         )}
       </AnimatePresence>
     </>

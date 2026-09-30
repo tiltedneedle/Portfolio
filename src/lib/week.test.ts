@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { weekOf } from "@/lib/week";
+import { MONTHS, weekOf } from "@/lib/week";
 
 const at = (y: number, m: number, d: number) => new Date(y, m - 1, d, 12);
 
@@ -18,6 +18,11 @@ describe("weekOf", () => {
     const idx = new Set([21, 22, 23, 24, 25, 26, 27].map((d) => weekOf(at(2026, 9, d)).index));
     expect(idx.size).toBe(1);
     expect(weekOf(at(2026, 9, 28)).index).toBe(weekOf(at(2026, 9, 21)).index + 1);
+  });
+
+  it("names the months as en-GB does today, without asking Intl", () => {
+    const intl = MONTHS.map((_, m) => new Date(Date.UTC(2026, m, 1)).toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" }));
+    expect(MONTHS).toEqual(intl);
   });
 
   it("prints the range", () => {

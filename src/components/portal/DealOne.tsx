@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, m, useReducedMotion } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 
@@ -59,7 +59,7 @@ export function DealOne({
       <div className="relative aspect-[4/5] max-h-[380px] w-full max-w-[300px] justify-self-start md:justify-self-end">
         <AnimatePresence mode="wait">
           {dealt ? (
-            <motion.div
+            <m.div
               key={count}
               initial={reduced ? false : { opacity: 0, rotateY: -12, y: 10 }}
               animate={{ opacity: 1, rotateY: 0, y: 0 }}
@@ -86,9 +86,9 @@ export function DealOne({
                   </CutLink>
                 )}
               </span>
-            </motion.div>
+            </m.div>
           ) : (
-            <motion.div
+            <m.div
               key="back"
               initial={false}
               exit={{ opacity: 0 }}
@@ -98,7 +98,7 @@ export function DealOne({
               }}
             >
               <span className="mono text-[color:var(--ink-mid)]">Face down</span>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </div>

@@ -21,7 +21,9 @@ export function TopMark() {
       }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
-    update();
+    // A frame from now, not as the page hydrates, when reading scrollY
+    // forces a layout of the whole page.
+    onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 

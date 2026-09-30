@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, type CSSProperties } from "react";
+import { belowFold } from "@/lib/below-fold";
+import { groupDigits } from "@/lib/digits";
 
 /**
  * A number that arrives the way a counter settles: every digit on its own
@@ -30,34 +32,26 @@ const REEL = Array.from({ length: TURNS * 10 }, (_, i) => i % 10);
 
 export function Odometer({ value, className = "", now = false }: { value: number; className?: string; now?: boolean }) {
   const ref = useRef<HTMLSpanElement>(null);
-  // "en-US" pinned, so the server and the browser group the digits alike and
-  // hydration never meets a figure it did not render.
-  const figure = value.toLocaleString("en-US");
+  // Grouped the same on the server and in the browser, and without Intl,
+  // whose first use on a page loads the locale's data (lib/digits).
+  const figure = groupDigits(value);
 
   useEffect(() => {
     const el = ref.current;
     if (!el || now) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    // Nothing to let the reels go with: never wind them back. A figure that
-    // cannot roll in must not be left reading zero.
-    if (typeof IntersectionObserver === "undefined") return;
-    // Already on screen, or above it: leave it be.
-    if (el.getBoundingClientRect().top < window.innerHeight) return;
-    el.classList.add("odo-wait");
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((e) => e.isIntersecting)) return;
-        io.disconnect();
+    // Without an observer to let the reels go, belowFold never winds them
+    // back.
+    return belowFold(el, "0px 0px -15% 0px", {
+      hold: () => el.classList.add("odo-wait"),
+      release: () => {
         // Force the wound-back state to be computed, then let go, in the same
         // turn, not two animation frames later: a browser producing no frames
         // would otherwise hold the reels wound back indefinitely.
         void el.getBoundingClientRect();
         el.classList.remove("odo-wait");
       },
-      { rootMargin: "0px 0px -15% 0px" }
-    );
-    io.observe(el);
-    return () => io.disconnect();
+    });
   }, [now]);
 
   let reel = 0;

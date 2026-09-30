@@ -925,14 +925,44 @@ a:focus-visible > .wm {
    name. It draws in from the left as the first page opens and slides to
    the next room after (PortalNav.tsx, by script, so reduced motion holds
    it still there). */
+/* One line for the whole bar, placed under the current room by PortalNav
+   (--cue-x, --cue-w). It draws itself in once (.is-drawing), then slides
+   from room to room (.is-sliding); by translate and scale, which leave the
+   transform free and never lay the page out. */
 .room-cue {
   position: absolute;
   left: 0;
-  right: 0;
   bottom: -1px;
   height: 2px;
+  width: var(--cue-w, 0px);
+  translate: var(--cue-x, 0px) 0;
+  transform-origin: 0 50%;
   background: var(--tally);
   box-shadow: 0 0 10px var(--tally-glow);
+  opacity: 0;
+  pointer-events: none;
+}
+.room-cue.is-on {
+  opacity: 1;
+}
+.room-cue.is-sliding {
+  transition:
+    translate 0.55s var(--ease-out-expo),
+    width 0.55s var(--ease-out-expo);
+}
+.room-cue.is-drawing {
+  animation: cue-draw 0.9s var(--ease-out-expo) 0.3s both;
+}
+@keyframes cue-draw {
+  from {
+    scale: 0 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .room-cue {
+    transition: none;
+    animation: none;
+  }
 }
 /* While the menu fills the screen the floating Contents and Top buttons
    stand down: they sat over it, and could be tabbed to under it. */

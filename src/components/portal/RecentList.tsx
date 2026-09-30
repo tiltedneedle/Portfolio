@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { CutLink } from "@/components/room/CutLink";
 import type { Change } from "@/content/clients/types";
+import { belowFold } from "@/lib/below-fold";
 
 /**
  * The recent additions, with the ones since this device's last visit
@@ -58,20 +59,11 @@ export function RecentList({ slug, items }: { slug: string; items: Item[] }) {
     const ol = list.current;
     if (!ol || !items.length) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    // Already on screen, or above it: leave it be.
-    if (ol.getBoundingClientRect().top < window.innerHeight) return;
     // Held back only once it is known the list is below the fold, after hydration.
-    setType("wait");
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (!entries.some((e) => e.isIntersecting)) return;
-        io.disconnect();
-        setType({ row: 0, n: 0 });
-      },
-      { rootMargin: "0px 0px -15% 0px" }
-    );
-    io.observe(ol);
-    return () => io.disconnect();
+    return belowFold(ol, "0px 0px -15% 0px", {
+      hold: () => setType("wait"),
+      release: () => setType({ row: 0, n: 0 }),
+    });
   }, [items.length]);
 
   useEffect(() => {

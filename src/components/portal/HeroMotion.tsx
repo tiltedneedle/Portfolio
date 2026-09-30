@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, type ReactNode } from "react";
-import { motion, useAnimationFrame, useInView, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, useVelocity } from "framer-motion";
+import { m, useAnimationFrame, useInView, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, useVelocity } from "framer-motion";
 
 /**
  * The hero, as an edit suite would move it.
@@ -32,6 +32,19 @@ const wrap = (v: number) => {
   return r > 0 ? r - 50 : r;
 };
 
+// The screen's height, read when the scroll first needs it and forgotten
+// on a resize. On a phone, reading window.innerHeight lays the whole page
+// out on the spot, and this is asked for on every frame of scrolling.
+let screenH = 0;
+function screenHeight() {
+  if (typeof window === "undefined") return 900;
+  if (!screenH) {
+    screenH = window.innerHeight;
+    window.addEventListener("resize", () => (screenH = 0), { once: true });
+  }
+  return screenH;
+}
+
 export function Scrub({ children }: { children: ReactNode }) {
   const reduced = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
@@ -46,7 +59,9 @@ export function Scrub({ children }: { children: ReactNode }) {
   // It leans into its own travel, and never so far that the stills distort.
   const skewX = useTransform(smooth, [-2400, 0, 2400], [-5, 0, 5]);
   // Over the first screen of scroll the strip falls behind and goes soft.
-  const out = useTransform(scrollY, (v) => Math.min(1, Math.max(0, v / (typeof window === "undefined" ? 900 : window.innerHeight))));
+  // At the top it is 0 whatever the screen's height, so the height is not
+  // read as the page hydrates.
+  const out = useTransform(scrollY, (v) => (v <= 0 ? 0 : Math.min(1, v / screenHeight())));
   const y = useTransform(out, [0, 1], [0, 120]);
   const filter = useTransform(out, [0, 1], ["blur(0px)", "blur(9px)"]);
   const opacity = useTransform(out, [0, 1], [1, 0.35]);
@@ -60,11 +75,11 @@ export function Scrub({ children }: { children: ReactNode }) {
   });
 
   return (
-    <motion.div className="hero-band" style={{ y, filter, opacity }}>
-      <motion.div ref={ref} className="flex w-max opacity-50" style={{ x: xPercent, skewX }}>
+    <m.div className="hero-band" style={{ y, filter, opacity }}>
+      <m.div ref={ref} className="flex w-max opacity-50" style={{ x: xPercent, skewX }}>
         {children}
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 }
 
@@ -72,8 +87,8 @@ export function Lift({ children }: { children: ReactNode }) {
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, (v) => -Math.min(Math.max(v, 0), 1200) * 0.12);
   return (
-    <motion.div className="lift relative" style={{ y }}>
+    <m.div className="lift relative" style={{ y }}>
       {children}
-    </motion.div>
+    </m.div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useClient } from "@/components/portal/ClientContext";
 import { useRead } from "@/lib/read";
 import { hhmm } from "@/lib/timecode";
@@ -44,24 +44,58 @@ export function ReelPosition({ clips, className = "" }: { clips: Clip[]; classNa
   );
 }
 
+/** Runs fn when the page is idle (or soon, where it cannot say); returns a cancel. */
+function whenIdle(fn: () => void) {
+  if (typeof requestIdleCallback === "function") {
+    const h = requestIdleCallback(fn, { timeout: 2000 });
+    return () => cancelIdleCallback(h);
+  }
+  const h = setTimeout(fn, 300);
+  return () => clearTimeout(h);
+}
+
 const ZONES = [
   { code: "LDN", tz: "Europe/London" },
   { code: "DXB", tz: "Asia/Dubai" },
 ];
 
+/**
+ * The studio's clocks. They start once they are on screen (a phone never
+ * shows them) and the page has a moment to spare: the first Intl formatter
+ * on a page loads the locale's data and the zones', 0.1 to 0.5s on a slow
+ * phone, and as the page hydrated it held everything else up. Until then,
+ * and without script, they read --:--.
+ */
 export function StudioClocks({ className = "" }: { className?: string }) {
   const [times, setTimes] = useState<string[]>(ZONES.map(() => "--:--"));
+  const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {
-    const fmts = ZONES.map(
-      (z) => new Intl.DateTimeFormat("en-GB", { timeZone: z.tz, hour: "2-digit", minute: "2-digit", hour12: false })
-    );
-    const update = () => setTimes(fmts.map((f) => f.format(new Date())));
-    update();
-    const id = setInterval(update, 15000);
-    return () => clearInterval(id);
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    let tick: ReturnType<typeof setInterval> | undefined;
+    let later = () => {};
+    const start = () => {
+      const fmts = ZONES.map(
+        (z) => new Intl.DateTimeFormat("en-GB", { timeZone: z.tz, hour: "2-digit", minute: "2-digit", hour12: false })
+      );
+      const update = () => setTimes(fmts.map((f) => f.format(new Date())));
+      update();
+      tick = setInterval(update, 15000);
+    };
+    const io = new IntersectionObserver((entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      io.disconnect();
+      later = whenIdle(start);
+    });
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      later();
+      clearInterval(tick);
+    };
   }, []);
   return (
-    <span className={"mono " + className}>
+    <span ref={ref} className={"mono " + className}>
       {ZONES.map((z, i) => (
         <span key={z.code} className={i > 0 ? "ml-4" : ""}>
           {z.code} <span className="tc text-[color:var(--ink-soft)]">{times[i]}</span>

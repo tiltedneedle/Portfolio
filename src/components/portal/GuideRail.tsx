@@ -6,8 +6,8 @@ import { lastKey, positionKey } from "@/components/portal/Resume";
 
 /**
  * The rail beside a guide: every section, with the lamp on the one being
- * read. It follows the reader with an IntersectionObserver, and each row is
- * a real anchor so the keyboard can use it too. Sections the reader has
+ * read. It follows the reader on scroll, measured once a frame, and each
+ * row is a real anchor so the keyboard can use it too. Sections the reader has
  * scrolled past get a tick for the rest of the visit; nothing is stored.
  * Below the large breakpoint it folds into a cue sheet at the top of the
  * page.
@@ -42,8 +42,10 @@ export function GuideRail({ items, minutes = 0, k }: { items: { id: string; n?: 
       mark.style.height = row.offsetHeight + "px";
       mark.style.opacity = "1";
     };
-    place();
-    if (typeof ResizeObserver === "undefined") return;
+    // Placed by the ResizeObserver's first call, which comes after the
+    // browser's own layout and before the paint, so the playhead is never
+    // seen out of place, and nothing is read while the page hydrates.
+    if (typeof ResizeObserver === "undefined") return place();
     const ro = new ResizeObserver(place);
     ro.observe(ol);
     return () => ro.disconnect();
@@ -94,19 +96,21 @@ export function GuideRail({ items, minutes = 0, k }: { items: { id: string; n?: 
         return next === prev ? prev : next;
       });
     };
-    let ticking = false;
+    let frame = 0;
     const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        ticking = false;
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
         pick();
       });
     };
-    pick();
+    // The first pick a frame from now, not as the page hydrates, when its
+    // reads would force a layout of the whole page.
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     return () => {
+      if (frame) cancelAnimationFrame(frame);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };

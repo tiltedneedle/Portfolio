@@ -116,7 +116,9 @@ export function TrainingFilm({ film, number, dock = "always", eager = false }: {
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(place);
     };
-    place();
+    // Placed a frame from now, not as the page hydrates: its reads would
+    // force a layout of the whole page then.
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     return () => {

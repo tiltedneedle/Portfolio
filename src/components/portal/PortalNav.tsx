@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, m, useReducedMotion } from "framer-motion";
 import { CutLink } from "@/components/room/CutLink";
 import { Wordmark } from "@/components/room/Wordmark";
 import { chapters, pageHref, pageNumber } from "@/content/chapters";
@@ -11,7 +11,7 @@ import { openLocked } from "@/lib/locked";
 import { Lock } from "@/components/portal/Lock";
 import { useClient } from "@/components/portal/ClientContext";
 import { shortName } from "@/content/clients/types";
-import { cn } from "@/lib/utils";
+import { clsx } from "clsx";
 import { EASE_OUT_EXPO } from "@/lib/design-tokens";
 import { useRead } from "@/lib/read";
 import { seenKey } from "@/components/portal/RecentList";
@@ -83,7 +83,7 @@ function Panel({ chapter: c, onPick, current, read }: { chapter: Room; onPick: (
                 href={href}
                 onClick={onPick}
                 aria-current={here ? "page" : undefined}
-                className={cn(
+                className={clsx(
                   "flex items-baseline gap-3 border-b border-[color:var(--rule)] px-3 py-2.5 text-[15px] transition-colors last:border-b-0 hover:bg-[color:var(--stage-3)] hover:text-[color:var(--ink)]",
                   here ? "text-[color:var(--ink)]" : "text-[color:var(--ink-soft)]"
                 )}
@@ -168,9 +168,6 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
   // Set while Escape hands focus back to a room, so that focus does not
   // open the panel it has just closed.
   const returning = useRef(false);
-  // The cue draws itself in once, as the first page opens; after that it
-  // slides from room to room.
-  const [cueDrawn, setCueDrawn] = useState(false);
   const pathname = usePathname();
   // Where "here" is can only be known in the browser: the server renders
   // these pages at their rewritten path (/c/<slug>/create/hooks), so it
@@ -196,7 +193,9 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
       }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
-    update();
+    // A page restored part-way down is known a frame later, not as the page
+    // hydrates: reading scrollY then forces a layout of the whole page.
+    onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -262,11 +261,74 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
     return c.href !== "/" && here.startsWith(c.href + "/") ? "true" : undefined;
   };
 
+  // The cue under the current room: one line for the whole bar. It is placed
+  // from the room's own box by a ResizeObserver, whose calls come after the
+  // browser's layout and before the paint, so it is never seen out of place
+  // and nothing is measured as the page hydrates; CSS slides it from room to
+  // room (.room-cue). It draws itself in once, the first time there is a
+  // room to stand under; after that it slides, and arriving from no room at
+  // all it is set down in place. (It was a framer-motion shared layout,
+  // which put every animated element on the site through layout
+  // projection.)
+  //
+  // One observer for the life of the bar, told to look again when the room
+  // changes (observing afresh always reports). Observers report in the
+  // order they were made, and this one is made before the page's own, so it
+  // measures before any of theirs has written a style; one made anew after
+  // hydration reported last, and its read paid for everything they wrote.
+  // Below lg the bar is not shown, and nothing is read.
+  const bar = useRef<HTMLDivElement>(null);
+  const cue = useRef<HTMLSpanElement>(null);
+  const cueDrawn = useRef(false);
+  const cueWatch = useRef<ResizeObserver | null>(null);
+  const lit = rooms.findIndex((c) => where(c) !== undefined);
+  const litNow = useRef(lit);
+  useEffect(() => {
+    const box = bar.current;
+    const line = cue.current;
+    if (!box || !line || typeof ResizeObserver === "undefined") return;
+    let frame = 0;
+    const ro = new ResizeObserver((entries) => {
+      const shown = entries[entries.length - 1].contentRect.width > 0;
+      const room = shown && litNow.current >= 0 ? box.querySelectorAll<HTMLElement>(":scope > [data-room]")[litNow.current] : undefined;
+      const w = room ? room.offsetWidth : 0;
+      if (!room || !w) {
+        line.classList.remove("is-on", "is-sliding");
+        return;
+      }
+      const was = line.classList.contains("is-on");
+      line.style.setProperty("--cue-x", room.offsetLeft + "px");
+      line.style.setProperty("--cue-w", w + "px");
+      line.classList.add("is-on");
+      if (reduced) return;
+      if (!cueDrawn.current) {
+        cueDrawn.current = true;
+        line.classList.add("is-drawing");
+      }
+      if (!was) frame = requestAnimationFrame(() => line.classList.add("is-sliding"));
+    });
+    ro.observe(box);
+    cueWatch.current = ro;
+    return () => {
+      ro.disconnect();
+      cueWatch.current = null;
+      cancelAnimationFrame(frame);
+    };
+  }, [reduced]);
+  useEffect(() => {
+    litNow.current = lit;
+    const ro = cueWatch.current;
+    const box = bar.current;
+    if (!ro || !box) return;
+    ro.unobserve(box);
+    ro.observe(box);
+  }, [lit]);
+
   return (
     <>
       <header
         data-nav=""
-        className={cn(
+        className={clsx(
           "fixed inset-x-0 top-0 z-50 transition-colors duration-500",
           scrolled && !open ? "border-b border-[color:var(--rule)] bg-[rgba(11,11,12,0.82)] backdrop-blur-xl" : "border-b border-transparent bg-transparent"
         )}
@@ -281,7 +343,7 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
             <NewLamp latest={latest} />
             {/* The client's name joins the mark where the bar has room for
                 it: a short name from lg, a longer one from xl. */}
-            <span className={cn("mono hidden whitespace-nowrap text-[color:var(--ink-mid)]", who.length <= 8 ? "lg:inline" : "xl:inline")}>
+            <span className={clsx("mono hidden whitespace-nowrap text-[color:var(--ink-mid)]", who.length <= 8 ? "lg:inline" : "xl:inline")}>
               <span className="text-[color:var(--ink-mid)]">&times;</span> {who}
             </span>
           </CutLink>
@@ -292,7 +354,8 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
               the first room). Below lg, the menu. Each room is the bar's full
               height, so its panel hangs from the foot of the bar. */}
           <div
-            className="hidden items-stretch gap-7 self-stretch lg:flex"
+            ref={bar}
+            className="relative hidden items-stretch gap-7 self-stretch lg:flex"
             onPointerLeave={() => {
               setHot(null);
               hide();
@@ -324,7 +387,7 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
                         openLocked(c.id);
                       }}
                       aria-haspopup="dialog"
-                      className={cn("slate-link room-link whitespace-nowrap", hot !== null && i <= hot && "is-lit", hot === i && "is-hot")}
+                      className={clsx("slate-link room-link whitespace-nowrap", hot !== null && i <= hot && "is-lit", hot === i && "is-hot")}
                     >
                       <RoomLabel n={c.n} title={c.title} />
                       <Lock className="ml-1.5 text-[color:var(--ink-mid)]" label="Locked" />
@@ -336,7 +399,7 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
                       aria-haspopup="true"
                       aria-expanded={panel === c.id}
                       aria-current={current}
-                      className={cn(
+                      className={clsx(
                         "slate-link room-link whitespace-nowrap",
                         current && "text-[color:var(--ink)]",
                         hot !== null && i <= hot && "is-lit",
@@ -346,34 +409,23 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
                       <RoomLabel n={c.n} title={c.title} />
                     </CutLink>
                   )}
-                  {current && (
-                    <motion.span
-                      layoutId="room-cue"
-                      aria-hidden="true"
-                      className="room-cue"
-                      style={{ originX: 0 }}
-                      initial={cueDrawn || reduced ? false : { scaleX: 0 }}
-                      animate={{ scaleX: 1 }}
-                      transition={reduced ? { duration: 0 } : { duration: cueDrawn ? 0.55 : 0.9, delay: cueDrawn ? 0 : 0.3, ease: EASE_OUT_EXPO }}
-                      onAnimationComplete={() => setCueDrawn(true)}
-                    />
-                  )}
                   <AnimatePresence>
                     {panel === c.id && (
-                      <motion.div
+                      <m.div
                         initial={reduced ? false : { opacity: 0, y: 6 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 4 }}
                         transition={{ duration: 0.18, ease: EASE_OUT_EXPO }}
-                        className={cn("absolute top-full z-50 pt-px", i >= rooms.length - 3 ? "right-0" : "left-0")}
+                        className={clsx("absolute top-full z-50 pt-px", i >= rooms.length - 3 ? "right-0" : "left-0")}
                       >
                         <Panel chapter={c} onPick={pick} current={pathname} read={read} />
-                      </motion.div>
+                      </m.div>
                     )}
                   </AnimatePresence>
                 </div>
               );
             })}
+            <span ref={cue} aria-hidden="true" className="room-cue" />
           </div>
 
           <button
@@ -391,7 +443,7 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
 
       <AnimatePresence>
         {open && (
-          <motion.div
+          <m.div
             id="system-menu"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -425,7 +477,7 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
                 {rooms.map((c, i) => {
                   const current = where(c);
                   return (
-                    <motion.li
+                    <m.li
                       key={c.id}
                       initial={reduced ? false : { opacity: 0, y: 14 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -475,7 +527,7 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
                                     href={href}
                                     onClick={pick}
                                     aria-current={on ? "page" : undefined}
-                                    className={cn("flex items-baseline gap-3 text-[15px]", on ? "text-[color:var(--ink)]" : "text-[color:var(--ink-soft)]")}
+                                    className={clsx("flex items-baseline gap-3 text-[15px]", on ? "text-[color:var(--ink)]" : "text-[color:var(--ink-soft)]")}
                                   >
                                     <span className="mono text-[color:var(--ink-mid)]">{c.id === "home" ? pad(j) : pageNumber(c.id, p.slug)}</span>
                                     {p.title}
@@ -489,12 +541,12 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
                               );
                             })}
                       </ul>
-                    </motion.li>
+                    </m.li>
                   );
                 })}
               </ol>
             </nav>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </>

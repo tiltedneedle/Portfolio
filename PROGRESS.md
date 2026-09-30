@@ -213,6 +213,59 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 75 (2026-09-30): speed, continued: what blocks a slow phone.
+      Measured on an emulated slow phone (4x CPU), three loads a page, the
+      previous commit against this one, counting only tasks that are mostly
+      script (rendering here is software raster and swamps everything else):
+      home, script blocking 5,435ms to 2,704ms and its longest script task
+      3,982ms to 1,855ms; a guide (create/hooks), 3,699ms to 1,839ms and
+      2,191ms to 569ms. The runs' ranges do not overlap.
+      - Every block that comes on below the fold (Reveal, Odometer, TypeOn,
+        RecentList) decided with a getBoundingClientRect as it mounted and
+        then wrote a class: forty-odd forced layouts on a guide, 780ms of
+        its load. lib/below-fold does the measuring with shared
+        IntersectionObservers, first sight with no margin (so the entry's
+        root is the screen) and release with the block's margin; nothing
+        in it reads the layout, not even window.innerHeight.
+      - On a phone window.innerHeight, window.scrollY and
+        document.fonts.ready (once the fonts are in) each lay the page out
+        on the spot, measured at 53 to 93ms apiece on a dirtied page. The
+        rail, the caption track, the access strip, the hero dust and the
+        guide rail's playhead now take their first measure from a
+        ResizeObserver, whose calls come after the browser's own layout; a
+        late font asks the observer to look again (a loadingdone listener)
+        instead of reading fonts.ready. The nav, the Top mark, the training
+        film and the guide rail read scrollY a frame later, not as the
+        page hydrates. The hero's scroll fade reads the screen's height
+        once, when a scroll first needs it.
+      - Two loops read and wrote in turn, a layout per item: the rail's
+        depth pass (433ms on the home page) and the title's letter tilt.
+        Each now measures everything, then writes.
+      - Framer Motion runs as LazyMotion with domAnimation (room/Motion,
+        m.* everywhere, strict). The full build gave every animated
+        element a layout-projection node, each reading the layout as it
+        mounted, for the one element that used it: the nav's room cue,
+        now a single CSS-placed line (translate and width, eased as
+        before; it draws in once, slides between rooms, is set down in
+        place under reduced motion, and reads nothing on a phone, where
+        the bar is not shown). Its observer is made once, before the
+        page's own, so it measures before any of theirs writes.
+      - The first Intl call on a page loads the locale's data: 410 to
+        470ms on the throttled phone, in the middle of hydration. The
+        odometer groups its digits itself (lib/digits, tested against
+        Intl), the week's months are a table (lib/week, "Sept" as en-GB
+        prints it; the server's ICU and a browser's could disagree), and
+        the studio clocks start only once shown and the page is idle
+        (they are hidden on phones and never start there).
+      - tailwind-merge is gone: only the nav used cn(), and none of its
+        seven calls had two classes to merge. lib/utils went with it.
+      Verified: the cue under each room (home, create, analyse after a
+      client-side navigation), drawn on load and sliding 355 to 558px;
+      palette open and close under LazyMotion; reveals, odometer, clocks,
+      rail, caption track and dust canvas; overflow at seven widths,
+      collisions, the phone audit (unchanged: the profile guide's 8px
+      phone mock); smoke, a11y, vitest (148) and the brief guard.
+
 - [x] Wave 74 (2026-09-30): the home page looped, then phones and speed.
       "Now do the same for the home page too", then "work on
       responsiveness, mobile view, and website speed optimization".

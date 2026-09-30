@@ -40,17 +40,13 @@ export function HeroDust() {
     const ctx = cv.getContext("2d");
     if (!ctx) return;
 
+    // Sized by the ResizeObserver below, whose first call comes once the
+    // browser has laid the hero out itself: sized as the page hydrated, the
+    // canvas forced a layout of the whole page. Until then the field is 0 by
+    // 0 and nothing is drawn.
     let w = 0;
     let h = 0;
     const dpr = Math.min(2, window.devicePixelRatio || 1);
-    const size = () => {
-      w = cv.clientWidth;
-      h = cv.clientHeight;
-      cv.width = Math.round(w * dpr);
-      cv.height = Math.round(h * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
-    size();
 
     // A fixed walk rather than Math.random: the same calm field every visit.
     let seed = 7;
@@ -59,9 +55,10 @@ export function HeroDust() {
       return (seed - 1) / 2147483646;
     };
     // Velocities in px a second: a slow rise, a little sideways wander.
+    // Placed as fractions of the field until it has a size.
     const motes: Mote[] = Array.from({ length: COUNT }, () => ({
-      x: rand() * w,
-      y: rand() * h,
+      x: rand(),
+      y: rand(),
       vx: (rand() - 0.5) * 8,
       vy: -3 - rand() * 7,
       r: 0.5 + rand() * 1.3,
@@ -131,7 +128,7 @@ export function HeroDust() {
       raf = requestAnimationFrame(draw);
     };
     const start = () => {
-      if (raf || !on || document.hidden) return;
+      if (raf || !on || document.hidden || !w || !h) return;
       last = performance.now();
       raf = requestAnimationFrame(draw);
     };
@@ -143,12 +140,22 @@ export function HeroDust() {
     io.observe(zone);
     const vis = () => start();
     document.addEventListener("visibilitychange", vis);
-    const ro = new ResizeObserver(() => {
-      size();
+    const ro = new ResizeObserver((entries) => {
+      const box = entries[entries.length - 1].contentRect;
+      if (!box.width || !box.height) return;
+      const placed = w > 0 && h > 0;
+      w = box.width;
+      h = box.height;
+      cv.width = Math.round(w * dpr);
+      cv.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      // The first size spreads the field across the canvas; later ones keep
+      // every mote inside it.
       for (const m of motes) {
-        m.x = Math.min(m.x, w);
-        m.y = Math.min(m.y, h);
+        m.x = placed ? Math.min(m.x, w) : m.x * w;
+        m.y = placed ? Math.min(m.y, h) : m.y * h;
       }
+      start();
     });
     ro.observe(cv);
 

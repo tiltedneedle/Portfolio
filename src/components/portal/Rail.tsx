@@ -18,32 +18,38 @@ export function Rail({ children, count, label }: { children: ReactNode; count: n
     const el = ref.current;
     if (!el) return;
     const update = () => {
+      // Everything is measured before anything is written: a write between
+      // two reads makes the browser work the page out again, once a card.
       const left = el.scrollLeft;
+      const width = el.clientWidth;
+      const end = el.scrollWidth;
       const kids = Array.from(el.children) as HTMLElement[];
+      const home = el.offsetLeft;
+      const cards = kids.map((kid) => ({ at: kid.offsetLeft - home, w: kid.offsetWidth }));
       let i = 0;
-      for (let k = 0; k < kids.length; k++) {
-        if (kids[k].offsetLeft - el.offsetLeft >= left - 8) {
-          i = k;
-          break;
-        }
+      for (let k = 0; k < cards.length; k++) {
         i = k;
+        if (cards[k].at >= left - 8) break;
       }
       setFirst(i);
-      setAtEnd(left + el.clientWidth >= el.scrollWidth - 4);
+      setAtEnd(left + width >= end - 4);
       // Depth: where each card's middle sits across the rail (-1 left edge,
       // 0 middle, 1 right edge), for its numeral to move against it
       // (.rail > li .numeral). Never under reduced motion.
       if (reduced) return;
-      const mid = left + el.clientWidth / 2;
-      for (const kid of kids) {
-        const c = kid.offsetLeft - el.offsetLeft + kid.offsetWidth / 2;
-        kid.style.setProperty("--par", ((c - mid) / el.clientWidth).toFixed(3));
-      }
+      const mid = left + width / 2;
+      kids.forEach((kid, k) => kid.style.setProperty("--par", ((cards[k].at + cards[k].w / 2 - mid) / width).toFixed(3)));
     };
-    update();
+    // The first measure is a ResizeObserver's first call, which comes once
+    // the browser has laid the rail out itself; measured as the page
+    // hydrates, it forced a layout of the whole page.
+    const ro = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(update);
+    if (ro) ro.observe(el);
+    else update();
     el.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
     return () => {
+      ro?.disconnect();
       el.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useAnimationFrame, useInView, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, useVelocity } from "framer-motion";
+import { m, useAnimationFrame, useInView, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, useVelocity } from "framer-motion";
 
 // The reference closes on a slow serif-italic crawl over dark. Decorative,
 // hidden from assistive tech, frozen under reduced motion. Our own words.
@@ -49,12 +49,12 @@ export function WordStrip({ words = DEFAULT_WORDS }: { words?: string }) {
   return (
     <div ref={ref} aria-hidden="true" className="overflow-hidden border-y border-white/10 bg-[color:var(--slab-deep)] py-5">
       <div className="flex overflow-hidden whitespace-nowrap">
-        <motion.span className="word-run em-serif shrink-0 text-[32px] text-white/90 md:text-[44px]" style={{ x: xPercent, skewX }}>
+        <m.span className="word-run em-serif shrink-0 text-[32px] text-white/90 md:text-[44px]" style={{ x: xPercent, skewX }}>
           {run}
-        </motion.span>
-        <motion.span className="word-run em-serif shrink-0 text-[32px] text-white/90 md:text-[44px]" style={{ x: xPercent, skewX }}>
+        </m.span>
+        <m.span className="word-run em-serif shrink-0 text-[32px] text-white/90 md:text-[44px]" style={{ x: xPercent, skewX }}>
           {run}
-        </motion.span>
+        </m.span>
       </div>
     </div>
   );

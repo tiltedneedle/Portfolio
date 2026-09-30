@@ -4,6 +4,7 @@ import { FilmGrain } from "@/components/FilmGrain";
 import { TopMark } from "@/components/room/TopMark";
 import { Cursor } from "@/components/room/Cursor";
 import { CutOverlay } from "@/components/room/CutOverlay";
+import { Motion } from "@/components/room/Motion";
 import "./globals.css";
 
 // Four faces, all vendored as woff2 so the build needs no network, all SIL OFL.
@@ -69,11 +70,13 @@ export default function RootLayout({
     // data-scroll-behavior lets Next make its own navigation scrolls instant under the page-wide smooth setting (Next 16 no longer does this by default).
     <html lang="en" data-scroll-behavior="smooth" className={`${sans.variable} ${display.variable} ${serif.variable} ${mono.variable}`}>
       <body className="antialiased">
-        <FilmGrain />
-        {children}
-        <TopMark />
-        <Cursor />
-        <CutOverlay />
+        <Motion>
+          <FilmGrain />
+          {children}
+          <TopMark />
+          <Cursor />
+          <CutOverlay />
+        </Motion>
       </body>
     </html>
   );

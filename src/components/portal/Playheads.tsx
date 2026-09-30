@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type RefObject } from "react";
-import { motion, useAnimationFrame, useInView, useMotionValue, useReducedMotion } from "framer-motion";
+import { m, useAnimationFrame, useInView, useMotionValue, useReducedMotion } from "framer-motion";
 
 /**
  * Two playheads for the home page, each doing what an edit does.
@@ -171,7 +171,7 @@ export function LoopRunner({ stations = 5 }: { stations?: number }) {
 
   return (
     <div ref={box} aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[80px]">
-      <motion.span
+      <m.span
         className="absolute h-[11px] w-[11px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[color:var(--tally)] shadow-[0_0_14px_3px_var(--tally-glow)]"
         style={{ left, top, opacity }}
       />

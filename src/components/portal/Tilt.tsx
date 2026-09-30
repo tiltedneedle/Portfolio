@@ -35,15 +35,17 @@ export function Tilt({ text }: { text: string }) {
     let py = 0;
     const lean = () => {
       frame = 0;
-      for (const l of letters) {
-        const r = l.getBoundingClientRect();
+      // Every letter measured before any leans, so a frame lays out once.
+      const feet = letters.map((l) => l.getBoundingClientRect());
+      letters.forEach((l, i) => {
+        const r = feet[i];
         // The pivot is the foot of the letter, where a needle is pinned.
         const dx = px - (r.left + r.width / 2);
         const dy = py - r.bottom;
         const pull = Math.max(0, 1 - Math.hypot(dx, dy * 1.4) / REACH);
         const a = Math.max(-1, Math.min(1, dx / SPAN)) * MAX * pull;
         l.style.setProperty("--tilt", a.toFixed(2) + "deg");
-      }
+      });
     };
     const move = (e: Event) => {
       const p = e as PointerEvent;

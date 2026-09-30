@@ -287,10 +287,12 @@ async function walk(browser, shape) {
       } catch (e) {
         losses++;
         lost = (crashed ? "crashed" : "lost") + ": " + String(e?.message || e).split("\n")[0].slice(0, 100);
-        // Not the notice every new context prints on Linux ("automation is
-        // not allowed in the context, falling back"): that is all WebKit had
-        // to say across the first runs; its crashes themselves are silent.
-        const words = lastWords.filter((l) => /crash|signal|abort|assert|fatal|kill|memory|segv|error/i.test(l) && !/is-controlled-by-automation/.test(l)).slice(-8);
+        // Everything but the notice every new context prints on Linux
+        // ("automation is not allowed in the context, falling back") and
+        // empty stderr lines: launches and exits too, with their pids. All
+        // a loss had shown was a process exiting cleanly (code 0) at that
+        // moment, which by itself says neither which process nor why.
+        const words = lastWords.filter((l) => !/is-controlled-by-automation/.test(l) && !/\[err\]\s*$/.test(l)).slice(-12);
         console.log("      " + label + path + " lost (" + lost + ")" + (words.length ? ":\n" + words.map((l) => "        | " + l.slice(0, 200)).join("\n") : ", WebKit said nothing"));
         await open();
       }

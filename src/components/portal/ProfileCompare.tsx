@@ -30,7 +30,10 @@ function Phone({ variant }: { variant: "bad" | "good" }) {
     ? ["Fly further", "More range", "Global 7500", "A day at the FBO", "Explore the fleet", "First-time flyers"]
     : ["", "", "", "", "", ""];
   return (
-    <div className="mx-auto w-[236px] rounded-[22px] border border-[color:var(--rule-strong)] bg-[color:var(--stage)] p-3 shadow-[0_30px_60px_-30px_rgba(0,0,0,0.9)]">
+    // A picture of a profile at the size a phone shows one (its 8px type is
+    // the point), so it is kept from screen readers, which read it as loose
+    // fragments ("14:32", "47 posts"): the notes beside it say what it shows.
+    <div aria-hidden="true" className="mx-auto w-[236px] rounded-[22px] border border-[color:var(--rule-strong)] bg-[color:var(--stage)] p-3 shadow-[0_30px_60px_-30px_rgba(0,0,0,0.9)]">
       <div className="mono mb-3 flex items-center justify-between text-[8px] tracking-normal">
         <span>14:32</span>
         <span className="text-[color:var(--ink-mid)]">{good ? "horizonaviation" : "skyaviation_"}</span>

@@ -338,7 +338,9 @@ export function PortalNav({ latest, rooms = chapters }: { latest?: string; rooms
             stand over the page's edges on a wide screen too. The gap means
             the mark and the rooms can never touch. */}
         <nav className="mx-auto flex h-14 max-w-[1600px] items-center justify-between gap-8 px-6 md:h-16 md:px-14" aria-label="Primary">
-          <CutLink href="/" className="inline-flex shrink-0 items-center gap-3" aria-label="Home" onClick={pick}>
+          {/* At least 44px tall to a thumb, inside the 56px bar: sized to the
+              wordmark alone it was 22px on a 320px phone. */}
+          <CutLink href="/" className="inline-flex min-h-11 shrink-0 items-center gap-3" aria-label="Home" onClick={pick}>
             <Wordmark />
             <NewLamp latest={latest} />
             {/* The client's name joins the mark where the bar has room for

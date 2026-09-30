@@ -216,12 +216,15 @@ function Pairs({
       <div className="border-b border-[color:var(--rule)]">
         {items.map((it) => (
           <div key={it.a} className="grid gap-y-1 border-t border-[color:var(--rule)] py-4 md:grid-cols-2 md:gap-x-8">
+            {/* The phone's own label, where the pair has one: an empty one
+                still carried its margin, and indented every line that opened
+                a half by 12px. */}
             <p className="text-[17px] leading-snug text-[color:var(--ink-soft)]">
-              <span className="mono mr-3 text-[color:var(--ink-mid)] md:hidden">{aLabel}</span>
+              {aLabel && <span className="mono mr-3 text-[color:var(--ink-mid)] md:hidden">{aLabel}</span>}
               <Rich text={it.a} />
             </p>
             <p className="text-[17px] leading-snug text-[color:var(--ink)]">
-              <span className="mono mr-3 text-[color:var(--ink-mid)] md:hidden">{bLabel}</span>
+              {bLabel && <span className="mono mr-3 text-[color:var(--ink-mid)] md:hidden">{bLabel}</span>}
               <Rich text={it.b} />
             </p>
           </div>
@@ -336,7 +339,9 @@ function Checklist({ title, items, note }: { title: string; items: string[]; not
     <div className="border border-[color:var(--rule-strong)] p-6 md:p-8">
       <div className="mb-4 flex items-baseline justify-between gap-6">
         <p className="mono text-[color:var(--ink)]">{title}</p>
-        <p className="mono text-[color:var(--ink-mid)]">Call sheet</p>
+        {/* Never broken: under a long title on a phone it stood as "Call"
+            over "sheet". */}
+        <p className="mono shrink-0 whitespace-nowrap text-[color:var(--ink-mid)]">Call sheet</p>
       </div>
       <ul>
         {items.map((it, i) => (

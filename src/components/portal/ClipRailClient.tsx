@@ -16,9 +16,12 @@ export function ClipRailClient({ title, note, clips }: { title?: string; note?: 
         <p className="mono text-[color:var(--ink)]">{title ?? "From the library"}</p>
         {note && <p className="em-serif max-w-[44ch] text-[17px] text-[color:var(--ink-soft)]">{note}</p>}
       </div>
-      {/* The clips power on like monitors as the rail comes on (.reel-on). */}
+      {/* The clips power on like monitors as the rail comes on (.reel-on).
+          The snap lands a clip on the gutter, not the screen's edge
+          (scroll-px): without it a phone opened the rail 24px along, the
+          first clip flush against the edge. */}
       <Reveal>
-      <ul className="rail -mx-6 gap-4 px-6 md:mx-0 md:px-0">
+      <ul className="rail -mx-6 gap-4 px-6 scroll-px-6 md:mx-0 md:px-0 md:scroll-px-0">
         {clips.map((c, i) => (
           <li key={c.id} className="w-[168px] md:w-[196px]">
             <button

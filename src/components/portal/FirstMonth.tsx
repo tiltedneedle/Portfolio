@@ -70,9 +70,12 @@ export function FirstMonth({ scripts, ideas }: { scripts: Script[]; ideas: IdeaR
               </li>
             );
           }
+          // The day and what it holds keep their words together and wrap
+          // as wholes: in a phone's narrow cell they broke inside, into
+          // "Day / 07" beside "Authority / 01".
           const inner = (
             <>
-              <span className="mono flex items-center justify-between">
+              <span className="mono flex flex-wrap items-center justify-between gap-x-3 gap-y-1 [&>*]:whitespace-nowrap">
                 <span>Day {pad(day)}</span>
                 {s.kind === "script" ? (
                   <span className="flex items-center gap-1.5 text-[color:var(--ink)]">

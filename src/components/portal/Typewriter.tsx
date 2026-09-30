@@ -71,9 +71,12 @@ export function Typewriter({ title, queries }: { title?: string; queries: string
           <span className="tw-caret ml-0.5 inline-block h-[1.1em] w-[2px] translate-y-[0.2em] bg-[color:var(--ink)]" />
         </span>
       </div>
+      {/* The query being typed is marked by the tally's red under its chip.
+          It used to be marked by ink-coloured type, on a chip whose ground
+          is ink: the one being typed went blank, on every screen. */}
       <ul className="mt-4 flex flex-wrap gap-2">
         {queries.map((x, k) => (
-          <li key={x} className={"chip transition-colors " + (live && k === i % queries.length ? "text-[color:var(--ink)]" : "")}>
+          <li key={x} className={"chip transition-shadow " + (live && k === i % queries.length ? "shadow-[inset_0_-3px_0_var(--tally)]" : "shadow-[inset_0_-3px_0_transparent]")}>
             {x}
           </li>
         ))}

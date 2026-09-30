@@ -238,11 +238,64 @@ The marketing site this grew out of is on the `marketing-site` branch.
         the door, and passed.
       - Frames alone missed the stamp. Its easing does nearly all its
         travel at once, so one broken build measured 218px, 23px, or
-        nothing, by luck. Each animation that moves something is now
-        stopped as it appears, measured at 0, 10, 25 and 50% of its run and
-        let go, and only blamed for what it adds. The walk also waits for
-        every part to hydrate before scrolling: a part sets up its reveals
-        only as it hydrates, and one scrolled past too early never runs.
+        nothing, by luck. Animations are caught as they are born instead: a
+        MutationObserver sees the class change that starts one before the
+        next frame, the page is measured there, and every animation is
+        slowed to a tenth for the frames after. (Stopping each one and
+        measuring it at four points found it too, but laid the page out
+        four hundred times a page.) The walk also waits for every part to
+        hydrate before scrolling: a part sets up its reveals only as it
+        hydrates, and one scrolled past too early never runs.
+      - WebKit on Linux (CI) loses pages. Its page process dies mid-walk
+        ("Target page, context or browser has been closed"), silently, a
+        different page each run, one to seven of fifty-two; none of it
+        happens on Windows. Each shape walks in a WebKit of its own, the
+        iPhone is drawn at 1x (what is measured is CSS pixels), a page gets
+        three tries in a fresh page, and each loss prints WebKit's last
+        words from its own stderr (DEBUG=pw:browser, which CI sets). Those
+        say nothing beyond a notice every new context prints on Linux, so
+        the cause is not known; with the retries CI is green, and a page
+        lost three times in a row still fails.
+
+- [x] Wave 82 (2026-09-30): the site on a phone, page by page. "Also make
+      sure everything looks right on mobile."
+      Measured first, at 320, 360 and 393 wide (both clients): touch targets
+      under 24px, text set under 11px, sideways overflow; then text that
+      lands on other text and controls something covers, at 320, 360, 375,
+      393 and 430. Then looked: every page at iPhone width cut into contact
+      sheets (71 sheets, 25 pages), each read screen by screen.
+      Clean from the start: no overflow anywhere, no text on text, nothing
+      covering a control, the hero, the nav and menu, every diagram (the
+      shot sizes, the lens cone, the retention curve, the 30-day grid, the
+      cycle), the reports' boards and dials, every rail.
+      Found and fixed:
+      - Discoverability's search terms: the one being typed went blank, on
+        every screen. The live chip was marked with ink-coloured type on a
+        chip whose ground is ink. It is marked now by the tally's red under
+        it, and all five stay readable.
+      - The ideas page's controls broke inside themselves at 360: "list"
+        alone under "Copy all as a". They wrap as wholes.
+      - The first-month grid's labels broke inside at 360: "Day / 07"
+        beside "Authority / 01". Each keeps its words together.
+      - A script's parts and figures stood 400px tall above the hook on a
+        phone, the script's shape a bare 200px line beside nothing. On a
+        phone they run in two lines over the shape laid flat (91px); the
+        column beside the script on a wide screen is as it was.
+      - The guides' clip rails opened 24px along, the first clip against
+        the screen's edge (no scroll padding to snap to, unlike Rail.tsx).
+      - Paired examples ("If you are explaining..., show...") indented the
+        first line of each half by 12px: an empty phone label kept its
+        margin.
+      - "Call sheet" broke over two lines beside a long checklist title.
+      - The nav's home link was 22px tall at 320; it is 44px.
+      - The profile drawings on Profile optimisation (8px type, the size a
+        phone shows a profile at) were read out by screen readers as loose
+        fragments; they are hidden from them, the notes beside say it all.
+      After: the mobile audit finds nothing at any width, both clients; the
+      accessibility pass, smoke, links, door and the Safari walk all pass.
+      Kept as it is: emphasis inside an italic line turns upright sans (the
+      reverse-italic convention; no roman serif is vendored), noted in
+      globals.css.
 
 - [x] Wave 80 (2026-09-30): Safari. "Yes go ahead for the safari system
       aswell." Playwright's WebKit 26.6, the engine inside Safari, fetched

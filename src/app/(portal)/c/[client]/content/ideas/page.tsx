@@ -66,7 +66,9 @@ export default async function IdeasPage({ params }: { params: Promise<{ client: 
               </li>
             ))}
           </ul>
-          <div className="no-print flex items-baseline gap-6">
+          {/* Wrapping as wholes: on a phone the three broke inside instead,
+              and "list" stood alone under "Copy all as a". */}
+          <div className="no-print flex flex-wrap items-baseline gap-x-6 gap-y-3 [&>*]:whitespace-nowrap">
             <PinnedCount keys={pinnable.map((x) => x.k)} empty="Pin the ones you like" className="mono text-[color:var(--ink-mid)]" />
             {asText && <CopyText text={asText} label="Copy all as a list" />}
             <PrintButton />

@@ -104,25 +104,32 @@ export default async function ScriptPage({ params }: { params: Promise<{ client:
 
       <div className="mx-auto max-w-[1600px] px-6 pb-24 md:px-14">
         {written ? (
-          <div className="grid gap-x-16 border-t border-[color:var(--rule)] pt-12 md:grid-cols-[200px_1fr]">
-            <div className="mono flex flex-col gap-2 md:sticky md:top-28 md:self-start">
-              <span>Hook</span>
-              <span>Script</span>
-              {s.cta && <span>Call to action</span>}
-              {s.shots?.length ? <span>Shot list</span> : null}
-              <span className="mt-4 text-[color:var(--ink-mid)]">{words} words</span>
-              <span className="text-[color:var(--ink-mid)]">
-                &asymp; {mmss(spoken)} <span className="text-[color:var(--ink-mid)]">spoken</span>
-              </span>
-              {/* Said once, here, so the twenty times in the gutter do not each
-                  have to carry a tilde to stay honest. */}
-              <span className="text-[color:var(--ink-mid)]">{SPOKEN_WPM} wpm</span>
-              {/* The shape of the script: constant height, each beat as tall as
-                  its seconds. A six-second hook reads short even though it is
-                  set at 38px. Structure's strip, stood on end. */}
-              <div aria-hidden="true" className="mt-4 flex h-[200px] w-px flex-col gap-[2px]">
+          <div className="grid gap-x-16 gap-y-10 border-t border-[color:var(--rule)] pt-12 md:grid-cols-[200px_1fr]">
+            {/* A column beside the script on a wide screen; above it on a
+                phone, where the parts and the figures run in lines and the
+                script's shape lies flat. Stacked, they stood 400px tall over
+                the hook, the shape a bare 200px line with nothing beside it. */}
+            <div className="mono flex flex-col gap-4 md:sticky md:top-28 md:gap-6 md:self-start">
+              <div className="flex flex-wrap gap-x-5 gap-y-2 md:flex-col">
+                <span>Hook</span>
+                <span>Script</span>
+                {s.cta && <span>Call to action</span>}
+                {s.shots?.length ? <span>Shot list</span> : null}
+              </div>
+              <div className="flex flex-wrap gap-x-5 gap-y-2 text-[color:var(--ink-mid)] md:flex-col">
+                <span>{words} words</span>
+                <span>&asymp; {mmss(spoken)} spoken</span>
+                {/* Said once, here, so the twenty times in the gutter do not each
+                    have to carry a tilde to stay honest. */}
+                <span>{SPOKEN_WPM} wpm</span>
+              </div>
+              {/* The shape of the script: constant length, each beat as long
+                  as its seconds. A six-second hook reads short even though it
+                  is set at 38px. Structure's strip, stood on end beside the
+                  script, and flat above it on a phone. */}
+              <div aria-hidden="true" className="flex h-px w-full gap-[2px] md:h-[200px] md:w-px md:flex-col">
                 {times.map((t, i) => (
-                  <span key={i} style={{ flexGrow: t.end - t.start, flexBasis: 0 }} className="w-px bg-[color:var(--rule-strong)]" />
+                  <span key={i} style={{ flexGrow: t.end - t.start, flexBasis: 0 }} className="bg-[color:var(--rule-strong)]" />
                 ))}
               </div>
             </div>

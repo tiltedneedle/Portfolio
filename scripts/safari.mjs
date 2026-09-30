@@ -36,8 +36,11 @@ if (process.argv.includes("--gated")) {
   session = { name: "tn-room", value, domain: new URL(base).hostname, path: "/", httpOnly: true, secure: false, sameSite: "Lax" };
 }
 const FILE = /\.(png|jpe?g|webp|avif|gif|svg|mp4|ico|json|txt|webmanifest|pdf)$/;
+// The iPhone drawn at 1x, not its own 3x: nine times fewer pixels, and what
+// is measured here is CSS pixels, which do not change with it. At 3x, WebKit
+// on Linux (CI) lost three pages of the phone's walk and none of desktop's.
 const SHAPES = [
-  { name: "iphone", device: devices["iPhone 15"] },
+  { name: "iphone", device: { ...devices["iPhone 15"], deviceScaleFactor: 1 } },
   { name: "desktop", device: devices["Desktop Safari"] },
 ];
 

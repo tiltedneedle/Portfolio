@@ -23,11 +23,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      # Both actions at v7, which run on Node 24: at v4 they ran on Node 20,
+      # which GitHub has deprecated and was already forcing up to 24.
+      - uses: actions/checkout@v7
 
       # The Node version is package.json's engines field, the one Vercel
       # builds and runs with, so what is tested here is what goes out.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: package.json
           cache: npm

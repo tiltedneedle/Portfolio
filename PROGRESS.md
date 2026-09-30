@@ -277,6 +277,12 @@ The marketing site this grew out of is on the `marketing-site` branch.
       Measuring: a layout-shift figure from a trace must count only events
       after the page begins parsing. The warm-up page shares the renderer,
       and counting by process alone once gave 0.17 for a page that shifts 0.
+      CI, from the run's own warnings: checkout and setup-node to v7, which
+      run on Node 24 (v4 ran on Node 20, deprecated; nothing in v5 to v7
+      touches this workflow: no pull_request_target, no publishing, the npm
+      cache set by hand). ubuntu-latest becomes Ubuntu 26 on 2026-10-19;
+      Playwright 1.63 lists ubuntu26.04 among the systems it installs a
+      browser's dependencies for, so the label stays.
 
 - [x] Wave 79 (2026-09-30): production readiness, third pass: the site as
       a client uses it.

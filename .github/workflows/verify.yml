@@ -6,7 +6,9 @@
 # and borrowed sessions (door), and the accessibility pass in a real
 # browser against the gated server: every room at desktop and phone width
 # through axe (WCAG 2.2 AA), with no horizontal overflow and no console
-# errors.
+# errors; then the same pages in Safari's engine (WebKit) as an iPhone and
+# as desktop Safari, which counts what an animation draws toward a page's
+# width where Chromium does not (safari).
 name: Verify
 
 on:
@@ -48,8 +50,8 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Browser for the accessibility pass
-        run: npx playwright install --with-deps chromium
+      - name: Browsers for the accessibility and Safari passes
+        run: npx playwright install --with-deps chromium webkit
 
       - name: Smoke, open door
         run: |
@@ -73,6 +75,7 @@ jobs:
           npm run door -- http://localhost:3401
           npm run links -- http://localhost:3401 --gated
           npm run a11y -- http://localhost:3401 --code horizon-2026
+          npm run safari -- http://localhost:3401 --gated --code horizon-2026
           kill %1 || true
 
       - name: Server logs on failure

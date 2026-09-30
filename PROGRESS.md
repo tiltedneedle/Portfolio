@@ -213,6 +213,37 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 81 (2026-09-30): Safari in CI. "Yes add it."
+      scripts/safari.mjs (npm run safari), run by CI after the accessibility
+      pass on the gated server: every page a reader can reach, in WebKit,
+      as an iPhone 15 and as desktop Safari at once. Each page answers,
+      comes alive (every section and the footer hydrated) with no console
+      error, and is never wider than the screen, as it opens or at any
+      point while it is scrolled through; then the phone menu, open. Three
+      of the twenty written scripts stand for the rest (one template; the
+      accessibility pass visits every one). 26 pages a shape, 136s locally.
+      Proved against a build with wave 80's fixes taken back out: it failed
+      on exactly those, the same way on two runs (home 218px from the
+      stamp, Competitor intelligence 53px from the flaps, the phone menu
+      12px), and on one wave 80 had not measured: Competitor intelligence
+      63px wider than desktop Safari's screen, the same flaps, gone with
+      the same fix. With the fixes in, all passed, both doors.
+      What it had to learn on the way:
+      - Safari keeps the Secure cookie the door sets but will not send it
+        back to plain http://localhost, so a session won through the form
+        there is gone at the next page load (production is https, where it
+        is sent). The walk signs its own session with the server's secret,
+        as door and links do, and checks the form on its own. A page sent
+        back to the door is a failure: the first version walked one page,
+        the door, and passed.
+      - Frames alone missed the stamp. Its easing does nearly all its
+        travel at once, so one broken build measured 218px, 23px, or
+        nothing, by luck. Each animation that moves something is now
+        stopped as it appears, measured at 0, 10, 25 and 50% of its run and
+        let go, and only blamed for what it adds. The walk also waits for
+        every part to hydrate before scrolling: a part sets up its reveals
+        only as it hydrates, and one scrolled past too early never runs.
+
 - [x] Wave 80 (2026-09-30): Safari. "Yes go ahead for the safari system
       aswell." Playwright's WebKit 26.6, the engine inside Safari, fetched
       with the user's go-ahead, run as an iPhone 15 and as desktop Safari
@@ -1810,9 +1841,7 @@ The marketing site this grew out of is on the `marketing-site` branch.
    the finding is not reachable here; it needs a working npm, not a
    workaround.
 3. Browsers not yet tried (wave 80): Firefox (Playwright's build is a
-   download, so ask first), and a real iPhone, which only the user has; on
-   one, open the home page in Safari and look for "Start here" at the foot
-   of the first screen. WebKit could also join CI, the way Chromium runs
-   the accessibility pass (a sideways-overflow walk of every page would
-   have caught wave 80's flaps), at the cost of installing it on every
-   run: a decision, not a bump.
+   download, so ask first; the user chose not to for now), and a real
+   iPhone, which only the user has; on one, open the home page in Safari
+   and look for "Start here" at the foot of the first screen. WebKit runs
+   in CI since wave 81.

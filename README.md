@@ -344,6 +344,7 @@ npm run links -- http://localhost:3400
 PORTAL_SECRET=<the server's> npm run door -- http://localhost:3401
 PORTAL_SECRET=<the server's> npm run links -- http://localhost:3401 --gated
 PORTAL_DEMO=1 npm run a11y -- http://localhost:3401 --code horizon-2026
+PORTAL_SECRET=<the server's> npm run safari -- http://localhost:3401 --gated --code horizon-2026
 ```
 
 `test` runs the unit tests for the pure parts: the session token and
@@ -365,7 +366,17 @@ chromium` once), logs in, and takes every route the palette's index knows
 plus the fixed pages through axe at desktop and phone width (WCAG 2.2 AA
 and best practice, no filter), failing on any violation, any horizontal
 overflow or any console error; then the palette, open. CI runs it after
-the gated smoke. Visual checks run through Playwright against
+the gated smoke. `safari` walks every page a reader can reach in
+Playwright's WebKit, the engine inside Safari (`npx playwright install
+webkit` once), as an iPhone and as desktop Safari: each page answers and
+comes alive with no console error, and is never wider than the screen,
+as it opens or at any point while it is scrolled through, with every
+animation that moves something stopped and measured along its run.
+WebKit counts what an animation draws toward the page's width and
+Chromium does not, so only this pass can see that fault (it found three).
+It signs its own session like `door`, since Safari will not send the
+door's Secure cookie back to plain http://localhost, and with `--code`
+checks the form separately. CI runs it after `a11y`. Visual checks run through Playwright against
 `next start`, with screenshots into a scratch directory.
 
 Stop both servers before rebuilding. `next start` reads the build manifest

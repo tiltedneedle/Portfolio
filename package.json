@@ -16,6 +16,7 @@
     "door": "node scripts/door.mjs",
     "links": "node scripts/links.mjs",
     "a11y": "node scripts/a11y.mjs",
+    "safari": "node scripts/safari.mjs",
     "access": "node scripts/access.mjs",
     "new-client": "node scripts/new-client.mjs"
   },

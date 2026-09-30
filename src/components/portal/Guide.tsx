@@ -80,8 +80,13 @@ export function Guide({ guide, notes = [], who = "", client }: { guide: GuideT; 
             {/* The width lives on a wrapper, not on the image: `fill` writes its own
                 inline width and would take the poster full-bleed on desktop. Transform,
                 opacity and filter are untouched by it, so they stay put. */}
+            {/* The largest thing on a phone's first screen, so it is what the
+                page is timed by (LCP): fetched at once and first, not lazily
+                after layout. It asks for half the width: at 16% behind a 3px
+                blur a sharper file cannot be seen (the YouTube stills are
+                smaller than that anyway). */}
             <div className="scene-frame absolute right-0 top-0 h-full w-full md:w-[58%]">
-              <Still src={stillFor(guide.poster)} sizes="(min-width:768px) 58vw, 100vw" className="scale-105 object-cover opacity-[0.16] blur-[3px]" />
+              <Still src={stillFor(guide.poster)} sizes="(min-width:768px) 29vw, 50vw" eager className="scale-105 object-cover opacity-[0.16] blur-[3px]" />
             </div>
             <div className="absolute inset-0 bg-gradient-to-r from-[color:var(--stage)] via-[rgba(11,11,12,0.82)] to-[rgba(11,11,12,0.45)]" />
             <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-[color:var(--stage)]" />

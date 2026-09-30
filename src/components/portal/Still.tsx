@@ -31,6 +31,12 @@ import { useState } from "react";
  * `sizes` is required. Without it `fill` falls back to 100vw and a 1920px
  * image is fetched for a 150px well, which is the whole bug this component
  * exists to close.
+ *
+ * `eager`, for a still at the top of a page: fetched at once and first,
+ * not lazily after layout. Loading and priority, not Next's preload (which
+ * replaced `priority` in Next 16): more than one still can be the largest
+ * thing on the first screen, depending on the screen, and Next's own docs
+ * keep preload for the single one that always is.
  */
 const PLACEHOLDER_AR = 4 / 3;
 
@@ -44,7 +50,8 @@ export function Still({ src, className, sizes, eager = false }: { src: string; c
       alt=""
       fill
       sizes={sizes}
-      priority={eager}
+      loading={eager ? "eager" : undefined}
+      fetchPriority={eager ? "high" : undefined}
       className={className}
       onError={() => setFailed(true)}
       onLoad={(e) => {

@@ -250,6 +250,14 @@ The marketing site this grew out of is on the `marketing-site` branch.
         first frame; on a short laptop no padding kept it clear. It stands
         down while that bar is on screen (an IntersectionObserver), and is
         back as soon as the page moves on.
+      - A guide's first screen on a phone is timed (LCP) by the faint
+        still behind its title, which was loaded lazily, after layout. It is
+        fetched at once and first now. Still's eager uses loading and
+        fetchPriority rather than priority, which Next 16 deprecated; its
+        preload is for a single image that is always the largest, and here
+        the poster or the backdrop can be, by screen. (Its LCP here still
+        reads 9s: the frame fades in over 2.6s and this browser barely
+        makes frames. A phone counts it at the fade's first frame.)
       Measured and left: the palette's hidden entries (a client's ideas and
       scripts, searchable once something is typed) are 8KB of every page
       for the demo client, about 3KB gzipped; moving them into the fetched

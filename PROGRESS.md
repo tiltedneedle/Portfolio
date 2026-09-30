@@ -251,15 +251,16 @@ The marketing site this grew out of is on the `marketing-site` branch.
         different page each run, one to seven of fifty-two; none of it
         happens on Windows. Each shape walks in a WebKit of its own, the
         iPhone is drawn at 1x (what is measured is CSS pixels), a page gets
-        three tries in a fresh page, and each loss prints WebKit's recent
-        log (DEBUG=pw:browser, which CI sets). The only trace so far: a
-        process Playwright launched exits cleanly (code 0) at the moment
-        of each loss, while the walk carries on in its browser, so it is
-        not simply the browser dying. The log now keeps launches and exits
-        with their pids for the next loss to say which process it is. With
-        the retries CI is green (8cf8a6a: two pages lost once each, both
-        walked on the second try), and a page lost three times in a row
-        still fails.
+        three tries in a fresh page, and each loss prints what WebKit
+        logged during that try (DEBUG=pw:browser, which CI sets). With
+        launches and exits logged by pid (37852d0), it is plain what
+        happens: the browsers stay up and log nothing; the page's own
+        process dies (Playwright's crash event), and a fresh page in the
+        same browser walks on. A clean process exit that had looked like a
+        clue was only the door check's browser closing. The cause is not
+        known. With the retries CI is green (8cf8a6a two pages lost once,
+        37852d0 three, all walked on the next try), and a page lost three
+        times in a row still fails the run; re-running it is the remedy.
 
 - [x] Wave 82 (2026-09-30): the site on a phone, page by page. "Also make
       sure everything looks right on mobile."

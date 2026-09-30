@@ -37,8 +37,10 @@ if (process.argv.includes("--gated")) {
 }
 const FILE = /\.(png|jpe?g|webp|avif|gif|svg|mp4|ico|json|txt|webmanifest|pdf)$/;
 // WebKit's own stderr, when DEBUG=pw:browser is set (CI sets it): kept
-// rather than printed, and its last complaints said when a page is lost.
+// rather than printed, numbered, and what it said during a page reported
+// when that page is lost.
 const lastWords = [];
+let logged = 0;
 if (/pw:browser/.test(process.env.DEBUG || "")) {
   const write = process.stderr.write.bind(process.stderr);
   process.stderr.write = (chunk, ...rest) => {
@@ -46,7 +48,7 @@ if (/pw:browser/.test(process.env.DEBUG || "")) {
     if (!text.includes("pw:browser")) return write(chunk, ...rest);
     for (const line of text.split("\n")) {
       if (!line.trim()) continue;
-      lastWords.push(line.trim());
+      lastWords.push({ n: logged++, text: line.trim() });
       if (lastWords.length > 400) lastWords.shift();
     }
     return true;
@@ -276,24 +278,23 @@ async function walk(browser, shape) {
     // A page WebKit loses (its process crashes, the page goes, or it stops
     // answering for two minutes) is tried again in a fresh one, up to three
     // times in all: lost every time is a failure, lost and then walked is
-    // said. Each loss is followed by WebKit's own last words from its log,
-    // for whatever made it fall over.
+    // said. On Linux (CI) the page's own process dies now and then, a
+    // different page each run, while the browser lives on; each loss says
+    // what WebKit logged during that try, which so far has been nothing.
     let result = null;
     let lost = "";
     let losses = 0;
     for (let attempt = 0; attempt < 3 && !result; attempt++) {
+      const from = logged;
       try {
         result = await within(check(path), 120000, "the page");
       } catch (e) {
         losses++;
         lost = (crashed ? "crashed" : "lost") + ": " + String(e?.message || e).split("\n")[0].slice(0, 100);
-        // Everything but the notice every new context prints on Linux
-        // ("automation is not allowed in the context, falling back") and
-        // empty stderr lines: launches and exits too, with their pids. All
-        // a loss had shown was a process exiting cleanly (code 0) at that
-        // moment, which by itself says neither which process nor why.
-        const words = lastWords.filter((l) => !/is-controlled-by-automation/.test(l) && !/\[err\]\s*$/.test(l)).slice(-12);
-        console.log("      " + label + path + " lost (" + lost + ")" + (words.length ? ":\n" + words.map((l) => "        | " + l.slice(0, 200)).join("\n") : ", WebKit said nothing"));
+        // Not the notice every new context prints on Linux ("automation is
+        // not allowed in the context, falling back"), nor empty lines.
+        const words = lastWords.filter((l) => l.n >= from && !/is-controlled-by-automation/.test(l.text) && !/\[err\]\s*$/.test(l.text)).slice(-12);
+        console.log("      " + label + path + " lost (" + lost + ")" + (words.length ? ":\n" + words.map((l) => "        | " + l.text.slice(0, 200)).join("\n") : ", WebKit logged nothing meanwhile"));
         await open();
       }
     }

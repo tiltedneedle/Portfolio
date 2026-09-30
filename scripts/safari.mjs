@@ -67,9 +67,14 @@ async function visit(page, url, settle = 600) {
  * Frames alone are not enough. The stamp's easing does nearly all its
  * travel at once, so it is widest for a few milliseconds, and a frame lands
  * there or not by luck (on one broken build, one walk saw it 218px past the
- * screen, another 23px, another not at all). So each animation that moves
- * something is also stopped as it appears and measured at set points along
- * its run, from its first frame, then let go where it was.
+ * screen, another 23px, another not at all), and a frame may come too late
+ * even to slow it down. So animations are caught as they are born: a class
+ * change that starts one is seen at once (a MutationObserver runs before
+ * the next frame), the page is measured there, at the animation's first
+ * instant, and every animation is slowed to a tenth of its pace for the
+ * frames that follow. (Stopping each animation and measuring it along its
+ * run found the stamp too, but laid the page out four times for each of a
+ * hundred animations a page.)
  */
 const scrollThrough = (page) =>
   page.evaluate(async () => {
@@ -80,34 +85,24 @@ const scrollThrough = (page) =>
     let culprit = "";
     const name = (el) => el.tagName.toLowerCase() + (typeof el.className === "string" && el.className.trim() ? "." + el.className.trim().split(/\s+/).slice(0, 3).join(".") : "");
     const seen = new WeakSet();
-    const MOVES = /transform|translate|scale|rotate/;
-    // Blamed only for what it adds: the page may already be too wide.
-    const probe = (base) => {
+    // Slows what has started since last looked; says whether anything had.
+    const slow = () => {
+      let born = false;
       for (const a of document.getAnimations()) {
-        if (seen.has(a) || a.pending || a.currentTime === null) continue;
+        if (seen.has(a)) continue;
         seen.add(a);
-        const fx = a.effect;
-        const end = fx && fx.target ? fx.getComputedTiming().endTime : Infinity;
-        if (!Number.isFinite(end) || !fx.getKeyframes().some((k) => Object.keys(k).some((p) => MOVES.test(p)))) continue;
-        const was = a.currentTime;
-        const running = a.playState === "running";
-        a.pause();
-        for (const f of [0, 0.1, 0.25, 0.5]) {
-          a.currentTime = f * end;
-          const over = de.scrollWidth - cw;
-          if (over > base && over > worst) {
-            worst = over;
-            culprit = name(fx.target) + ", " + Math.round(f * 100) + "% into " + (a.animationName || "its animation");
-          }
-        }
-        a.currentTime = was;
-        if (running) a.play();
+        a.playbackRate = 0.1;
+        born = true;
       }
+      return born;
     };
+    // The moving thing that reaches furthest past the edge.
     const find = () => {
+      let far = null;
+      let right = cw + 0.5;
       for (const el of document.body.querySelectorAll("*")) {
         const r = el.getBoundingClientRect();
-        if (!r.width || r.right <= cw + 0.5) continue;
+        if (!r.width || r.right <= right) continue;
         const cs = getComputedStyle(el);
         if (cs.position === "fixed" || (cs.transform === "none" && !el.getAnimations().length)) continue;
         let own = false;
@@ -117,18 +112,29 @@ const scrollThrough = (page) =>
             break;
           }
         }
-        if (!own) return name(el) + " to " + Math.round(r.right) + "px";
+        if (own) continue;
+        far = el;
+        right = r.right;
       }
-      return "";
+      if (!far) return "";
+      const moving = far.getAnimations().map((a) => a.animationName || a.transitionProperty || "").filter(Boolean);
+      return name(far) + " to " + Math.round(right) + "px" + (moving.length ? ", " + moving.join(", ") : "");
     };
-    let watching = true;
-    const watch = () => {
+    const measure = () => {
       const over = de.scrollWidth - cw;
       if (over > worst) {
         worst = over;
         culprit = find();
       }
-      probe(over);
+    };
+    const births = new MutationObserver(() => {
+      if (slow()) measure();
+    });
+    births.observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ["class"] });
+    let watching = true;
+    const watch = () => {
+      slow();
+      measure();
       if (watching) requestAnimationFrame(watch);
     };
     requestAnimationFrame(watch);
@@ -147,6 +153,7 @@ const scrollThrough = (page) =>
     }
     await new Promise((r) => setTimeout(r, 800));
     watching = false;
+    births.disconnect();
     return { worst, culprit, cut };
   });
 

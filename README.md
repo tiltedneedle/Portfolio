@@ -94,7 +94,7 @@ code `horizon-2026`).
 To add a client, scaffold it:
 
 ```bash
-npm run new-client -- horizon-aviation "Horizon Aviation" --short Horizon --code "three words 7" --logo /client/horizon.png
+npm run new-client -- horizon-aviation "Horizon Aviation" --short Horizon --code "velvet anchor orbit meadow lantern quarry" --logo /client/horizon.png
 ```
 
 That creates `src/content/clients/<slug>/index.ts` with the identity, every
@@ -304,6 +304,34 @@ new rules go inside that block.
 
 Security headers, including a narrow content security policy, are in
 `next.config.ts`. Anything that loads from a new host must be added there.
+
+## Going live
+
+Vercel builds `main` to Production on every push. Before a client is sent
+a link:
+
+1. **The repository.** Make it private, or keep client content and codes
+   out of git (see Clients, and The door on why a code's hash matters).
+2. **The door.** In the Vercel project, Settings, Environment Variables,
+   Production: `PORTAL_SECRET` set to 32 or more random characters, and no
+   `PORTAL_DEMO`. A production build refuses to go out otherwise, and says
+   which it was in the build log.
+3. **An address.** Add a domain to the project. Vercel's login (Deployment
+   Protection) sits in front of the project's generated `*.vercel.app`
+   addresses, so a client cannot reach the door through them. Put the
+   domain on the GitHub repository too; the one there now is dead.
+4. **The client.** Scaffold them with a code of six or more random words
+   (the scripts warn about shorter ones) and send `/login?for=<slug>`. That
+   page shows their name to anyone who guesses the slug; if who the studio
+   works with is confidential, use a slug that is not the client's name.
+5. **After the deploy,** from outside: `/login` answers 200 with the
+   Content-Security-Policy header; `/audit` without a session goes to
+   `/login`; a wrong code is refused; the right one opens the client's own
+   pages and nobody else's.
+6. **Worth switching on in Vercel:** a firewall rate limit on `POST
+   /login` (the in-app limit is per instance), an uptime check on
+   `/login`, and error alerts or a reporting service; today a fault in
+   production is visible only in Vercel's logs.
 
 ## Verifying
 

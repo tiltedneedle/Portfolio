@@ -213,6 +213,38 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 78 (2026-09-30): production readiness, second pass.
+      "Continue with the production readiness checks."
+      Tried to get in, and could not (33 probes against the gated server,
+      scratchpad door-probe.mjs): /C/, //c/, /%63/, /c%2F, dot segments and
+      trailing slashes on the internal tree; the image optimizer pointed at
+      an internal page or the search index; wrong-signature, expired,
+      unknown-slug, cross-signed, extra-dot and empty cookies (each also
+      cleared); a demo session asking for the template's search index or
+      tree; a backslash next=; HEAD with and without a session. A real login
+      action posted from a foreign Origin is refused, no cookie set.
+      Also clean: no client's words, name, code or hash in any public file
+      under _next/static; public/ holds only the studio's logos, nine
+      example clips and one guide figure; one dangerouslySetInnerHTML (the
+      slate's fixed script), no debug logging, no TODOs; the login page's
+      error, for and next parameters cannot be turned into markup (next=
+      javascript: appears only escaped in Next's page data), and the page
+      is sent private, no-store; the code field is a password field.
+      Changed:
+      - Node is pinned: package.json engines 22.x, which Vercel builds and
+        runs with, and CI now reads its version from the same field.
+      - README, Going live: the six steps between this repo and a client
+        at the door, and the example code is six words now, not three and a
+        number.
+      Tried and left: vitest 3 to 4.1.11 (the dev-only advisory). npm
+      10.9.2's resolver crashes on vitest 4's optional peers (arborist
+      #loadPeerSet, "reading 'edgesOut'"), both as an install and through
+      package.json; restored exactly. Do it under a newer npm.
+      For the user, beyond wave 77's list: /login?for=<slug> shows the
+      client's name to anyone who guesses the slug, so a slug that is the
+      company's name confirms the studio works with them; use another slug
+      if that is confidential.
+
 - [x] Wave 77 (2026-09-30): production readiness, first pass.
       "Start with production readiness checks."
       Found and fixed:

@@ -1,7 +1,9 @@
 # Every push and pull request runs the same verification loop that runs on
 # the desktop: unit tests, the content validator, lint, a production build,
 # the smoke suite against `next start` in both modes (open door, and
-# gated with a throwaway secret), and the accessibility pass in a real
+# gated with a throwaway secret), every page reached by following links with
+# its anchors and images (links), attempts on the door with forged, expired
+# and borrowed sessions (door), and the accessibility pass in a real
 # browser against the gated server: every room at desktop and phone width
 # through axe (WCAG 2.2 AA), with no horizontal overflow and no console
 # errors.
@@ -52,6 +54,7 @@ jobs:
           npx next start -p 3400 > open.log 2>&1 &
           for i in $(seq 1 30); do curl -sf -o /dev/null http://localhost:3400/ && break; sleep 1; done
           npm run smoke -- http://localhost:3400
+          npm run links -- http://localhost:3400
           kill %1 || true
 
       - name: Smoke, gated
@@ -65,6 +68,8 @@ jobs:
           npx next start -p 3401 > gated.log 2>&1 &
           for i in $(seq 1 30); do curl -sf -o /dev/null http://localhost:3401/login && break; sleep 1; done
           npm run smoke -- http://localhost:3401 --gated
+          npm run door -- http://localhost:3401
+          npm run links -- http://localhost:3401 --gated
           npm run a11y -- http://localhost:3401 --code horizon-2026
           kill %1 || true
 

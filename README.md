@@ -340,16 +340,27 @@ npm test
 npm run check
 npm run smoke -- http://localhost:3400
 npm run smoke -- http://localhost:3401 --gated
+npm run links -- http://localhost:3400
+PORTAL_SECRET=<the server's> npm run door -- http://localhost:3401
+PORTAL_SECRET=<the server's> npm run links -- http://localhost:3401 --gated
 PORTAL_DEMO=1 npm run a11y -- http://localhost:3401 --code horizon-2026
 ```
 
 `test` runs the unit tests for the pure parts: the session token and
 access hash, the proxy's path maps, spoken length, the week, the inline
 marks and the palette index. The same loop runs on every push in GitHub
-Actions (`.github/workflows/verify.yml`), on Node 22 (`.nvmrc`).
+Actions (`.github/workflows/verify.yml`), on Node 22: `package.json`'s
+engines field, which Vercel builds with and CI reads (`.nvmrc` says the
+same, for nvm).
 
 `smoke` fetches every route and checks status codes, redirects, the door,
-and a few strings. `a11y` opens a real browser (`npx playwright install
+and a few strings. `links` walks every page a reader can reach from the
+front page and checks that each answers, that every #anchor lands on an id,
+and that every image loads. `door` tries to get past the door with the
+internal tree under other spellings, the image optimizer, and sessions
+that are forged, expired, cross-signed or another client's; it signs them
+with the server's own secret, so it needs `PORTAL_SECRET` (and the server
+`PORTAL_DEMO=1`). `a11y` opens a real browser (`npx playwright install
 chromium` once), logs in, and takes every route the palette's index knows
 plus the fixed pages through axe at desktop and phone width (WCAG 2.2 AA
 and best practice, no filter), failing on any violation, any horizontal

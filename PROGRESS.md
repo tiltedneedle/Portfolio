@@ -250,6 +250,10 @@ The marketing site this grew out of is on the `marketing-site` branch.
       - No new-tab link without noopener, no plain http:// anywhere.
       Not tested here: Safari's engine and Firefox. Only Chromium is
       installed; WebKit is a download the user has to agree to.
+      The crawl and the door probe are kept: scripts/links.mjs and
+      scripts/door.mjs (npm run links, npm run door), run by CI against both
+      servers on every push. Missing pages for a signed-in client, including a
+      script number that does not exist, answer a real 404.
 
 - [x] Wave 78 (2026-09-30): production readiness, second pass.
       "Continue with the production readiness checks."

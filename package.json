@@ -13,6 +13,8 @@
     "test": "vitest run",
     "check": "node scripts/check-content.mjs",
     "smoke": "node scripts/smoke.mjs",
+    "door": "node scripts/door.mjs",
+    "links": "node scripts/links.mjs",
     "a11y": "node scripts/a11y.mjs",
     "access": "node scripts/access.mjs",
     "new-client": "node scripts/new-client.mjs"

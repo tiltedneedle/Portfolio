@@ -132,27 +132,36 @@ const scrollThrough = (page) =>
       if (watching) requestAnimationFrame(watch);
     };
     requestAnimationFrame(watch);
-    const step = Math.round(innerHeight * 0.85);
+    // At least 200px a step, and thirty seconds at most in all: a page that
+    // cannot be walked in that is said to be, not waited on.
+    const step = Math.max(200, Math.round(innerHeight * 0.85));
+    const began = performance.now();
+    let cut = false;
     for (let y = 0; y < de.scrollHeight; y += step) {
+      if (performance.now() - began > 30000) {
+        cut = true;
+        break;
+      }
       window.scrollTo(0, y);
       await new Promise((r) => setTimeout(r, 100));
     }
     await new Promise((r) => setTimeout(r, 800));
     watching = false;
-    return { worst, culprit };
+    return { worst, culprit, cut };
   });
+
+/** A promise that gives up after `ms`, saying what took too long. */
+const within = (promise, ms, what) =>
+  Promise.race([promise, new Promise((_, reject) => setTimeout(() => reject(new Error(what + " took over " + ms / 1000 + "s")), ms))]);
 
 /**
  * One shape's walk: every page reached by following links from the front
- * page, checked as above, then (on the phone) the menu. Lines are kept and
- * printed after, since the two shapes walk at once.
+ * page, checked as above, then (on the phone) the menu. Each line is said
+ * as it is known, with the time the page took, so a walk that stalls on CI
+ * shows where.
  */
 async function walk(browser, shape) {
-  const lines = [];
-  const note = (ok, msg) => {
-    if (!ok) failed++;
-    lines.push((ok ? "ok    " : "FAIL  ") + msg);
-  };
+  const note = say;
   const label = shape.name.padEnd(8);
   const errors = [];
   let context = null;
@@ -226,6 +235,7 @@ async function walk(browser, shape) {
       alive ? "" : "never came alive (a part never hydrated)",
       at.over > 0 ? at.over + "px wider than the screen as it opens" : "",
       run.worst > 0 ? run.worst + "px wider than the screen while scrolled through" + (run.culprit ? " (" + run.culprit + ")" : "") : "",
+      run.cut ? "too long to walk through in 30s" : "",
       errors.length ? "console: " + errors[0].slice(0, 140) : "",
     ].filter(Boolean);
     return { problems, links };
@@ -236,20 +246,29 @@ async function walk(browser, shape) {
   const queued = new Set(queue);
   while (queue.length) {
     const path = queue.shift();
-    // A page WebKit loses (its process crashes, or the page goes) is tried
-    // once more in a fresh one: lost twice is a failure, lost once is said.
+    const t0 = Date.now();
+    // A page WebKit loses (its process crashes, the page goes, or it stops
+    // answering for two minutes) is tried once more in a fresh one: lost
+    // twice is a failure, lost once is said.
     let result = null;
     let lost = "";
     for (let attempt = 0; attempt < 2 && !result; attempt++) {
       try {
-        result = await check(path);
+        result = await within(check(path), 120000, "the page");
       } catch (e) {
-        lost = (crashed ? "crashed" : "gone") + ": " + String(e?.message || e).split("\n")[0].slice(0, 100);
+        lost = (crashed ? "crashed" : "lost") + ": " + String(e?.message || e).split("\n")[0].slice(0, 100);
         await open();
       }
     }
+    const took = "  " + ((Date.now() - t0) / 1000).toFixed(1) + "s";
+    // What this WebKit is and how it holds the front page: one that thinks
+    // the page hidden slows its timers, and the whole walk with them.
+    if (path === "/") {
+      const how = await page.evaluate(() => innerWidth + "x" + innerHeight + ", " + document.visibilityState).catch((e) => String(e?.message || e).slice(0, 60));
+      console.log("      " + label + "WebKit " + browser.version() + ", " + how);
+    }
     if (!result) {
-      note(false, label + path.padEnd(44) + "WebKit lost the page twice (" + lost + ")");
+      note(false, label + path.padEnd(44) + "WebKit lost the page twice (" + lost + ")" + took);
       continue;
     }
     for (const next of result.links) {
@@ -257,9 +276,9 @@ async function walk(browser, shape) {
       queued.add(next);
       queue.push(next);
     }
-    note(result.problems.length === 0, label + path.padEnd(44) + result.problems.join("  ") + (lost ? "  (WebKit lost the page once, " + lost + "; this is the second try)" : ""));
+    note(result.problems.length === 0, label + path.padEnd(44) + result.problems.join("  ") + (lost ? "  (WebKit lost the page once, " + lost + "; this is the second try)" : "") + took);
   }
-  lines.push("      " + label + queued.size + " pages");
+  console.log("      " + label + queued.size + " pages");
 
   // The phone menu fills the screen and is no wider than it (it was 12px
   // wider in Safari once, from a flap waiting on the page behind it).
@@ -278,17 +297,16 @@ async function walk(browser, shape) {
     }
   }
   await context.close().catch(() => {});
-  return lines;
 }
 
-const browser = await webkit.launch();
-try {
-  // The door, as a client meets it on a phone: the code typed into the form
-  // is sent, and the door answers with a session. Read off the door's
-  // answer, not the browser's cookie jar, which says nothing over plain
-  // http: WebKit on Linux (CI) does not keep the Secure cookie at all, and
-  // on Windows keeps it but never sends it back.
-  if (code) {
+// The door, as a client meets it on a phone: the code typed into the form
+// is sent, and the door answers with a session. Read off the door's answer,
+// not the browser's cookie jar, which says nothing over plain http: WebKit
+// on Linux (CI) does not keep the Secure cookie at all, and on Windows keeps
+// it but never sends it back.
+if (code) {
+  const browser = await webkit.launch();
+  try {
     const context = await browser.newContext({ ...devices["iPhone 15"] });
     const page = await context.newPage();
     let handed = false;
@@ -303,17 +321,28 @@ try {
     for (let i = 0; i < 150 && !handed; i++) await page.waitForTimeout(100);
     say(handed, "iphone  the door opens to the code" + (handed ? "" : "  (no session in the door's answer)"));
     await context.close();
+  } finally {
+    await browser.close().catch(() => {});
   }
-  // Both shapes at once, each in its own context. A walk that cannot go on
-  // at all (WebKit itself gone) is a failure to report, not a crash here.
-  const walks = await Promise.allSettled(SHAPES.map((shape) => walk(browser, shape)));
-  walks.forEach((w, i) => {
-    if (w.status === "fulfilled") for (const line of w.value) console.log(line);
-    else say(false, SHAPES[i].name.padEnd(8) + "the walk could not go on (" + String(w.reason?.message || w.reason).split("\n")[0].slice(0, 120) + ")");
-  });
-} finally {
-  await browser.close();
 }
+
+// Both shapes at once, each in a WebKit of its own, so neither page is ever
+// a background tab to the other and a browser that goes down takes one walk
+// with it, not both. A walk that cannot go on at all is a failure to report,
+// not a crash here.
+const walks = await Promise.allSettled(
+  SHAPES.map(async (shape) => {
+    const browser = await webkit.launch();
+    try {
+      await walk(browser, shape);
+    } finally {
+      await browser.close().catch(() => {});
+    }
+  })
+);
+walks.forEach((w, i) => {
+  if (w.status === "rejected") say(false, SHAPES[i].name.padEnd(8) + "the walk could not go on (" + String(w.reason?.message || w.reason).split("\n")[0].slice(0, 120) + ")");
+});
 
 console.log(failed ? "\n" + failed + " failed" : "\nall passed");
 process.exit(failed ? 1 : 0);

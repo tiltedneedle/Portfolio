@@ -115,7 +115,10 @@ export function RecentList({ slug, items }: { slug: string; items: Item[] }) {
               key={c.date + c.text}
               className={"grid gap-x-8 gap-y-2 border-t border-[color:var(--rule)] py-5 md:grid-cols-[14ch_1fr_auto] md:items-baseline" + (phase === "held" ? " row-held" : "")}
             >
-              <span className={"mono flex items-center gap-2 " + (mark ? "text-[color:var(--ink)]" : "text-[color:var(--ink-mid)]") + (phase === "typing" ? " stamp-in" : "")}>
+              {/* As wide as the date, not the row: the stamp lands at 1.7x
+                  from its left edge, and a phone's full-width row at 1.7x
+                  ran 218px past the screen as it landed. */}
+              <span className={"mono flex items-center gap-2 justify-self-start " + (mark ? "text-[color:var(--ink)]" : "text-[color:var(--ink-mid)]") + (phase === "typing" ? " stamp-in" : "")}>
                 {mark && <span className="lamp" aria-hidden="true" />}
                 {printed(c.date)}
                 {mark && <span className="sr-only">, new since your last visit</span>}

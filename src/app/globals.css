@@ -2162,9 +2162,15 @@ body.is-cutting
   transform-origin: 50% 0;
   backface-visibility: hidden;
 }
+/* Waiting, a flap is tipped up out of sight without the depth the drop is
+   seen in. Drawn in perspective, the invisible flap was drawn larger than
+   its cell, and Safari counts what is drawn toward the page's width: on a
+   phone the home page measured 12px wider than the screen and Competitor
+   intelligence 53px, for as long as the board waited below. The drop
+   starts from the same angle in depth (flap-drop), so it looks the same. */
 .reveal-wait .flap {
   opacity: 0;
-  transform: perspective(900px) rotateX(-92deg);
+  transform: rotateX(-92deg);
 }
 .reveal-wait.reveal-in .flap {
   animation: flap-drop 0.85s cubic-bezier(0.25, 1.45, 0.45, 1) both;

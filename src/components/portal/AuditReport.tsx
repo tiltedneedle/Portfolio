@@ -309,8 +309,12 @@ export function AuditReport({ slug, title, report, identity }: { slug: string; t
         </section>
       )}
 
+      {/* Clipped sideways (nothing in it is sticky): a card dropping in
+          swings toward the reader and is drawn larger than itself, and in
+          Safari the page measured up to 51px wider than a phone's screen
+          while it did. */}
       {report.competitors?.length ? (
-        <section id="board" className="mx-auto max-w-[1600px] scroll-mt-28 px-6 pt-14 md:px-14 md:pt-20" aria-label="The accounts studied">
+        <section id="board" className="mx-auto max-w-[1600px] scroll-mt-28 overflow-x-clip px-6 pt-14 md:px-14 md:pt-20" aria-label="The accounts studied">
           <p className="mono">The field</p>
           <h2 className="display mt-3 text-[clamp(36px,4.6vw,72px)]">
             {report.competitors.length} accounts, <span className="em-serif">studied.</span>

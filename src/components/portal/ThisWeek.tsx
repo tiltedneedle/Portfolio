@@ -96,7 +96,10 @@ export function ThisWeek({ ideas, scripts, guides }: { ideas: Idea[]; scripts: S
   );
 
   return (
-    <section className="border-t border-[color:var(--rule)] bg-[color:var(--stage-2)] py-20 md:py-28" aria-label="This week">
+    // Clipped sideways (nothing in it is sticky): a flap dropping in swings
+    // toward the reader and is drawn larger than its cell, and in Safari
+    // the page measured 12px wider than a phone's screen while it did.
+    <section className="overflow-x-clip border-t border-[color:var(--rule)] bg-[color:var(--stage-2)] py-20 md:py-28" aria-label="This week">
       <div className="mx-auto max-w-[1600px] px-6 md:px-14">
         <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3">
           <p className="mono">

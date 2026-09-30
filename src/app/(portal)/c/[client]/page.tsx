@@ -180,23 +180,29 @@ export default async function Home({ params }: { params: Promise<{ client: strin
           <StudioClocks className="max-md:hidden" />
         </div>
 
-        {/* The title card is meant to be one screen. Its spacing and the
-            name's size give way to a short screen (svh), so on a 1440x900 or
-            1280x800 laptop the way in ("Start here") is in the first frame:
-            with fixed 80px bands and a 144px name it fell 16 to 130px below
-            it. On a tall screen nothing changes. */}
+        {/* The title card is meant to be one screen: the screen as a browser
+            shows it, less its toolbars (100svh). Its spacing, the lockup and,
+            on the shortest laptops, the name give way to a short one, so the
+            way in ("Start here") is in the first frame in an iPhone's Safari
+            (393x659), a 1366x768 laptop's Chrome (1366x657) and a 13"
+            MacBook's Safari (1280x689). Fitted to whole screens (1440x900,
+            1280x800) it had missed all three, by 23 to 51px. On a tall
+            screen nothing changes: the name keeps 16svh above 700px, the
+            lockup is 64px above 914px, and the room under the readout is the
+            bar's own margin wherever there is room to spare. An iPhone SE's
+            Safari (375x553) is still some 50px short, and scrolls to it. */}
         {/* On a tablet stood upright the title fills much less of the screen
             (223px spare at 768x1024, nearly 500 on a 12.9" iPad), so it is
             let down by half of what is spare, reckoned from the screen alone:
             anything reckoned from the title's own height would move it as its
             lines arrive. */}
-        <div className="relative mx-auto w-full max-w-[1600px] px-6 py-[clamp(20px,5svh,64px)] md:px-14 md:py-[clamp(24px,5svh,80px)] md:portrait:pt-[calc(clamp(24px,5svh,80px)_+_max(0px,(100svh_-_800px)/2))]">
-          <ClientMark size={64} />
+        <div className="relative mx-auto w-full max-w-[1600px] px-6 pb-[clamp(16px,3svh,40px)] pt-[clamp(20px,5svh,64px)] md:px-14 md:pb-[clamp(20px,3svh,48px)] md:pt-[clamp(24px,5svh,80px)] md:portrait:pt-[calc(clamp(24px,5svh,80px)_+_max(0px,(100svh_-_800px)/2))]">
+          <ClientMark size={64} fluid="clamp(44px, 7svh, 64px)" />
           {/* The name sets the size for itself and for the work drifting
               behind it: the band is centred on this box and its frames are
               sized in em, so it sits behind the name at every width and never
               reaches the tagline below. */}
-          <div className="relative mt-[clamp(16px,4svh,40px)] text-[clamp(56px,min(10vw,16svh),168px)]">
+          <div className="relative mt-[clamp(16px,4svh,40px)] text-[clamp(56px,min(10vw,16svh,32svh_-_112px),168px)]">
             {/* The band runs the full width of the screen, whatever the measure. */}
             <Backdrop className="band-in inset-x-[calc(50%_-_50vw)] top-1/2 -translate-y-1/2" />
             {/* Each line rises through its own mask (.title-line), the second
@@ -233,7 +239,11 @@ export default async function Home({ params }: { params: Promise<{ client: strin
               client's own document asks for the red, and the client wins. */}
           {/* Word by word, each pulled into focus; the brief's red word
               lands in ink and then catches, like a tally lamp. */}
-          <p className="display footage-type mt-[clamp(16px,3.5svh,32px)] text-[clamp(24px,min(2.8vw,4.6svh),44px)] leading-[1] text-[color:var(--ink)]">
+          {/* On a phone it is one line, set a little smaller on a narrow one
+              rather than broken: the line is 14.33em long in this face, and
+              the measure is the screen less 48px. At 375px its last two
+              words had dropped to a second line, and the card grew 24px. */}
+          <p className="display footage-type mt-[clamp(16px,3.5svh,32px)] text-[length:min(24px,calc((100vw_-_48px)/14.5))] leading-[1] text-[color:var(--ink)] md:text-[clamp(24px,min(2.8vw,4.6svh),44px)]">
             {home.kicker.split(" ").map((w, i) => (
               <Fragment key={i}>
                 {i > 0 && " "}
@@ -262,10 +272,13 @@ export default async function Home({ params }: { params: Promise<{ client: strin
         {/* The rule runs the width of the screen; the line on it keeps the
             measure. The floating Contents button stands down while it is on
             screen (data-hero-bar, Palette.tsx): it sat on the note. */}
+        {/* On a phone the note and the way in share the bar's first line, as
+            they do on a wide screen: stacked, "Start here" came under two
+            lines of note, 45px further down the screen. */}
         <div data-hero-bar="" className="relative mt-auto border-t border-[color:var(--rule)]">
-          <div className="mono mx-auto flex max-w-[1600px] flex-col gap-3 px-6 py-6 md:flex-row md:items-center md:justify-between md:px-14 md:pb-[clamp(24px,5.5svh,80px)]">
-            <p className="text-[color:var(--ink-soft)]">{home.access_note}</p>
-            <a href="#objective" className="slate-link text-[13px] text-[color:var(--ink)]" data-cursor="Cut">
+          <div className="mono mx-auto flex max-w-[1600px] items-baseline justify-between gap-6 px-6 py-6 md:items-center md:px-14 md:pb-[clamp(24px,5.5svh,80px)]">
+            <p className="min-w-0 text-[color:var(--ink-soft)]">{home.access_note}</p>
+            <a href="#objective" className="slate-link shrink-0 text-[13px] text-[color:var(--ink)]" data-cursor="Cut">
               Start here &darr;
             </a>
           </div>

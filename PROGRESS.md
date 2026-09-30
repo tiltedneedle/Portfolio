@@ -213,6 +213,71 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 80 (2026-09-30): Safari. "Yes go ahead for the safari system
+      aswell." Playwright's WebKit 26.6, the engine inside Safari, fetched
+      with the user's go-ahead, run as an iPhone 15 and as desktop Safari
+      against the gated server (scratchpad webkit-check.mjs), and every page
+      a reader can reach crawled at iPhone width (44 pages).
+      Clean: every page loads, hydrates and loads its fonts with no console
+      or page errors; the CSS the design leans on is all there (:has,
+      container queries, svh, individual transforms, text-wrap balance and
+      pretty, the scripting media query, color-mix, backdrop-filter,
+      cascade layers); the palette opens by its button and by Cmd+K; the
+      room cue; the login form (the session cookie is Secure); a deploy
+      while a page is open reloads once, to the page; reduced motion clean.
+      Found and fixed:
+      - The page was wider than the screen in Safari, and only there. A
+        flap waiting to drop (the call sheet on home, the competitor board)
+        is tipped toward the reader in perspective, so it is drawn larger
+        than its cell, and WebKit counts what is drawn toward the page's
+        width: on a phone home measured 12px wider than the screen and
+        Competitor intelligence 53px, for as long as the boards waited
+        below (the phone menu's 12px was the same flap). Waiting flaps are
+        tipped without perspective now (invisible either way; the drop
+        starts from the same angle in depth), and the two sections they
+        drop in are clipped sideways for the moment of the drop (nothing
+        in either is sticky). Scrolling a phone through home frame by frame
+        then found a third: "Still being written" stamps each date at 1.7x
+        from its left edge, and the date's box was the whole row, 587px on
+        a 393px screen as it landed. It is as wide as the date now. After:
+        none of the 44 pages is wider than a phone in WebKit, opening or
+        scrolled through, and none in any frame through home and
+        Competitor intelligence. Chromium never was.
+      - The title card missed the first screen on most phones and laptops.
+        It had been fitted to whole screens (1440x900, 1280x800), not to
+        what a browser shows under its toolbars (100svh): "Start here" fell
+        51px below an iPhone 15's Safari (393x659), 98 below a 13 mini's
+        (375x629) and a Galaxy S8's Chrome (360x628), 36 below a 1366x768
+        laptop's Chrome (1366x657), 23 below a 13" MacBook's Safari
+        (1280x689). Now the lockup follows the screen's height (7svh, 44 to
+        64px; ClientMark draws itself from one length, --mark); the space
+        under the readout is 3svh, not 5 (the bar's auto margin takes the
+        rest on a tall screen, so nothing moves there); the name gives way
+        below 700px tall (min(10vw, 16svh, 32svh - 112px)); on a phone the
+        tagline is fitted to one line (it broke at 375px: 24px) and the
+        note and "Start here" share the bar's first line, as on a wide
+        screen. "Start here" is in the first screen at all sixteen browser
+        sizes measured from 360x628 up, 5 to 25px clear on the short phones,
+        and nothing changed at 1920x955 or 1440x900. An iPhone SE's Safari
+        (375x553) is still 54px short (it was 156); a phone on its side
+        cannot hold the card and does not try. No layout shift on load: 0
+        at 1366x657 in five runs, 0.004 on a phone slowed 4x.
+      Not the site: the display face draws thin in this WebKit. Playwright's
+      WebKit on Windows does not apply a variable font's weight axis, even
+      set outright, and draws the default instance; Safari on a Mac or an
+      iPhone does. Not tested: Firefox, and a real iPhone.
+      A wrong turn, written down so it is not taken again: a clip over the
+      whole page (main, overflow-x: clip) fixed the width, and the access
+      strip then seemed to stop pinning in WebKit. It had not: that check
+      ran on a cold first load, before the strip had hydrated and been
+      given its height. On a hydrated page it pins with the clip and
+      without, in both engines. The fixes stayed where the causes are all
+      the same, so no clip sits over a sticky part in a Safari older than
+      this one, which cannot be tried here.
+      Measuring: a layout-shift figure from a trace must count only events
+      after the page begins parsing. The warm-up page shares the renderer,
+      and counting by process alone once gave 0.17 for a page that shifts 0.
+
 - [x] Wave 79 (2026-09-30): production readiness, third pass: the site as
       a client uses it.
       Found and fixed: a deploy while a page is open. Vercel deploys main on
@@ -1738,3 +1803,10 @@ The marketing site this grew out of is on the `marketing-site` branch.
    with and without a verified cache. The suite uses no mocking at all, so
    the finding is not reachable here; it needs a working npm, not a
    workaround.
+3. Browsers not yet tried (wave 80): Firefox (Playwright's build is a
+   download, so ask first), and a real iPhone, which only the user has; on
+   one, open the home page in Safari and look for "Start here" at the foot
+   of the first screen. WebKit could also join CI, the way Chromium runs
+   the accessibility pass (a sideways-overflow walk of every page would
+   have caught wave 80's flaps), at the cost of installing it on every
+   run: a decision, not a bump.

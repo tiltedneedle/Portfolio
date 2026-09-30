@@ -1,17 +1,25 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Rise, delay } from "@/components/portal/Scene";
+import { isStaleBuild, mayReloadForStaleBuild, reloadForStaleBuild } from "@/lib/stale-build";
 
 /**
  * The page could not be rendered. Said in the room's voice, with the one
  * useful action: try the take again. The error itself goes to the console,
- * where whoever maintains the site will look for it.
+ * where whoever maintains the site will look for it. A page left open across
+ * a deploy is not a fault: it reloads once for the new version
+ * (lib/stale-build).
  */
 export default function ErrorPage({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  const stale = isStaleBuild(error);
+  const [reloading] = useState(() => stale && mayReloadForStaleBuild());
   useEffect(() => {
-    console.error(error);
-  }, [error]);
+    if (reloading) reloadForStaleBuild();
+    else console.error(error);
+  }, [error, reloading]);
+
+  if (reloading) return <main aria-busy="true" className="min-h-screen bg-[color:var(--stage)]" />;
 
   return (
     <main className="flex min-h-screen items-center bg-[color:var(--stage)]">
@@ -32,7 +40,7 @@ export default function ErrorPage({ error, reset }: { error: Error & { digest?: 
         </p>
         {error.digest && <p className="mono mt-4 text-[color:var(--ink-mid)]">Ref {error.digest}</p>}
         <div className="scene-up mt-10 flex flex-wrap items-center gap-6" style={delay(0.85)}>
-          <button type="button" onClick={reset} className="pill pill-solid px-7 py-3 text-[15px]" data-cursor="Play">
+          <button type="button" onClick={stale ? reloadForStaleBuild : reset} className="pill pill-solid px-7 py-3 text-[15px]" data-cursor="Play">
             Try again
           </button>
           <a href="/" className="slate-link">

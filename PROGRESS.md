@@ -213,6 +213,44 @@ The marketing site this grew out of is on the `marketing-site` branch.
       closes are dropped by the browser (same-page jumps are instant, after
       the palette has gone). Cuts within a scene, not glides.
 
+- [x] Wave 79 (2026-09-30): production readiness, third pass: the site as
+      a client uses it.
+      Found and fixed: a deploy while a page is open. Vercel deploys main on
+      every push; the code a room the reader has not opened yet needs is
+      then gone from the server, and the next click into it failed to load
+      its chunk (ChunkLoadError) and showed the fault screen, "Cut. Going
+      again." The error boundaries (the room's, the root's, the global one)
+      now know that fault (lib/stale-build, tested) and reload the page
+      once, showing nothing meanwhile; the new deployment's files then load.
+      The attempt's time is kept for the tab's session, so a load that fails
+      the same way shows the fault screen instead of looping; with no session
+      storage nothing reloads by itself and "Try again" does it, since
+      rendering again cannot fetch what is gone. Simulated (scratchpad
+      deploy-skew.js): files missing for good, exactly one reload and the
+      page, not the fault screen; missing briefly, Next's own retry and no
+      reload at all.
+      Checked and clean:
+      - Every page reachable by a link, both clients (crawl.mjs): demo 43
+        pages, 447 of 447 anchors land on an id, 123 of 123 images load;
+        template 17 pages, 390 anchors, 123 images. Outbound links only to
+        TikTok, Instagram and LinkedIn.
+      - A long session (soak.js): 80 moves by clicking the site's own links,
+        all client-side, 23 pages. After garbage collection the heap levels
+        at 8.6MB from move 40; nodes and listeners follow the page open,
+        not the count of moves; no errors.
+      - Weight of a first visit on a phone, compressed: 403 to 485KB by
+        load (JS 257 to 275KB, fonts 120KB, CSS 21KB, HTML 30 to 36KB);
+        the home page reaches 983KB scrolled through, 398KB of it the reel's
+        stills. Prefetches are Next 16's segment cache (a route's tree and
+        its segments, fetched as their links come into view), not waste.
+      - Reduced motion, four pages: nothing held back, no faint text, no
+        running loops, the slate down.
+      - The players: a guide's film (youtube-nocookie), a TikTok and an
+        Instagram clip each open with no policy refusal.
+      - No new-tab link without noopener, no plain http:// anywhere.
+      Not tested here: Safari's engine and Firefox. Only Chromium is
+      installed; WebKit is a download the user has to agree to.
+
 - [x] Wave 78 (2026-09-30): production readiness, second pass.
       "Continue with the production readiness checks."
       Tried to get in, and could not (33 probes against the gated server,

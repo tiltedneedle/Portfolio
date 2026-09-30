@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { CutLink } from "@/components/room/CutLink";
 import { Rise, delay } from "@/components/portal/Scene";
+import { isStaleBuild, mayReloadForStaleBuild, reloadForStaleBuild } from "@/lib/stale-build";
 
 /**
  * A page inside the portal could not be rendered.
@@ -14,11 +15,21 @@ import { Rise, delay } from "@/components/portal/Scene";
  *
  * The error itself goes to the console, where whoever maintains the site
  * will look for it.
+ *
+ * One fault is not the page's: a deploy went out while it was open, and the
+ * code the room needs is gone (lib/stale-build). That one reloads the page,
+ * once, which fetches the new version, and shows nothing while it does;
+ * "Try again" reloads too, since rendering again cannot fetch what is gone.
  */
 export default function PortalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  const stale = isStaleBuild(error);
+  const [reloading] = useState(() => stale && mayReloadForStaleBuild());
   useEffect(() => {
-    console.error(error);
-  }, [error]);
+    if (reloading) reloadForStaleBuild();
+    else console.error(error);
+  }, [error, reloading]);
+
+  if (reloading) return <div aria-busy="true" className="min-h-[60vh]" />;
 
   return (
     <div className="mx-auto w-full max-w-[1600px] px-6 py-32 md:px-14">
@@ -38,7 +49,7 @@ export default function PortalError({ error, reset }: { error: Error & { digest?
       </p>
       {error.digest && <p className="mono mt-4 text-[color:var(--ink-mid)]">Ref {error.digest}</p>}
       <div className="scene-up mt-10 flex flex-wrap items-center gap-6" style={delay(0.85)}>
-        <button type="button" onClick={reset} className="pill pill-solid px-7 py-3 text-[15px]" data-cursor="Play">
+        <button type="button" onClick={stale ? reloadForStaleBuild : reset} className="pill pill-solid px-7 py-3 text-[15px]" data-cursor="Play">
           Try again
         </button>
         <CutLink href="/" className="slate-link" data-cursor="Cut">

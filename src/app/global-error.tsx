@@ -1,10 +1,27 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { isStaleBuild, mayReloadForStaleBuild, reloadForStaleBuild } from "@/lib/stale-build";
+
 /**
  * The root layout itself failed, so nothing from globals.css or the fonts
- * can be assumed. Plain, legible, in the room's colours by value.
+ * can be assumed. Plain, legible, in the room's colours by value. A page
+ * left open across a deploy reloads once for the new version instead
+ * (lib/stale-build).
  */
 export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  const stale = isStaleBuild(error);
+  const [reloading] = useState(() => stale && mayReloadForStaleBuild());
+  useEffect(() => {
+    if (reloading) reloadForStaleBuild();
+  }, [reloading]);
+
+  if (reloading)
+    return (
+      <html lang="en">
+        <body style={{ margin: 0, background: "#0b0b0c" }} />
+      </html>
+    );
   return (
     <html lang="en">
       <body style={{ margin: 0, background: "#0b0b0c", color: "#f2efe9", fontFamily: "system-ui, sans-serif" }}>
@@ -22,7 +39,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
             )}
             <button
               type="button"
-              onClick={reset}
+              onClick={stale ? reloadForStaleBuild : reset}
               style={{
                 marginTop: 32,
                 padding: "12px 28px",

@@ -17,10 +17,12 @@
     "links": "node scripts/links.mjs",
     "a11y": "node scripts/a11y.mjs",
     "safari": "node scripts/safari.mjs",
-    "access": "node scripts/access.mjs",
+    "double": "node scripts/auth-double.mjs",
     "new-client": "node scripts/new-client.mjs"
   },
   "dependencies": {
+    "@supabase/ssr": "0.12.3",
+    "@supabase/supabase-js": "2.110.8",
     "clsx": "^2.1.1",
     "framer-motion": "^13.4.4",
     "next": "16.3.6",

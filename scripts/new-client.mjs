@@ -1,12 +1,15 @@
-// Scaffold a client: the folder, the identity, the empty slots, the access
-// hash, and the line in the registry. Everything the README's "To add a
-// client" steps 1 to 3 do by hand.
+// Scaffold a client: the folder, the identity, the empty slots, the link to
+// the client in the Tilted Needle app, and the lines in the registry and the
+// proxy's list. Everything the README's "To add a client" steps do by hand.
 //
-//   node scripts/new-client.mjs <slug> "<Name>" [--short "Short"] [--code "access code"]
+//   node scripts/new-client.mjs <slug> "<Name>" [--ops-client <id>] [--short "Short"]
 //                               [--since 2026] [--contact email] [--logo /client/file.png]
 //
-// Then write the audit, ideas and scripts in the new index.ts and run
-// `npm run check`. The access code itself is never stored; only its hash.
+// --ops-client is the client's id in the Tilted Needle app (its row in that
+// app's `clients` table). Its people, invited there with the Client role for
+// that client, sign in here with the same email and password. Without it,
+// nobody can sign in until it is set. Then write the audit, ideas and
+// scripts in the new index.ts and run `npm run check`.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -24,7 +27,7 @@ function opt(name, fallback = "") {
 
 function fail(msg) {
   console.error("new-client: " + msg);
-  console.error('usage: node scripts/new-client.mjs <slug> "<Name>" [--short "Short"] [--code "access code"] [--since 2026] [--contact email] [--logo /client/file.png]');
+  console.error('usage: node scripts/new-client.mjs <slug> "<Name>" [--ops-client <id>] [--short "Short"] [--since 2026] [--contact email] [--logo /client/file.png]');
   process.exit(1);
 }
 
@@ -41,29 +44,9 @@ const short = opt("short");
 const since = opt("since", String(new Date().getFullYear()));
 const contact = opt("contact", "info@tiltedneedle.com");
 const logo = opt("logo");
-// A code whose hash sits in a public repository can be tried offline, at any
-// speed, with no rate limit: three words and a number falls in minutes. Say
-// so when a code is that short (README, The door).
-function warnIfShort(code) {
-  const words = code.trim().split(/[\s-]+/).filter(Boolean).length;
-  if (code.length < 30 || words < 6)
-    console.warn(
-      "warning  this code is short enough to be guessed offline from its hash while the repository is public. " +
-        "Make the repository private, or use six or more random words (README, The door)."
-    );
-}
-const code = opt("code");
 if (logo && !existsSync(join(root, "public", logo.replace(/^\//, "")))) fail("logo " + logo + " is not under public/");
-
-let accessHash = "";
-if (code) {
-  warnIfShort(code);
-  const data = new TextEncoder().encode("tn:" + slug + ":" + code);
-  const hash = await crypto.subtle.digest("SHA-256", data);
-  accessHash = Array.from(new Uint8Array(hash))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-}
+const opsClientId = opt("ops-client").toLowerCase();
+if (opsClientId && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(opsClientId)) fail("--ops-client must be the client's id in the Tilted Needle app, a UUID");
 
 // An identifier for the export: "horizon-aviation" becomes horizonAviation.
 let ident = slug.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase());
@@ -90,8 +73,9 @@ export const ${ident}: ClientSystem = {
     logo: ${q(logo)},
     since: ${q(since)},
     contact: ${q(contact)},
-    // sha256("tn:" + slug + ":" + access code), from \`npm run access -- ${slug} "<code>"\`.
-    accessHash: ${q(accessHash)},
+    // The client's id in the Tilted Needle app. Mirrored in slugs.ts
+    // (OPS_CLIENT_IDS); the build checks the two agree.
+    opsClientId: ${q(opsClientId)},
   },
 
   contentDiagnostic: report(DIAGNOSTIC_INTRO, diagnosticHeadings, {
@@ -118,11 +102,11 @@ export const ${ident}: ClientSystem = {
 `;
 
 // Two files have to agree with the new folder: the registry, which the
-// server reads, and the slug list, which the proxy reads at the edge where
-// it cannot import the registry. Both anchors are checked BEFORE anything
-// is written, because a half-scaffolded client does not merely fail to
-// build: the registry throws at module load and takes `npm run check`,
-// `npm run build` and `npm test` down with it.
+// server reads, and slugs.ts (the slugs and the Tilted Needle ids), which
+// the proxy reads where it cannot import the registry. Every anchor is
+// checked BEFORE anything is written, because a half-scaffolded client does
+// not merely fail to build: the registry throws at module load and takes
+// `npm run check`, `npm run build` and `npm test` down with it.
 const regPath = join(root, "src/content/clients/registry.ts");
 const slugsPath = join(root, "src/content/clients/slugs.ts");
 let reg = readFileSync(regPath, "utf8");
@@ -131,8 +115,12 @@ const importLine = `import { ${ident} } from "@/content/clients/${slug}";`;
 const anchorImport = 'import { demo } from "@/content/clients/demo";';
 const anchorAll = /const all: ClientSystem\[\] = \[([^\]]*)\];/;
 const anchorSlugs = /export const CLIENT_SLUGS = \[([^\]]*)\] as const;/;
+const anchorIds = /export const OPS_CLIENT_IDS: Readonly<Record<string, string>> = \{([\s\S]*?)\n\};/;
 if (!reg.includes(anchorImport) || !anchorAll.test(reg)) fail("registry.ts does not look like the one this script knows; add the client by hand");
-if (!anchorSlugs.test(slugsSrc)) fail("slugs.ts does not look like the one this script knows; add the client by hand");
+if (!anchorSlugs.test(slugsSrc) || !anchorIds.test(slugsSrc)) fail("slugs.ts does not look like the one this script knows; add the client by hand");
+// One Tilted Needle client, one portal: a second would show its people
+// whichever of the two came first.
+if (opsClientId && slugsSrc.toLowerCase().includes('"' + opsClientId + '"')) fail("another client here already has the Tilted Needle id " + opsClientId);
 
 mkdirSync(dir, { recursive: true });
 writeFileSync(join(dir, "index.ts"), file);
@@ -142,11 +130,16 @@ reg = reg.replace(anchorAll, (m, list) => `const all: ClientSystem[] = [${list.t
 writeFileSync(regPath, reg);
 
 slugsSrc = slugsSrc.replace(anchorSlugs, (m, list) => `export const CLIENT_SLUGS = [${list.trim()}, "${slug}"] as const;`);
+if (opsClientId) slugsSrc = slugsSrc.replace(anchorIds, (m, body) => `export const OPS_CLIENT_IDS: Readonly<Record<string, string>> = {${body}\n  ${q(slug)}: ${q(opsClientId)},\n};`);
 writeFileSync(slugsPath, slugsSrc);
 
 console.log("created  src/content/clients/" + slug + "/index.ts");
 console.log("updated  src/content/clients/registry.ts");
 console.log("updated  src/content/clients/slugs.ts");
-console.log(accessHash ? "access   hash set from the code you gave (the code itself is not stored)" : "access   no code given: the client cannot log in until accessHash is set");
-console.log("link     /login?for=" + slug + "   (their own door; the code still opens it)");
+console.log(
+  opsClientId
+    ? "accounts people invited in the Tilted Needle app with the Client role for this client sign in here"
+    : "accounts none yet: set opsClientId here and in slugs.ts to the client's id in the Tilted Needle app"
+);
+console.log("link     /login?for=" + slug + "   (their own door, with their name on it)");
 console.log("next     write the reports, ideas and scripts, then: npm run check && npm run build");

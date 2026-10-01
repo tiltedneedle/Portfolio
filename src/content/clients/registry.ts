@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { ClientSystem } from "@/content/clients/types";
-import { CLIENT_SLUGS, TEMPLATE_SLUG } from "@/content/clients/slugs";
+import { CLIENT_SLUGS, OPS_CLIENT_IDS, TEMPLATE_SLUG } from "@/content/clients/slugs";
 import { template } from "@/content/clients/template";
 import { demo } from "@/content/clients/demo";
 
@@ -8,8 +8,8 @@ import { demo } from "@/content/clients/demo";
  * Every client system this deployment can serve. Add a client by adding a
  * folder and one line here; `npm run check` verifies the shape.
  *
- * The template is what an open door (no PORTAL_SECRET) shows, and what a
- * new client's folder is copied from. It has no access code.
+ * The template is what an open door (no Supabase configured) shows, and
+ * what a new client's folder is copied from. Nobody signs in to it.
  */
 const all: ClientSystem[] = [template, demo];
 
@@ -17,13 +17,22 @@ export const clients: Record<string, ClientSystem> = Object.fromEntries(all.map(
 
 export const clientSlugs = all.map((c) => c.identity.slug);
 
-// The proxy runs at the edge and cannot import this file, so it keeps its
-// own copy of the slugs. They have to agree: a client in the registry but
-// not in that list can never be let through the door, and one in the list
-// but not the registry is rewritten into a tree that does not exist. This
-// throws at build time, which is where a mismatch should be found.
+// The proxy cannot import this file (its bundle would carry every client's
+// content), so it keeps its own copy of the slugs and of each client's id in
+// the Tilted Needle app. They have to agree: a client in the registry but
+// not in that list can never be let through the door, one in the list but
+// not the registry is rewritten into a tree that does not exist, and an id
+// that differs sends a client's people to the door, or to someone else's
+// portal. This throws at build time, which is where a mismatch should be
+// found.
 if (clientSlugs.length !== CLIENT_SLUGS.length || clientSlugs.some((s) => !(CLIENT_SLUGS as readonly string[]).includes(s))) {
   throw new Error("clients/slugs.ts lists [" + CLIENT_SLUGS.join(", ") + "] but the registry has [" + clientSlugs.join(", ") + "]");
+}
+for (const c of all) {
+  const listed = Object.hasOwn(OPS_CLIENT_IDS, c.identity.slug) ? OPS_CLIENT_IDS[c.identity.slug] : "";
+  if (listed !== c.identity.opsClientId) {
+    throw new Error("clients/slugs.ts gives " + c.identity.slug + " the Tilted Needle id " + JSON.stringify(listed) + " but its folder says " + JSON.stringify(c.identity.opsClientId));
+  }
 }
 
 /**
@@ -44,22 +53,6 @@ export function requireClient(slug: string): ClientSystem {
   const c = getClient(slug);
   if (!c) notFound();
   return c;
-}
-
-/**
- * The systems a visitor can actually log into.
- *
- * The demo is behind a flag. Its code is printed in the README, this repo
- * is public, and `accessHash` is a plain sha256 of "tn:<slug>:<code>" with
- * no PORTAL_SECRET mixed in — so rotating the secret ends sessions but
- * does NOT revoke a code. Without this gate, the moment PORTAL_SECRET is
- * set for the first paying client, the demo door opens to anyone who has
- * read the README. Set PORTAL_DEMO=1 in development and in CI, never in
- * production.
- */
-export function clientsWithAccess(): ClientSystem[] {
-  const demoOpen = process.env.PORTAL_DEMO === "1";
-  return all.filter((c) => c.identity.accessHash && (demoOpen || !c.identity.demo));
 }
 
 export { TEMPLATE_SLUG };

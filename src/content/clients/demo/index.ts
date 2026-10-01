@@ -1,10 +1,13 @@
 import type { ClientSystem } from "@/content/clients/types";
+import { DEMO_OPS_CLIENT_ID } from "@/content/clients/slugs";
 import { COMPETITOR_INTRO, DIAGNOSTIC_INTRO, competitorHeadings, diagnosticHeadings, pillar, report, scripts } from "@/content/system/pillars";
 
 /**
  * A DEMO CLIENT. Horizon Aviation is fictional: a private jet charter and
  * sales house, invented so the finished state of a system can be seen and
- * so the door can be tested. Access code: `horizon-2026` (see README).
+ * so the door can be tested. No real account can reach it: its id in the
+ * Tilted Needle app is fictional, and only the test double
+ * (scripts/auth-double.mjs) has an account for it (see README).
  * Delete this folder and its line in the registry before a real deployment
  * if you would rather it did not exist.
  */
@@ -16,7 +19,7 @@ export const demo: ClientSystem = {
     logo: "",
     since: "2026",
     contact: "info@tiltedneedle.com",
-    accessHash: "46722c7f0d32372a520855156501ead6fbec3dc8b73b053d7222b0b10a72544b",
+    opsClientId: DEMO_OPS_CLIENT_ID,
     demo: true,
   },
 

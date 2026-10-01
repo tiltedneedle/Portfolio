@@ -3,25 +3,24 @@
 // that exists on its page, and that every image loads. Outbound links are
 // listed, not fetched.
 //
-//   node scripts/links.mjs http://localhost:3400                   (open door)
-//   PORTAL_SECRET=... node scripts/links.mjs http://localhost:3401 --gated
+//   node scripts/links.mjs http://localhost:3400            (open door)
+//   node scripts/links.mjs http://localhost:3401 --gated    (accounts: the test double)
 //
-// Gated, it signs a session for the demo client with the server's secret
-// (the server needs PORTAL_DEMO=1). A YouTube still that YouTube no longer
-// has is not a failure: the page hides it. Every body is read (see smoke).
-import crypto from "node:crypto";
+// Gated, it signs in as the demo's client, through the door's own form
+// handler. A YouTube still that YouTube no longer has is not a failure: the
+// page hides it. Every body is read (see smoke).
+import { signIn } from "./test-accounts.mjs";
 
 const base = process.argv[2] || "http://localhost:3400";
 const gated = process.argv.includes("--gated");
 let cookie = "";
 if (gated) {
-  const secret = process.env.PORTAL_SECRET;
-  if (!secret) {
-    console.error("links: --gated needs the server's PORTAL_SECRET in the environment");
+  const s = await signIn(base);
+  if (s.location !== "/" || !s.cookie) {
+    console.error("links: could not sign in as the demo's client (" + s.status + " -> " + s.location + ")");
     process.exit(2);
   }
-  const exp = Date.now() + 3600e3;
-  cookie = "tn-room=demo." + exp + "." + crypto.createHmac("sha256", secret).update("demo." + exp).digest("hex");
+  cookie = s.cookie;
 }
 const headers = { connection: "close", ...(cookie ? { cookie } : {}) };
 const FILE = /\.(png|jpe?g|webp|avif|gif|svg|mp4|ico|json|txt|webmanifest)$/;

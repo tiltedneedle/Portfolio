@@ -19,17 +19,19 @@ export type ClientIdentity = {
   /** Where "your Tilted Needle team" links go. */
   contact: string;
   /**
-   * sha256("tn:" + slug + ":" + accessCode), from `node scripts/access.mjs`.
-   * The access code is what the client types at the door. Empty means the
-   * system cannot be logged into (the template).
+   * This client's id in the Tilted Needle app: the `id` of its row in that
+   * app's `clients` table. Someone invited there with the Client role for
+   * this client signs in here with the same email and password, and this
+   * is the system they see. Empty means nobody can sign in to it (the
+   * template). Mirrored in slugs.ts, for the proxy.
    */
-  accessHash: string;
+  opsClientId: string;
   /** Marks a fictional system kept in the repo to show the finished state. */
   demo?: boolean;
 };
 
 /** The identity without anything the browser has no business holding. */
-export type PublicIdentity = Omit<ClientIdentity, "accessHash">;
+export type PublicIdentity = Omit<ClientIdentity, "opsClientId">;
 
 /** How an area of the client's presence reads today. */
 export type Verdict = "strong" | "mixed" | "weak";
@@ -149,7 +151,7 @@ export type ClientSystem = {
 };
 
 export function publicIdentity(i: ClientIdentity): PublicIdentity {
-  const { accessHash: _omit, ...rest } = i;
+  const { opsClientId: _omit, ...rest } = i;
   void _omit;
   return rest;
 }

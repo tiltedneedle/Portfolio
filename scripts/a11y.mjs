@@ -4,17 +4,17 @@
 // overflow and for console errors; then the palette, open. Needs the
 // Playwright browser once: `npx playwright install chromium`.
 //
-//   node scripts/a11y.mjs http://localhost:3401 --code horizon-2026   (gated: logs in)
+//   node scripts/a11y.mjs http://localhost:3401 --sign-in   (accounts: signs in as the test double's client)
 //   node scripts/a11y.mjs http://localhost:3400                        (open door)
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { chromium } from "playwright";
+import { ACCOUNTS, PASSWORD } from "./test-accounts.mjs";
 
 const require = createRequire(import.meta.url);
 const axeSource = readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
 const base = process.argv[2] || "http://localhost:3400";
-const codeAt = process.argv.indexOf("--code");
-const code = codeAt > -1 ? process.argv[codeAt + 1] : "";
+const signingIn = process.argv.includes("--sign-in");
 const widths = [
   { name: "desktop", width: 1440, height: 900 },
   { name: "phone", width: 390, height: 844 },
@@ -40,11 +40,12 @@ try {
     if (m.type() === "error") errors.push(m.text());
   });
 
-  if (code) {
+  if (signingIn) {
     await visit(page, base + "/login");
-    await page.fill("#code", code);
-    await Promise.all([page.waitForURL((u) => !u.pathname.startsWith("/login")), page.press("#code", "Enter")]);
-    say(!page.url().includes("/login"), "logged in as the client behind the door");
+    await page.fill("#email", ACCOUNTS.client);
+    await page.fill("#password", PASSWORD);
+    await Promise.all([page.waitForURL((u) => !u.pathname.startsWith("/login")), page.press("#password", "Enter")]);
+    say(!page.url().includes("/login"), "signed in as the client behind the door");
   }
 
   // Every guide, report and written script the palette knows, plus the fixed pages.
@@ -52,7 +53,7 @@ try {
   const index = indexRes.ok() ? await indexRes.json() : [];
   say(Array.isArray(index) && index.length > 0, "search index answers with " + (Array.isArray(index) ? index.length : 0) + " entries");
   // The rooms, the door (with and without a client named) and the 404, then every page the index knows.
-  const routes = [...new Set(["/", "/audit", "/content", "/create", "/publish", "/analyse", "/content/ideas", "/content/scripts", "/login", "/login?for=demo", "/nothing-on-this-slate", ...index.map((e) => e.href)])];
+  const routes = [...new Set(["/", "/audit", "/content", "/create", "/publish", "/analyse", "/content/ideas", "/content/scripts", "/login", "/login?for=demo", "/login?forgot=1", "/login?error=credentials", "/auth/reset", "/nothing-on-this-slate", ...index.map((e) => e.href)])];
 
   const audit = () =>
     page.evaluate(async (tags) => {

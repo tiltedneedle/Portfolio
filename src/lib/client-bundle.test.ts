@@ -17,9 +17,14 @@ import { describe, expect, it } from "vitest";
  * Type-only imports are ignored. SWC erases them, so `import type
  * { Published }` in a client component costs nothing, and counting it would
  * fail this test the first time someone writes one.
+ *
+ * The door's server half is held the same way: the session lookups, the
+ * sign-in limiter and the Supabase client run on the server only. The one
+ * thing the browser needs from them, the name of the "someone is in"
+ * cookie, lives in lib/presence.ts for that reason.
  */
 const SRC = resolve(__dirname, "..");
-const FORBIDDEN = ["src/lib/published.ts", "src/lib/published.json"];
+const FORBIDDEN = ["src/lib/published.ts", "src/lib/published.json", "src/lib/auth.ts", "src/lib/supabase-server.ts", "src/lib/door-routes.ts"];
 
 function walk(dir: string, out: string[] = []): string[] {
   for (const name of readdirSync(dir)) {
@@ -119,9 +124,9 @@ describe("the client bundle", () => {
     expect(entries.length).toBeGreaterThan(10);
   });
 
-  it("never reaches the publishing index", () => {
+  it("never reaches the publishing index, nor the door's server half", () => {
     const leaks = entries.map((e) => chainToForbidden(e)).filter((c): c is string[] => c !== null);
     const message = leaks.map((c) => c.join("\n      -> ")).join("\n\n");
-    expect(message, "a client component reaches the publishing index:\n\n" + message).toBe("");
+    expect(message, "a client component reaches server-only code:\n\n" + message).toBe("");
   });
 });

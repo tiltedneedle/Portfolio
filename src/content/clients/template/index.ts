@@ -8,8 +8,9 @@ import { COMPETITOR_INTRO, DIAGNOSTIC_INTRO, competitorHeadings, diagnosticHeadi
  * written. The demo client shows the finished state.
  *
  * To set up a client: copy this folder to `src/content/clients/<slug>/`,
- * fill the four parts below, generate an access hash with
- * `node scripts/access.mjs <slug> <access code>`, add the client to
+ * fill the four parts below, set `opsClientId` to the client's id in the
+ * Tilted Needle app (or run `npm run new-client`, which does all of this),
+ * add the client to
  * `registry.ts`, run `npm run check`.
  */
 export const template: ClientSystem = {
@@ -20,7 +21,7 @@ export const template: ClientSystem = {
     logo: "",
     since: "2026",
     contact: "info@tiltedneedle.com",
-    accessHash: "",
+    opsClientId: "",
   },
 
   contentDiagnostic: report(DIAGNOSTIC_INTRO, diagnosticHeadings),

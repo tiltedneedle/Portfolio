@@ -5,8 +5,8 @@ Next.js 16 (App Router) · React 19 · Tailwind v4 · Framer Motion
 A private site that delivers each client's complete viral content system:
 their audit, their hundred ideas and twenty scripts, and the universal
 Tilted Needle knowledge (create, publish, analyse). One deployment serves
-every client; the access code identifies who is in the room, and every page
-under the door is theirs. `PROGRESS.md` is the resume point for anyone
+every client; each person signs in with their Tilted Needle account, which
+says which client they belong to, and every page under the door is theirs. `PROGRESS.md` is the resume point for anyone
 picking the work up. The marketing site this grew out of lives on the
 `marketing-site` branch.
 
@@ -22,19 +22,25 @@ npm run build
 npx next start -p 3400
 ```
 
-Without `PORTAL_SECRET` the door is open and the site shows the `template`
-client, which is the right thing for previewing. To test the door locally:
+With no accounts connected (`SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY`
+unset) the door is open and the site shows the `template` client, which is
+the right thing for previewing. To test the door locally, run the stand-in
+for Supabase and point the portal at it:
 
 ```bash
-PORTAL_SECRET=any-long-random-string PORTAL_DEMO=1 npx next start -p 3401
+npm run double
 ```
 
-`PORTAL_DEMO=1` is what opens the demo client's door. Its code is printed
-below and this repository is public, so without the flag that door stays
-shut: `accessHash` is a plain sha256 of `"tn:" + slug + ":" + code` with no
-secret mixed in, which means rotating `PORTAL_SECRET` ends sessions but does
-not revoke a code. Set the flag in development and in CI. Never in
-production.
+```bash
+SUPABASE_URL=http://localhost:54321 SUPABASE_PUBLISHABLE_KEY=sb_publishable_double npx next start -p 3401
+```
+
+Then sign in as `client@horizon.test`, password `horizon-portal-2026` (the
+demo's client). The double (`scripts/auth-double.mjs`) has an account for
+every case the door handles, listed at its top; none of them exists
+anywhere else, and it forgets everything when it stops. To try the real
+thing, put the Tilted Needle app's two values in `.env.local` instead (see
+The door).
 
 If `next start` fails with `EADDRINUSE`, an older instance holds the port
 and you would be looking at a stale build. Kill it first:
@@ -82,33 +88,32 @@ heading carries a copy-link anchor on hover.
 > publishes their material to anyone who looks. Decide first: make the
 > repository private, or keep client content out of git and supply it at
 > build time. Do not write a paying client's words into this tree until
-> that is settled. The demo's access code is published here too, which is
-> why the demo door needs `PORTAL_DEMO=1` to open at all.
+> that is settled. Signing in does not change this: the login guards the
+> site, not the repository.
 
 Everything personal lives in `src/content/clients/<slug>/`, one folder per
 client, listed in `src/content/clients/registry.ts`. Two ship with the
 repo: `template` (what an open door shows; example ideas and one example
-script) and `demo` (Horizon Aviation, fictional; the finished state, access
-code `horizon-2026`).
+script) and `demo` (Horizon Aviation, fictional; the finished state, and no
+real account can reach it: only the test double has one).
 
-To add a client, scaffold it:
-
-```bash
-npm run new-client -- horizon-aviation "Horizon Aviation" --short Horizon --code "velvet anchor orbit meadow lantern quarry" --logo /client/horizon.png
-```
-
-That creates `src/content/clients/<slug>/index.ts` with the identity, every
-slot empty, the access hash computed from the code (the code itself is
-never stored; give it to the client directly), and adds the client to
-`registry.ts`. `--short` is the name the nav uses, `--logo` a file under
-`public/` (without one the site shows a monogram); `--since` and
-`--contact` are optional. To change the code later:
+To add a client, first create them in the Tilted Needle app and invite
+their people there (Team admin, role Client, for that client). Then
+scaffold them here with their id from that app (the `id` of their row in
+its `clients` table):
 
 ```bash
-npm run access -- <slug> "<the new code>"
+npm run new-client -- horizon-aviation "Horizon Aviation" --short Horizon --ops-client <their id in the Tilted Needle app> --logo /client/horizon.png
 ```
 
-and paste the hash into `accessHash`. Then:
+That creates `src/content/clients/<slug>/index.ts` with the identity and
+every slot empty, and adds the client to `registry.ts` and to `slugs.ts`,
+where the proxy finds which portal an account belongs to. `--short` is the
+name the nav uses, `--logo` a file under `public/` (without one the site
+shows a monogram); `--since` and `--contact` are optional. Without
+`--ops-client` nobody can sign in until the id is set, in the client's
+`opsClientId` and in `OPS_CLIENT_IDS` in `slugs.ts` (the build checks the
+two agree). Then:
 
 4. Write the two audit reports (paragraphs under each fixed heading; use the
    `report()` helper), 25 ideas per pillar (`pillar()` pads to 25) and 20
@@ -139,42 +144,61 @@ and paste the hash into `accessHash`. Then:
    ```
 
    `check` compiles the content, then validates every client and guide:
-   slugs, hashes, logos, heading sets, idea counts, script numbering, clip
-   ids. It exits non-zero on problems.
+   slugs, Tilted Needle ids, logos, heading sets, idea counts, script
+   numbering, clip ids. It exits non-zero on problems.
 6. Deploy. The pages for every client are pre-rendered at build time.
 
 ## The door
 
-`src/proxy.ts` runs on every request. With `PORTAL_SECRET` set it verifies
-the `tn-room` cookie (`slug.expiry.signature`, HMAC-SHA256 under the
-secret, 30 days) and rewrites the clean URL into that client's pre-rendered
-tree under `/c/<slug>/`. No cookie, or a bad one, redirects to `/login`
-with the wanted page in `?next=`. Direct hits on `/c/...` are bounced to the
+People sign in with their Tilted Needle account: the same email and
+password as the Tilted Needle app, because the portal uses that app's
+Supabase project. Neither has a sign-up form; an account exists because
+someone invited it from the app's Team admin. Who sees which portal is that
+app's own record: a person whose active membership has the Client role,
+for a client whose id is in `OPS_CLIENT_IDS` (`src/content/clients/slugs.ts`),
+sees that client's system. Anyone else (staff, a client this portal does
+not carry, a membership switched off) is told at the door that the account
+has no portal here, and no session is kept.
+
+`src/proxy.ts` runs on every request. It verifies the session's token by
+its signature (`getClaims`, against the project's published keys, with no
+round trip once they are cached), refreshes it as it nears its end, asks
+the database which client the person belongs to (as that person: row
+security shows anyone their own memberships only), and rewrites the clean
+URL into that client's pre-rendered tree under `/c/<slug>/`. The answer is
+remembered per server instance for a minute (fifteen seconds when there is
+none), so taking a membership away takes up to a minute to reach the
+portal. No session, or one that does not verify, redirects to `/login` with
+the wanted page in `?next=`. Direct hits on `/c/...` are bounced to the
 clean path, so no client tree is reachable by name.
 
-The login page is one field. The server action hashes the code against
-every client (`sha256("tn:" + slug + ":" + code)`, constant-time, no early
-exit) and, on a match, sets the session cookie and a readable `tn-in`
-presence cookie that the static footer uses to show "Leave the room".
-Twelve attempts per ten minutes per IP. No accounts, no database.
+The door's forms post to route handlers under `/auth/`: `sign-in`,
+`sign-out`, `forgot` (emails a link to choose a new password), `confirm`
+(where that link lands) and `password`; `/auth/reset` is the page for the
+new one. All of them refuse a form posted from another site. Wrong
+passwords are counted, twelve per ten minutes per address, under
+Supabase's own limits; reset requests are counted the same way, since
+each sends an email. Signing out ends this browser's session only:
+Supabase's default ends every session, which here would sign the person
+out of the Tilted Needle app as well.
 
-Set `PORTAL_SECRET` on the deployment to a long random string (the
-`.env.example` shows how to make one). Rotating it logs everyone out.
+The session's cookies are httpOnly (the portal never talks to Supabase
+from the browser, so nothing a page runs can read them), SameSite=Lax, and
+Secure over https. A readable `tn-in` cookie tells the static footer to
+show "Leave the room". The portal keeps no secret of its own:
+`SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` are public values, the same
+ones the Tilted Needle app ships to every browser (there they are named
+`NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`).
 
-A Vercel production build refuses to go out without a proper door
-(`next.config.ts`): with no `PORTAL_SECRET` (the template, every guide in
-it, to anyone), with one shorter than 32 characters (a client holding one
-valid cookie of their own could guess it offline, then sign a cookie for
-another client), or with `PORTAL_DEMO` set (the demo's published code opens
-a room). The deploy fails where it is seen and the last good one stays up.
-Preview deployments, CI and `next start` are not affected.
+A Vercel production build refuses to go out without the door
+(`next.config.ts`): with either value missing (the template, every guide in
+it, to anyone), or with `SUPABASE_URL` anything but the https address of a
+real project (the test double on localhost, say). The deploy fails where it
+is seen and the last good one stays up. Preview deployments, CI and
+`next start` are not affected.
 
-Access codes are stored as a plain sha256, and this repository is public:
-anyone can take a client's `accessHash` and try codes against it offline,
-at whatever speed their hardware allows, with no rate limit. Three words
-and a number falls in minutes that way. Before a real client's code is
-committed, either make the repository private or give the code real
-length (six or more random words).
+The demo has no real account: its id in the Tilted Needle app is
+fictional, so only the test double can sign in to it.
 
 A shared link previews as the slate of a private screening
 (`src/app/opengraph-image.tsx`), whatever the path: no client name ever
@@ -183,7 +207,7 @@ unknown client) is a routed 404 served from the site's own page.
 
 Each client has their own link to the door, `/login?for=<slug>`, which
 puts their name and mark on the slate (the scaffolder prints it). The
-code is still what opens it; the link on its own grants nothing.
+account is still what opens it; the link on its own grants nothing.
 
 ## Writing a guide
 
@@ -310,28 +334,39 @@ Security headers, including a narrow content security policy, are in
 Vercel builds `main` to Production on every push. Before a client is sent
 a link:
 
-1. **The repository.** Make it private, or keep client content and codes
-   out of git (see Clients, and The door on why a code's hash matters).
+1. **The repository.** Make it private, or keep client content out of git
+   (see Clients). The login guards the site, not the repository.
 2. **The door.** In the Vercel project, Settings, Environment Variables,
-   Production: `PORTAL_SECRET` set to 32 or more random characters, and no
-   `PORTAL_DEMO`. A production build refuses to go out otherwise, and says
-   which it was in the build log.
-3. **An address.** Add a domain to the project. Vercel's login (Deployment
+   Production: `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY`, set to the
+   Tilted Needle app's own values (its `NEXT_PUBLIC_SUPABASE_URL` and
+   `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`). A production build refuses to
+   go out without them, and says why in the build log.
+3. **Supabase** (the Tilted Needle project, Authentication). Under URL
+   Configuration, add `https://<the portal's domain>/auth/confirm` to the
+   Redirect URLs, or the portal's "forgot your password" links land on the
+   Tilted Needle app instead. Keep "Allow new users to sign up" off (the
+   app needs that too). And before inviting clients: Supabase's built-in
+   email reaches only the project team's own addresses, and slowly, so set
+   a mail provider (SMTP) for invitations and reset links to reach anyone
+   else.
+4. **An address.** Add a domain to the project. Vercel's login (Deployment
    Protection) sits in front of the project's generated `*.vercel.app`
    addresses, so a client cannot reach the door through them. Put the
    domain on the GitHub repository too; the one there now is dead.
-4. **The client.** Scaffold them with a code of six or more random words
-   (the scripts warn about shorter ones) and send `/login?for=<slug>`. That
+5. **The client.** Create them in the Tilted Needle app and invite their
+   people from Team admin with the Client role, for that client; each
+   chooses a password from the invitation. Scaffold them here with
+   `--ops-client` (see Clients), deploy, and send `/login?for=<slug>`. That
    page shows their name to anyone who guesses the slug; if who the studio
    works with is confidential, use a slug that is not the client's name.
-5. **After the deploy,** from outside: `/login` answers 200 with the
+6. **After the deploy,** from outside: `/login` answers 200 with the
    Content-Security-Policy header; `/audit` without a session goes to
-   `/login`; a wrong code is refused; the right one opens the client's own
-   pages and nobody else's.
-6. **Worth switching on in Vercel:** a firewall rate limit on `POST
-   /login` (the in-app limit is per instance), an uptime check on
-   `/login`, and error alerts or a reporting service; today a fault in
-   production is visible only in Vercel's logs.
+   `/login`; a wrong password is refused; the client's account opens their
+   own pages and nobody else's; a staff account is told it has no portal.
+7. **Worth switching on in Vercel:** a firewall rate limit on `POST
+   /auth/sign-in` and `POST /auth/forgot` (the in-app count is per
+   instance), an uptime check on `/login`, and error alerts or a reporting
+   service; today a fault in production is visible only in Vercel's logs.
 
 ## Verifying
 
@@ -339,16 +374,18 @@ a link:
 npm test
 npm run check
 npm run smoke -- http://localhost:3400
-npm run smoke -- http://localhost:3401 --gated
 npm run links -- http://localhost:3400
-PORTAL_SECRET=<the server's> npm run door -- http://localhost:3401
-PORTAL_SECRET=<the server's> npm run links -- http://localhost:3401 --gated
-PORTAL_DEMO=1 npm run a11y -- http://localhost:3401 --code horizon-2026
-PORTAL_SECRET=<the server's> npm run safari -- http://localhost:3401 --gated --code horizon-2026
+npm run smoke -- http://localhost:3401 --gated
+npm run door -- http://localhost:3401
+npm run links -- http://localhost:3401 --gated
+npm run a11y -- http://localhost:3401 --sign-in
+npm run safari -- http://localhost:3401 --sign-in
 ```
 
-`test` runs the unit tests for the pure parts: the session token and
-access hash, the proxy's path maps, spoken length, the week, the inline
+The :3401 lines need the test double and the gated server running (see
+Running). `test` runs the unit tests for the pure parts: which portal a
+membership leads to and how long that is remembered, the redirects the
+door allows, the proxy's path maps, spoken length, the week, the inline
 marks and the palette index. The same loop runs on every push in GitHub
 Actions (`.github/workflows/verify.yml`), on Node 22: `package.json`'s
 engines field, which Vercel builds with and CI reads (`.nvmrc` says the
@@ -358,11 +395,11 @@ same, for nvm).
 and a few strings. `links` walks every page a reader can reach from the
 front page and checks that each answers, that every #anchor lands on an id,
 and that every image loads. `door` tries to get past the door with the
-internal tree under other spellings, the image optimizer, and sessions
-that are forged, expired, cross-signed or another client's; it signs them
-with the server's own secret, so it needs `PORTAL_SECRET` (and the server
-`PORTAL_DEMO=1`). `a11y` opens a real browser (`npx playwright install
-chromium` once), logs in, and takes every route the palette's index knows
+internal tree under other spellings, the image optimizer, sessions that
+are forged, expired, signed with the wrong key or with none, accounts that
+have no portal here, and forms posted from another site; the double's
+test-only routes mint the tokens it needs. `a11y` opens a real browser
+(`npx playwright install chromium` once), signs in, and takes every route the palette's index knows
 plus the fixed pages through axe at desktop and phone width (WCAG 2.2 AA
 and best practice, no filter), failing on any violation, any horizontal
 overflow or any console error; then the palette, open. CI runs it after
@@ -371,12 +408,11 @@ Playwright's WebKit, the engine inside Safari (`npx playwright install
 webkit` once), as an iPhone and as desktop Safari: each page answers and
 comes alive with no console error, and is never wider than the screen,
 as it opens or at any point while it is scrolled through, with every
-animation that moves something stopped and measured along its run.
+animation caught as it starts and slowed so its widest moment is seen.
 WebKit counts what an animation draws toward the page's width and
 Chromium does not, so only this pass can see that fault (it found three).
-It signs its own session like `door`, since Safari will not send the
-door's Secure cookie back to plain http://localhost, and with `--code`
-checks the form separately. CI runs it after `a11y`. Visual checks run through Playwright against
+It signs in through the door's own form, as a client on a phone would,
+and follows them inside. CI runs it after `a11y`. Visual checks run through Playwright against
 `next start`, with screenshots into a scratch directory.
 
 Stop both servers before rebuilding. `next start` reads the build manifest

@@ -14,10 +14,9 @@ import { Tilt } from "@/components/portal/Tilt";
 import { type Room } from "@/lib/rooms";
 import { openLocked } from "@/lib/locked";
 import { shortName } from "@/content/clients/types";
-import { PRESENCE } from "@/lib/session";
+import { PRESENCE } from "@/lib/presence";
 import type { Clip } from "@/lib/sequence";
 import { useCookieFlag } from "@/lib/use-cookie-flag";
-import { leave } from "@/app/login/actions";
 
 // Frozen at build time for the server render; the browser reads its own clock on hydration.
 const BUILD_YEAR = new Date().getFullYear();
@@ -116,7 +115,7 @@ export function PortalFooter({ rooms = chapters, clips }: { rooms?: Room[]; clip
                 Any part of the system, or a cut you want a second pair of eyes on.
               </p>
               {inRoom && (
-                <form action={leave} className="mt-4">
+                <form method="post" action="/auth/sign-out" className="mt-4">
                   <button type="submit" className="slate-link" data-cursor="Cut">
                     Leave the room &rarr;
                   </button>

@@ -119,8 +119,12 @@ for (const [slug, c] of Object.entries(clients)) {
   if (id.slug !== slug) problems.push(`${slug}: identity.slug is "${id.slug}"`);
   if (!/^[a-z0-9-]{1,64}$/.test(slug)) problems.push(`${slug}: slug must be lowercase letters, digits, dashes`);
   if (!id.name) problems.push(`${slug}: no name`);
-  if (id.accessHash && !/^[0-9a-f]{64}$/.test(id.accessHash)) problems.push(`${slug}: accessHash is not a sha256 hex`);
-  if (!id.accessHash && slug !== "template") warn.push(`${slug}: no access code, so nobody can log in to it`);
+  // The link to the client in the Tilted Needle app: a UUID, never the
+  // template's, never two clients'.
+  if (id.opsClientId && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id.opsClientId)) problems.push(`${slug}: opsClientId is not a UUID`);
+  if (id.opsClientId && slug === "template") problems.push("template: has an opsClientId, but nobody is meant to sign in to the template");
+  if (id.opsClientId && Object.values(clients).some((o) => o !== c && o.identity.opsClientId.toLowerCase() === id.opsClientId.toLowerCase())) problems.push(`${slug}: shares its opsClientId with another client`);
+  if (!id.opsClientId && slug !== "template") warn.push(`${slug}: no opsClientId, so nobody can sign in to it`);
   if (id.logo && !existsSync(join(root, "public", id.logo))) problems.push(`${slug}: logo ${id.logo} not found under public/`);
   // The contact is where every "ask the studio" goes: an address, or a link.
   if (!(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(id.contact ?? "") || /^https?:\/\//.test(id.contact ?? "")))

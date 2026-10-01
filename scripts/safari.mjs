@@ -9,32 +9,19 @@
 // accessibility pass included, measured 0. Then the phone menu, open. Needs
 // the browser once: `npx playwright install webkit`.
 //
-//   node scripts/safari.mjs http://localhost:3400                                 (open door)
-//   PORTAL_SECRET=... node scripts/safari.mjs http://localhost:3401 --gated --code horizon-2026
+//   node scripts/safari.mjs http://localhost:3400              (open door)
+//   node scripts/safari.mjs http://localhost:3401 --sign-in    (accounts: the test double)
 //
-// Gated, it signs the demo client's session with the server's secret, as
-// links does (the server needs PORTAL_DEMO=1): Safari keeps the Secure
-// cookie the door sets, but will not send it back to plain http://localhost,
-// so a session won through the form here is lost on the next page load.
-// Production is https, where it is sent. With --code the form is checked on
-// its own: a client typing the code is let through.
-import crypto from "node:crypto";
+// With --sign-in, the door's form is checked first, as a client on a phone
+// meets it, all the way inside; then each walk signs in as the demo's
+// client through the same form handler, sharing the page's cookie jar.
+// The session's cookies are Secure only over https, so Safari keeps and
+// sends them on plain http://localhost as it will on the real site.
 import { devices, webkit } from "playwright";
+import { ACCOUNTS, PASSWORD } from "./test-accounts.mjs";
 
 const base = process.argv[2] || "http://localhost:3400";
-const codeAt = process.argv.indexOf("--code");
-const code = codeAt > -1 ? process.argv[codeAt + 1] : "";
-let session = null;
-if (process.argv.includes("--gated")) {
-  const secret = process.env.PORTAL_SECRET;
-  if (!secret) {
-    console.error("safari: --gated needs the server's PORTAL_SECRET in the environment");
-    process.exit(2);
-  }
-  const exp = Date.now() + 3600e3;
-  const value = "demo." + exp + "." + crypto.createHmac("sha256", secret).update("demo." + exp).digest("hex");
-  session = { name: "tn-room", value, domain: new URL(base).hostname, path: "/", httpOnly: true, secure: false, sameSite: "Lax" };
-}
+const signingIn = process.argv.includes("--sign-in");
 const FILE = /\.(png|jpe?g|webp|avif|gif|svg|mp4|ico|json|txt|webmanifest|pdf)$/;
 // WebKit's own stderr, when DEBUG=pw:browser is set (CI sets it): kept
 // rather than printed, numbered, and what it said during a page reported
@@ -204,7 +191,10 @@ async function walk(browser, shape) {
   const open = async () => {
     if (context) await context.close().catch(() => {});
     context = await browser.newContext({ ...shape.device });
-    if (session) await context.addCookies([session]);
+    if (signingIn) {
+      const r = await context.request.post(base + "/auth/sign-in", { form: { email: ACCOUNTS.client, password: PASSWORD, next: "/" }, headers: { origin: new URL(base).origin }, maxRedirects: 0 });
+      if (r.status() !== 303 || r.headers().location?.includes("/login")) throw new Error("could not sign in (" + r.status() + " -> " + r.headers().location + ")");
+    }
     await context.addInitScript(() => {
       try {
         localStorage.setItem("tn-slate-seen", "1");
@@ -372,27 +362,27 @@ async function walk(browser, shape) {
   await context.close().catch(() => {});
 }
 
-// The door, as a client meets it on a phone: the code typed into the form
-// is sent, and the door answers with a session. Read off the door's answer,
-// not the browser's cookie jar, which says nothing over plain http: WebKit
-// on Linux (CI) does not keep the Secure cookie at all, and on Windows keeps
-// it but never sends it back.
-if (code) {
+// The door, as a client meets it on a phone: an email and a password typed
+// into the form, then the portal itself, a page inside it, and the way out.
+if (signingIn) {
   const browser = await webkit.launch();
   try {
-    const context = await browser.newContext({ ...devices["iPhone 15"] });
-    const page = await context.newPage();
-    let handed = false;
-    page.on("response", async (r) => {
-      if (r.request().method() !== "POST") return;
-      const set = (await r.headerValue("set-cookie").catch(() => null)) || "";
-      if (/(^|\n)\s*tn-room=/.test(set)) handed = true;
+    const context = await browser.newContext({ ...devices["iPhone 15"], deviceScaleFactor: 1 });
+    await context.addInitScript(() => {
+      try {
+        localStorage.setItem("tn-slate-seen", "1");
+      } catch {}
     });
-    await visit(page, base + "/login");
-    await page.fill("#code", code);
-    await page.press("#code", "Enter");
-    for (let i = 0; i < 150 && !handed; i++) await page.waitForTimeout(100);
-    say(handed, "iphone  the door opens to the code" + (handed ? "" : "  (no session in the door's answer)"));
+    const page = await context.newPage();
+    await visit(page, base + "/login?next=%2Faudit");
+    await page.fill("#email", ACCOUNTS.client);
+    await page.fill("#password", PASSWORD);
+    await Promise.all([page.waitForURL((u) => !u.pathname.startsWith("/login"), { timeout: 30000 }).catch(() => {}), page.press("#password", "Enter")]);
+    const landed = new URL(page.url()).pathname;
+    say(landed === "/audit", "iphone  the door opens to an account, onto the page asked for" + (landed === "/audit" ? "" : "  (landed on " + landed + ")"));
+    await visit(page, base + "/content/ideas");
+    const stays = new URL(page.url()).pathname === "/content/ideas";
+    say(stays, "iphone  and the session holds on the next page" + (stays ? "" : "  (sent to " + new URL(page.url()).pathname + ")"));
     await context.close();
   } finally {
     await browser.close().catch(() => {});

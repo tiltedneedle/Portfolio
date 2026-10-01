@@ -7,8 +7,11 @@ continuous work: implement, test, harden, research, improve, repeat.
 
 Repo: `C:\Users\HP\Downloads\JOB2\tilted-needle-site` (remote `github-tn`,
 `tiltedneedle/Portfolio`). Build with `npm run build`; serve with
-`npx next start -p 3400` (kill any old listener on 3400 first). A gated
-server for testing the door: `PORTAL_SECRET=x npx next start -p 3401`.
+`npx next start -p 3400` (kill any old listener on 3400 first). For testing
+the door: `npm run double` (a stand-in for the Tilted Needle app's
+Supabase), then `SUPABASE_URL=http://localhost:54321
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_double npx next start -p 3401`;
+sign in as `client@horizon.test` / `horizon-portal-2026`.
 Verify with `npm run smoke -- http://localhost:3400` and
 `npm run smoke -- http://localhost:3401 --gated`; content with `npm run
 check`. Visual checks go through the Playwright MCP
@@ -23,8 +26,10 @@ scratchpad, then `cp`) or put edit logic in a scratch `.cjs` and run it.
 ## What this is (2026-09-24)
 
 **The client system**: a private site delivering one client's complete
-viral content system. One deployment serves many clients: each has an
-access code; the door identifies them; every page under it is theirs.
+viral content system. One deployment serves many clients: each person
+signs in with their Tilted Needle account (since wave 83; it was an access
+code per client before), whose client membership says whose system they
+see; every page under the door is theirs.
 Brief: the user's "Info Product Servicing .md". Six rooms: Home, Your
 audit, Your content (personalised), Create, Publish, Analyse (universal).
 
@@ -35,10 +40,12 @@ The marketing site this grew out of is on the `marketing-site` branch.
 - Content is data: `src/content/system/` (universal guides as typed
   blocks), `src/content/clients/<slug>/` (identity, audit, ideas, scripts).
   `registry.ts` lists clients; `template` is what an open door shows; `demo`
-  (Horizon Aviation, fictional, code `horizon-2026`) shows the finished state.
-  `npm run new-client -- <slug> "<Name>" --code "<code>"` scaffolds a client.
+  (Horizon Aviation, fictional; only the test double has an account for
+  it) shows the finished state. `npm run new-client -- <slug> "<Name>"
+  --ops-client <id>` scaffolds a client, linked by its id in the Tilted
+  Needle app (`opsClientId`, mirrored in `OPS_CLIENT_IDS` in slugs.ts).
 - Each client's own door is `/login?for=<slug>` (name and mark on the
-  slate; the code still opens it).
+  slate; the account still opens it).
 - **A client is shown only what they have.** `src/lib/rooms.ts`:
   `writtenPages(sys)` is the personalised pages the studio has written,
   `liveChapters(sys)` the rooms to show, `livePaths()` every path they
@@ -52,15 +59,19 @@ The marketing site this grew out of is on the `marketing-site` branch.
   never printed on a card, a panel or a room. `personalised` on a chapter
   and on a home access item is a build-time flag only.
 - Every client's pages are pre-rendered at `/c/<slug>/...`. `src/proxy.ts`
-  verifies the signed session cookie (`tn-room`, HMAC under PORTAL_SECRET)
-  and rewrites clean URLs into that client's tree; `/c/...` direct hits are
-  bounced to clean paths. No PORTAL_SECRET means an open door showing only
-  the template. Login is one field: the code identifies the client
-  (constant-time compare over every client's hash; 12 tries / 10 min per IP).
-  A readable `tn-in` cookie lets the static footer show "Leave the room".
+  verifies the Supabase session (the Tilted Needle app's project; token
+  checked by signature with getClaims), finds the person's active Client
+  membership and the portal it names (lib/auth.ts, remembered a minute per
+  instance), and rewrites clean URLs into that client's tree; `/c/...`
+  direct hits are bounced to clean paths. No SUPABASE_URL /
+  SUPABASE_PUBLISHABLE_KEY means an open door showing only the template.
+  The door's forms post to route handlers under `/auth/` (sign-in,
+  sign-out, forgot, confirm, password; /auth/reset is a page). Sign-out
+  is this browser's session only. A readable `tn-in` cookie lets the
+  static footer show "Leave the room". The portal keeps no secret.
 - Remote stills go through `Still.tsx`, which hides itself on error or
   on YouTube's tiny placeholder, so the slate underneath shows.
-- Scripts: `npm run access -- <slug> <code>` (hash for a client file),
+- Scripts: `npm run double` (the test double for the accounts),
   `npm run check` (validates every client and guide, warns on clip and
   poster ids missing from published.json), `npm run smoke` (every route,
   the door, and a string from each new feature), `npm run a11y -- <base>
@@ -271,6 +282,53 @@ The marketing site this grew out of is on the `marketing-site` branch.
         against the build with wave 80's faults put back: the same four
         failures. A page lost four times in a row still fails the run, and
         re-running it is the remedy.
+
+- [x] Wave 83 (2026-10-01): accounts instead of access codes. "We're not
+      gonna do a secret system, instead we'll do a proper login
+      authentication system." Decided with the user: the Tilted Needle
+      app's own accounts (same Supabase project), email and password,
+      invite-only, clients only (no staff view).
+      - The door: email and password, posted to route handlers under
+        `/auth/` (sign-in, sign-out, forgot, confirm, password; the
+        /auth/reset page). Supabase checks the password; the person's
+        active Client membership in the Tilted Needle app names the client,
+        and `OPS_CLIENT_IDS` (slugs.ts, mirrored in each client's
+        `opsClientId`, asserted equal at build) says which portal that is.
+        Staff, a client this portal does not carry, a membership switched
+        off: told the account has no portal here, and no session is kept.
+      - The proxy verifies the session's token by signature (getClaims,
+        ES256 against the project's published keys: one key fetch, then no
+        round trips; measured), refreshes it, and remembers each person's
+        portal a minute per instance (fifteen seconds when none): twenty
+        page loads cost one membership lookup.
+      - Cookies httpOnly (nothing in the browser talks to Supabase), Secure
+        over https only (so Safari keeps them on localhost, and the Safari
+        pass now follows a client in through the form). Sign-out is this
+        browser's session only: Supabase's default is every session, which
+        would sign the person out of the Tilted Needle app too. Forms from
+        another site are refused. Wrong passwords counted (12 / 10 min per
+        address), reset requests counted (each sends an email).
+      - Gone: PORTAL_SECRET, PORTAL_DEMO, access codes and hashes,
+        access.mjs, the session token. The production build guard now
+        demands SUPABASE_URL (https, not localhost) and
+        SUPABASE_PUBLISHABLE_KEY, server-side names (the browser never uses
+        them, and a NEXT_PUBLIC_ value is fixed at build time).
+      - Tests: scripts/auth-double.mjs stands in for Supabase (the password
+        grant, refresh, PKCE recovery, the user, logout, JWKS, and the
+        memberships table under the same row rule), with an account for
+        each case (scripts/test-accounts.mjs). smoke, door (rewritten:
+        forged, expired, wrong-key, alg-none, HS256-with-the-public-key and
+        tampered tokens; no-portal accounts; cross-site forms; sign-out
+        ends one session and not another), links, a11y and safari all sign
+        in through the real form handler; CI runs the double.
+      - Found on the way: /auth/reset had been prerendered (no Supabase at
+        build, so its redirect ran before anything read the request, and
+        the build kept the redirect as the page); connection() fixes it.
+        The sign-in limiter counted every attempt, so the suites' own
+        sign-ins tripped it; it counts wrong passwords only.
+      - The door's title is capped by screen height (min(9vw, 12svh)), so
+        the second field does not push the note off a laptop's first
+        screen.
 
 - [x] Wave 82 (2026-09-30): the site on a phone, page by page. "Also make
       sure everything looks right on mobile."
@@ -1879,13 +1937,22 @@ The marketing site this grew out of is on the `marketing-site` branch.
    `src/content/clients/<slug>/index.ts`, and committing that publishes
    them. Either make the repository private, or keep client content out of
    git and supply it at build time. Flagged 2026-09-28; the README now warns
-   at the step itself. Related and already fixed: the demo door needed
-   `PORTAL_DEMO=1` because its code is printed in the public README and the
-   access hash is unsalted, so rotating PORTAL_SECRET does not revoke a code.
-   Sharper, found 2026-09-30: a client's accessHash in a public repo can be
-   attacked offline with no rate limit, and "three words and a number" (what
-   the scripts used to recommend) falls in minutes. Private repo, or codes of
-   six or more random words; access.mjs and new-client.mjs now warn.
+   at the step itself. The access-code concerns that sat here (an unsalted
+   hash in a public repo, guessable offline) went with the codes in wave
+   83; the content concern did not: a login guards the site, not the repo.
+
+**B. Going live with accounts (wave 83; only you can do these).**
+   - Vercel, project `portfolio`, Production: `SUPABASE_URL` and
+     `SUPABASE_PUBLISHABLE_KEY`, the Tilted Needle app's own values (its
+     NEXT_PUBLIC_ pair). Production builds refuse to go out without them.
+     `PORTAL_SECRET` / `PORTAL_DEMO`, if they were ever set, are unused.
+   - Supabase (the Tilted Needle project), Authentication: add
+     `https://<portal domain>/auth/confirm` to Redirect URLs; keep sign-ups
+     off; set a mail provider (SMTP) before inviting clients, since the
+     built-in sender reaches only the project team's own addresses.
+   - Per client: create and invite them in the Tilted Needle app (Team
+     admin, Client role, for that client), then scaffold or link them here
+     with their id from that app (`--ops-client`).
 
 
 0. Done in wave 75: framer-motion loads through `LazyMotion` + `m`

@@ -2,7 +2,8 @@
 // behaves, and the pages carry what they should. No browser needed.
 //
 //   node scripts/smoke.mjs http://localhost:3400            (open door)
-//   node scripts/smoke.mjs http://localhost:3401 --gated    (PORTAL_SECRET set)
+//   node scripts/smoke.mjs http://localhost:3401 --gated    (accounts: the test double)
+import { ACCOUNTS, signIn } from "./test-accounts.mjs";
 const base = process.argv[2] || "http://localhost:3400";
 const gated = process.argv.includes("--gated");
 let failed = 0;
@@ -106,15 +107,15 @@ if (!gated) {
   // A hostile or mistyped ?error must not take the door down: messages is a
   // plain object, so messages["__proto__"] used to render Object.prototype
   // and throw, replacing the login form with the fault page.
-  await expect("/login?error=__proto__", 200, { contains: "Access code" });
-  await expect("/login?for=constructor", 200, { contains: "Access code" });
-  await expect("/login?error=constructor", 200, { contains: "Access code" });
-  await expect("/login?error=nosuchthing", 200, { contains: "Access code" });
+  await expect("/login?error=__proto__", 200, { contains: 'name="email"' });
+  await expect("/login?for=constructor", 200, { contains: 'name="email"' });
+  await expect("/login?error=constructor", 200, { contains: 'name="email"' });
+  await expect("/login?error=nosuchthing", 200, { contains: 'name="email"' });
   // Same bug, one line below the one that was fixed: a prototype key reached
   // the client lookup, so /login?for=constructor answered 500.
-  await expect("/login?for=constructor", 200, { contains: "Access code" });
-  await expect("/login?for=tostring", 200, { contains: "Access code" });
-  await expect("/login?for=nosuchclient", 200, { contains: "Access code" });
+  await expect("/login?for=constructor", 200, { contains: 'name="email"' });
+  await expect("/login?for=tostring", 200, { contains: 'name="email"' });
+  await expect("/login?for=nosuchclient", 200, { contains: 'name="email"' });
   await expect("/login?for=demo", 200, { contains: /prepared for (<!-- -->)?Horizon Aviation/ });
   await expect("/login?for=nope", 200, { contains: "Private screening" });
   await expect("/robots.txt", 200, { contains: "Disallow: /" });
@@ -132,9 +133,10 @@ if (!gated) {
   await expect("/create/hooks", 307, { location: "/login?next=%2Fcreate%2Fhooks" });
   await expect("/search-index.json", 307, { location: "/login?next=%2Fsearch-index.json" });
   await expect("/", 307, { location: "/login", headers: { cookie: "tn-room=demo.9999999999999.deadbeef" } });
+  await expect("/", 307, { location: "/login", headers: { cookie: "sb-localhost-auth-token=base64-bm90IGEgc2Vzc2lvbg" } });
   await expect("/c/demo/audit", 307, { location: "/audit" });
-  await expect("/login", 200, { contains: "Access code" });
-  await expect("/login?error=__proto__", 200, { contains: "Access code" });
+  await expect("/login", 200, { contains: 'name="email"' });
+  await expect("/login?error=__proto__", 200, { contains: 'name="email"' });
   // A backslash is a slash to a browser, so this used to survive safeNext
   // and end up in the form as a redirect target. The framework echoes the
   // request URL in its own router payload either way; what matters is that
@@ -142,6 +144,29 @@ if (!gated) {
   await expect("/login?next=%2F%5Cevil.example", 200, { contains: 'name="next" value="/"' });
   await expect("/login?next=%2F%2Fevil.example", 200, { contains: 'name="next" value="/"' });
   await expect("/login?next=%2Fcreate%2Fhooks", 200, { contains: 'name="next" value="/create/hooks"' });
+  await expect("/login?for=demo", 200, { contains: /prepared for (<!-- -->)?Horizon Aviation/ });
+  await expect("/login?error=account", 200, { contains: "This account has no portal here" });
+  await expect("/login?forgot=1", 200, { contains: 'action="/auth/forgot"' });
+  await expect("/login?error=link", 200, { contains: 'action="/auth/forgot"' });
+  // Choosing a password needs the session an emailed link begins.
+  await expect("/auth/reset", 307, { location: "/login?error=link" });
+
+  // Inside, as the demo's client, through the form handler a browser posts to.
+  const s = await signIn(base, ACCOUNTS.client);
+  const okIn = s.status === 303 && s.location === "/" && s.cookie.includes("sb-localhost-auth-token=");
+  if (!okIn) failed++;
+  console.log((okIn ? "ok    " : "FAIL  ") + "sign in as the demo's client".padEnd(40) + " " + s.status + " -> " + s.location);
+  const inside = { headers: { cookie: s.cookie } };
+  await expect("/", 200, { contains: "Horizon Aviation", ...inside });
+  await expect("/audit/content-diagnostic", 200, { contains: "Horizon Aviation", ...inside });
+  await expect("/content/scripts/3", 200, inside);
+  await expect("/search-index.json", 200, { contains: "Verbal hooks", ...inside });
+  await expect("/c/template/audit", 307, { location: "/audit", ...inside });
+  // An account with no portal here is turned away at the form, and says why.
+  const staff = await signIn(base, ACCOUNTS.owner);
+  const okStaff = staff.location.startsWith("/login?error=account") && !staff.cookie.includes("sb-");
+  if (!okStaff) failed++;
+  console.log((okStaff ? "ok    " : "FAIL  ") + "staff account turned away".padEnd(40) + " " + staff.status + " -> " + staff.location);
 }
 
 console.log(failed ? "\n" + failed + " failed" : "\nall passed");

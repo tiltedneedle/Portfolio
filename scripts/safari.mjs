@@ -165,6 +165,9 @@ const scrollThrough = (page) =>
     return { worst, culprit, cut };
   });
 
+/** How many times a page WebKit loses is tried in all (see the walk). */
+const TRIES = 6;
+
 /** A promise that gives up after `ms`, saying what took too long. */
 const within = (promise, ms, what) =>
   Promise.race([promise, new Promise((_, reject) => setTimeout(() => reject(new Error(what + " took over " + ms / 1000 + "s")), ms))]);
@@ -175,8 +178,11 @@ const within = (promise, ms, what) =>
  * as it is known, with the time the page took, so a walk that stalls on CI
  * shows where.
  */
-async function walk(browser, shape) {
+async function walk(held, shape) {
   const note = say;
+  // This walk's WebKit. Held by the caller too, which closes whichever one
+  // is open when the walk ends, however it ends.
+  let browser = null;
   const label = shape.name.padEnd(8);
   const errors = [];
   let cancelled = 0;
@@ -187,9 +193,14 @@ async function walk(browser, shape) {
   let phase = "";
   // A fresh context and page, with the session and past the slate (which
   // plays once, on a first visit, over everything, and is not what is
-  // measured here). If WebKit loses a page, the walk goes on in a new one.
-  const open = async () => {
+  // measured here). If WebKit loses a page, the walk goes on in a new one;
+  // `anew` starts a whole new WebKit under it first.
+  const open = async (anew = false) => {
     if (context) await context.close().catch(() => {});
+    if (anew || !browser) {
+      if (browser) await browser.close().catch(() => {});
+      browser = held.current = await webkit.launch();
+    }
     context = await browser.newContext({ ...shape.device });
     if (signingIn) {
       const r = await context.request.post(base + "/auth/sign-in", { form: { email: ACCOUNTS.client, password: PASSWORD, next: "/" }, headers: { origin: new URL(base).origin }, maxRedirects: 0 });
@@ -282,18 +293,26 @@ async function walk(browser, shape) {
     const path = queue.shift();
     const t0 = Date.now();
     // A page WebKit loses (its process crashes, the page goes, or it stops
-    // answering for two minutes) is tried again in a fresh one, up to four
+    // answering for two minutes) is tried again in a fresh one, up to six
     // times in all: lost every time is a failure, lost and then walked is
-    // said. On Linux (CI) the page's own process dies now and then, a
-    // different page each run and up to seven of fifty-two, while the
-    // browser lives on; each loss says the step it happened in and what
-    // WebKit logged during that try, which so far has been nothing. What a
-    // page is found to have wrong is never retried: a fault in the site
-    // shows the same way every time (the three wave 80 fixed did).
+    // said. On Linux (CI) the page's own process dies now and then while
+    // the browser lives on, and not evenly: over eight runs, 47 losses, the
+    // two pages with the most on them (/content/ideas and
+    // /audit/content-diagnostic) lost on about one try in three, the rest
+    // on about one in twelve, and always walked clean on a try that
+    // survived. At four tries a page that fragile is lost every time in
+    // about one run in twenty, and was (wave 85: /content/ideas, on a
+    // commit that had not touched it); at six, about one in two hundred.
+    // From the third try on the walk starts a whole new WebKit as well, in
+    // case the one that keeps losing the page is part of the reason. Each
+    // loss says the step it happened in and what WebKit logged during that
+    // try, which so far has been nothing. What a page is found to have
+    // wrong is never retried: a fault in the site shows the same way every
+    // time (the three wave 80 fixed did).
     let result = null;
     let lost = "";
     let losses = 0;
-    for (let attempt = 0; attempt < 4 && !result; attempt++) {
+    for (let attempt = 0; attempt < TRIES && !result; attempt++) {
       const from = logged;
       try {
         result = await within(check(path), 120000, "the page");
@@ -304,7 +323,7 @@ async function walk(browser, shape) {
         // not allowed in the context, falling back"), nor empty lines.
         const words = lastWords.filter((l) => l.n >= from && !/is-controlled-by-automation/.test(l.text) && !/\[err\]\s*$/.test(l.text)).slice(-12);
         console.log("      " + label + path + " lost (" + lost + ")" + (words.length ? ":\n" + words.map((l) => "        | " + l.text.slice(0, 200)).join("\n") : ", WebKit logged nothing meanwhile"));
-        await open();
+        await open(losses >= 2);
       }
     }
     const took = "  " + ((Date.now() - t0) / 1000).toFixed(1) + "s";
@@ -395,11 +414,11 @@ if (signingIn) {
 // not a crash here.
 const walks = await Promise.allSettled(
   SHAPES.map(async (shape) => {
-    const browser = await webkit.launch();
+    const held = { current: null };
     try {
-      await walk(browser, shape);
+      await walk(held, shape);
     } finally {
-      await browser.close().catch(() => {});
+      await held.current?.close().catch(() => {});
     }
   })
 );

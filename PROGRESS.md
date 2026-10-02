@@ -323,6 +323,20 @@ The marketing site this grew out of is on the `marketing-site` branch.
       - Not done, and not tried: a real invitation email. Sending one is
         the user's first real use (it needs the mail provider and the two
         redirect addresses, see Next B).
+      - CI went red on this wave's push, and not for it: the Safari pass
+        lost /content/ideas (as an iPhone) on all four tries, on a commit
+        that had not touched the page. Counted from the logs of the eight
+        runs since WebKit joined CI: 47 losses, the two fullest pages
+        (/content/ideas, /audit/content-diagnostic) lost on about one try
+        in three, the rest on about one in twelve, and every page clean on
+        a try that survived. At four tries that is a red run in twenty.
+        safari.mjs now gives six, the later ones in a whole new WebKit
+        (tried here with losses simulated: recovers after three, still
+        fails a page lost all six times). Why Linux WebKit drops them is
+        still not known: it logs nothing, and it has never happened on
+        Windows. Measured and ruled out as the cause: the walk's slowed
+        animations piling up (/content/ideas has the fewest of the heavy
+        pages, 52; the others 180 to 200).
 
 - [x] Wave 84 (2026-10-02): the login, gone over again. Found by reading
       it as the thing that guards everything, and by making the test double

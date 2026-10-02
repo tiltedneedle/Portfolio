@@ -18,6 +18,8 @@ export const ACCOUNTS = {
   former: "former@horizon.test",
   /** Invited, invitation never taken up: no password yet. */
   invited: "invited@horizon.test",
+  /** Invited to the demo's client, kept for the invitation round trip, so `invited` stays as it began. */
+  newcomer: "newcomer@horizon.test",
   /** Has a password, but the address was never confirmed. */
   unconfirmed: "unconfirmed@horizon.test",
   /** Their membership lookup fails. */

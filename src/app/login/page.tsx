@@ -21,6 +21,7 @@ const messages: Record<string, string> = {
   account: "This account has no portal here. Sign in with the email your Tilted Needle team invited.",
   invite: "Finish setting up your account first: choose your password from your invitation email.",
   link: "That link has expired, been used, or was opened in another browser. Ask for a new one here.",
+  invitation: "That invitation has expired or been used. Enter your email for a new link, or ask your Tilted Needle team to send the invitation again.",
   unavailable: "Your account could not be checked just now. Try again in a minute.",
   email: "Enter the email address your account uses.",
   wait: "Too many emails just now. If you asked a moment ago, check your inbox; otherwise try again in a few minutes.",
@@ -53,7 +54,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const error = pick(messages, sp.error);
   const notice = pick(notices, sp.notice);
   // A spent link is answered by the form that asks for a new one.
-  const forgot = sp.forgot === "1" || sp.error === "link";
+  const forgot = sp.forgot === "1" || sp.error === "link" || sp.error === "invitation";
   const named = sp.for && /^[a-z0-9-]{1,64}$/.test(sp.for) ? getClient(sp.for) : undefined;
   const who = named?.identity.opsClientId ? publicIdentity(named.identity) : null;
   const next = safeNext(sp.next);

@@ -97,10 +97,10 @@ repo: `template` (what an open door shows; example ideas and one example
 script) and `demo` (Horizon Aviation, fictional; the finished state, and no
 real account can reach it: only the test double has one).
 
-To add a client, first create them in the Tilted Needle app and invite
-their people there (Team admin, role Client, for that client). Then
-scaffold them here with their id from that app (the `id` of their row in
-its `clients` table):
+To add a client, first create them in the Tilted Needle app. Then
+scaffold them here with their id from that app: Team admin's Clients tab
+shows it, with a copy button, as soon as the client is chosen there (it is
+the `id` of their row in that app's `clients` table):
 
 ```bash
 npm run new-client -- horizon-aviation "Horizon Aviation" --short Horizon --ops-client <their id in the Tilted Needle app> --logo /client/horizon.png
@@ -174,8 +174,10 @@ clean path, so no client tree is reachable by name.
 
 The door's forms post to route handlers under `/auth/`: `sign-in`,
 `sign-out`, `forgot` (emails a link to choose a new password), `confirm`
-(where that link lands) and `password`; `/auth/reset` is the page for the
-new one. All of them refuse a form posted from another site. Wrong
+(where that link lands), `session` (takes the session an invitation
+began) and `password`; `/auth/reset` is the page for the new password and
+`/auth/accept` the page an invitation lands on. All of them refuse a form
+posted from another site. Wrong
 passwords are counted, twelve per ten minutes per address, under
 Supabase's own limits; reset requests are counted the same way, since
 each sends an email. Signing out ends this browser's session only:
@@ -197,9 +199,20 @@ cookie. A request Supabase refuses (asking twice in a minute, an address
 its mailer will not send to) is said on the page, and leaves the cookie
 for the link already sent untouched.
 
-Invitations are accepted in the Tilted Needle app, which sends them: the
-link opens that app's page for choosing a password. After that the same
-email and password sign in here.
+An invitation is sent from the Tilted Needle app (Team admin, Clients)
+and, with that app's `CLIENT_PORTAL_URL` set to this portal's address,
+lands here, on `/auth/accept`. Supabase answers an invitation link with
+the session it began in the address's fragment, which no server is ever
+sent, so that page's one script reads it, clears it from the address and
+the history, and posts it to `/auth/session`. The route checks it with
+Supabase before keeping it, in the same httpOnly cookies as any sign-in,
+and the person goes on to choose their password and then into their
+portal. That script is the only thing here that handles a session in the
+browser, and it keeps nothing. An invitation that has expired or been
+used goes to the door, which offers a new link by email. Without
+`CLIENT_PORTAL_URL` the link opens the Tilted Needle app's own page for
+choosing a password instead, and the same email and password then sign in
+here.
 
 The session's cookies are httpOnly (the portal never talks to Supabase
 from the browser, so nothing a page runs can read them), SameSite=Lax, and
@@ -361,9 +374,13 @@ a link:
    `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`). A production build refuses to
    go out without them, and says why in the build log.
 3. **Supabase** (the Tilted Needle project, Authentication). Under URL
-   Configuration, add `https://<the portal's domain>/auth/confirm` to the
-   Redirect URLs, or the portal's "forgot your password" links land on the
-   Tilted Needle app instead. Keep "Allow new users to sign up" off (the
+   Configuration, add `https://<the portal's domain>/auth/confirm` and
+   `https://<the portal's domain>/auth/accept` to the Redirect URLs, or the
+   portal's "forgot your password" links and its invitations land on the
+   Tilted Needle app instead. In the Tilted Needle app's own environment
+   (its Vercel project) set `CLIENT_PORTAL_URL` to
+   `https://<the portal's domain>`, so a client's invitation opens here.
+   Keep "Allow new users to sign up" off (the
    app needs that too). And before inviting clients: Supabase's built-in
    email reaches only the project team's own addresses, and slowly, so set
    a mail provider (SMTP) for invitations and reset links to reach anyone
@@ -372,10 +389,13 @@ a link:
    Protection) sits in front of the project's generated `*.vercel.app`
    addresses, so a client cannot reach the door through them. Put the
    domain on the GitHub repository too; the one there now is dead.
-5. **The client.** Create them in the Tilted Needle app and invite their
-   people from Team admin with the Client role, for that client; each
-   chooses a password from the invitation. Scaffold them here with
-   `--ops-client` (see Clients), deploy, and send `/login?for=<slug>`. That
+5. **The client.** Create them in the Tilted Needle app, scaffold them
+   here with `--ops-client` (see Clients; Team admin's Clients tab shows
+   the id) and deploy. Only then invite their people, from that tab, for
+   that client: each gets a link that opens here, chooses a password, and
+   is inside. Invited before the deploy, they would choose a password and
+   be told the account has no portal yet. From then on the address to give
+   them is `/login?for=<slug>`. That
    page shows their name to anyone who guesses the slug; if who the studio
    works with is confidential, use a slug that is not the client's name.
 6. **After the deploy,** from outside: `/login` answers 200 with the
@@ -416,9 +436,11 @@ front page and checks that each answers, that every #anchor lands on an id,
 and that every image loads. `door` tries to get past the door with the
 internal tree under other spellings, the image optimizer, sessions that
 are forged, expired, signed with the wrong key or with none, accounts that
-have no portal here, and forms posted from another site; the double's
-test-only routes mint the tokens it needs. `a11y` opens a real browser
-(`npx playwright install chromium` once), signs in, and takes every route the palette's index knows
+have no portal here, and forms posted from another site, then takes a
+forgotten password and an invitation from the link to being inside; the
+double's test-only routes mint the tokens and links it needs. `a11y` opens a real browser
+(`npx playwright install chromium` once), opens an invitation link (reading it out of the address is the one
+part of the door only a browser can do), signs in, and takes every route the palette's index knows
 plus the fixed pages through axe at desktop and phone width (WCAG 2.2 AA
 and best practice, no filter), failing on any violation, any horizontal
 overflow or any console error; then the palette, open. CI runs it after

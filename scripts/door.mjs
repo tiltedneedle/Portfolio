@@ -4,8 +4,9 @@
 // forged, expired, signed with the wrong key or with none, accounts with no
 // portal here, forms posted from another site, and a real client's session
 // reaching for another client's pages. Then what must work: a session that
-// has run out is renewed, and a forgotten password is replaced, from asking
-// for the link to being inside.
+// has run out is renewed, a forgotten password is replaced, from asking
+// for the link to being inside, and an invitation is taken up, from the
+// session its link began to a password chosen and the portal open.
 //
 //   node scripts/door.mjs http://localhost:3401 [http://localhost:54321]
 //
@@ -279,6 +280,70 @@ for (const path of ["/auth/sign-in", "/auth/sign-out", "/auth/forgot", "/auth/pa
   check("something that is not an address is asked for one", junk.location.startsWith("/login?error=email"), junk.location);
   const without = await get("/auth/password", { method: "POST", headers: { origin: base, "content-type": "application/x-www-form-urlencoded" }, body: new URLSearchParams({ password: "a-long-enough-one", confirm: "a-long-enough-one" }).toString() });
   check("a new password with no session behind it changes nothing", without.location.startsWith("/login?error=link"), without.status + " -> " + without.location);
+}
+
+// An invitation. The Tilted Needle app invites a client's person, and
+// Supabase's email brings them to /auth/accept with the session it began in
+// the address's fragment, which the page's script posts to /auth/session.
+// (Reading the fragment takes a browser: a11y.mjs opens one.)
+{
+  const jar = jarOf();
+  const post = async (path, form) => {
+    const r = await get(path, { method: "POST", cookie: jar.header(), headers: { origin: base, "content-type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(form).toString() });
+    jar.take(r.setCookie);
+    return r;
+  };
+  const open = async (path) => {
+    const r = await get(path, { cookie: jar.header() });
+    jar.take(r.setCookie);
+    return r;
+  };
+  const chosen = "a-first-password-" + crypto.randomBytes(4).toString("hex");
+
+  const early = await signIn(base, ACCOUNTS.newcomer, chosen, "/", FROM);
+  check("invited, the link not yet opened: no way in", early.location.startsWith("/login?error=credentials"), early.location);
+  const landing = await open("/auth/accept");
+  check("the invitation page answers anyone, and hands on to /auth/session", landing.status === 200 && landing.body.includes('action="/auth/session"') && !landing.body.includes(DEMO), String(landing.status));
+  const refused = await get("/auth/accept?error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid+or+has+expired");
+  check("an invitation Supabase refused goes to the door", refused.location === "/login?error=invitation", refused.status + " -> " + refused.location);
+  const said = await get("/login?error=invitation");
+  check("which says so, and offers a new link in its place", said.status === 200 && said.body.includes("invitation has expired") && said.body.includes('action="/auth/forgot"'), String(said.status));
+  const coded = await get("/auth/accept?code=abc123");
+  check("a link that carries a code is handed to /auth/confirm", coded.location === "/auth/confirm?code=abc123", coded.status + " -> " + coded.location);
+
+  const { fragment } = await (await fetch(double + "/__double/invite", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ email: ACCOUNTS.newcomer }) })).json();
+  const tokens = Object.fromEntries(new URLSearchParams(fragment));
+  const pair = { access_token: tokens.access_token, refresh_token: tokens.refresh_token };
+  const send = (form, { origin = base, cookie } = {}) => get("/auth/session", { method: "POST", cookie, headers: { origin, "content-type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(form).toString() });
+
+  const foreign = await send(pair, { origin: "https://elsewhere.example" });
+  check("a session posted from another site is refused", foreign.status === 403 && foreign.setCookie.length === 0, String(foreign.status));
+  const now = Math.floor(Date.now() / 1000);
+  for (const [name, form] of [
+    ["nothing at all", {}],
+    ["something that is not a token", { access_token: "not-a-token", refresh_token: "nor-this" }],
+    ["a token signed by someone else", { access_token: jwt({ alg: "HS256", typ: "JWT" }, { sub: crypto.randomUUID(), aud: "authenticated", role: "authenticated", email: ACCOUNTS.client, exp: now + 3600, iat: now }, "a-guess"), refresh_token: tokens.refresh_token }],
+  ]) {
+    const r = await send(form);
+    check("opens nothing: " + name, r.status === 303 && r.location === "/login?error=invitation" && !r.setCookie.some((c) => c.startsWith(SESSION)), r.status + " -> " + r.location);
+  }
+  {
+    const me = await signIn(base, ACCOUNTS.client, PASSWORD, "/", FROM);
+    const r = await send({ access_token: "not-a-token", refresh_token: "nor-this" }, { cookie: me.cookie });
+    const still = await get("/audit", { cookie: me.cookie });
+    check("and signs nobody out who was already in", !r.setCookie.some((c) => c.startsWith(SESSION)) && shown(still), r.status + ", then " + still.status);
+  }
+
+  const taken = await post("/auth/session", pair);
+  const kept = taken.setCookie.filter((c) => c.startsWith(SESSION));
+  check("the invitation's own session is kept, in httpOnly cookies", taken.status === 303 && taken.location === "/auth/reset" && jar.hasSession() && kept.length > 0 && kept.every((c) => /; ?HttpOnly/i.test(c)), taken.status + " -> " + taken.location);
+  const page = await open("/auth/reset");
+  check("then the page for choosing a password, in their name", page.status === 200 && page.body.includes('action="/auth/password"') && page.body.includes(ACCOUNTS.newcomer), String(page.status));
+  const set = await post("/auth/password", { password: chosen, confirm: chosen });
+  const inside = await open("/audit");
+  check("a password chosen, they are inside their own portal", set.status === 303 && set.location === "/" && shown(inside), set.status + " -> " + set.location + ", then " + inside.status);
+  const later = await signIn(base, ACCOUNTS.newcomer, chosen, "/", FROM);
+  check("and that password signs them in from then on", later.location === "/", later.location);
 }
 
 // Signing out ends this session, and only this one.

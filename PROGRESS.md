@@ -283,6 +283,47 @@ The marketing site this grew out of is on the `marketing-site` branch.
         failures. A page lost four times in a row still fails the run, and
         re-running it is the remedy.
 
+- [x] Wave 85 (2026-10-02): a client's invitation opens on their own
+      portal. Two repositories.
+      - The Tilted Needle app (its commit e29fdd4, live on its main): Team
+        admin has a Clients tab. A manager invites one of a client's own
+        people there and picks which client; the row shows that client and
+        the id this portal knows them by, with a copy button. Client users
+        are left out of every staff list and cannot be given a staff role.
+        With CLIENT_PORTAL_URL set in that app the invitation's link comes
+        here; without it, to that app's own page, as before.
+      - Its database, read with a real client session in mind (145
+        policies) before the first one exists; migration 20261002120000,
+        applied. Four things a client user could have done: read the merge
+        journal (every merged video, every client), file and delete
+        expenses, spend or refund the transcription budget (callable by
+        anyone at all), and, for a manager, turn the OWNER into a client
+        user with one call to set_client_membership, for a client of any
+        workspace (reproduced against the database, then closed). Its
+        client-scope suite holds each: 33 checks.
+      - Here: /auth/accept, where the link lands. Supabase answers an
+        invitation with the session in the address's fragment, which no
+        server sees, so the page's one script reads it, clears it from the
+        address and the history, and posts it to /auth/session, which
+        checks it with Supabase before keeping it (httpOnly, like every
+        session here) and goes on to /auth/reset. A refused or junk pair
+        opens nothing and signs nobody out; a link Supabase refused goes to
+        the door, which says so and offers a new link (a recovery link
+        confirms an invited address too). A link carrying a code or a token
+        hash is handed to /auth/confirm.
+      - The double: POST /__double/invite, and newcomer@horizon.test for
+        the round trip. door.mjs, 96 checks, the invitation from the
+        session to being inside and each refusal on the way; a11y opens the
+        link in a browser (the fragment needs one) and checks no address
+        after the first carries it. Tried by hand in WebKit as an iPhone;
+        axe clean on the page at both widths.
+      - Order matters, and the README says so: scaffold and deploy a client
+        here BEFORE inviting their people, or they choose a password and
+        are told the account has no portal yet.
+      - Not done, and not tried: a real invitation email. Sending one is
+        the user's first real use (it needs the mail provider and the two
+        redirect addresses, see Next B).
+
 - [x] Wave 84 (2026-10-02): the login, gone over again. Found by reading
       it as the thing that guards everything, and by making the test double
       behave like Supabase where it had been kinder than Supabase.
@@ -319,10 +360,10 @@ The marketing site this grew out of is on the `marketing-site` branch.
         the door's own page), the signed-in door, the forgotten password
         from asking to being inside, and each refusal on the way. a11y
         sweeps the door's states before signing in.
-      Still to do in the Tilted Needle app (the user chose it, 2026-10-02):
-      its Team admin cannot create a Client-role account at all
+      Found at the end of this wave, done in wave 85: the Tilted Needle
+      app's Team admin could not create a Client-role account at all
       (ASSIGNABLE_ROLES is member, manager, admin; "the workspace has no
-      client users at all"), so nobody can yet be given a portal account.
+      client users at all"), so nobody could yet be given a portal account.
 
 - [x] Wave 83 (2026-10-01): accounts instead of access codes. "We're not
       gonna do a secret system, instead we'll do a proper login
@@ -1988,12 +2029,17 @@ The marketing site this grew out of is on the `marketing-site` branch.
      NEXT_PUBLIC_ pair). Production builds refuse to go out without them.
      `PORTAL_SECRET` / `PORTAL_DEMO`, if they were ever set, are unused.
    - Supabase (the Tilted Needle project), Authentication: add
-     `https://<portal domain>/auth/confirm` to Redirect URLs; keep sign-ups
+     `https://<portal domain>/auth/confirm` and
+     `https://<portal domain>/auth/accept` to Redirect URLs; keep sign-ups
      off; set a mail provider (SMTP) before inviting clients, since the
      built-in sender reaches only the project team's own addresses.
-   - Per client: create and invite them in the Tilted Needle app (Team
-     admin, Client role, for that client), then scaffold or link them here
-     with their id from that app (`--ops-client`).
+   - The Tilted Needle app's Vercel project, Production:
+     `CLIENT_PORTAL_URL=https://<portal domain>`, so a client's invitation
+     opens on the portal (wave 85). Unset, it opens that app instead.
+   - Per client, in this order: create them in the Tilted Needle app;
+     scaffold or link them here with their id (`--ops-client`; Team
+     admin's Clients tab shows it) and deploy; then invite their people
+     from that tab.
 
 
 0. Done in wave 75: framer-motion loads through `LazyMotion` + `m`

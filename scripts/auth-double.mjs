@@ -20,6 +20,7 @@
 //   elsewhere@client.test   a client this portal does not carry: turned away
 //   former@horizon.test     the demo's client, membership switched off
 //   invited@horizon.test    invited, invitation never taken up (no password)
+//   newcomer@horizon.test   invited to the demo's client, for the invitation round trip
 //   unconfirmed@horizon.test has a password, address never confirmed
 //   broken@horizon.test     the membership lookup fails (503)
 //   resetter@horizon.test   the demo's client, for the forgotten-password round trip
@@ -35,7 +36,11 @@
 // "choose a new password" link sent to an address; POST /__double/mint
 // {email, exp?, session?} signs a token for one (with session: a whole
 // session, refresh token and all), for probing expired sessions; POST
-// /__double/reset puts passwords and send times back as they began.
+// /__double/invite {email} is an invitation link opened: it confirms the
+// address, begins a session, and returns the fragment the link's redirect
+// carries (#access_token=...&refresh_token=...&type=invite); POST
+// /__double/reset puts passwords, confirmations and send times back as
+// they began.
 import crypto from "node:crypto";
 import http from "node:http";
 import { ACCOUNTS, DEMO_CLIENT, PASSWORD } from "./test-accounts.mjs";
@@ -52,13 +57,14 @@ const jwk = { ...publicKey.export({ format: "jwk" }), kid, alg: "ES256", use: "s
 const users = new Map();
 function seed(email, { confirmed = true, password = PASSWORD, memberships = [], broken = false, unsendable = false } = {}) {
   const id = crypto.randomUUID();
-  users.set(email, { id, email, password, seeded: password, confirmed, memberships, broken, unsendable, lastSent: 0, created: new Date().toISOString() });
+  users.set(email, { id, email, password, seeded: password, confirmed, seededConfirmed: confirmed, memberships, broken, unsendable, lastSent: 0, created: new Date().toISOString() });
 }
 seed(ACCOUNTS.client, { memberships: [{ role: "client", client_id: DEMO_CLIENT, is_active: true }] });
 seed(ACCOUNTS.owner, { memberships: [{ role: "owner", client_id: null, is_active: true }] });
 seed(ACCOUNTS.elsewhere, { memberships: [{ role: "client", client_id: ELSEWHERE, is_active: true }] });
 seed(ACCOUNTS.former, { memberships: [{ role: "client", client_id: DEMO_CLIENT, is_active: false }] });
 seed(ACCOUNTS.invited, { confirmed: false, password: null, memberships: [{ role: "client", client_id: DEMO_CLIENT, is_active: true }] });
+seed(ACCOUNTS.newcomer, { confirmed: false, password: null, memberships: [{ role: "client", client_id: DEMO_CLIENT, is_active: true }] });
 seed(ACCOUNTS.unconfirmed, { confirmed: false, memberships: [{ role: "client", client_id: DEMO_CLIENT, is_active: true }] });
 seed(ACCOUNTS.broken, { broken: true, memberships: [{ role: "client", client_id: DEMO_CLIENT, is_active: true }] });
 seed(ACCOUNTS.resetter, { memberships: [{ role: "client", client_id: DEMO_CLIENT, is_active: true }] });
@@ -173,9 +179,27 @@ const server = http.createServer(async (req, res) => {
       done(200);
       return send(res, 200, whole ? session(u, { exp }) : { access_token: sign(u, { exp }), user: userJson(u) });
     }
+    if (path === "/__double/invite" && req.method === "POST") {
+      const { email } = await bodyOf(req);
+      const u = users.get(email);
+      if (!u) return fail(res, 404, "user_not_found", "No such account in the double");
+      u.confirmed = true;
+      const made = session(u);
+      const fragment = new URLSearchParams({
+        access_token: made.access_token,
+        expires_at: String(made.expires_at),
+        expires_in: String(made.expires_in),
+        refresh_token: made.refresh_token,
+        token_type: "bearer",
+        type: "invite",
+      }).toString();
+      done(200);
+      return send(res, 200, { fragment });
+    }
     if (path === "/__double/reset" && req.method === "POST") {
       for (const u of users.values()) {
         u.password = u.seeded;
+        u.confirmed = u.seededConfirmed;
         u.lastSent = 0;
       }
       codes.clear();

@@ -126,9 +126,36 @@ async function visit(page, url, settle = 600) {
   // The door, before anyone is in: its two forms, with and without a
   // client named, and saying what went wrong. (Signed in, the plain door
   // sends a client straight on, so afterwards there is no door to see.)
-  await sweep(["/login", "/login?for=demo", "/login?forgot=1", "/login?error=credentials", "/login?forgot=1&error=unsent"]);
+  await sweep(["/login", "/login?for=demo", "/login?forgot=1", "/login?error=credentials", "/login?forgot=1&error=unsent", "/login?error=invitation"]);
 
   if (signingIn) {
+    // An invitation, opened, in a browser of its own. The session arrives in
+    // the address's fragment, which only a script on the page can read, so
+    // this is the one part of the door no plain request can check: the page
+    // takes it, clears it from the address, and lands on choosing a password.
+    const double = process.env.DOUBLE_URL || "http://localhost:54321";
+    const invited = await (await fetch(double + "/__double/invite", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ email: ACCOUNTS.newcomer }) })).json();
+    const guest = await browser.newContext({ reducedMotion: "reduce" });
+    const tab = await guest.newPage();
+    const seen = [];
+    tab.on("framenavigated", (f) => {
+      if (f === tab.mainFrame()) seen.push(f.url());
+    });
+    await tab.goto(base + "/auth/accept#" + invited.fragment);
+    await tab.waitForURL((u) => u.pathname === "/auth/reset", { timeout: 20000 }).catch(() => {});
+    const at = new URL(tab.url());
+    const asks = await tab.locator("form[action='/auth/password']").count();
+    // The account the password is for, as the form tells a password manager (the slate shows it in capitals).
+    const named = (await tab.locator("form[action='/auth/password'] input[name=username]").inputValue().catch(() => "")) === ACCOUNTS.newcomer;
+    say(at.pathname === "/auth/reset" && asks === 1 && named, "an invitation link opens on choosing a password, in their name  (" + at.pathname + ")");
+    await tab.goBack().catch(() => {});
+    await tab.waitForTimeout(1500);
+    // The link's own address carries it, until the page clears it; nothing after that may.
+    const carries = (u) => u.includes("access_token") || u.includes("refresh_token");
+    const cleared = seen.findIndex((u) => !carries(u));
+    say(cleared > 0 && !seen.slice(cleared).concat(tab.url()).some(carries), "and the session is cleared from the address, and is in none after it");
+    await guest.close();
+
     await visit(page, base + "/login");
     await page.fill("#email", ACCOUNTS.client);
     await page.fill("#password", PASSWORD);

@@ -40,13 +40,30 @@ export function supabaseFor(request: NextRequest, config: SupabaseConfig) {
 }
 
 /**
- * For a page rendered on the server: reads the session and cannot write it
- * (the proxy and the auth routes do that). A refresh it needs is simply
- * not kept; the next request to the proxy or a route makes its own.
+ * A page must never refresh a session. It cannot keep the new one (a page
+ * cannot write cookies), and the old refresh token is spent the moment it
+ * is used: ten seconds later it opens nothing, and using it again ends the
+ * session everywhere. So a refresh from here is answered with a refusal
+ * before it leaves (a 400, which the client does not retry), and the page
+ * sees no session. The proxy refreshes before a page renders, where the
+ * new session can be kept, so this is the guard behind that, not the plan.
+ */
+const noRefresh: typeof fetch = (input, init) => {
+  const url = typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url;
+  if (url.includes("/auth/v1/token") && url.includes("grant_type=refresh_token")) {
+    return Promise.resolve(Response.json({ code: 400, error_code: "refresh_not_here", msg: "A page does not refresh a session" }, { status: 400 }));
+  }
+  return fetch(input, init);
+};
+
+/**
+ * For a page rendered on the server: reads the session, and can neither
+ * write it nor refresh it (the proxy and the auth routes do both).
  */
 export async function supabaseForPage(config: SupabaseConfig) {
   const store = await cookies();
   return createServerClient(config.url, config.key, {
+    global: { fetch: noRefresh },
     cookies: {
       getAll: () => store.getAll(),
       setAll() {},

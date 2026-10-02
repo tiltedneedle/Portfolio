@@ -16,10 +16,16 @@ export const ACCOUNTS = {
   elsewhere: "elsewhere@client.test",
   /** The demo's client, membership switched off: turned away. */
   former: "former@horizon.test",
-  /** Invited, password never chosen. */
+  /** Invited, invitation never taken up: no password yet. */
   invited: "invited@horizon.test",
+  /** Has a password, but the address was never confirmed. */
+  unconfirmed: "unconfirmed@horizon.test",
   /** Their membership lookup fails. */
   broken: "broken@horizon.test",
+  /** The demo's client, kept for the forgotten-password round trip, so nobody else's password changes. */
+  resetter: "resetter@horizon.test",
+  /** The demo's client, whose reset email cannot be sent. */
+  unsendable: "unsendable@horizon.test",
 };
 
 /** Every Set-Cookie of a response, as name=value pairs (attributes dropped). */
@@ -33,11 +39,11 @@ export function cookiePairs(res) {
  * returns the Cookie header the session came back as, and where the door
  * sent us. Every body is read (see smoke.mjs).
  */
-export async function signIn(base, email = ACCOUNTS.client, password = PASSWORD, next = "/") {
+export async function signIn(base, email = ACCOUNTS.client, password = PASSWORD, next = "/", headers = {}) {
   const res = await fetch(base + "/auth/sign-in", {
     method: "POST",
     redirect: "manual",
-    headers: { origin: new URL(base).origin, "content-type": "application/x-www-form-urlencoded", connection: "close" },
+    headers: { origin: new URL(base).origin, "content-type": "application/x-www-form-urlencoded", connection: "close", ...headers },
     body: new URLSearchParams({ email, password, next }).toString(),
   });
   await res.text();

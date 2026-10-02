@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { ClientMark } from "@/components/portal/ClientMark";
 import { DoorBackdrop } from "@/components/room/DoorBackdrop";
 import { getClient } from "@/content/clients/registry";
 import { publicIdentity } from "@/content/clients/types";
-import { doorOpen } from "@/lib/auth";
+import { doorOpen, portalAccess, supabaseConfig } from "@/lib/auth";
 import { safeNext } from "@/lib/safe-next";
+import { supabaseForPage } from "@/lib/supabase-server";
 import { Rise, delay } from "@/components/portal/Scene";
 import { HeroDust } from "@/components/portal/HeroDust";
 
@@ -21,6 +23,8 @@ const messages: Record<string, string> = {
   link: "That link has expired, been used, or was opened in another browser. Ask for a new one here.",
   unavailable: "Your account could not be checked just now. Try again in a minute.",
   email: "Enter the email address your account uses.",
+  wait: "Too many emails just now. If you asked a moment ago, check your inbox; otherwise try again in a few minutes.",
+  unsent: "The link could not be sent just now. Try again in a few minutes, or ask your Tilted Needle team.",
 };
 
 const notices: Record<string, string> = {
@@ -53,6 +57,20 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const named = sp.for && /^[a-z0-9-]{1,64}$/.test(sp.for) ? getClient(sp.for) : undefined;
   const who = named?.identity.opsClientId ? publicIdentity(named.identity) : null;
   const next = safeNext(sp.next);
+
+  // Someone already in goes straight on: the link a client is sent is this
+  // page, and they will open it again long after they first signed in. Only
+  // the plain door does this. One that has something to say (an error, a
+  // notice, the forgotten-password form) says it, which is also what keeps
+  // an account with no portal here from being sent round in circles.
+  const config = supabaseConfig();
+  if (config && !sp.error && !sp.notice && !forgot) {
+    const supabase = await supabaseForPage(config);
+    const { data } = await supabase.auth.getClaims();
+    const userId = typeof data?.claims?.sub === "string" ? data.claims.sub : null;
+    if (userId && (await portalAccess(supabase, userId)).slug) redirect(next);
+  }
+
   // The other state of this page, keeping where the visitor was going and whose link it was.
   const other = new URLSearchParams();
   if (!forgot) other.set("forgot", "1");

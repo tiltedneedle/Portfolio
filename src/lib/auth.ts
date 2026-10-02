@@ -68,15 +68,31 @@ export function isHttps(request: Request) {
  * page submitting ours: signing a visitor in to an account of theirs, or
  * out of their own. A request with no Origin at all is not a browser's
  * form post and carries no visitor's cookies but its own, so it may pass.
+ *
+ * "This site" is the host the browser asked for. Behind a proxy that is
+ * the forwarded host, which the request's own URL may not show; a page
+ * elsewhere cannot set either header on a visitor's request.
  */
 export function sameOrigin(request: Request) {
   const origin = request.headers.get("origin");
   if (origin === null) return true;
+  let from: string;
   try {
-    return new URL(origin).host === new URL(request.url).host;
+    from = new URL(origin).host;
   } catch {
     return false;
   }
+  const here = new Set<string>();
+  try {
+    here.add(new URL(request.url).host);
+  } catch {
+    // no usable URL: the headers decide
+  }
+  for (const name of ["x-forwarded-host", "host"]) {
+    const value = request.headers.get(name)?.split(",")[0]?.trim();
+    if (value) here.add(value);
+  }
+  return here.has(from);
 }
 
 // ---------------------------------------------------------------- the portal

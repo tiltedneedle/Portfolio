@@ -23,10 +23,23 @@ import { cleanPath, isRoomPath, roomPath } from "@/lib/room-paths";
  * The internal tree is never addressed directly: a request to /c/... is
  * bounced back to the clean path, so no one can reach another client's
  * pages by guessing a slug.
+ *
+ * The door's own two pages (/login, /auth/reset) are open to everyone, but
+ * they pass through here as well, for one thing: a session near its end is
+ * refreshed here, where the new one can be kept. A page cannot write
+ * cookies, and a refresh token is spent once used (supabase-server.ts).
  */
 export async function proxy(request: NextRequest) {
   const url = request.nextUrl.clone();
   const path = url.pathname;
+
+  if (path === "/login" || path === "/auth/reset") {
+    const config = supabaseConfig();
+    if (!config) return NextResponse.next();
+    const { supabase, carry } = supabaseFor(request, config);
+    await supabase.auth.getClaims();
+    return carry(NextResponse.next({ request: { headers: request.headers } }));
+  }
 
   if (isRoomPath(path)) {
     url.pathname = cleanPath(path);
@@ -70,8 +83,11 @@ export const config = {
   matcher: [
     // Static files under public/ are served as they are, never rewritten into
     // a client's tree: a folder missing here answers 404 for everything in it
-    // (guides/ did, the day the brief's first figure arrived). The door and
-    // the auth routes (/login, /auth/...) take care of themselves.
-    "/((?!login|auth/|_next/static|_next/image|favicon.ico|white-logo.png|black-logo.png|logos/|clips/|client/|guides/|manifest.webmanifest|robots.txt|opengraph-image).*)",
+    // (guides/ did, the day the brief's first figure arrived). The auth
+    // routes (/auth/...) take care of themselves, and their forms' answers
+    // must not have this function's cookies laid over their own.
+    "/((?!auth/|_next/static|_next/image|favicon.ico|white-logo.png|black-logo.png|logos/|clips/|client/|guides/|manifest.webmanifest|robots.txt|opengraph-image).*)",
+    // The one page under /auth/: it reads the session, so it gets it fresh.
+    "/auth/reset",
   ],
 };

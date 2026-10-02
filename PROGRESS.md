@@ -283,6 +283,47 @@ The marketing site this grew out of is on the `marketing-site` branch.
         failures. A page lost four times in a row still fails the run, and
         re-running it is the remedy.
 
+- [x] Wave 84 (2026-10-02): the login, gone over again. Found by reading
+      it as the thing that guards everything, and by making the test double
+      behave like Supabase where it had been kinder than Supabase.
+      - Asking for a reset link twice in a minute broke the link already
+        sent. Supabase's client makes a new PKCE pair before it asks and
+        keeps the browser's half in a cookie; the second request was
+        refused (one email a minute), but its cookie still replaced the
+        first one's, so the one emailed link read "opened in another
+        browser". A refused request is now answered without its cookies.
+        Caught by the round trip added to door.mjs.
+      - A page must never refresh a session: it cannot keep the new one,
+        and a refresh token is spent once used (ten seconds' grace, then
+        using it again ends the session everywhere). /auth/reset did
+        (supabaseForPage, a no-op setAll). Now /login and /auth/reset pass
+        through the proxy first, which renews and keeps; a page's client
+        refuses to refresh at all (a 400 answered locally, which auth-js
+        does not retry; a thrown error it retries for thirty seconds).
+      - The reset link's address carried "?next=", and Supabase matches
+        redirect addresses against its allowed list as whole strings: with
+        the entry the README asks for, the link would have landed on the
+        Tilted Needle app. It is exactly /auth/confirm now.
+      - A reset email Supabase would not send was reported as sent. It is
+        said on the page (wait / unsent) and logged without the address;
+        hiding it protected nothing, since Supabase's endpoint answers the
+        same to anyone with the public key.
+      - Someone signed in who opens the plain door (the link clients are
+        sent) goes straight on. A door with something to say still says it.
+      - sameOrigin knows the site by the forwarded host too.
+      - The double: the refresh token reuse interval, a whole session
+        minted for the expiry probes, one reset email a minute (429), an
+        invited account with no password (so "invited" is a wrong password,
+        as in life; "unconfirmed" is its own case), /__double/reset.
+      - door.mjs, 82 checks: sessions renewed (one request, five at once,
+        the door's own page), the signed-in door, the forgotten password
+        from asking to being inside, and each refusal on the way. a11y
+        sweeps the door's states before signing in.
+      Still to do in the Tilted Needle app (the user chose it, 2026-10-02):
+      its Team admin cannot create a Client-role account at all
+      (ASSIGNABLE_ROLES is member, manager, admin; "the workspace has no
+      client users at all"), so nobody can yet be given a portal account.
+
 - [x] Wave 83 (2026-10-01): accounts instead of access codes. "We're not
       gonna do a secret system, instead we'll do a proper login
       authentication system." Decided with the user: the Tilted Needle

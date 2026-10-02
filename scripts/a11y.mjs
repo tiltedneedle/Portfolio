@@ -40,21 +40,6 @@ try {
     if (m.type() === "error") errors.push(m.text());
   });
 
-  if (signingIn) {
-    await visit(page, base + "/login");
-    await page.fill("#email", ACCOUNTS.client);
-    await page.fill("#password", PASSWORD);
-    await Promise.all([page.waitForURL((u) => !u.pathname.startsWith("/login")), page.press("#password", "Enter")]);
-    say(!page.url().includes("/login"), "signed in as the client behind the door");
-  }
-
-  // Every guide, report and written script the palette knows, plus the fixed pages.
-  const indexRes = await page.request.get(base + "/search-index.json");
-  const index = indexRes.ok() ? await indexRes.json() : [];
-  say(Array.isArray(index) && index.length > 0, "search index answers with " + (Array.isArray(index) ? index.length : 0) + " entries");
-  // The rooms, the door (with and without a client named) and the 404, then every page the index knows.
-  const routes = [...new Set(["/", "/audit", "/content", "/create", "/publish", "/analyse", "/content/ideas", "/content/scripts", "/login", "/login?for=demo", "/login?forgot=1", "/login?error=credentials", "/auth/reset", "/nothing-on-this-slate", ...index.map((e) => e.href)])];
-
   const audit = () =>
     page.evaluate(async (tags) => {
       const res = await window.axe.run(document, { runOnly: { type: "tag", values: tags } });
@@ -81,59 +66,83 @@ async function visit(page, url, settle = 600) {
   return resp;
 }
 
-for (const w of widths) {
-    await page.setViewportSize({ width: w.width, height: w.height });
-    for (const route of routes) {
-      errors.length = 0;
-      // Home opens on the slate, which has to finish before anything is measured.
-      const resp = await visit(page, base + route, route === "/" ? 3000 : 400);
-      await page.addScriptTag({ content: axeSource });
-      const r = await audit();
-      const wide = r.scrollW > r.innerW;
-      // A not-found page is meant to answer 404; the browser logging that is not a fault of the page.
-      const own404 = resp?.status() === 404;
-      const consoleErrors = errors.filter((e) => !(own404 && /status of 404/.test(e)));
-      // A rail a thumb cannot reach the end of is a deliverable nobody can
-      // read. This shipped once: spines were made non-snapping to stop the
-      // rail stuttering over them, and under `scroll-snap-type: mandatory`
-      // that left sixteen of twenty scripts unreachable on a phone, with
-      // every other check green.
-      const stuck = await page.evaluate(async () => {
-        const out = [];
-        for (const r of document.querySelectorAll(".rail")) {
-          const max = r.scrollWidth - r.clientWidth;
-          if (max < 8) continue;
-          const was = r.scrollLeft;
-          r.scrollLeft = r.scrollWidth;
-          await new Promise((res) => setTimeout(res, 250));
-          const got = Math.round(r.scrollLeft);
-          r.scrollLeft = was;
-          if (got < max - 4) out.push(got + " of " + max);
-        }
-        return out;
-      });
-      // A well with nothing in it. Still drops itself when a frame will not
-      // load, so an empty well is invisible to axe, to the overflow check
-      // and to the console -- it is simply a bordered box. The hero backdrop
-      // ran as thirty-two of them, drifting, for as long as the placeholder
-      // guard read naturalWidth (which srcset density-corrects to the layout
-      // width, so every 256px still in a 150px well looked like a 150px
-      // placeholder). Nothing else here can see that.
-      const hollow = await page.evaluate(() => {
-        const wells = [...document.querySelectorAll(".well")];
-        const empty = wells.filter((w) => !w.querySelector("img") && !w.querySelector("iframe"));
-        return wells.length ? empty.length + " of " + wells.length : "";
-      });
-      const problems = [
-        r.violations.length ? "axe: " + r.violations.join("; ") : "",
-        wide ? "overflow " + r.scrollW + " > " + r.innerW : "",
-        stuck.length ? "rail stops short: " + stuck.join(", ") : "",
-        hollow && !hollow.startsWith("0 of ") ? "empty wells: " + hollow : "",
-        consoleErrors.length ? "console: " + consoleErrors[0].slice(0, 140) : "",
-      ].filter(Boolean);
-      say(problems.length === 0, w.name.padEnd(8) + route.padEnd(44) + problems.join("  "));
+  /** Every route at both widths: axe, overflow, rails, wells, console. */
+  async function sweep(routes) {
+  for (const w of widths) {
+      await page.setViewportSize({ width: w.width, height: w.height });
+      for (const route of routes) {
+        errors.length = 0;
+        // Home opens on the slate, which has to finish before anything is measured.
+        const resp = await visit(page, base + route, route === "/" ? 3000 : 400);
+        await page.addScriptTag({ content: axeSource });
+        const r = await audit();
+        const wide = r.scrollW > r.innerW;
+        // A not-found page is meant to answer 404; the browser logging that is not a fault of the page.
+        const own404 = resp?.status() === 404;
+        const consoleErrors = errors.filter((e) => !(own404 && /status of 404/.test(e)));
+        // A rail a thumb cannot reach the end of is a deliverable nobody can
+        // read. This shipped once: spines were made non-snapping to stop the
+        // rail stuttering over them, and under `scroll-snap-type: mandatory`
+        // that left sixteen of twenty scripts unreachable on a phone, with
+        // every other check green.
+        const stuck = await page.evaluate(async () => {
+          const out = [];
+          for (const r of document.querySelectorAll(".rail")) {
+            const max = r.scrollWidth - r.clientWidth;
+            if (max < 8) continue;
+            const was = r.scrollLeft;
+            r.scrollLeft = r.scrollWidth;
+            await new Promise((res) => setTimeout(res, 250));
+            const got = Math.round(r.scrollLeft);
+            r.scrollLeft = was;
+            if (got < max - 4) out.push(got + " of " + max);
+          }
+          return out;
+        });
+        // A well with nothing in it. Still drops itself when a frame will not
+        // load, so an empty well is invisible to axe, to the overflow check
+        // and to the console -- it is simply a bordered box. The hero backdrop
+        // ran as thirty-two of them, drifting, for as long as the placeholder
+        // guard read naturalWidth (which srcset density-corrects to the layout
+        // width, so every 256px still in a 150px well looked like a 150px
+        // placeholder). Nothing else here can see that.
+        const hollow = await page.evaluate(() => {
+          const wells = [...document.querySelectorAll(".well")];
+          const empty = wells.filter((w) => !w.querySelector("img") && !w.querySelector("iframe"));
+          return wells.length ? empty.length + " of " + wells.length : "";
+        });
+        const problems = [
+          r.violations.length ? "axe: " + r.violations.join("; ") : "",
+          wide ? "overflow " + r.scrollW + " > " + r.innerW : "",
+          stuck.length ? "rail stops short: " + stuck.join(", ") : "",
+          hollow && !hollow.startsWith("0 of ") ? "empty wells: " + hollow : "",
+          consoleErrors.length ? "console: " + consoleErrors[0].slice(0, 140) : "",
+        ].filter(Boolean);
+        say(problems.length === 0, w.name.padEnd(8) + route.padEnd(44) + problems.join("  "));
+      }
     }
   }
+
+  // The door, before anyone is in: its two forms, with and without a
+  // client named, and saying what went wrong. (Signed in, the plain door
+  // sends a client straight on, so afterwards there is no door to see.)
+  await sweep(["/login", "/login?for=demo", "/login?forgot=1", "/login?error=credentials", "/login?forgot=1&error=unsent"]);
+
+  if (signingIn) {
+    await visit(page, base + "/login");
+    await page.fill("#email", ACCOUNTS.client);
+    await page.fill("#password", PASSWORD);
+    await Promise.all([page.waitForURL((u) => !u.pathname.startsWith("/login")), page.press("#password", "Enter")]);
+    say(!page.url().includes("/login"), "signed in as the client behind the door");
+  }
+
+  // Every guide, report and written script the palette knows, plus the fixed pages.
+  const indexRes = await page.request.get(base + "/search-index.json");
+  const index = indexRes.ok() ? await indexRes.json() : [];
+  say(Array.isArray(index) && index.length > 0, "search index answers with " + (Array.isArray(index) ? index.length : 0) + " entries");
+  // The rooms, the page for choosing a password (it needs a session) and the 404, then every page the index knows.
+  const routes = [...new Set(["/", "/audit", "/content", "/create", "/publish", "/analyse", "/content/ideas", "/content/scripts", ...(signingIn ? ["/auth/reset"] : []), "/nothing-on-this-slate", ...index.map((e) => e.href)])];
+  await sweep(routes);
 
   // The palette, open with results, is a dialog of its own.
   await page.setViewportSize({ width: widths[0].width, height: widths[0].height });

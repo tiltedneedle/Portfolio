@@ -76,6 +76,13 @@ describe("a form posted from this site", () => {
       expect(sameOrigin(post("https://portal.example/auth/sign-in", { origin })), origin).toBe(false);
     }
   });
+
+  it("knows this site by the host the browser asked for, behind a proxy", () => {
+    // The request's own URL names the machine inside; the browser asked for the public name.
+    const behind = { "x-forwarded-host": "portal.example", host: "10.0.0.7:3000" };
+    expect(sameOrigin(post("http://10.0.0.7:3000/auth/sign-in", { origin: "https://portal.example", ...behind }))).toBe(true);
+    expect(sameOrigin(post("http://10.0.0.7:3000/auth/sign-in", { origin: "https://evil.example", ...behind }))).toBe(false);
+  });
 });
 
 describe("whether a request came over https", () => {

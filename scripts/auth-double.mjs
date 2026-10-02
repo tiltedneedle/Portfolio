@@ -19,12 +19,23 @@
 //   owner@studio.test       staff, no client: turned away
 //   elsewhere@client.test   a client this portal does not carry: turned away
 //   former@horizon.test     the demo's client, membership switched off
-//   invited@horizon.test    invited, password never chosen
+//   invited@horizon.test    invited, invitation never taken up (no password)
+//   unconfirmed@horizon.test has a password, address never confirmed
 //   broken@horizon.test     the membership lookup fails (503)
+//   resetter@horizon.test   the demo's client, for the forgotten-password round trip
+//   unsendable@horizon.test the demo's client, whose email cannot be sent
+//
+// Like the real thing: a refresh token is spent once used, except within
+// ten seconds, when using it again returns the session it already became
+// (several requests at once all refresh with the same token); after that,
+// using it again ends the whole session. A second reset email to the same
+// address within a minute is refused (429).
 //
 // Test-only routes, under /__double/: GET /__double/link?email= is the last
 // "choose a new password" link sent to an address; POST /__double/mint
-// {email, exp?} signs a token for one, for probing expired sessions.
+// {email, exp?, session?} signs a token for one (with session: a whole
+// session, refresh token and all), for probing expired sessions; POST
+// /__double/reset puts passwords and send times back as they began.
 import crypto from "node:crypto";
 import http from "node:http";
 import { ACCOUNTS, DEMO_CLIENT, PASSWORD } from "./test-accounts.mjs";
@@ -39,16 +50,19 @@ const kid = crypto.randomUUID();
 const jwk = { ...publicKey.export({ format: "jwk" }), kid, alg: "ES256", use: "sig", key_ops: ["verify"] };
 
 const users = new Map();
-function seed(email, { confirmed = true, memberships = [], broken = false } = {}) {
+function seed(email, { confirmed = true, password = PASSWORD, memberships = [], broken = false, unsendable = false } = {}) {
   const id = crypto.randomUUID();
-  users.set(email, { id, email, password: PASSWORD, confirmed, memberships, broken, created: new Date().toISOString() });
+  users.set(email, { id, email, password, seeded: password, confirmed, memberships, broken, unsendable, lastSent: 0, created: new Date().toISOString() });
 }
 seed(ACCOUNTS.client, { memberships: [{ role: "client", client_id: DEMO_CLIENT, is_active: true }] });
 seed(ACCOUNTS.owner, { memberships: [{ role: "owner", client_id: null, is_active: true }] });
 seed(ACCOUNTS.elsewhere, { memberships: [{ role: "client", client_id: ELSEWHERE, is_active: true }] });
 seed(ACCOUNTS.former, { memberships: [{ role: "client", client_id: DEMO_CLIENT, is_active: false }] });
-seed(ACCOUNTS.invited, { confirmed: false, memberships: [{ role: "client", client_id: DEMO_CLIENT, is_active: true }] });
+seed(ACCOUNTS.invited, { confirmed: false, password: null, memberships: [{ role: "client", client_id: DEMO_CLIENT, is_active: true }] });
+seed(ACCOUNTS.unconfirmed, { confirmed: false, memberships: [{ role: "client", client_id: DEMO_CLIENT, is_active: true }] });
 seed(ACCOUNTS.broken, { broken: true, memberships: [{ role: "client", client_id: DEMO_CLIENT, is_active: true }] });
+seed(ACCOUNTS.resetter, { memberships: [{ role: "client", client_id: DEMO_CLIENT, is_active: true }] });
+seed(ACCOUNTS.unsendable, { unsendable: true, memberships: [{ role: "client", client_id: DEMO_CLIENT, is_active: true }] });
 const byId = (id) => [...users.values()].find((u) => u.id === id);
 
 const b64url = (b) => Buffer.from(b).toString("base64url");
@@ -108,11 +122,17 @@ function userJson(u) {
   };
 }
 
-const refreshTokens = new Map(); // token -> { userId, sessionId, revoked }
-function session(u, sessionId = crypto.randomUUID()) {
-  const refresh = crypto.randomBytes(16).toString("hex");
-  refreshTokens.set(refresh, { userId: u.id, sessionId, revoked: false });
-  return { access_token: sign(u, { sessionId }), token_type: "bearer", expires_in: 3600, expires_at: Math.floor(Date.now() / 1000) + 3600, refresh_token: refresh, user: userJson(u) };
+const REUSE_MS = 10_000; // Supabase's default refresh token reuse interval
+const EMAIL_GAP_MS = 60_000; // and its default minimum between two emails to one address
+const refreshTokens = new Map(); // token -> { userId, sessionId, usedAt, child }
+function session(u, { sessionId = crypto.randomUUID(), exp, refresh } = {}) {
+  if (!refresh) {
+    refresh = crypto.randomBytes(16).toString("hex");
+    refreshTokens.set(refresh, { userId: u.id, sessionId, usedAt: 0, child: null });
+  }
+  const now = Math.floor(Date.now() / 1000);
+  const expiresAt = exp ?? now + 3600;
+  return { access_token: sign(u, { sessionId, exp: expiresAt }), token_type: "bearer", expires_in: expiresAt - now, expires_at: expiresAt, refresh_token: refresh, user: userJson(u) };
 }
 
 const codes = new Map(); // auth code -> { userId, challenge, method }
@@ -147,11 +167,22 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { link: links.get(url.searchParams.get("email") || "") || null });
     }
     if (path === "/__double/mint" && req.method === "POST") {
-      const { email, exp } = await bodyOf(req);
+      const { email, exp, session: whole } = await bodyOf(req);
       const u = users.get(email);
       if (!u) return fail(res, 404, "user_not_found", "No such account in the double");
       done(200);
-      return send(res, 200, { access_token: sign(u, { exp }), user: userJson(u) });
+      return send(res, 200, whole ? session(u, { exp }) : { access_token: sign(u, { exp }), user: userJson(u) });
+    }
+    if (path === "/__double/reset" && req.method === "POST") {
+      for (const u of users.values()) {
+        u.password = u.seeded;
+        u.lastSent = 0;
+      }
+      codes.clear();
+      links.clear();
+      done(204);
+      res.writeHead(204);
+      return res.end();
     }
 
     // Supabase checks the project key on everything but the key set.
@@ -170,7 +201,8 @@ const server = http.createServer(async (req, res) => {
       const body = await bodyOf(req);
       if (grant === "password") {
         const u = users.get(String(body.email || "").toLowerCase());
-        if (!u || u.password !== body.password) {
+        // An invited account has no password until the invitation is taken up.
+        if (!u || u.password === null || u.password !== body.password) {
           done(400);
           return fail(res, 400, "invalid_credentials", "Invalid login credentials");
         }
@@ -183,14 +215,27 @@ const server = http.createServer(async (req, res) => {
       }
       if (grant === "refresh_token") {
         const known = refreshTokens.get(body.refresh_token);
-        const u = known && !known.revoked ? byId(known.userId) : null;
+        const u = known ? byId(known.userId) : null;
         if (!u) {
           done(400);
           return fail(res, 400, "refresh_token_not_found", "Invalid Refresh Token: Refresh Token Not Found");
         }
-        known.revoked = true;
+        if (known.usedAt) {
+          // Used again: within the interval, the session it already became;
+          // after it, the whole session ends.
+          if (Date.now() - known.usedAt < REUSE_MS && known.child && refreshTokens.has(known.child)) {
+            done(200);
+            return send(res, 200, session(u, { sessionId: known.sessionId, refresh: known.child }));
+          }
+          for (const [t, v] of refreshTokens) if (v.sessionId === known.sessionId) refreshTokens.delete(t);
+          done(400);
+          return fail(res, 400, "refresh_token_already_used", "Invalid Refresh Token: Already Used");
+        }
+        const next = session(u, { sessionId: known.sessionId });
+        known.usedAt = Date.now();
+        known.child = next.refresh_token;
         done(200);
-        return send(res, 200, session(u, known.sessionId));
+        return send(res, 200, next);
       }
       if (grant === "pkce") {
         const c = codes.get(body.auth_code);
@@ -212,7 +257,16 @@ const server = http.createServer(async (req, res) => {
     if (path === "/auth/v1/recover" && req.method === "POST") {
       const body = await bodyOf(req);
       const u = users.get(String(body.email || "").toLowerCase());
+      if (u?.unsendable) {
+        done(400);
+        return fail(res, 400, "email_address_not_authorized", "Email address not authorized");
+      }
+      if (u && Date.now() - u.lastSent < EMAIL_GAP_MS) {
+        done(429);
+        return fail(res, 429, "over_email_send_rate_limit", "For security purposes, you can only request this after 60 seconds.");
+      }
       if (u) {
+        u.lastSent = Date.now();
         const code = crypto.randomUUID();
         codes.set(code, { userId: u.id, challenge: body.code_challenge, method: String(body.code_challenge_method || "plain").toLowerCase() });
         const to = url.searchParams.get("redirect_to") || base;
@@ -245,9 +299,9 @@ const server = http.createServer(async (req, res) => {
       const claims = bearer(req);
       if (claims) {
         const scope = url.searchParams.get("scope") || "global";
-        for (const t of refreshTokens.values()) {
+        for (const [token, t] of refreshTokens) {
           if (t.userId !== claims.sub) continue;
-          if (scope === "global" || (scope === "local" && t.sessionId === claims.session_id) || (scope === "others" && t.sessionId !== claims.session_id)) t.revoked = true;
+          if (scope === "global" || (scope === "local" && t.sessionId === claims.session_id) || (scope === "others" && t.sessionId !== claims.session_id)) refreshTokens.delete(token);
         }
       }
       done(204);

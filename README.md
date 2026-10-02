@@ -182,6 +182,25 @@ each sends an email. Signing out ends this browser's session only:
 Supabase's default ends every session, which here would sign the person
 out of the Tilted Needle app as well.
 
+A session's token lasts an hour and is renewed with a refresh token that
+is spent once used. Only the proxy and the `/auth/` routes renew it,
+because only they can keep the new one; a page cannot write cookies, so
+the two pages that read the session (`/login`, `/auth/reset`) pass
+through the proxy first, and a page's own client refuses to refresh at
+all (`supabaseForPage`). Someone already signed in who opens the plain
+door, which is the link clients are sent, goes straight on.
+
+A reset link comes back to exactly `/auth/confirm` (Supabase matches the
+address against its allowed list as a whole string) and works once, in
+the browser that asked: it is half of a key pair whose other half is a
+cookie. A request Supabase refuses (asking twice in a minute, an address
+its mailer will not send to) is said on the page, and leaves the cookie
+for the link already sent untouched.
+
+Invitations are accepted in the Tilted Needle app, which sends them: the
+link opens that app's page for choosing a password. After that the same
+email and password sign in here.
+
 The session's cookies are httpOnly (the portal never talks to Supabase
 from the browser, so nothing a page runs can read them), SameSite=Lax, and
 Secure over https. A readable `tn-in` cookie tells the static footer to
